@@ -17,14 +17,14 @@ export default function WorksPage() {
 
   return (
     <>
+      <Header
+        titleState="works"
+        openTools={openTools}
+        setOpenTools={setOpenTools}
+        openMenu={openMenu}
+        setOpenMenu={setOpenMenu}
+      />
       <div className=" w-screen h-screen overflow-hidden">
-        <Header
-          titleState="works"
-          openTools={openTools}
-          setOpenTools={setOpenTools}
-          openMenu={openMenu}
-          setOpenMenu={setOpenMenu}
-        />
         <WorksCarousel openTools={openTools} />
       </div>
     </>

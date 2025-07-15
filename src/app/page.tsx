@@ -18,15 +18,15 @@ export default function HomePage() {
   }, [startRevealSequence]);
   return (
     <>
-      <div className="w-full h-full font-serif flex flex-col items-start justify-center overflow-hidden">
-        <Header
-          showSettings={false}
-          openTools={openTools}
-          setOpenTools={setOpenTools}
-          openMenu={openMenu}
-          setOpenMenu={setOpenMenu}
-          titleState="home"
-        />
+      <Header
+        showSettings={false}
+        openTools={openTools}
+        setOpenTools={setOpenTools}
+        openMenu={openMenu}
+        setOpenMenu={setOpenMenu}
+        titleState="home"
+      />
+      <div className="w-screen h-screen font-serif flex flex-col items-center justify-center overflow-hidden">
         <div className="grid grid-cols-2 w-full h-full">
           <div className="col-span-2 lg:col-span-1 flex flex-col items-start justify-center  gap-y-6 p-6">
             <motion.div

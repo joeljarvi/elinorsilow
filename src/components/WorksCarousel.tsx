@@ -153,13 +153,13 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const visibleRange = 2;
 
   return (
-    <div className="relative w-screen h-screen flex flex-col overflow-hidden items-center justify-center">
+    <div className="w-screen h-screen flex flex-col overflow-hidden items-center justify-center">
       <div
         className={` transition-all touch-pan-y `}
         ref={emblaRef}
         style={{ touchAction: "pan-y" }}
       >
-        <div className="flex h-full">
+        <div className="flex w-full h-full">
           {filteredWorks.map((work, index) => {
             const isVisible = Math.abs(index - selectedIndex) <= visibleRange;
             if (!isVisible) {
@@ -209,33 +209,32 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
                     </li>
                   </motion.ul>
                 )}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={revealStep >= 3 ? { opacity: 1 } : {}}
+                  transition={{ duration: 0.6 }}
+                  className="hidden lg:flex flex-wrap items-end justify-center gap-x-3 w-full p-3 lg:justify-start lg:pb-3 "
+                >
+                  {filteredWorks.map((work, index) => (
+                    <button
+                      key={work.id}
+                      onClick={() => {
+                        setSelectedIndex(index);
+                        emblaApi?.scrollTo(index);
+                      }}
+                      className={`font-serif-italic transition-opacity cursor-pointer text-sm hover:opacity-30 ${
+                        index === selectedIndex ? "text-black opacity-30" : ""
+                      }`}
+                    >
+                      {work.title.rendered}
+                    </button>
+                  ))}
+                </motion.div>
               </div>
             );
           })}
         </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={revealStep >= 3 ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6 }}
-        className="absolute bottom-0 left-0 flex flex-wrap items-center justify-center gap-x-3 w-full p-3 lg:justify-start lg:pb-3"
-      >
-        {filteredWorks.map((work, index) => (
-          <button
-            key={work.id}
-            onClick={() => {
-              setSelectedIndex(index);
-              emblaApi?.scrollTo(index);
-            }}
-            className={`font-serif-italic transition-opacity cursor-pointer text-sm hover:opacity-30 ${
-              index === selectedIndex ? "text-black opacity-30" : ""
-            }`}
-          >
-            {work.title.rendered}
-          </button>
-        ))}
-      </motion.div>
 
       <AnimatePresence>
         {showInfoHint && (
