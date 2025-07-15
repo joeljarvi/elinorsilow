@@ -1,12 +1,15 @@
-import { getWorkBySlug, getAllWorks, Work } from "../../../../lib/wordpress";
+import { getWorkBySlug, getAllWorks } from "../../../../lib/wordpress";
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export async function generateStaticParams() {
-  return [{ slug: "test-slug" }, { slug: "another-slug" }];
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  const works = await getAllWorks();
+  return works.map((work) => ({
+    slug: work.slug,
+  }));
 }
 
 export default async function WorkPage({
