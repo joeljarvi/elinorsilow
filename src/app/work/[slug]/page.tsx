@@ -20,6 +20,7 @@ export async function generateStaticParams() {
     slug: work.slug,
   }));
 }
+
 export default async function WorkPage({ params }: WorkPageProps) {
   const work: Work | null = await getWorkBySlug(params.slug);
   if (!work) return notFound();
