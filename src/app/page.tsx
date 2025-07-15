@@ -26,9 +26,9 @@ export default function HomePage() {
         setOpenMenu={setOpenMenu}
         titleState="home"
       />
-      <div className="w-screen h-screen font-serif flex flex-col items-center justify-center overflow-hidden">
-        <div className="grid grid-cols-2 w-full h-full">
-          <div className="col-span-2 lg:col-span-1 flex flex-col items-start justify-center  gap-y-6 p-6">
+      <div className="w-screen h-screen font-serif flex flex-col items-center justify-center ">
+        <div className="grid grid-cols-2 w-full h-full ">
+          <div className="col-span-2 lg:col-span-1 flex flex-col items-start justify-center  gap-y-6 p-6 overflow-hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={revealStep >= 2 ? { opacity: 1 } : {}}
