@@ -27,7 +27,7 @@ export function Header({
 
   useEffect(() => {
     startRevealSequence();
-  }, []);
+  }, [startRevealSequence]);
 
   function handleOpenTools() {
     setOpenTools((prev) => !prev);

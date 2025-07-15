@@ -9,7 +9,6 @@ import Image from "next/image";
 import { Toolbox } from "./Toolbox";
 import { useAnimationContext } from "@/context/AnimationContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 
 type WorksCarouselProps = {
   openTools: boolean;

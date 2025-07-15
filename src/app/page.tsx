@@ -15,7 +15,7 @@ export default function HomePage() {
 
   useEffect(() => {
     startRevealSequence();
-  }, []);
+  }, [startRevealSequence]);
   return (
     <>
       <Header
