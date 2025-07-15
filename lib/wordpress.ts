@@ -1,3 +1,7 @@
+export interface Params {
+  slug: string;
+}
+
 export interface Work {
   id: number;
   slug: string;

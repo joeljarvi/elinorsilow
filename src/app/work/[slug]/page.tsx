@@ -1,27 +1,28 @@
-import { getWorkBySlug, getAllWorks } from "../../../../lib/wordpress";
+import {
+  getWorkBySlug,
+  getAllWorks,
+  Params,
+  Work,
+} from "../../../../lib/wordpress";
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 type Props = {
-  params: {
-    slug: string;
-  };
+  params: Params;
 };
 
-export async function generateStaticParams() {
-  const works = await getAllWorks();
-
+export async function generateStaticParams(): Promise<Params[]> {
+  const works: Work[] = await getAllWorks();
   return works.map((work) => ({
     slug: work.slug,
   }));
 }
 
-export default async function WorkPage({
-  params,
-}: Props): Promise<React.ReactNode> {
-  const work = await getWorkBySlug(params.slug);
+export default async function WorkPage({ params }: Props) {
+  const work: Work | null = await getWorkBySlug(params.slug);
   if (!work) return notFound();
 
   const imageUrl = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
