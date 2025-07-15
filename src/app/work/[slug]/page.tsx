@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Work } from "../../../../lib/wordpress";
-type Params = {
+
+type WorkPageProps = {
   params: {
     slug: string;
   };
@@ -18,7 +19,7 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   }));
 }
 
-export default async function WorkPage({ params }: Params) {
+export default async function WorkPage({ params }: WorkPageProps) {
   const work = await getWorkBySlug(params.slug);
 
   if (!work) return notFound();
