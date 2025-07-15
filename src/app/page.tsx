@@ -101,7 +101,7 @@ export default function HomePage() {
               </nav>
             </div>
           </div>
-          <div className="hidden lg:flex  col-span-1"></div>
+          <div className="hidden lg:flex  col-span-1 bg-black"></div>
         </div>
       </div>
     </>

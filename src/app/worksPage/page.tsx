@@ -25,7 +25,7 @@ export default function WorksPage() {
         setOpenMenu={setOpenMenu}
       />
       <div className=" w-screen h-screen overflow-hidden">
-        <WorksCarousel openTools={openTools} />
+        <WorksCarousel openTools={openTools} openMenu={openMenu} />
       </div>
     </>
   );

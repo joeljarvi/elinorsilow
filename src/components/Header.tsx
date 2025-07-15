@@ -40,7 +40,7 @@ export function Header({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="absolute top-0 w-full flex items-baseline justify-between lg:justify-between p-3 z-60
+        className="absolute top-0 w-full flex items-baseline justify-between lg:justify-between p-3 z-60 mix-blend-difference text-white
 "
       >
         <div className="flex justify-start items-center">
@@ -58,7 +58,7 @@ export function Header({
             <button
               onClick={handleOpenTools}
               className={` font-serif cursor-pointer hover:opacity-30 transition-opacity px-3 ${
-                openTools ? "text-black opacity-30" : ""
+                openTools ? "text-white opacity-30" : ""
               }`}
             >
               {openTools ? "close (x)" : "settings"}
@@ -71,7 +71,7 @@ export function Header({
           <button
             onClick={handleOpenMenu}
             className={`font-sans cursor-pointer hover:underline underline-offset-6 text-sm tracking-tighter p-3 ${
-              openMenu ? "text-black opacity-30" : ""
+              openMenu ? "text-white opacity-30" : ""
             }`}
           >
             {openMenu ? "CLOSE" : "MENU"}
@@ -132,9 +132,9 @@ export function Header({
 
       {/* Mobile menu overlay */}
       {openMenu && (
-        <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full  z-40">
-          <div className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl font-sans w-full h-full pointer-events-auto">
-            <ul className="text-center text-4xl">
+        <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full text-white mix-blend-difference pt-16  z-40">
+          <div className="flex flex-col items-start justify-start p-6 rounded-2xl font-sans w-full h-full pointer-events-auto">
+            <ul className=" text-4xl">
               <li>
                 <Link
                   href="/worksPage"

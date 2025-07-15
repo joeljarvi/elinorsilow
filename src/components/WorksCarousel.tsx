@@ -12,9 +12,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type WorksCarouselProps = {
   openTools: boolean;
+  openMenu: boolean;
 };
 
-export function WorksCarousel({ openTools }: WorksCarouselProps) {
+export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
   const [works, setWorks] = useState<Work[]>([]);
 
   const [selectedYear, setSelectedYear] = useState("all");
@@ -127,7 +128,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
               width={2124}
               height={2123}
               priority
-              className="max-w-24 lg:max-w-1/6 object-cover"
+              className="max-w-24  object-cover"
             />
           </motion.div>
         </AnimatePresence>
@@ -154,7 +155,8 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
             }}
             className={`font-serif-italic transition-opacity cursor-pointer ${
               index === selectedIndex ? "text-black opacity-30" : ""
-            }  ${openTools ? "blur lg:blur-none" : ""}`}
+            }  ${openTools ? "blur lg:blur-none" : ""}
+            ${openMenu ? "blur lg:blur-none" : ""}`}
           >
             {work.title.rendered}
           </button>
@@ -163,8 +165,8 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
 
       <div
         className={` transition-all touch-pan-y ${
-          openTools ? "blur-xl lg:blur-none" : ""
-        }`}
+          openTools ? "blur-3xl grayscale lg:blur-none" : ""
+        } ${openMenu ? "blur-3xl grayscale lg:blur-none" : ""}`}
         ref={emblaRef}
         style={{ touchAction: "pan-y" }}
       >
@@ -251,7 +253,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
           disabled={!canScrollPrev}
           className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity pointer-events-auto ${
             openTools ? "blur-xl lg:blur-none" : ""
-          }`}
+          } ${openMenu ? "blur-xl lg:blur-none" : ""}`}
         >
           Prev
         </button>
@@ -260,7 +262,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
           disabled={!canScrollNext}
           className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity pointer-events-auto ${
             openTools ? "blur-xl lg:blur-none" : ""
-          }`}
+          } ${openMenu ? "blur-xl lg:blur-none" : ""}`}
         >
           Next
         </button>

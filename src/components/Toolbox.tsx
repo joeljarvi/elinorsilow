@@ -38,15 +38,15 @@ export function Toolbox({
   }, {} as Record<string, number>);
 
   return (
-    <div className="absolute top-0 left-0 flex flex-col items-center justify-center  z-50 w-full h-full lg:max-w-md lg:h-auto pt-16 pb-16 px-6 lg:p-3 pointer-events-auto">
-      <div className="flex flex-col items-baseline justify-center mt-0 lg:justify-start lg:mt-12 rounded-2xl p-6 w-full ">
-        <div className="flex items-baseline justify-center lg:justify-start font-serif w-full  mix-blend-difference text-md gap-3 ">
+    <div className="absolute top-0 left-0 flex flex-col items-center justify-start  z-50 w-full h-full lg:max-w-md lg:h-auto pt-16 pb-16 px-6 lg:p-3 pointer-events-auto text-white mix-blend-difference">
+      <div className="flex flex-col items-baseline justify-start mt-0 lg:justify-start lg:mt-12 rounded-2xl p-0 lg:p-6 w-full ">
+        <div className="flex items-baseline justify-start lg:justify-start font-serif w-full  mix-blend-difference text-md gap-3 ">
           <h2 className="text-sm font-sans uppercase">sort by:</h2>
           <span className="flex items-baseline gap-1.5">
             <button
               onClick={() => setSortBy("latest")}
               className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-                sortBy === "latest" ? "text-black opacity-30" : ""
+                sortBy === "latest" ? "text-white opacity-30" : ""
               }`}
             >
               Latest
@@ -55,7 +55,7 @@ export function Toolbox({
             <button
               onClick={() => setSortBy("az")}
               className={`font-serif cursor-pointer hover:opacity-30 transition-opacity  ${
-                sortBy === "az" ? "text-black opacity-30" : ""
+                sortBy === "az" ? "text-white opacity-30" : ""
               }`}
             >
               A—Ö
@@ -64,14 +64,14 @@ export function Toolbox({
             <button
               onClick={() => setSortBy("random")}
               className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-                sortBy === "random" ? "text-black opacity-30" : ""
+                sortBy === "random" ? "text-white opacity-30" : ""
               }`}
             >
               Random
             </button>
           </span>
         </div>
-        <div className="flex items-baseline justify-center lg:justify-start font-serif w-full  mix-blend-difference text-md gap-3">
+        <div className="flex items-baseline justify-start font-serif w-full  mix-blend-difference text-md gap-3">
           <h2 className="text-sm font-sans uppercase">category:</h2>
 
           {Object.entries(categoryCounts).map(([cat, count]) => (
@@ -79,7 +79,7 @@ export function Toolbox({
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-                selectedCategory === cat ? "text-black opacity-30" : ""
+                selectedCategory === cat ? "text-white opacity-30" : ""
               }`}
             >
               {cat} {`(${count})`}
@@ -88,14 +88,14 @@ export function Toolbox({
           <button
             onClick={() => setSelectedCategory("all")}
             className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-              selectedCategory === "all" ? "text-black opacity-30" : ""
+              selectedCategory === "all" ? "text-white opacity-30" : ""
             }`}
           >
             Show all
           </button>
         </div>
 
-        <div className="flex flex-wrap items-baseline justify-center lg:justify-start w-full mix-blend-difference text-md gap-3  ">
+        <div className="flex flex-wrap items-baseline justify-start w-full mix-blend-difference text-md gap-3  ">
           <h2 className="text-sm font-sans uppercase">Year:</h2>
 
           {[...new Set(allWorks.map((w) => w.acf.year.toString()))].map(
@@ -104,7 +104,7 @@ export function Toolbox({
                 key={year}
                 onClick={() => setSelectedYear(year)}
                 className={`font-serif cursor-pointer hover:opacity-30 transition-opacity  ${
-                  selectedYear === year ? "text-black opacity-30" : ""
+                  selectedYear === year ? "text-white opacity-30" : ""
                 }`}
               >
                 {year}
@@ -114,17 +114,17 @@ export function Toolbox({
           <button
             onClick={() => setSelectedYear("all")}
             className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-              selectedYear === "all" ? "text-black opacity-30" : ""
+              selectedYear === "all" ? "text-white opacity-30" : ""
             }`}
           >
             Show all
           </button>
         </div>
-        <div className="flex items-baseline justify-center lg:justify-start  font-serif w-full  mix-blend-difference text-md gap-3  ">
+        <div className="flex items-baseline justify-start  font-serif w-full  mix-blend-difference text-md gap-3  ">
           <h2 className="text-sm font-sans uppercase">description:</h2>
           <button
             className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-              showDescription ? "text-black opacity-30" : ""
+              showDescription ? "text-white opacity-30" : ""
             }`}
             onClick={() => setShowDescription(!showDescription)}
           >
@@ -133,7 +133,7 @@ export function Toolbox({
           /
           <button
             className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
-              !showDescription ? "text-black opacity-30" : ""
+              !showDescription ? "text-white opacity-30" : ""
             }`}
             onClick={() => setShowDescription(!showDescription)}
           >
