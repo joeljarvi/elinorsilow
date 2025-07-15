@@ -5,23 +5,23 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Work } from "../../../../lib/wordpress";
 
-type WorkPageProps = {
-  params: {
-    slug: string;
-  };
+type Params = {
+  slug: string;
 };
 
-export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  const works = await getAllWorks();
+type WorkPageProps = {
+  params: Params;
+};
 
-  return works.map((work: Work) => ({
+export async function generateStaticParams(): Promise<Params[]> {
+  const works = await getAllWorks();
+  return works.map((work) => ({
     slug: work.slug,
   }));
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {
   const work = await getWorkBySlug(params.slug);
-
   if (!work) return notFound();
 
   const imageUrl = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
