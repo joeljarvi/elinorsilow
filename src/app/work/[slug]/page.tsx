@@ -1,4 +1,3 @@
-// app/work/[slug]/page.tsx
 import { getWorkBySlug } from "../../../../lib/wordpress";
 import { getAllWorks } from "../../../../lib/wordpress";
 import { notFound } from "next/navigation";
@@ -6,21 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-type Props = {
-  params: {
-    slug: string;
-  };
-};
-
-export async function generateStaticParams() {
-  const works = await getAllWorks();
-
-  return works.map((work) => ({
-    slug: work.slug,
-  }));
+interface WorkPageParams {
+  params: { slug: string };
 }
 
-export default async function WorkPage({ params }: Props) {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  const works = await getAllWorks();
+  return works.map((work) => ({ slug: work.slug }));
+}
+
+export default async function WorkPage({ params }: WorkPageParams) {
   const work = await getWorkBySlug(params.slug);
   if (!work) return notFound();
 
