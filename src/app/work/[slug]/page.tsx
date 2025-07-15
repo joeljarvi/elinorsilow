@@ -1,9 +1,4 @@
-import {
-  getWorkBySlug,
-  getAllWorks,
-  WorkPageProps,
-  Work,
-} from "../../../../lib/wordpress";
+import { getWorkBySlug, getAllWorks, Work } from "../../../../lib/wordpress";
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
