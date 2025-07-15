@@ -5,7 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { getAllWorks } from "../../lib/wordpress";
 import { Work } from "../../lib/wordpress";
 import Image from "next/image";
-import Link from "next/link";
+
 import { Toolbox } from "./Toolbox";
 import { useAnimationContext } from "@/context/AnimationContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -110,7 +110,28 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   if (!filteredWorks.length) {
     return (
       <div className="flex flex-col items-center justify-center w-full h-full">
-        <h2 className="font-sans uppercase">Loading works…</h2>
+        <AnimatePresence>
+          <motion.div
+            key="loading-image"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, rotate: 360 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              opacity: { duration: 0.5 },
+              rotate: { repeat: Infinity, duration: 2, ease: "linear" },
+            }}
+            className="w-fit"
+          >
+            <Image
+              src="/ogubbe.jpg"
+              alt="drawing by Elinor Silow"
+              width={2124}
+              height={2123}
+              priority
+              className="max-w-24 lg:max-w-1/6 object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
     );
   }
@@ -118,7 +139,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const visibleRange = 2;
 
   return (
-    <div className="relative w-screen h-screen flex flex-col overflow-hidden">
+    <div className="relative w-full h-full flex flex-col overflow-hidden">
       <motion.div
         initial={{ opacity: 0 }}
         animate={revealStep >= 3 ? { opacity: 1 } : {}}
@@ -246,7 +267,6 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
         </button>
       </motion.div>
 
-      {/* Toolbox */}
       {openTools && (
         <motion.div
           initial={{ opacity: 0 }}

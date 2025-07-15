@@ -21,11 +21,12 @@ export default function HomePage() {
 
       <div className="w-screen h-screen font-serif flex flex-col items-start justify-center p-6">
         <Image
-          src="/trumpet-gubbe.jpg"
+          src="/elli_trumpetgubbe.jpg"
           alt="drawing by Elinor Silow"
-          width={179}
-          height={281}
-          className="object-cover"
+          width={1713}
+          height={2697}
+          loading="lazy"
+          className="max-w-1/3 lg:max-w-1/6 object-cover"
         />
         <div className="flex flex-col items-start justify-center">
           <Link href="/" className="font-serif-italic opacity-30">
