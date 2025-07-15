@@ -1,35 +1,40 @@
-import { getWorkBySlug } from "../../../../lib/wordpress";
-import { getAllWorks } from "../../../../lib/wordpress";
+import { getWorkBySlug, getAllWorks } from "../../../../lib/wordpress";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-interface WorkPageParams {
-  params: { slug: string };
-}
+import { Work } from "../../../../lib/wordpress";
+type Params = {
+  params: {
+    slug: string;
+  };
+};
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const works = await getAllWorks();
-  return works.map((work) => ({ slug: work.slug }));
+
+  return works.map((work: Work) => ({
+    slug: work.slug,
+  }));
 }
 
-export default async function WorkPage({ params }: WorkPageParams) {
+export default async function WorkPage({ params }: Params) {
   const work = await getWorkBySlug(params.slug);
+
   if (!work) return notFound();
 
   const imageUrl = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
   const alt = work._embedded?.["wp:featuredmedia"]?.[0]?.alt_text ?? "";
 
   return (
-    <article className="flex flex-col lg:flex-row justify-center items-center  mx-auto p-6  h-screen gap-3">
-      <div className="flex  flex-col w-full items-center justify-center">
+    <article className="flex flex-col lg:flex-row justify-center items-center mx-auto p-6 h-screen gap-3">
+      <div className="flex flex-col w-full items-center justify-center">
         <h1
-          className=" font-sans uppercase"
+          className="font-sans uppercase"
           dangerouslySetInnerHTML={{ __html: work.title.rendered }}
         />
 
-        <ul className="flex flex-wrap gap-x-1 items-center, justify-center font-serif text-sm text-gray-700 ">
+        <ul className="flex flex-wrap gap-x-1 items-center justify-center font-serif text-sm text-gray-700">
           <li>
             <span className="font-serif-bold">Year:</span> {work.acf.year},
           </li>
@@ -53,7 +58,7 @@ export default async function WorkPage({ params }: WorkPageParams) {
           alt={alt}
           width={1600}
           height={1200}
-          className=" h-screen p-24 object-contain"
+          className="h-screen p-24 object-contain"
         />
       )}
 
@@ -61,6 +66,7 @@ export default async function WorkPage({ params }: WorkPageParams) {
         className="work-content"
         dangerouslySetInnerHTML={{ __html: work.content.rendered }}
       />
+
       <Link href="/">
         <Button variant="link" className="font-sans absolute top-0 left-0 z-10">
           Back to works
