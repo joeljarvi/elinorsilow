@@ -9,12 +9,7 @@ import { Toolbox } from "./Toolbox";
 import { useAnimationContext } from "@/context/AnimationContext";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function WorksCarousel({
-  openTools,
-  setOpenTools,
-  openMenu,
-  setOpenMenu,
-}) {
+export function WorksCarousel({ openTools }) {
   const [works, setWorks] = useState([]);
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -28,11 +23,6 @@ export function WorksCarousel({
   const [showInfoHint, setShowInfoHint] = useState(false);
 
   const { revealStep, startRevealSequence } = useAnimationContext();
-
-  const toggle = useCallback((setter, closeOther) => {
-    setter((prev) => !prev);
-    if (closeOther) closeOther(false);
-  }, []);
 
   useEffect(() => {
     getAllWorks().then(setWorks);
@@ -96,7 +86,7 @@ export function WorksCarousel({
     if (filteredWorks.length > 0) {
       startRevealSequence();
     }
-  }, [filteredWorks.length]);
+  }, [filteredWorks.length, startRevealSequence]);
 
   useEffect(() => {
     if (revealStep === 6) {
@@ -255,8 +245,6 @@ export function WorksCarousel({
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
             allWorks={works}
-            filteredWorks={filteredWorks}
-            selectedIndex={selectedIndex}
             showDescription={showDescription}
             setShowDescription={setShowDescription}
           />

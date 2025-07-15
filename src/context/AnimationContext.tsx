@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useRef,
   useState,
+  useCallback,
 } from "react";
 
 const AnimationContext = createContext<{
@@ -48,19 +49,19 @@ export const AnimationProvider = ({
   const advanceRevealStep = () => {
     setRevealStep((prev) => prev + 1);
   };
-
-  const startRevealSequence = () => {
+  const startRevealSequence = useCallback(() => {
     setRevealStep(0);
-    revealTimers.current.forEach(clearTimeout); // clear old timers
+    revealTimers.current.forEach(clearTimeout);
+
     revealTimers.current = [
-      setTimeout(() => setRevealStep(1), 300), // image
-      setTimeout(() => setRevealStep(2), 900), // description
-      setTimeout(() => setRevealStep(3), 1500), // titles
-      setTimeout(() => setRevealStep(4), 2200), // toolbox
-      setTimeout(() => setRevealStep(5), 3000), //  navigation
-      setTimeout(() => setRevealStep(6), 3200), // infoBox
+      setTimeout(() => setRevealStep(1), 200),
+      setTimeout(() => setRevealStep(2), 700),
+      setTimeout(() => setRevealStep(3), 1200),
+      setTimeout(() => setRevealStep(4), 1700),
+      setTimeout(() => setRevealStep(5), 2200),
+      setTimeout(() => setRevealStep(6), 2700),
     ];
-  };
+  }, []);
 
   useEffect(() => {
     const handleActivity = () => resetTimer();

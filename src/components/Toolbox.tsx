@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
-import { Button } from "./ui/button";
 
 type ToolboxProps = {
   sortBy: string;
@@ -12,8 +10,7 @@ type ToolboxProps = {
   selectedCategory: string;
   setSelectedCategory: (val: string) => void;
   allWorks: any[];
-  filteredWorks: any[];
-  selectedIndex: number;
+
   showDescription: boolean;
   setShowDescription: (val: boolean) => void;
 };
@@ -26,8 +23,7 @@ export function Toolbox({
   selectedCategory,
   setSelectedCategory,
   allWorks,
-  filteredWorks,
-  selectedIndex,
+
   showDescription,
   setShowDescription,
 }: ToolboxProps) {
