@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { useAnimationContext } from "@/context/AnimationContext";
 
@@ -22,7 +22,7 @@ export function Header({
   showSettings = true,
   titleState = "home",
 }: HeaderProps) {
-  const { isIdle, revealStep } = useAnimationContext();
+  const { isIdle } = useAnimationContext();
 
   function handleOpenTools() {
     setOpenTools((prev) => !prev);

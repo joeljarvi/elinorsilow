@@ -3,6 +3,7 @@ export interface Work {
   slug: string;
   title: { rendered: string };
   content: { rendered: string };
+  date: string;
   acf: {
     year: number;
     title: string;
@@ -15,6 +16,10 @@ export interface Work {
       {
         source_url: string;
         alt_text: string;
+        media_details?: {
+          width?: number;
+          height?: number;
+        };
       }
     ];
   };

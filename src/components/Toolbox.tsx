@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Work } from "../../lib/wordpress";
 
 type ToolboxProps = {
   sortBy: string;
@@ -9,8 +10,7 @@ type ToolboxProps = {
   setSelectedYear: (val: string) => void;
   selectedCategory: string;
   setSelectedCategory: (val: string) => void;
-  allWorks: any[];
-
+  allWorks: Work[];
   showDescription: boolean;
   setShowDescription: (val: boolean) => void;
 };
@@ -98,17 +98,19 @@ export function Toolbox({
         <div className="flex flex-wrap items-baseline justify-center lg:justify-start w-full mix-blend-difference text-md gap-3  ">
           <h2 className="text-sm font-sans uppercase">Year:</h2>
 
-          {[...new Set(allWorks.map((w) => w.acf.year))].map((year) => (
-            <button
-              key={year}
-              onClick={() => setSelectedYear(year)}
-              className={`font-serif cursor-pointer hover:opacity-30 transition-opacity  ${
-                selectedYear === year ? "text-black opacity-30" : ""
-              }`}
-            >
-              {year}
-            </button>
-          ))}
+          {[...new Set(allWorks.map((w) => w.acf.year.toString()))].map(
+            (year) => (
+              <button
+                key={year}
+                onClick={() => setSelectedYear(year)}
+                className={`font-serif cursor-pointer hover:opacity-30 transition-opacity  ${
+                  selectedYear === year ? "text-black opacity-30" : ""
+                }`}
+              >
+                {year}
+              </button>
+            )
+          )}
           <button
             onClick={() => setSelectedYear("all")}
             className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${

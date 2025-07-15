@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { getAllWorks } from "../../lib/wordpress";
+import { Work } from "../../lib/wordpress";
 import Image from "next/image";
 import Link from "next/link";
 import { Toolbox } from "./Toolbox";
@@ -10,7 +11,8 @@ import { useAnimationContext } from "@/context/AnimationContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function WorksCarousel({ openTools }) {
-  const [works, setWorks] = useState([]);
+  const [works, setWorks] = useState<Work[]>([]);
+
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
@@ -32,10 +34,10 @@ export function WorksCarousel({ openTools }) {
     let result = [...works];
 
     if (selectedYear !== "all") {
-      result = result.filter((w) => w.acf.year === selectedYear);
+      result = result.filter((w) => w.acf.year === Number(selectedYear)); // Ensure correct type
     }
     if (selectedCategory !== "all") {
-      result = result.filter((w) => w.medium?.includes(selectedCategory));
+      result = result.filter((w) => w.acf.medium?.includes(selectedCategory));
     }
 
     switch (sortBy) {
