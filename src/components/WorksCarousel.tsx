@@ -159,7 +159,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
         ref={emblaRef}
         style={{ touchAction: "pan-y" }}
       >
-        <div className="flex w-full h-full">
+        <div className="flex h-full">
           {filteredWorks.map((work, index) => {
             const isVisible = Math.abs(index - selectedIndex) <= visibleRange;
             if (!isVisible) {
@@ -173,7 +173,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
             return (
               <div
                 key={work.id}
-                className="flex-none w-full h-full flex flex-col items-center justify-center gap-3 px-4 md:px-32"
+                className="flex-none w-full h-full flex flex-col items-center justify-center gap-3 px-4 lg:px-32"
                 style={{ userSelect: "none" }}
               >
                 {imageUrl && (
@@ -209,27 +209,6 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
                     </li>
                   </motion.ul>
                 )}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={revealStep >= 3 ? { opacity: 1 } : {}}
-                  transition={{ duration: 0.6 }}
-                  className="hidden lg:flex flex-wrap items-end justify-center gap-x-3 w-full p-3 lg:justify-start lg:pb-3 "
-                >
-                  {filteredWorks.map((work, index) => (
-                    <button
-                      key={work.id}
-                      onClick={() => {
-                        setSelectedIndex(index);
-                        emblaApi?.scrollTo(index);
-                      }}
-                      className={`font-serif-italic transition-opacity cursor-pointer text-sm hover:opacity-30 ${
-                        index === selectedIndex ? "text-black opacity-30" : ""
-                      }`}
-                    >
-                      {work.title.rendered}
-                    </button>
-                  ))}
-                </motion.div>
               </div>
             );
           })}
@@ -295,6 +274,27 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
           </motion.div>
         )}
       </AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={revealStep >= 3 ? { opacity: 1 } : {}}
+        transition={{ duration: 0.6 }}
+        className="absolute bottom-0 flex flex-wrap items-end justify-center gap-x-3 w-full p-3 lg:justify-start z-40 pointer-events-none"
+      >
+        {filteredWorks.map((work, index) => (
+          <button
+            key={work.id}
+            onClick={() => {
+              setSelectedIndex(index);
+              emblaApi?.scrollTo(index);
+            }}
+            className={`font-serif-italic transition-opacity cursor-pointer text-sm hover:opacity-30 pointer-events-auto ${
+              index === selectedIndex ? "text-black opacity-30" : ""
+            }`}
+          >
+            {work.title.rendered}
+          </button>
+        ))}
+      </motion.div>
     </div>
   );
 }

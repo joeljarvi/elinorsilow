@@ -45,7 +45,7 @@ export function Header({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="fixed top-0 w-full flex items-baseline justify-between lg:justify-between p-3 z-30 mix-blend-difference text-white 
+        className="fixed top-0 w-full flex items-center justify-between lg:justify-between p-3 z-30 mix-blend-difference text-white 
 "
       >
         <div className="flex justify-start items-center">
@@ -165,7 +165,7 @@ export function Header({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }} // smooth fade
-            className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-white pt-16 z-20"
+            className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-white pt-16 z-20 overflow-hidden"
           >
             <div className="flex flex-col items-start justify-start p-6 rounded-2xl font-sans w-full h-full pointer-events-auto uppercase">
               <ul className="text-3xl">
