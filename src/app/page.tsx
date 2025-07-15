@@ -98,12 +98,6 @@ export default function HomePage() {
                 >
                   contact
                 </Link>
-                <Link
-                  className="font-serif-italic hover:opacity-30 transition-opacity block lg:hidden "
-                  href="/"
-                >
-                  dark mode
-                </Link>
               </nav>
             </div>
           </div>

@@ -138,7 +138,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const visibleRange = 2;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="relative w-full h-full flex flex-col overflow-hidden items-center justify-center">
       <motion.div
         initial={{ opacity: 0 }}
         animate={revealStep >= 3 ? { opacity: 1 } : {}}
@@ -154,7 +154,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
             }}
             className={`font-serif-italic transition-opacity cursor-pointer ${
               index === selectedIndex ? "text-black opacity-30" : ""
-            }`}
+            }  ${openTools ? "blur lg:blur-none" : ""}`}
           >
             {work.title.rendered}
           </button>
@@ -162,7 +162,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
       </motion.div>
 
       <div
-        className={`overflow-hidden w-full h-full transition-all touch-pan-y ${
+        className={` transition-all touch-pan-y ${
           openTools ? "blur-xl lg:blur-none" : ""
         }`}
         ref={emblaRef}
