@@ -12,17 +12,9 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type WorksCarouselProps = {
   openTools: boolean;
-  setOpenTools: React.Dispatch<React.SetStateAction<boolean>>;
-  openMenu: boolean;
-  setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function WorksCarousel({
-  openTools,
-  setOpenTools,
-  openMenu,
-  setOpenMenu,
-}: WorksCarouselProps) {
+export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const [works, setWorks] = useState<Work[]>([]);
 
   const [selectedYear, setSelectedYear] = useState("all");

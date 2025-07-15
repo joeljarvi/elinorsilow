@@ -24,12 +24,7 @@ export default function WorksPage() {
         openMenu={openMenu}
         setOpenMenu={setOpenMenu}
       />
-      <WorksCarousel
-        openTools={openTools}
-        setOpenTools={setOpenTools}
-        openMenu={openMenu}
-        setOpenMenu={setOpenMenu}
-      />
+      <WorksCarousel openTools={openTools} />
     </div>
   );
 }
