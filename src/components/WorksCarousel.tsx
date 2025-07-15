@@ -29,36 +29,48 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [showInfoHint, setShowInfoHint] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const { revealStep, startRevealSequence } = useAnimationContext();
 
   useEffect(() => {
     getAllWorks().then(setWorks);
   }, []);
+  const sortedWorks = useMemo(() => {
+    switch (sortBy) {
+      case "az":
+        return [...works].sort((a, b) =>
+          a.title.rendered.localeCompare(b.title.rendered)
+        );
+      case "random":
+        return [...works].sort(() => Math.random() - 0.5);
+      default:
+        return [...works].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+    }
+  }, [works, sortBy]);
 
   const filteredWorks = useMemo(() => {
-    let result = [...works];
+    let result = [...sortedWorks];
 
     if (selectedYear !== "all") {
-      result = result.filter((w) => w.acf.year === Number(selectedYear)); // Ensure correct type
+      result = result.filter((w) => w.acf.year === Number(selectedYear));
     }
+
     if (selectedCategory !== "all") {
       result = result.filter((w) => w.acf.medium?.includes(selectedCategory));
     }
 
-    switch (sortBy) {
-      case "az":
-        return result.sort((a, b) =>
-          a.title.rendered.localeCompare(b.title.rendered)
-        );
-      case "random":
-        return result.sort(() => Math.random() - 0.5);
-      default:
-        return result.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-    }
-  }, [works, selectedYear, selectedCategory, sortBy]);
+    return result;
+  }, [sortedWorks, selectedYear, selectedCategory]);
+
+  useEffect(() => {
+    setIsFiltering(true);
+    const timeout = setTimeout(() => setIsFiltering(false), 300); // Increased delay
+
+    return () => clearTimeout(timeout);
+  }, [filteredWorks]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -106,7 +118,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
     }
   }, [revealStep]);
 
-  if (!filteredWorks.length) {
+  if (!filteredWorks.length || isFiltering) {
     return (
       <div className="flex flex-col items-center justify-center w-full h-full">
         <AnimatePresence>
@@ -127,10 +139,13 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
               width={2124}
               height={2123}
               priority
-              className="max-w-24  object-cover"
+              className="max-w-24 object-cover"
             />
           </motion.div>
         </AnimatePresence>
+        <p className="text-sm font-sans uppercase pt-4">
+          {filteredWorks.length ? "Filtering…" : "Loading works…"}
+        </p>
       </div>
     );
   }
@@ -138,7 +153,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const visibleRange = 2;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden items-center justify-center">
+    <div className="relative w-screen h-screen flex flex-col overflow-hidden items-center justify-center">
       <div
         className={` transition-all touch-pan-y `}
         ref={emblaRef}
@@ -148,7 +163,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
           {filteredWorks.map((work, index) => {
             const isVisible = Math.abs(index - selectedIndex) <= visibleRange;
             if (!isVisible) {
-              return <div key={work.id} className="flex-none w-full" />;
+              return null;
             }
             const media = work._embedded?.["wp:featuredmedia"]?.[0];
             const imageUrl = media?.source_url || "";
@@ -231,7 +246,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
             transition={{ duration: 0.6 }}
             className="absolute bottom-0 right-0 px-6 pb-3 hidden lg:flex z-30 uppercase"
           >
-            <h2 className="flex items-center gap-x-3 font-sans justify-end">
+            <h2 className="flex items-center gap-x-3 font-sans justify-end opacity-30">
               **use arrow keys to navigate**
             </h2>
           </motion.div>

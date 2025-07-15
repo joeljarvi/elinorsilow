@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useMemo } from "react";
 import { Work } from "../../lib/wordpress";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -28,15 +29,24 @@ export function Toolbox({
   showDescription,
   setShowDescription,
 }: ToolboxProps) {
-  const categoryCounts = allWorks.reduce((acc, work) => {
-    const mediums = Array.isArray(work.acf.medium)
-      ? work.acf.medium
-      : [work.acf.medium].filter(Boolean);
-    mediums.forEach((medium) => {
-      acc[medium] = (acc[medium] || 0) + 1;
-    });
-    return acc;
-  }, {} as Record<string, number>);
+  const availableYears = useMemo(() => {
+    return [...new Set(allWorks.map((w) => w.acf.year))]
+      .filter(Boolean)
+      .sort((a, b) => b - a) // descending numerical sort
+      .map(String); // convert to strings for comparison
+  }, [allWorks]);
+
+  const categoryCounts = useMemo(() => {
+    return allWorks.reduce((acc, work) => {
+      const mediums = Array.isArray(work.acf.medium)
+        ? work.acf.medium
+        : [work.acf.medium].filter(Boolean);
+      mediums.forEach((medium) => {
+        acc[medium] = (acc[medium] || 0) + 1;
+      });
+      return acc;
+    }, {} as Record<string, number>);
+  }, [allWorks]);
 
   return (
     <AnimatePresence>
@@ -106,21 +116,23 @@ export function Toolbox({
           <div className="flex flex-wrap items-baseline justify-start w-full  text-md gap-3  ">
             <h2 className="text-sm font-sans uppercase">Year:</h2>
 
-            {[...new Set(allWorks.map((w) => w.acf.year.toString()))].map(
-              (year) => (
-                <button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className={`font-serif cursor-pointer hover:opacity-30 transition-opacity  ${
-                    selectedYear === year ? "text-black opacity-30" : ""
-                  }`}
-                >
-                  {year}
-                </button>
-              )
-            )}
+            {availableYears.map((year) => (
+              <button
+                key={year}
+                onClick={() => {
+                  if (selectedYear !== year) setSelectedYear(year);
+                }}
+                className={`font-serif cursor-pointer hover:opacity-30 transition-opacity  ${
+                  selectedYear === year ? "text-black opacity-30" : ""
+                }`}
+              >
+                {year}
+              </button>
+            ))}
             <button
-              onClick={() => setSelectedYear("all")}
+              onClick={() => {
+                if (selectedYear !== "all") setSelectedYear("all");
+              }}
               className={`font-serif cursor-pointer hover:opacity-30 transition-opacity ${
                 selectedYear === "all" ? "text-black opacity-30" : ""
               }`}
