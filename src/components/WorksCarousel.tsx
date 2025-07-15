@@ -23,7 +23,9 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showDescription, setShowDescription] = useState(true);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+  });
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [showInfoHint, setShowInfoHint] = useState(false);
@@ -113,25 +115,29 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
     );
   }
 
+  const visibleRange = 2;
+
   return (
     <div className="relative w-screen h-screen flex flex-col overflow-hidden">
-      {/* Titles */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={revealStep >= 3 ? { opacity: 1 } : {}}
         transition={{ duration: 0.6 }}
-        className="absolute bottom-0 top:0 lg:top-auto flex flex-wrap items-baseline justify-center lg:justify-start w-full p-3 gap-x-3 text-sm z-30"
+        className="absolute bottom-0 top:0 lg:top-auto flex flex-wrap items-baseline justify-center lg:justify-start w-full p-3 gap-x-3 text-sm z-80"
       >
         {filteredWorks.map((work, index) => (
-          <Link
-            href="/"
+          <button
             key={work.id}
+            onClick={() => {
+              setSelectedIndex(index); // <-- optional, Embla will update it on "select"
+              emblaApi?.scrollTo(index); // <-- this makes it work!
+            }}
             className={`font-serif-italic transition-opacity cursor-pointer ${
               index === selectedIndex ? "text-black opacity-30" : ""
             }`}
           >
             {work.title.rendered}
-          </Link>
+          </button>
         ))}
       </motion.div>
 
@@ -143,7 +149,11 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
         ref={emblaRef}
       >
         <div className="flex h-full">
-          {filteredWorks.map((work) => {
+          {filteredWorks.map((work, index) => {
+            const isVisible = Math.abs(index - selectedIndex) <= visibleRange;
+            if (!isVisible) {
+              return <div key={work.id} className="flex-none w-full" />;
+            }
             const media = work._embedded?.["wp:featuredmedia"]?.[0];
             const imageUrl = media?.source_url || "";
             const imageWidth = media?.media_details?.width || 1600;
@@ -168,7 +178,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
                       width={imageWidth}
                       height={imageHeight}
                       className="object-contain h-auto w-auto max-h-[60vh] lg:max-h-[70vh] max-w-full"
-                      priority
+                      loading="lazy"
                     />
                   </motion.div>
                 )}

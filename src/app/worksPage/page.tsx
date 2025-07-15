@@ -16,7 +16,7 @@ export default function WorksPage() {
   }, []);
 
   return (
-    <div className="w-screen h-screen">
+    <>
       <Header
         titleState="works"
         openTools={openTools}
@@ -24,7 +24,9 @@ export default function WorksPage() {
         openMenu={openMenu}
         setOpenMenu={setOpenMenu}
       />
-      <WorksCarousel openTools={openTools} />
-    </div>
+      <div className="w-screen h-screen overflow-hidden">
+        <WorksCarousel openTools={openTools} />
+      </div>
+    </>
   );
 }
