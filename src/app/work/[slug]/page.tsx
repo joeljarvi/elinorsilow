@@ -1,7 +1,7 @@
 import {
   getWorkBySlug,
   getAllWorks,
-  Params,
+  WorkPageProps,
   Work,
 } from "../../../../lib/wordpress";
 
@@ -10,10 +10,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-type WorkPageProps = {
-  params: Params;
-};
-
 export async function generateStaticParams() {
   const works: Work[] = await getAllWorks();
   return works.map((work) => ({
@@ -21,8 +17,12 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function WorkPage({ params }: WorkPageProps) {
-  const work: Work | null = await getWorkBySlug(params.slug);
+export default async function WorkPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const work = await getWorkBySlug(params.slug);
   if (!work) return notFound();
 
   const imageUrl = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url;

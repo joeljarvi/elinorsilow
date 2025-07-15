@@ -1,7 +1,6 @@
-export interface Params {
-  slug: string;
+export interface WorkPageProps {
+  params: { slug: string };
 }
-
 export interface Work {
   id: number;
   slug: string;
