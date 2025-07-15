@@ -108,7 +108,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
 
   if (!filteredWorks.length) {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
         <AnimatePresence>
           <motion.div
             key="loading-image"
@@ -143,7 +143,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
         initial={{ opacity: 0 }}
         animate={revealStep >= 3 ? { opacity: 1 } : {}}
         transition={{ duration: 0.6 }}
-        className="absolute bottom-0 left-0 flex flex-wrap items-center justify-center gap-x-3 w-full p-3 lg:justify-start lg:pb-3"
+        className=" overflow-hidden absolute bottom-0 left-0 flex flex-wrap items-end justify-center gap-x-3 w-full p-3 lg:justify-start lg:pb-3 h-full z-10"
       >
         {filteredWorks.map((work, index) => (
           <button

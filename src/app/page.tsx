@@ -27,7 +27,7 @@ export default function HomePage() {
         titleState="home"
       />
 
-      <div className="w-screen h-screen font-serif flex flex-col items-start justify-center ">
+      <div className="w-screen h-screen font-serif flex flex-col items-start justify-center overflow-hidden">
         <div className="grid grid-cols-2 w-full h-full">
           <div className="col-span-2 lg:col-span-1 flex flex-col items-start justify-center  gap-y-6 p-6">
             <motion.div
