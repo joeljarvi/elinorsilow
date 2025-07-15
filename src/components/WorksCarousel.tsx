@@ -10,7 +10,19 @@ import { Toolbox } from "./Toolbox";
 import { useAnimationContext } from "@/context/AnimationContext";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function WorksCarousel({ openTools }) {
+type WorksCarouselProps = {
+  openTools: boolean;
+  setOpenTools: React.Dispatch<React.SetStateAction<boolean>>;
+  openMenu: boolean;
+  setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function WorksCarousel({
+  openTools,
+  setOpenTools,
+  openMenu,
+  setOpenMenu,
+}: WorksCarouselProps) {
   const [works, setWorks] = useState<Work[]>([]);
 
   const [selectedYear, setSelectedYear] = useState("all");

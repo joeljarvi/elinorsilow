@@ -10,18 +10,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-type Props = {
+type WorkPageProps = {
   params: Params;
 };
 
-export async function generateStaticParams(): Promise<Params[]> {
+export async function generateStaticParams() {
   const works: Work[] = await getAllWorks();
   return works.map((work) => ({
     slug: work.slug,
   }));
 }
-
-export default async function WorkPage({ params }: Props) {
+export default async function WorkPage({ params }: WorkPageProps) {
   const work: Work | null = await getWorkBySlug(params.slug);
   if (!work) return notFound();
 
