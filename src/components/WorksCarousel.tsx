@@ -9,13 +9,13 @@ import Image from "next/image";
 import { Toolbox } from "./Toolbox";
 import { useAnimationContext } from "@/context/AnimationContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 
 type WorksCarouselProps = {
   openTools: boolean;
-  openMenu: boolean;
 };
 
-export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
+export function WorksCarousel({ openTools }: WorksCarouselProps) {
   const [works, setWorks] = useState<Work[]>([]);
 
   const [selectedYear, setSelectedYear] = useState("all");
@@ -144,7 +144,7 @@ export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
         initial={{ opacity: 0 }}
         animate={revealStep >= 3 ? { opacity: 1 } : {}}
         transition={{ duration: 0.6 }}
-        className="absolute bottom-0 top:0 lg:top-auto flex flex-wrap items-baseline justify-center lg:justify-start w-full p-3 gap-x-3 text-sm z-80"
+        className="absolute bottom-0 left-0 flex flex-wrap items-center justify-center gap-x-3 w-full p-3 lg:justify-start lg:pb-3"
       >
         {filteredWorks.map((work, index) => (
           <button
@@ -153,10 +153,9 @@ export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
               setSelectedIndex(index);
               emblaApi?.scrollTo(index);
             }}
-            className={`font-serif-italic transition-opacity cursor-pointer ${
+            className={`font-serif-italic transition-opacity cursor-pointer text-sm hover:opacity-30 ${
               index === selectedIndex ? "text-black opacity-30" : ""
-            }  ${openTools ? "blur lg:blur-none" : ""}
-            ${openMenu ? "blur lg:blur-none" : ""}`}
+            }`}
           >
             {work.title.rendered}
           </button>
@@ -164,9 +163,7 @@ export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
       </motion.div>
 
       <div
-        className={` transition-all touch-pan-y ${
-          openTools ? "blur-3xl grayscale lg:blur-none" : ""
-        } ${openMenu ? "blur-3xl grayscale lg:blur-none" : ""}`}
+        className={` transition-all touch-pan-y `}
         ref={emblaRef}
         style={{ touchAction: "pan-y" }}
       >
@@ -184,13 +181,13 @@ export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
             return (
               <div
                 key={work.id}
-                className="flex-none w-full flex flex-col items-center justify-center gap-3 px-4 md:px-32"
+                className="flex-none w-full h-full flex flex-col items-center justify-center gap-3 px-4 md:px-32"
                 style={{ userSelect: "none" }}
               >
                 {imageUrl && (
                   <motion.div
                     initial={{ opacity: 0 }}
-                    animate={revealStep >= 1 ? { opacity: 1 } : {}}
+                    animate={revealStep >= 2 ? { opacity: 1 } : {}}
                     transition={{ duration: 0.6 }}
                     className="max-h-[60vh] lg:max-h-[70vh] max-w-full flex items-center justify-center"
                   >
@@ -233,10 +230,10 @@ export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
-            className="absolute bottom-0 right-0 p-3 hidden lg:flex"
+            className="absolute bottom-0 right-0 px-6 pb-3 hidden lg:flex z-30 uppercase"
           >
-            <h2 className="font-sans justify-end">
-              *use arrow keys to navigate
+            <h2 className="flex items-center gap-x-3 font-sans justify-end">
+              **use arrow keys to navigate**
             </h2>
           </motion.div>
         )}
@@ -244,49 +241,47 @@ export function WorksCarousel({ openTools, openMenu }: WorksCarouselProps) {
 
       <motion.div
         initial={{ opacity: 0 }}
-        animate={revealStep >= 5 ? { opacity: 1 } : {}}
+        animate={revealStep >= 2 ? { opacity: 1 } : {}}
         transition={{ duration: 0.6 }}
-        className="absolute flex w-full h-full top-0 items-center justify-between z-50 pointer-events-none"
+        className="absolute flex w-full h-full top-0 items-center justify-between z-20 pointer-events-none mix-blend-difference text-white"
       >
         <button
           onClick={() => emblaApi?.scrollPrev()}
           disabled={!canScrollPrev}
-          className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity pointer-events-auto ${
-            openTools ? "blur-xl lg:blur-none" : ""
-          } ${openMenu ? "blur-xl lg:blur-none" : ""}`}
+          className={`font-sans uppercase text-sm opacity-30 lg:text-lg hover:opacity-10 transition-opacity pointer-events-auto `}
         >
           Prev
         </button>
         <button
           onClick={() => emblaApi?.scrollNext()}
           disabled={!canScrollNext}
-          className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity pointer-events-auto ${
-            openTools ? "blur-xl lg:blur-none" : ""
-          } ${openMenu ? "blur-xl lg:blur-none" : ""}`}
+          className={`font-sans uppercase text-sm opacity-30 lg:text-lg hover:opacity-10 transition-opacity pointer-events-auto`}
         >
           Next
         </button>
       </motion.div>
-
-      {openTools && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={revealStep >= 4 ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <Toolbox
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            allWorks={works}
-            showDescription={showDescription}
-            setShowDescription={setShowDescription}
-          />
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {openTools && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={revealStep >= 6 ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6 }}
+            exit={{ opacity: 0 }}
+          >
+            <Toolbox
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              allWorks={works}
+              showDescription={showDescription}
+              setShowDescription={setShowDescription}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
