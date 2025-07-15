@@ -70,12 +70,11 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
     };
 
     emblaApi.on("select", onSelect);
-    onSelect(); // set initial state
-
+    onSelect();
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi]); // this is OK now
+  }, [emblaApi]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -101,7 +100,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
       setShowInfoHint(true);
       const timer = setTimeout(() => {
         setShowInfoHint(false);
-      }, 5000); // 5 seconds
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -150,8 +149,8 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
           <button
             key={work.id}
             onClick={() => {
-              setSelectedIndex(index); // <-- optional, Embla will update it on "select"
-              emblaApi?.scrollTo(index); // <-- this makes it work!
+              setSelectedIndex(index);
+              emblaApi?.scrollTo(index);
             }}
             className={`font-serif-italic transition-opacity cursor-pointer ${
               index === selectedIndex ? "text-black opacity-30" : ""
@@ -162,12 +161,12 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
         ))}
       </motion.div>
 
-      {/* Carousel */}
       <div
-        className={`overflow-hidden w-full h-full transition-all ${
+        className={`overflow-hidden w-full h-full transition-all touch-pan-y ${
           openTools ? "blur-xl lg:blur-none" : ""
         }`}
         ref={emblaRef}
+        style={{ touchAction: "pan-y" }}
       >
         <div className="flex h-full">
           {filteredWorks.map((work, index) => {
@@ -240,17 +239,17 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Navigation */}
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={revealStep >= 5 ? { opacity: 1 } : {}}
         transition={{ duration: 0.6 }}
-        className="absolute flex w-full h-full top-0 items-center justify-between z-50"
+        className="absolute flex w-full h-full top-0 items-center justify-between z-50 pointer-events-none"
       >
         <button
           onClick={() => emblaApi?.scrollPrev()}
           disabled={!canScrollPrev}
-          className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity ${
+          className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity pointer-events-auto ${
             openTools ? "blur-xl lg:blur-none" : ""
           }`}
         >
@@ -259,7 +258,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
         <button
           onClick={() => emblaApi?.scrollNext()}
           disabled={!canScrollNext}
-          className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity ${
+          className={`font-sans uppercase text-sm lg:text-lg hover:opacity-30 transition-opacity pointer-events-auto ${
             openTools ? "blur-xl lg:blur-none" : ""
           }`}
         >

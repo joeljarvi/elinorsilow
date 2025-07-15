@@ -81,14 +81,14 @@ export function Header({
         <motion.div
           animate={{ opacity: isIdle ? 0 : 1 }}
           transition={{ duration: 0.5 }}
-          className="hidden lg:flex "
+          className=" hidden lg:flex "
         >
           <nav>
             <ul className="flex items-center justify-end gap-6">
               <li>
                 <Link
                   href="/worksPage"
-                  className="font-sans text-xl hover:opacity-30 transition-opacity"
+                  className="font-sans text-xl hover:opacity-30 transition-opacity  "
                 >
                   works
                 </Link>
@@ -96,7 +96,7 @@ export function Header({
               <li>
                 <Link
                   href="/"
-                  className="font-sans text-xl hover:opacity-30 transition-opacity"
+                  className="font-sans text-xl hover:opacity-30 transition-opacity "
                 >
                   exhibitions
                 </Link>
@@ -104,7 +104,7 @@ export function Header({
               <li>
                 <Link
                   href="/"
-                  className="font-sans text-xl hover:opacity-30 transition-opacity"
+                  className="font-sans text-xl hover:opacity-30 transition-opacity "
                 >
                   information
                 </Link>
