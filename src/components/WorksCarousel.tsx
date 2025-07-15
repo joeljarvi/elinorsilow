@@ -124,7 +124,7 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
       >
         {filteredWorks.map((work, index) => (
           <Link
-            href={`/work/${work.slug}`}
+            href="/"
             key={work.id}
             className={`font-serif-italic transition-opacity cursor-pointer ${
               index === selectedIndex ? "text-black opacity-30" : ""
