@@ -6,10 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export async function generateStaticParams() {
-  const works: Work[] = await getAllWorks();
-  return works.map((work) => ({
-    slug: work.slug,
-  }));
+  return [{ slug: "test-slug" }, { slug: "another-slug" }];
 }
 
 export default async function WorkPage({
