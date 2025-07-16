@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 
 export function ExhibitionCarousel() {
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -26,7 +25,6 @@ export function ExhibitionCarousel() {
     if (!emblaApi || !emblaApi.on) return;
 
     const onSelect = () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
       setCanScrollPrev(emblaApi.canScrollPrev());
       setCanScrollNext(emblaApi.canScrollNext());
     };
@@ -53,7 +51,7 @@ export function ExhibitionCarousel() {
     <div className="w-screen h-screen flex flex-col overflow-hidden items-center justify-center">
       <div ref={emblaRef} className="overflow-hidden w-full h-full">
         <div className="flex w-full h-full">
-          {exhibitions.map((exhibition, index) => {
+          {exhibitions.map((exhibition) => {
             const acf = exhibition.acf;
             const galleryImages = Object.keys(acf)
               .filter((key) => key.startsWith("image_"))

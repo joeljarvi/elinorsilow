@@ -20,7 +20,7 @@ export default function Exhibitions() {
     <>
       <div className="w-screen h-screen overflow-hidden">
         <Header
-          titleState="works"
+          titleState="exhibitions"
           openTools={openTools}
           setOpenTools={setOpenTools}
           openMenu={openMenu}

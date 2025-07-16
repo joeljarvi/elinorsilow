@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { getAllWorks } from "../../lib/wordpress";
 import { Work } from "../../lib/wordpress";
