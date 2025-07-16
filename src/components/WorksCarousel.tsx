@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { getAllWorks } from "../../lib/wordpress";
 import { Work } from "../../lib/wordpress";
@@ -12,9 +12,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type WorksCarouselProps = {
   openTools: boolean;
+  setOpenTools: (val: boolean) => void;
 };
 
-export function WorksCarousel({ openTools }: WorksCarouselProps) {
+export function WorksCarousel({ openTools, setOpenTools }: WorksCarouselProps) {
   const [works, setWorks] = useState<Work[]>([]);
 
   const [selectedYear, setSelectedYear] = useState("all");
@@ -286,10 +287,11 @@ export function WorksCarousel({ openTools }: WorksCarouselProps) {
             onClick={() => {
               setSelectedIndex(index);
               emblaApi?.scrollTo(index);
+              setOpenTools(false);
             }}
-            className={`font-serif-italic transition-opacity cursor-pointer text-sm hover:opacity-30 pointer-events-auto ${
+            className={`font-serif-italic transition-all cursor-pointer text-sm hover:opacity-30 pointer-events-auto ${
               index === selectedIndex ? "text-black opacity-30" : ""
-            }`}
+            } ${openTools ? "block" : "hidden lg:block"}`}
           >
             {work.title.rendered}
           </button>

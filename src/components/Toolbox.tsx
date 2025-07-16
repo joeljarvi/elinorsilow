@@ -25,7 +25,6 @@ export function Toolbox({
   selectedCategory,
   setSelectedCategory,
   allWorks,
-
   showDescription,
   setShowDescription,
 }: ToolboxProps) {

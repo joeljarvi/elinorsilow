@@ -58,7 +58,7 @@ export default function HomePage() {
                 in Stockholm.
                 <span>
                   <Link
-                    className="font-sans underline underline-offset-4 ml-1.5 hover:opacity-30 transition-opacity"
+                    className="font-sans underline underline-offset-4 ml-1.5 hover:opacity-30 transition-all"
                     href="/"
                   >
                     Read more
@@ -78,13 +78,13 @@ export default function HomePage() {
 
               <span className="flex items-start gap-3">
                 <Link
-                  className="font-sans text-lg hover:opacity-30 transition-opacity"
+                  className="font-sans text-lg hover:opacity-30 transition-all hover:underline underline-offset-6"
                   href="mailto:elinor.silow@gmail.com"
                 >
                   Email
                 </Link>
                 <Link
-                  className="font-sans text-lg hover:opacity-30 transition-opacity"
+                  className="font-sans text-lg hover:opacity-30 transition-all hover:underline underline-offset-6"
                   href="https://www.instagram.com/elinorsilow/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -106,25 +106,25 @@ export default function HomePage() {
 
               <nav className="flex  flex-wrap items-start justify-start gap-x-6 gap-y-1.5 w-full text-xl uppercase">
                 <Link
-                  className="font-sans  hover:opacity-30 transition-opacity"
-                  href="/worksPage"
+                  className="font-sans hover:opacity-30 transition-all hover:underline underline-offset-6"
+                  href="/works"
                 >
                   works
                 </Link>
                 <Link
-                  className="font-sans hover:opacity-30 transition-opacity"
-                  href="/"
+                  className="font-sans hover:opacity-30 transition-all hover:underline underline-offset-6"
+                  href="/exhibitions"
                 >
                   exhibitions
                 </Link>
                 <Link
-                  className="font-sans hover:opacity-30 transition-opacity"
+                  className="font-sans hover:opacity-30 transition-all hover:underline underline-offset-6"
                   href="/"
                 >
                   information
                 </Link>
                 <Link
-                  className="font-sans hover:opacity-30 transition-opacity"
+                  className="font-sans hover:opacity-30 transition-all hover:underline underline-offset-6"
                   href="/"
                 >
                   contact

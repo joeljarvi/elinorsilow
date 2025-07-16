@@ -25,27 +25,31 @@ export interface Work {
   };
 }
 
-export interface Exhibition {
+export type Exhibition = {
   id: number;
-  slug: string;
   title: { rendered: string };
-  content: { rendered: string };
+  date: string;
   acf: {
-    title?: string;
-    duration?: string;
-    exhibition_type?: string;
-    location?: string;
+    title: string;
+    start_date: string;
+    end_date: string;
+    exhibition_type: string;
+    venue: string;
+    city: string;
     description?: string;
+    credits?: string;
+    image_1?: string;
+    image_2?: string;
+    image_3?: string;
+    image_4?: string;
+    image_5?: string;
+    image_6?: string;
+    image_7?: string;
+    image_8?: string;
+    image_9?: string;
+    image_10?: string;
   };
-  _embedded?: {
-    "wp:featuredmedia"?: [
-      {
-        source_url: string;
-        alt_text: string;
-      }
-    ];
-  };
-}
+};
 
 const API_URL = "https://elinorsilow.com/wp-json/wp/v2";
 

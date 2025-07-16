@@ -1,10 +1,11 @@
 "use client";
 
+import { ExhibitionCarousel } from "@/components/ExhibitionsCarousel";
 import { Header } from "@/components/Header";
-import { WorksCarousel } from "@/components/WorksCarousel";
+
 import { useState, useEffect } from "react";
 
-export default function WorksPage() {
+export default function Exhibitions() {
   const [openTools, setOpenTools] = useState(false);
 
   const [openMenu, setOpenMenu] = useState(false);
@@ -25,7 +26,7 @@ export default function WorksPage() {
           openMenu={openMenu}
           setOpenMenu={setOpenMenu}
         />
-        <WorksCarousel openTools={openTools} />
+        <ExhibitionCarousel />
       </div>
     </>
   );

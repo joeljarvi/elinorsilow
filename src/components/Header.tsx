@@ -48,12 +48,12 @@ export function Header({
         className="fixed top-0 w-full flex items-center justify-between lg:justify-between p-3 z-30 mix-blend-difference text-white 
 "
       >
-        <div className="flex justify-start items-center">
+        <div className="flex justify-center items-center">
           <motion.span
             initial={{ opacity: 0 }}
             animate={revealStep >= 1 ? { opacity: 1 } : {}}
             transition={{ duration: 0.6 }}
-            className="flex justify-start items-center"
+            className="flex justify-center items-center"
           >
             <Link
               href="/"
@@ -113,7 +113,7 @@ export function Header({
             >
               <li>
                 <Link
-                  href="/worksPage"
+                  href="/works"
                   className="font-sans hover:opacity-30 transition-opacity  "
                 >
                   works
@@ -121,7 +121,7 @@ export function Header({
               </li>
               <li>
                 <Link
-                  href="/"
+                  href="/exhibitions"
                   className="font-sans hover:opacity-30 transition-opacity "
                 >
                   exhibitions
@@ -165,38 +165,38 @@ export function Header({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }} // smooth fade
-            className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-white pt-16 z-20 overflow-hidden"
+            className="absolute top-0 left-0 flex items-center justify-center w-full h-full  pt-16 z-200 overflow-hidden pointer-events-none"
           >
-            <div className="flex flex-col items-start justify-start p-6 rounded-2xl font-sans w-full h-full pointer-events-auto uppercase">
+            <div className="flex flex-col items-start justify-start p-6 rounded-2xl font-sans w-full h-full pointer-events-auto uppercase bg-white">
               <ul className="text-3xl">
                 <li>
                   <Link
-                    href="/worksPage"
-                    className="hover:opacity-30 transition-opacity"
+                    href="/works"
+                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
                   >
                     works
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/worksPage"
-                    className="hover:opacity-30 transition-opacity"
+                    href="/exhibitions"
+                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
                   >
                     exhibitions
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/worksPage"
-                    className="hover:opacity-30 transition-opacity"
+                    href="/works"
+                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
                   >
                     information
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/worksPage"
-                    className="hover:opacity-30 transition-opacity"
+                    href="/works"
+                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
                   >
                     contact
                   </Link>
