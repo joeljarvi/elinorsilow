@@ -1,211 +1,263 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import { Button } from "./ui/button";
+import { DarkModeToggle } from "./DarkModeToggle";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useWorks } from "@/context/WorksContext";
+import { useExhibitions } from "@/context/ExhibitionsContext";
+import { InfoBox } from "./InfoBox";
+import Filter from "./Filter";
+import { Work } from "../../lib/wordpress";
+import { Exhibition } from "../../lib/wordpress";
+
 import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAnimationContext } from "@/context/AnimationContext";
 
-type HeaderProps = {
-  openTools: boolean;
-  setOpenTools: React.Dispatch<React.SetStateAction<boolean>>;
-  openMenu: boolean;
-  setOpenMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  showSettings?: boolean; //
-  titleState?: string; //
-};
+function MenuOverlay({
+  open,
+  isWorkSlugPage,
+  isInfoPage,
+}: {
+  open: boolean;
+  isWorkSlugPage: boolean;
+  isInfoPage: boolean;
+}) {
+  if (!open) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`fixed ${
+        isWorkSlugPage
+          ? "top-1/4 bottom-auto"
+          : isInfoPage
+          ? "top-3 bottom-auto h-1/4"
+          : "top-auto bottom-0 h-3/4"
+      } right-0 z-50 lg:h-auto lg:relative lg:bottom-auto lg:right-auto flex flex-col lg:flex-row justify-between items-end lg:justify-between lg:items-baseline font-haas text-base px-3 pb-3 overflow-y-auto uppercase text-white lg:text-xs w-auto rounded-xs lg:px-0 lg:pb-0`}
+    >
+      <Link href="/">Works</Link>
+      <Link href="/exhibitions">Exhibitions</Link>
+      <Link href="/info">Information</Link>
+    </motion.div>
+  );
+}
+interface HeaderProps {
+  work?: Work;
+  currentWork?: Work;
+  prevWork?: Work | null;
+  nextWork?: Work | null;
 
-export function Header({
-  openTools,
-  setOpenTools,
-  openMenu,
-  setOpenMenu,
-  showSettings = true,
-  titleState = "home",
+  currentExhibition?: Exhibition;
+  prevExhibition?: Exhibition | null;
+  nextExhibition?: Exhibition | null;
+
+  currentExhibitionIndex?: number;
+  setCurrentExhibitionIndex?: React.Dispatch<React.SetStateAction<number>>;
+  currentWorkIndex?: number;
+  bgColor?: string;
+  setBgColor?: React.Dispatch<React.SetStateAction<string>>;
+  min?: boolean;
+  setMin?: React.Dispatch<React.SetStateAction<boolean>>;
+  showInfo?: boolean;
+  setShowInfo?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function Header({
+  work,
+  currentWork,
+  prevWork,
+  nextWork,
+  currentExhibition,
+  prevExhibition,
+  nextExhibition,
+  min,
+  showInfo,
+  setShowInfo,
 }: HeaderProps) {
-  const { isIdle, revealStep, startRevealSequence } = useAnimationContext();
+  const [open, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    startRevealSequence();
-  }, [startRevealSequence]);
+  const pathname = usePathname();
 
-  function handleOpenTools() {
-    setOpenTools((prev) => !prev);
-    setOpenMenu(false);
-  }
+  const segments = pathname.split("/").filter(Boolean);
+  const isWorkSlugPage = segments[0] === "works" && !!segments[1];
 
-  function handleOpenMenu() {
-    setOpenMenu((prev) => !prev);
-    setOpenTools(false);
-  }
+  const isExhibitionSlugPage = segments[0] === "exhibitions" && segments[1];
+  const isSlugPage = isWorkSlugPage || isExhibitionSlugPage;
+  const isInfoPage = pathname === "/info";
 
   return (
     <>
-      <motion.header
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="fixed top-0 w-full flex items-center justify-between lg:justify-between p-3 z-30 mix-blend-difference text-white 
-"
-      >
-        <div className="flex justify-center items-center">
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={revealStep >= 1 ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6 }}
-            className="flex justify-center items-center"
-          >
-            <Link
-              href="/"
-              className=" font-serif cursor-pointer text-md underline underline-offset-8 hover:opacity-30 transition-opacity pl-3"
+      <div className="w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white ">
+        <div className="flex flex-col w-full p-3">
+          {/* COLUMN 1 — branding + nav buttons */}
+
+          <Link href="/">
+            <Button
+              variant="link"
+              size="sm"
+              className=" font-haas text-base lg:text-xs "
             >
-              elinorsilow.com/
-            </Link>
-
-            <h2 className="font-serif-italic opacity-30 pr-3">{titleState}</h2>
-          </motion.span>
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={revealStep >= 6 ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6 }}
-          >
-            {showSettings && (
-              <button
-                onClick={handleOpenTools}
-                className={` font-serif cursor-pointer hover:opacity-30 transition-opacity px-3 ${
-                  openTools ? "text-white opacity-30" : ""
-                }`}
-              >
-                {openTools ? "close (x)" : "settings"}
-              </button>
-            )}
-          </motion.span>
-        </div>
-
-        {/* Mobile: Menu button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={revealStep >= 6 ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6 }}
-          className="flex lg:hidden"
-        >
-          <button
-            onClick={handleOpenMenu}
-            className={`font-sans cursor-pointer hover:underline underline-offset-6 text-sm tracking-tighter p-3 ${
-              openMenu ? "text-white opacity-30" : ""
-            }`}
-          >
-            {openMenu ? "CLOSE" : "MENU"}
-          </button>
-        </motion.div>
-
-        <motion.div
-          animate={{ opacity: isIdle ? 0 : 1 }}
-          transition={{ duration: 0.5 }}
-          className=" hidden lg:flex "
-        >
-          <nav>
-            <motion.ul
+              ELINOR SILOW
+            </Button>
+          </Link>
+          <div className="flex gap-3 items-baseline w-full">
+            <Button
+              variant="link"
+              size="sm"
+              className="text-base lg:text-xs flex lg:hidden "
+              onClick={() => setIsOpen(!open)}
+            >
+              {open ? "Close Menu" : "Menu"}
+            </Button>
+            <motion.nav
               initial={{ opacity: 0 }}
-              animate={revealStep >= 6 ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center justify-end gap-6 uppercase px-3"
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="hidden lg:flex  justify-between items-baseline font-haas p-3  overflow-y-auto  uppercase  text-sm lg:text-xs w-full  rounded-xs lg:p-0 "
             >
-              <li>
-                <Link
-                  href="/works"
-                  className="font-sans hover:opacity-30 transition-opacity  "
-                >
-                  works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/exhibitions"
-                  className="font-sans hover:opacity-30 transition-opacity "
-                >
-                  exhibitions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="font-sans hover:opacity-30 transition-opacity "
-                >
-                  information
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="font-sans hover:opacity-30 transition-opacity"
-                >
-                  contact
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="font-sans hover:opacity-30 transition-opacity"
-                >
-                  dark mode
-                </Link>
-              </li>
-            </motion.ul>
-          </nav>
-        </motion.div>
-      </motion.header>
+              <Link href="/">Works</Link>
+              <Link href="/exhibitions">Exhibitions</Link>
+              <Link href="/info">Information</Link>
+            </motion.nav>
 
-      {/* Mobile menu overlay */}
-
-      <AnimatePresence>
-        {openMenu && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }} // smooth fade
-            className="absolute top-0 left-0 flex items-center justify-center w-full h-full  pt-16 z-200 overflow-hidden pointer-events-none"
-          >
-            <div className="flex flex-col items-start justify-start p-6 rounded-2xl font-sans w-full h-full pointer-events-auto uppercase bg-white">
-              <ul className="text-3xl">
-                <li>
-                  <Link
-                    href="/works"
-                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
-                  >
-                    works
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/exhibitions"
-                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
-                  >
-                    exhibitions
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/works"
-                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
-                  >
-                    information
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/works"
-                    className="hover:underline underline-offset-6 hover:opacity-30 transition-all"
-                  >
-                    contact
-                  </Link>
-                </li>
-              </ul>
+            <div className="w-full block lg:hidden">
+              <AnimatePresence>
+                <MenuOverlay
+                  isInfoPage={isInfoPage}
+                  isWorkSlugPage={isWorkSlugPage}
+                  open={open}
+                />
+              </AnimatePresence>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {/* COLUMN 2 — InfoBox ALWAYS lives here */}
+            <div className="fixed bottom-0 left-0 z-20 w-full">
+              <AnimatePresence>
+                {showInfo && (
+                  <>
+                    {isWorkSlugPage && (currentWork || work) && (
+                      <InfoBox
+                        data={currentWork || work}
+                        showInfo={showInfo}
+                        min={min}
+                      />
+                    )}
+
+                    {pathname === "/" && work && (
+                      <InfoBox data={work} showInfo={showInfo} min={min} />
+                    )}
+                    {pathname === "/exhibitions" && currentExhibition && (
+                      <InfoBox
+                        data={currentExhibition}
+                        showInfo={showInfo}
+                        min={min}
+                      />
+                    )}
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* COLUMN 3 — controls */}
+            <div className="flex flex-wrap gap-3 items-start justify-start lg:items-start lg:justify-start text-base lg:text-xs">
+              {isWorkSlugPage && work && (
+                <div
+                  className=" flex gap-3 
+     "
+                >
+                  <Link href={`/?work=${work.slug}`}>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="text-base lg:text-xs"
+                    >
+                      Back to works
+                    </Button>
+                  </Link>
+                  {prevWork && (
+                    <Link href={`/works/${prevWork.slug}`}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="text-base lg:text-xs"
+                      >
+                        Prev
+                      </Button>
+                    </Link>
+                  )}
+                  {nextWork && (
+                    <Link href={`/works/${nextWork.slug}`}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="text-base lg:text-xs"
+                      >
+                        Next
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              )}
+
+              {isExhibitionSlugPage && currentExhibition && (
+                <div
+                  className=" text-sm lg:text-xs flex gap-3 
+      "
+                >
+                  <Link href="/exhibitions">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="text-base lg:text-xs "
+                    >
+                      Back to exhibitions
+                    </Button>
+                  </Link>
+                  {prevExhibition && (
+                    <Link href={`/exhibitions/${prevExhibition.slug}`}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="text-base lg:text-xs "
+                      >
+                        Prev
+                      </Button>
+                    </Link>
+                  )}
+                  {nextExhibition && (
+                    <Link href={`/exhibitions/${nextExhibition.slug}`}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="text-base lg:text-xs"
+                      >
+                        Next
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              )}
+
+              {showInfo && !isSlugPage && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="text-base lg:text-xs"
+                  onClick={() => setShowInfo && setShowInfo(!showInfo)}
+                >
+                  Hide Description
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Menu + Filter Overlays */}
     </>
   );
 }
