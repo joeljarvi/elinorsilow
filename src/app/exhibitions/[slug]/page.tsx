@@ -127,9 +127,7 @@ export default function ExhibitionPage() {
         prevExhibition={prevExhibition}
         nextExhibition={nextExhibition}
         min={min}
-        setMin={setMin}
         showInfo={showInfo}
-        setShowInfo={setShowInfo}
       />
 
       {/* Sections with scaling */}

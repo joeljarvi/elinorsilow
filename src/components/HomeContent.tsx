@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import PopUpGubbe from "@/components/PopUpGubbe";
 import Lenis from "lenis";
+import { Work } from "../../lib/wordpress";
 
 function LenisWrapper({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
@@ -37,29 +38,20 @@ export default function HomeContent() {
   const initialIndex =
     slug && filteredWorks ? filteredWorks.findIndex((w) => w.slug === slug) : 0;
 
+  const [allWorks, setAllWorks] = useState(filteredWorks || []);
   const [currentWorkIndex, setCurrentWorkIndex] = useState(initialIndex);
+
   const currentWork =
-    filteredWorks && filteredWorks.length > 0
-      ? filteredWorks[currentWorkIndex]
-      : undefined;
+    allWorks && allWorks.length > 0 ? allWorks[currentWorkIndex] : undefined;
 
   const [showInfo, setShowInfo] = useState(true);
   const [min, setMin] = useState(true);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 798) {
-        setShowInfo(true);
-        setMin(true);
-      } else {
-        setShowInfo(true);
-        setMin(false);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // Lägg till ny work
+  const addNewWork = (newWork: Work) => {
+    setAllWorks((prev) => [...prev, newWork]);
+    setCurrentWorkIndex(allWorks.length); // pekar på nya worken
+  };
 
   function handleSelectWork(index: number) {
     setCurrentWorkIndex(index);
@@ -69,11 +61,11 @@ export default function HomeContent() {
     <LenisWrapper>
       <div className="w-full bg-white">
         <Header
+          initialWorks={allWorks}
           work={currentWork}
           currentWorkIndex={currentWorkIndex}
           showInfo={showInfo}
           min={min}
-          setMin={setMin}
         />
         <PopUpGubbe />
         <WorksCarousel

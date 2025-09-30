@@ -19,7 +19,7 @@ export default function WorkPage() {
 
   // state that needs to be shared with Header
   const [zoomed, setZoomed] = useState(false);
-  const [showInfo, setShowInfo] = useState(true);
+
   const [min, setMin] = useState(false);
 
   useEffect(() => {
@@ -49,14 +49,7 @@ export default function WorkPage() {
   const imageUrl = media?.source_url || "/placeholder.jpg";
   return (
     <>
-      <Header
-        work={work}
-        prevWork={prevWork}
-        nextWork={nextWork}
-        min={min}
-        setMin={setMin}
-        showInfo={showInfo}
-      />
+      <Header work={work} prevWork={prevWork} nextWork={nextWork} min={min} />
 
       <div
         className={`w-screen h-screen flex flex-col items-center justify-center relative px-0 pt-0 pb-0 lg:px-3 lg:pt-14 lg:pb-9 overflow-hidden `}
