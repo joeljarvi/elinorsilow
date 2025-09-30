@@ -10,6 +10,7 @@ import {
   Grant,
 } from "../../../lib/wordpress";
 import Header from "@/components/Header";
+import { Loader } from "@/components/Loader";
 
 export default function InfoPage() {
   const [biography, setBiography] = useState<Biography | null>(null);
@@ -39,7 +40,7 @@ export default function InfoPage() {
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   return (

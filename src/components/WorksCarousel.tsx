@@ -50,7 +50,7 @@ function WorkCarouselItem({
               src={img}
               alt={work.title.rendered}
               fill
-              className="object-contain object-top p-12 lg:p-24"
+              className="object-contain object-top p-6 lg:p-24"
             />
           )}
         </div>

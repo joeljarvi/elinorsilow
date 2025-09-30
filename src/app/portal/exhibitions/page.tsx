@@ -90,7 +90,7 @@ export default function ExhibitionsPage() {
       })
     );
 
-    const res = await fetch("/api/admin/exhibition", {
+    const res = await fetch("/api/admin/exhibitions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -137,7 +137,7 @@ export default function ExhibitionsPage() {
       })
     );
 
-    const res = await fetch("/api/admin/exhibition", {
+    const res = await fetch("/api/admin/exhibitions", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -155,7 +155,7 @@ export default function ExhibitionsPage() {
 
   async function handleDelete(id: number) {
     if (!confirm("Delete this exhibition?")) return;
-    const res = await fetch("/api/admin/exhibition", {
+    const res = await fetch("/api/admin/exhibitions", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),

@@ -26,7 +26,7 @@ export default function PopUpGubbe() {
       {visible && (
         <motion.div
           className="fixed bottom-3  right-3 
-           z-50 flex items-start gap-1.5"
+           z-50 flex items-start gap-1.5 max-w-xs"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
@@ -40,7 +40,7 @@ export default function PopUpGubbe() {
               transition={{ delay: 0.6, duration: 0.5 }}
               className="text-xs font-haas"
             >
-              <p className="text-base lg:text-xs max-w-xs">
+              <p className="text-base lg:text-xs">
                 Interested in making business with Elinor?{" "}
                 <a
                   href="/contact"

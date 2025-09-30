@@ -64,7 +64,7 @@ export default function WorkPage() {
       />
 
       <div
-        className={`w-screen h-screen flex flex-col items-center justify-center relative px-0 pt-0 pb-0 lg:px-3 lg:pt-14 lg:pb-9 `}
+        className={`w-screen h-screen flex flex-col items-center justify-center relative px-0 pt-0 pb-0 lg:px-3 lg:pt-14 lg:pb-9 overflow-hidden `}
       >
         <div
           className={`relative w-full h-full  cursor-pointer`}
@@ -74,7 +74,7 @@ export default function WorkPage() {
             src={imageUrl}
             alt={work.title.rendered}
             fill
-            className={`object-contain object-center p-36 lg:p-24 bg-black ${
+            className={`object-contain object-center p-24 lg:p-24 bg-black ${
               zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
             }`}
             style={{
