@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Work } from "../../../../lib/wordpress";
+import Image from "next/image";
 
 type EditWork = {
   title: string;
@@ -346,9 +347,11 @@ export default function WorksPage() {
                     <>
                       <div className="flex items-center gap-2">
                         {w.image_url && (
-                          <img
+                          <Image
                             src={w.image_url}
-                            className="w-16 h-16 object-cover rounded"
+                            width={64}
+                            height={64}
+                            className="object-cover rounded"
                             alt=""
                           />
                         )}

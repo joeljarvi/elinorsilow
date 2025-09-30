@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 type Education = {
   id: number;
@@ -30,10 +30,6 @@ export default function InformationPage() {
   const [grantForm, setGrantForm] = useState({ title: "", year: "" });
   const [bioForm, setBioForm] = useState("");
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
   // --- SAFELY PARSE JSON ---
   async function safeJson(res: Response) {
     try {
@@ -44,7 +40,8 @@ export default function InformationPage() {
   }
 
   // --- FETCH ALL ---
-  async function fetchAll() {
+
+  const fetchAll = useCallback(async () => {
     const [eduRes, grantRes, bioRes] = await Promise.all([
       fetch("/api/admin/information/education"),
       fetch("/api/admin/information/grant"),
@@ -61,7 +58,7 @@ export default function InformationPage() {
     setGrants(Array.isArray(grantData) ? grantData : []);
     setBiography(bioData);
     if (bioData?.acf?.bio) setBioForm(bioData.acf.bio);
-  }
+  }, []);
 
   // --- CREATE HANDLERS ---
   async function addEducation(e: React.FormEvent) {
@@ -76,6 +73,10 @@ export default function InformationPage() {
       fetchAll();
     }
   }
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   async function addGrant(e: React.FormEvent) {
     e.preventDefault();

@@ -46,7 +46,6 @@ export default function ExhibitionPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const [scrollText, setScrollText] = useState("scroll down");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [min, setMin] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
