@@ -1,4 +1,3 @@
-// ExhibitionsPageContent.tsx
 "use client";
 
 import { Loader } from "@/components/Loader";
@@ -9,9 +8,7 @@ import {
   useExhibitions,
 } from "@/context/ExhibitionsContext";
 import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
-
 import Header from "@/components/Header";
-import BorderWrapper from "@/components/BorderWrapper";
 import PopUpGubbe from "@/components/PopUpGubbe";
 
 function LenisWrapper({ children }: { children: React.ReactNode }) {
@@ -63,8 +60,6 @@ function ExhibitionsPageContent() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [bgColor, setBgColor] = useState("bg-neutral-400");
-
   // ✅ derive the current exhibition safely
   const currentExhibition =
     filteredExhibitions?.[currentExhibitionIndex] || null;
@@ -72,7 +67,6 @@ function ExhibitionsPageContent() {
   return (
     <>
       <LenisWrapper>
-        <div className={bgColor} />
         <Header
           currentExhibition={currentExhibition}
           currentExhibitionIndex={currentExhibitionIndex}
@@ -81,8 +75,6 @@ function ExhibitionsPageContent() {
           setMin={setMin}
           showInfo={showInfo}
           setShowInfo={setShowInfo}
-          bgColor={bgColor}
-          setBgColor={setBgColor}
         />
 
         <PopUpGubbe />
@@ -94,8 +86,6 @@ function ExhibitionsPageContent() {
           <ExhibitionsCarousel
             onExhibitionChange={setCurrentExhibitionIndex}
             exhibitions={filteredExhibitions || []}
-            bgColor={bgColor}
-            setBgColor={setBgColor}
           />
         )}
       </LenisWrapper>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Exhibition } from "../../../../../../lib/wordpress";
 
 const API_URL = "https://elinorsilow.com/wp-json/wp/v2";
 const authHeader = `Basic ${Buffer.from(
@@ -15,13 +16,11 @@ export async function GET() {
 
   if (!res.ok) return NextResponse.json([], { status: res.status });
 
-  const data = await res.json();
+  const data: Exhibition[] = await res.json();
 
-  // Normalize first image URL for frontend if needed
-  const normalized = data.map((ex: any) => ({
+  const normalized = data.map((ex) => ({
     ...ex,
     image_url: ex.acf?.image_1?.url || "", // fallback to first ACF image
   }));
-
   return NextResponse.json(normalized);
 }

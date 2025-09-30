@@ -3,7 +3,7 @@
 import { Carousel } from "./Carousel";
 import { Work } from "../../lib/wordpress";
 import { useWorks } from "@/context/WorksContext";
-import { motion, useTransform } from "framer-motion";
+import { motion, useTransform, MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Loader } from "./Loader";
@@ -12,9 +12,8 @@ interface WorkCarouselItemProps {
   work: Work;
   index: number;
   totalWorks: number;
-  scrollYProgress: any;
+  scrollYProgress: MotionValue<number>;
   onSelectWork: (index: number) => void;
-  onWorkChange?: (index: number) => void;
 }
 
 function WorkCarouselItem({
@@ -23,8 +22,7 @@ function WorkCarouselItem({
   totalWorks,
   scrollYProgress,
   onSelectWork,
-}: WorkCarouselItemProps) {
-  // Scale each item based on scroll progress
+}: Omit<WorkCarouselItemProps, "onWorkChange">) {
   const start = index / totalWorks;
   const end = (index + 1) / totalWorks;
 
@@ -61,19 +59,17 @@ function WorkCarouselItem({
   );
 }
 
-export function WorksCarousel({
-  onSelectWork,
-  bgColor,
-  setBgColor,
-  onWorkChange,
-  initialIndex = 0,
-}: {
+interface WorksCarouselProps {
   onSelectWork: (index: number) => void;
   onWorkChange?: (index: number) => void;
   initialIndex: number;
-  bgColor?: string;
-  setBgColor?: React.Dispatch<React.SetStateAction<string>>;
-}) {
+}
+
+export function WorksCarousel({
+  onSelectWork,
+  onWorkChange,
+  initialIndex = 0,
+}: WorksCarouselProps) {
   const { filteredWorks, loading, error } = useWorks();
 
   if (loading) return <Loader />;
@@ -82,8 +78,6 @@ export function WorksCarousel({
 
   return (
     <Carousel
-      bgColor={bgColor}
-      setBgColor={setBgColor}
       items={filteredWorks}
       initialIndex={initialIndex}
       onIndexChange={onWorkChange}
@@ -95,7 +89,6 @@ export function WorksCarousel({
           totalWorks={filteredWorks.length}
           scrollYProgress={scrollYProgress}
           onSelectWork={onSelectWork}
-          onWorkChange={onWorkChange}
         />
       )}
     />

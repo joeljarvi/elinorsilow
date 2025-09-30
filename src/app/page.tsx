@@ -5,9 +5,7 @@ import { WorksCarousel } from "@/components/WorksCarousel";
 import { WorksProvider, useWorks } from "@/context/WorksContext";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-
 import PopUpGubbe from "@/components/PopUpGubbe";
-
 import Lenis from "lenis";
 
 function LenisWrapper({ children }: { children: React.ReactNode }) {
@@ -90,7 +88,7 @@ function Home() {
           <PopUpGubbe />
 
           <WorksCarousel
-            onWorkChange={handleSelectWork}
+            onSelectWork={handleSelectWork}
             initialIndex={currentWorkIndex}
           />
         </div>

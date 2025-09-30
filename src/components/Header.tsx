@@ -2,18 +2,12 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { DarkModeToggle } from "./DarkModeToggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { useWorks } from "@/context/WorksContext";
-import { useExhibitions } from "@/context/ExhibitionsContext";
 import { InfoBox } from "./InfoBox";
-import Filter from "./Filter";
 import { Work } from "../../lib/wordpress";
 import { Exhibition } from "../../lib/wordpress";
-
-import { useEffect } from "react";
 
 function MenuOverlay({
   open,

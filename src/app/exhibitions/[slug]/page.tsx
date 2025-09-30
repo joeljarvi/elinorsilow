@@ -5,8 +5,7 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import Header from "@/components/Header";
 import { useParams } from "next/navigation";
 import { Loader } from "@/components/Loader";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+
 import Lenis from "lenis";
 import {
   motion,
@@ -58,19 +57,6 @@ export default function ExhibitionPage() {
       easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       orientation: "vertical",
-    });
-
-    lenis.on("scroll", ({ scroll, limit }) => {
-      if (scroll >= limit - 10) {
-        const currentIndex = filteredExhibitions.findIndex(
-          (exh) => exh.slug === slug
-        );
-        if (currentIndex < filteredExhibitions.length - 1) {
-        } else {
-        }
-      } else {
-        setScrollText("scroll down");
-      }
     });
 
     const raf = (time: number) => {

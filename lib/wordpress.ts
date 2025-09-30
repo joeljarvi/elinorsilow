@@ -1,31 +1,21 @@
-export interface Work {
+export type Work = {
   id: number;
   slug: string;
   title: { rendered: string };
-  content: { rendered: string };
-  date: string;
   acf: {
-    year: number;
-    title: string;
-    medium: string;
+    year?: number | string;
+    medium?: string;
     exhibition?: string;
-    dimensions: string;
-    materials: string;
+    dimensions?: string;
+    materials?: string;
   };
   _embedded?: {
-    "wp:featuredmedia"?: [
-      {
-        source_url: string;
-        alt_text: string;
-        media_details?: {
-          width?: number;
-          height?: number;
-        };
-      }
-    ];
+    "wp:featuredmedia"?: { id?: number; source_url?: string }[];
   };
-}
-type AcfImage = {
+  image_url?: string;
+};
+
+export type AcfImage = {
   id: number;
   url: string;
   alt?: string;

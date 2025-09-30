@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Work } from "../../../../../../lib/wordpress";
 
 const API_URL = "https://elinorsilow.com/wp-json/wp/v2";
 
@@ -18,10 +19,10 @@ export async function GET() {
 
   if (!res.ok) return NextResponse.json([], { status: res.status });
 
-  const data = await res.json();
+  const data: Work[] = await res.json();
 
   // Normalize image_url for frontend
-  const normalized = data.map((work: any) => ({
+  const normalized = data.map((work) => ({
     ...work,
     image_url: work._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "",
   }));

@@ -1,41 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Exhibition, AcfImage } from "../../../../lib/wordpress";
 
-type AcfImage = { id: number; url: string; alt?: string };
-
-type Exhibition = {
-  id: number;
-  title: { rendered: string };
-  acf: {
-    title: string;
-    start_date: string;
-    end_date: string;
-    exhibition_type: string;
-    venue: string;
-    city: string;
-    description?: string;
-    credits?: string;
-    image_1?: AcfImage;
-    image_2?: AcfImage;
-    image_3?: AcfImage;
-    image_4?: AcfImage;
-    image_5?: AcfImage;
-    image_6?: AcfImage;
-    image_7?: AcfImage;
-    image_8?: AcfImage;
-    image_9?: AcfImage;
-    image_10?: AcfImage;
-    work_1?: string;
-    work_2?: string;
-    work_3?: string;
-    work_4?: string;
-    work_5?: string;
-    work_6?: string;
-    work_7?: string;
-    work_8?: string;
-    work_9?: string;
-    work_10?: string;
-  };
+type EditExhibition = {
+  title: string;
+  start_date: string;
+  end_date: string;
+  exhibition_type: string;
+  venue: string;
+  city: string;
+  description: string;
+  credits: string;
+  files: (File | null)[];
 };
 
 export default function ExhibitionsPage() {
@@ -54,7 +30,9 @@ export default function ExhibitionsPage() {
   const [loadingExhibitions, setLoadingExhibitions] = useState(true);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editValues, setEditValues] = useState<{ [key: number]: any }>({});
+  const [editValues, setEditValues] = useState<{
+    [key: number]: EditExhibition;
+  }>({});
 
   useEffect(() => {
     fetchExhibitions();
@@ -66,7 +44,7 @@ export default function ExhibitionsPage() {
     const data = await res.json();
     setExhibitions(data);
 
-    const initial: typeof editValues = {};
+    const initial: { [key: number]: EditExhibition } = {};
     data.forEach((ex: Exhibition) => {
       initial[ex.id] = {
         title: ex.title.rendered,
@@ -81,6 +59,7 @@ export default function ExhibitionsPage() {
       };
     });
     setEditValues(initial);
+
     setLoadingExhibitions(false);
   }
 

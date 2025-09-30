@@ -2,16 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import {
-  Work,
-  getWorkBySlug,
-  getCachedExhibitions,
-} from "../../../../lib/wordpress";
+import { Work, getWorkBySlug } from "../../../../lib/wordpress";
 import { Loader } from "@/components/Loader";
 import Image from "next/image";
 import { useWorks } from "@/context/WorksContext";
 import Header from "@/components/Header";
-import BorderWrapper from "@/components/BorderWrapper";
 
 export default function WorkPage() {
   const params = useParams();
@@ -19,7 +14,7 @@ export default function WorkPage() {
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
 
   const [work, setWork] = useState<Work | null>(null);
-  const [exhibitionSlug, setExhibitionSlug] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(true);
 
   // state that needs to be shared with Header
@@ -33,20 +28,13 @@ export default function WorkPage() {
       try {
         const currentWork = await getWorkBySlug(slug);
         setWork(currentWork);
-
-        if (currentWork?.acf.exhibition) {
-          const exhibitions = await getCachedExhibitions();
-          const match = exhibitions.find(
-            (exh) => exh.acf.title === currentWork.acf.exhibition
-          );
-          if (match) setExhibitionSlug(match.slug);
-        }
       } catch (err) {
         console.error("Error fetching work:", err);
       } finally {
         setLoading(false);
       }
     }
+
     fetchWork();
   }, [slug, allWorks]);
 

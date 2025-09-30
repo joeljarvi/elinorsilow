@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Exhibition } from "../../lib/wordpress";
@@ -8,31 +8,13 @@ import { Carousel } from "./Carousel";
 
 interface ExhibitionItemProps {
   exhibition: Exhibition;
-  index: number;
-  totalExhibitions: number;
-  bgColor: string;
-  setBgColor: React.Dispatch<React.SetStateAction<string>>;
-  scrollYProgress: any;
 }
 
-function ExhibitionItem({
-  exhibition,
-  index,
-  totalExhibitions,
-  bgColor,
-  setBgColor,
-  scrollYProgress,
-}: ExhibitionItemProps) {
-  const start = index / totalExhibitions;
-  const end = (index + 1) / totalExhibitions;
-
+function ExhibitionItem({ exhibition }: ExhibitionItemProps) {
   const img = exhibition.acf?.image_1?.url || "";
 
   return (
-    <motion.div
-      key={exhibition.id}
-      className={`  px-0 lg:px-6 pt-12 flex items-center justify-center`}
-    >
+    <motion.div className="px-0 lg:px-6 pt-12 flex items-center justify-center">
       <Link
         href={`/exhibitions/${exhibition.slug}`}
         className="w-full h-full flex flex-col items-center justify-center"
@@ -47,7 +29,7 @@ function ExhibitionItem({
               src={img}
               alt={exhibition.title.rendered}
               fill
-              className="object-contain object-top lg:object-center p-0 lg:p-12  "
+              className="object-contain object-top lg:object-center p-0 lg:p-12"
             />
           )}
         </motion.div>
@@ -59,13 +41,9 @@ function ExhibitionItem({
 export function ExhibitionsCarousel({
   exhibitions,
   onExhibitionChange,
-  bgColor,
-  setBgColor,
 }: {
   exhibitions: Exhibition[];
   onExhibitionChange?: (index: number) => void;
-  bgColor: string;
-  setBgColor: React.Dispatch<React.SetStateAction<string>>;
 }) {
   if (!exhibitions?.length) {
     return (
@@ -79,17 +57,7 @@ export function ExhibitionsCarousel({
     <Carousel
       items={exhibitions}
       onIndexChange={onExhibitionChange}
-      renderItem={(exh, i, scrollYProgress) => (
-        <ExhibitionItem
-          bgColor={bgColor}
-          setBgColor={setBgColor}
-          key={exh.id}
-          exhibition={exh}
-          index={i}
-          totalExhibitions={exhibitions.length}
-          scrollYProgress={scrollYProgress}
-        />
-      )}
+      renderItem={(exh) => <ExhibitionItem key={exh.id} exhibition={exh} />}
     />
   );
 }

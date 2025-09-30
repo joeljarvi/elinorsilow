@@ -1,32 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Work } from "../../../../lib/wordpress";
 
-type Work = {
-  id: number;
-  title: { rendered: string };
-  acf: {
-    year?: number;
-    medium?: string;
-    exhibition?: string;
-    dimensions?: string;
-    materials?: string;
-  };
-  _embedded?: {
-    "wp:featuredmedia"?: {
-      id: number;
-      source_url: string;
-      alt_text?: string;
-      media_details?: {
-        width?: number;
-        height?: number;
-      };
-    }[];
-  };
-  image_url?: string; // normalized
+type EditWork = {
+  title: string;
+  year: string;
+  medium: string;
+  exhibition: string;
+  dimensions: string;
+  materials: string;
+  file?: File | null;
 };
 
 export default function WorksPage() {
-  // Form states for creating new work
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
   const [medium, setMedium] = useState("");
@@ -36,23 +22,11 @@ export default function WorksPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Existing works
   const [works, setWorks] = useState<Work[]>([]);
   const [loadingWorks, setLoadingWorks] = useState(true);
 
-  // Editing state
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editValues, setEditValues] = useState<{
-    [key: number]: {
-      title: string;
-      year: string;
-      medium: string;
-      exhibition: string;
-      dimensions: string;
-      materials: string;
-      file?: File | null;
-    };
-  }>({});
+  const [editValues, setEditValues] = useState<{ [key: number]: EditWork }>({});
 
   useEffect(() => {
     fetchWorks();
@@ -61,10 +35,9 @@ export default function WorksPage() {
   async function fetchWorks() {
     setLoadingWorks(true);
     const res = await fetch("/api/admin/work/list");
-    const data = await res.json();
+    const data: Work[] = await res.json(); // typed
 
-    // Normalize IDs and image_url
-    const normalized: Work[] = data.map((w: any) => ({
+    const normalized: Work[] = data.map((w) => ({
       ...w,
       id: Number(w.id),
       image_url: w._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "",
@@ -73,7 +46,7 @@ export default function WorksPage() {
     setWorks(normalized);
 
     // initialize edit values
-    const initial: typeof editValues = {};
+    const initial: { [key: number]: EditWork } = {};
     normalized.forEach((w) => {
       initial[w.id] = {
         title: w.title.rendered,
@@ -82,9 +55,11 @@ export default function WorksPage() {
         exhibition: w.acf.exhibition || "",
         dimensions: w.acf.dimensions || "",
         materials: w.acf.materials || "",
+        file: null,
       };
     });
     setEditValues(initial);
+
     setLoadingWorks(false);
   }
 
