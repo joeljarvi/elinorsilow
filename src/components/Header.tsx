@@ -40,6 +40,8 @@ function MenuOverlay({
   );
 }
 interface HeaderProps {
+  initialWorks?: Work[];
+  initialExhibitions?: Exhibition[];
   work?: Work;
   currentWork?: Work;
   prevWork?: Work | null;
@@ -52,8 +54,7 @@ interface HeaderProps {
   currentExhibitionIndex?: number;
   setCurrentExhibitionIndex?: React.Dispatch<React.SetStateAction<number>>;
   currentWorkIndex?: number;
-  bgColor?: string;
-  setBgColor?: React.Dispatch<React.SetStateAction<string>>;
+
   min?: boolean;
   setMin?: React.Dispatch<React.SetStateAction<boolean>>;
   showInfo?: boolean;
@@ -61,6 +62,8 @@ interface HeaderProps {
 }
 
 export default function Header({
+  initialWorks = [],
+  initialExhibitions = [],
   work,
   currentWork,
   prevWork,
@@ -83,6 +86,31 @@ export default function Header({
   const isSlugPage = isWorkSlugPage || isExhibitionSlugPage;
   const isInfoPage = pathname === "/info";
 
+  const [allWorks, setAllWorks] = useState<Work[]>(initialWorks);
+  const [allExhibitions, setAllExhibitions] =
+    useState<Exhibition[]>(initialExhibitions);
+
+  // State för valt objekt som ska visas i InfoBox
+  const [selected, setSelected] = useState<Work | Exhibition | null>(null);
+
+  // Funktioner för att lägga till nytt objekt
+  const handleNewWork = (newWork: Work) => {
+    setAllWorks((prev) => [...prev, newWork]);
+    setSelected(newWork);
+  };
+
+  const handleNewExhibition = (newExh: Exhibition) => {
+    setAllExhibitions((prev) => [...prev, newExh]);
+    setSelected(newExh);
+  };
+
+  // Bestäm vad som ska visas i InfoBox
+  let infoData: Work | Exhibition | null = selected;
+  if (!selected) {
+    if (isWorkSlugPage && allWorks.length) infoData = allWorks[0];
+    if (isExhibitionSlugPage && allExhibitions.length)
+      infoData = allExhibitions[0];
+  }
   return (
     <>
       <div className="w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white ">
@@ -131,27 +159,12 @@ export default function Header({
             {/* COLUMN 2 — InfoBox ALWAYS lives here */}
             <div className="fixed bottom-0 left-0 z-20 w-full">
               <AnimatePresence>
-                {showInfo && (
-                  <>
-                    {isWorkSlugPage && (currentWork || work) && (
-                      <InfoBox
-                        data={currentWork || work}
-                        showInfo={showInfo}
-                        min={min}
-                      />
-                    )}
-
-                    {pathname === "/" && work && (
-                      <InfoBox data={work} showInfo={showInfo} min={min} />
-                    )}
-                    {pathname === "/exhibitions" && currentExhibition && (
-                      <InfoBox
-                        data={currentExhibition}
-                        showInfo={showInfo}
-                        min={min}
-                      />
-                    )}
-                  </>
+                {showInfo && infoData && (
+                  <InfoBox
+                    data={infoData}
+                    showInfo={showInfo}
+                    min={min || false}
+                  />
                 )}
               </AnimatePresence>
             </div>
@@ -235,23 +248,10 @@ export default function Header({
                   )}
                 </div>
               )}
-
-              {showInfo && !isSlugPage && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="text-base lg:text-xs"
-                  onClick={() => setShowInfo && setShowInfo(!showInfo)}
-                >
-                  Hide Description
-                </Button>
-              )}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Menu + Filter Overlays */}
     </>
   );
 }

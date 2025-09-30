@@ -21,7 +21,6 @@ export default function WorkPage() {
   const [zoomed, setZoomed] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
   const [min, setMin] = useState(false);
-  const [bgColor, setBgColor] = useState("bg-background");
 
   useEffect(() => {
     async function fetchWork() {
@@ -59,8 +58,6 @@ export default function WorkPage() {
         setMin={setMin}
         showInfo={showInfo}
         setShowInfo={setShowInfo}
-        bgColor={bgColor}
-        setBgColor={setBgColor}
       />
 
       <div
