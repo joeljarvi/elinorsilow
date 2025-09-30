@@ -72,7 +72,6 @@ export default function HomeContent() {
           work={currentWork}
           currentWorkIndex={currentWorkIndex}
           showInfo={showInfo}
-          setShowInfo={setShowInfo}
           min={min}
           setMin={setMin}
         />

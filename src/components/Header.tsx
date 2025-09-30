@@ -43,7 +43,6 @@ interface HeaderProps {
   initialWorks?: Work[];
   initialExhibitions?: Exhibition[];
   work?: Work;
-  currentWork?: Work;
   prevWork?: Work | null;
   nextWork?: Work | null;
 
@@ -58,14 +57,13 @@ interface HeaderProps {
   min?: boolean;
   setMin?: React.Dispatch<React.SetStateAction<boolean>>;
   showInfo?: boolean;
-  setShowInfo?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Header({
   initialWorks = [],
   initialExhibitions = [],
   work,
-  currentWork,
+
   prevWork,
   nextWork,
   currentExhibition,
@@ -73,7 +71,6 @@ export default function Header({
   nextExhibition,
   min,
   showInfo,
-  setShowInfo,
 }: HeaderProps) {
   const [open, setIsOpen] = useState(false);
 
@@ -83,7 +80,7 @@ export default function Header({
   const isWorkSlugPage = segments[0] === "works" && !!segments[1];
 
   const isExhibitionSlugPage = segments[0] === "exhibitions" && segments[1];
-  const isSlugPage = isWorkSlugPage || isExhibitionSlugPage;
+
   const isInfoPage = pathname === "/info";
 
   const [allWorks, setAllWorks] = useState<Work[]>(initialWorks);
@@ -92,17 +89,6 @@ export default function Header({
 
   // State för valt objekt som ska visas i InfoBox
   const [selected, setSelected] = useState<Work | Exhibition | null>(null);
-
-  // Funktioner för att lägga till nytt objekt
-  const handleNewWork = (newWork: Work) => {
-    setAllWorks((prev) => [...prev, newWork]);
-    setSelected(newWork);
-  };
-
-  const handleNewExhibition = (newExh: Exhibition) => {
-    setAllExhibitions((prev) => [...prev, newExh]);
-    setSelected(newExh);
-  };
 
   // Bestäm vad som ska visas i InfoBox
   let infoData: Work | Exhibition | null = selected;

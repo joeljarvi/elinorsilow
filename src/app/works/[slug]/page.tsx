@@ -51,13 +51,11 @@ export default function WorkPage() {
     <>
       <Header
         work={work}
-        currentWork={work}
         prevWork={prevWork}
         nextWork={nextWork}
         min={min}
         setMin={setMin}
         showInfo={showInfo}
-        setShowInfo={setShowInfo}
       />
 
       <div
