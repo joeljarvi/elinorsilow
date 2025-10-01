@@ -47,7 +47,9 @@ export default function ExhibitionPage() {
   const slug = params?.slug as string;
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [min, setMin] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showInfo, setShowInfo] = useState(true);
 
   useEffect(() => {
@@ -124,10 +126,11 @@ export default function ExhibitionPage() {
     <div className="w-screen flex flex-col " ref={scrollContainerRef}>
       <Header
         currentExhibition={currentExhibition}
+        currentExhibitionIndex={currentIndex}
         prevExhibition={prevExhibition}
         nextExhibition={nextExhibition}
-        min={min}
-        showInfo={showInfo}
+        showInfo={true}
+        min={false}
       />
 
       {/* Sections with scaling */}

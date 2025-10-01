@@ -17,11 +17,10 @@ export default function WorkPage() {
 
   const [loading, setLoading] = useState(true);
 
-  // state that needs to be shared with Header
   const [zoomed, setZoomed] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [min, setMin] = useState(false);
-
   useEffect(() => {
     async function fetchWork() {
       try {
@@ -49,7 +48,14 @@ export default function WorkPage() {
   const imageUrl = media?.source_url || "/placeholder.jpg";
   return (
     <>
-      <Header work={work} prevWork={prevWork} nextWork={nextWork} min={min} />
+      <Header
+        currentWork={work}
+        currentWorkIndex={currentIndex}
+        prevWork={prevWork}
+        nextWork={nextWork}
+        showInfo={true}
+        min={false}
+      />
 
       <div
         className={`w-screen h-screen flex flex-col items-center justify-center relative px-0 pt-0 pb-0 lg:px-3 lg:pt-14 lg:pb-9 overflow-hidden `}

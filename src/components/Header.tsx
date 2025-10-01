@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { InfoBox } from "./InfoBox";
 import { Work, Exhibition } from "../../lib/wordpress";
@@ -41,14 +41,14 @@ function MenuOverlay({
 
 interface HeaderProps {
   initialWorks?: Work[];
-  initialExhibitions?: Exhibition[];
   currentWorkIndex?: number;
-  work?: Work;
+  currentWork?: Work;
   prevWork?: Work | null;
   nextWork?: Work | null;
 
-  currentExhibition?: Exhibition;
+  initialExhibitions?: Exhibition[];
   currentExhibitionIndex?: number;
+  currentExhibition?: Exhibition;
   prevExhibition?: Exhibition | null;
   nextExhibition?: Exhibition | null;
 
@@ -57,191 +57,172 @@ interface HeaderProps {
 }
 
 export default function Header({
-  initialWorks = [],
-  initialExhibitions = [],
-  currentWorkIndex = 0,
-  currentExhibitionIndex = 0,
-  work,
+  initialWorks,
+  currentWork,
+  currentWorkIndex,
   prevWork,
   nextWork,
+  initialExhibitions,
   currentExhibition,
+  currentExhibitionIndex,
   prevExhibition,
   nextExhibition,
-  min,
-  showInfo,
+  showInfo = true,
+  min = false,
 }: HeaderProps) {
   const [open, setIsOpen] = useState(false);
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const isWorkSlugPage = segments[0] === "works" && !!segments[1];
-  const isExhibitionSlugPage = segments[0] === "exhibitions" && segments[1];
+  const isExhibitionSlugPage = segments[0] === "exhibitions" && !!segments[1];
   const isInfoPage = pathname === "/info";
 
-  const [allWorks, setAllWorks] = useState<Work[]>(initialWorks);
-  const [allExhibitions, setAllExhibitions] =
-    useState<Exhibition[]>(initialExhibitions);
+  const displayedWork =
+    currentWorkIndex !== undefined && initialWorks
+      ? initialWorks[currentWorkIndex]
+      : currentWork;
 
-  // Bestäm work som ska visas
-  const displayedWork = allWorks[currentWorkIndex] || work;
+  const displayedExhibition =
+    currentExhibitionIndex !== undefined && initialExhibitions
+      ? initialExhibitions[currentExhibitionIndex]
+      : currentExhibition;
 
-  // State för valt objekt i InfoBox
-  const [selected, setSelected] = useState<Work | Exhibition | null>(
-    displayedWork || null
-  );
-
-  // Bestäm data för InfoBox
-  let infoData: Work | Exhibition | null = selected;
-
-  // If nothing is manually selected, derive from page context
-  if (!selected) {
-    if (isWorkSlugPage && allWorks.length) {
-      infoData = allWorks[0];
-    } else if (
-      isExhibitionSlugPage &&
-      allExhibitions.length &&
-      currentExhibitionIndex !== undefined
-    ) {
-      infoData = allExhibitions[currentExhibitionIndex];
-    }
-  }
+  const infoData = displayedWork || displayedExhibition;
 
   return (
-    <>
-      <div className="w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white">
-        <div className="flex flex-col w-full p-3">
-          {/* Branding */}
-          <Link href="/">
-            <Button
-              variant="link"
-              size="sm"
-              className="font-haas text-base lg:text-xs"
-            >
-              ELINOR SILOW
-            </Button>
-          </Link>
+    <div className="w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white">
+      <div className="flex flex-col w-full p-3">
+        {/* Branding */}
+        <Link href="/">
+          <Button
+            variant="link"
+            size="sm"
+            className="font-haas text-base lg:text-xs"
+          >
+            ELINOR SILOW
+          </Button>
+        </Link>
 
-          <div className="flex gap-3 items-baseline w-full">
-            <Button
-              variant="link"
-              size="sm"
-              className="text-base lg:text-xs flex lg:hidden"
-              onClick={() => setIsOpen(!open)}
-            >
-              {open ? "Close Menu" : "Menu"}
-            </Button>
+        <div className="flex gap-3 items-baseline w-full">
+          {/* Mobile menu toggle */}
+          <Button
+            variant="link"
+            size="sm"
+            className="text-base lg:text-xs flex lg:hidden"
+            onClick={() => setIsOpen(!open)}
+          >
+            {open ? "Close Menu" : "Menu"}
+          </Button>
 
-            <motion.nav
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="hidden lg:flex justify-between items-baseline font-haas p-3 overflow-y-auto uppercase text-sm lg:text-xs w-full rounded-xs lg:p-0"
-            >
-              <Link href="/">Works</Link>
-              <Link href="/exhibitions">Exhibitions</Link>
-              <Link href="/info">Information</Link>
-            </motion.nav>
+          {/* Desktop nav */}
+          <motion.nav
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="hidden lg:flex justify-between items-baseline font-haas p-3 overflow-y-auto uppercase text-sm lg:text-xs w-full rounded-xs lg:p-0"
+          >
+            <Link href="/">Works</Link>
+            <Link href="/exhibitions">Exhibitions</Link>
+            <Link href="/info">Information</Link>
+          </motion.nav>
 
-            <div className="w-full block lg:hidden">
-              <AnimatePresence>
-                <MenuOverlay
-                  isInfoPage={isInfoPage}
-                  isWorkSlugPage={isWorkSlugPage}
-                  open={open}
-                />
-              </AnimatePresence>
-            </div>
+          {/* Mobile menu overlay */}
+          <div className="w-full block lg:hidden">
+            <AnimatePresence>
+              <MenuOverlay
+                isInfoPage={isInfoPage}
+                isWorkSlugPage={isWorkSlugPage}
+                open={open}
+              />
+            </AnimatePresence>
+          </div>
 
-            {/* InfoBox */}
-            <div className="fixed bottom-0 left-0 z-20 w-full">
-              <AnimatePresence>
-                {showInfo && infoData && (
-                  <InfoBox
-                    data={infoData}
-                    showInfo={showInfo}
-                    min={min || false}
-                  />
+          {/* InfoBox */}
+          <div className="fixed bottom-0 left-0 z-20 w-full">
+            <AnimatePresence>
+              {showInfo && infoData && (
+                <InfoBox data={infoData} showInfo={showInfo} min={min} />
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-wrap gap-3 items-start justify-start lg:items-start lg:justify-start text-base lg:text-xs">
+            {isWorkSlugPage && currentWork && (
+              <div className="flex gap-3">
+                <Link href={`/?work=${currentWork.slug}`}>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-base lg:text-xs"
+                  >
+                    Back to works
+                  </Button>
+                </Link>
+                {prevWork && (
+                  <Link href={`/works/${prevWork.slug}`}>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="text-base lg:text-xs"
+                    >
+                      Prev
+                    </Button>
+                  </Link>
                 )}
-              </AnimatePresence>
-            </div>
-
-            {/* Controls */}
-            <div className="flex flex-wrap gap-3 items-start justify-start lg:items-start lg:justify-start text-base lg:text-xs">
-              {isWorkSlugPage && work && (
-                <div className="flex gap-3">
-                  <Link href={`/?work=${work.slug}`}>
+                {nextWork && (
+                  <Link href={`/works/${nextWork.slug}`}>
                     <Button
                       variant="link"
                       size="sm"
                       className="text-base lg:text-xs"
                     >
-                      Back to works
+                      Next
                     </Button>
                   </Link>
-                  {prevWork && (
-                    <Link href={`/works/${prevWork.slug}`}>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-base lg:text-xs"
-                      >
-                        Prev
-                      </Button>
-                    </Link>
-                  )}
-                  {nextWork && (
-                    <Link href={`/works/${nextWork.slug}`}>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-base lg:text-xs"
-                      >
-                        Next
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
+            )}
 
-              {isExhibitionSlugPage && currentExhibition && (
-                <div className="flex gap-3 text-sm lg:text-xs">
-                  <Link href="/exhibitions">
+            {isExhibitionSlugPage && currentExhibition && (
+              <div className="flex gap-3 text-sm lg:text-xs">
+                <Link href="/exhibitions">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-base lg:text-xs"
+                  >
+                    Back to exhibitions
+                  </Button>
+                </Link>
+                {prevExhibition && (
+                  <Link href={`/exhibitions/${prevExhibition.slug}`}>
                     <Button
                       variant="link"
                       size="sm"
                       className="text-base lg:text-xs"
                     >
-                      Back to exhibitions
+                      Prev
                     </Button>
                   </Link>
-                  {prevExhibition && (
-                    <Link href={`/exhibitions/${prevExhibition.slug}`}>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-base lg:text-xs"
-                      >
-                        Prev
-                      </Button>
-                    </Link>
-                  )}
-                  {nextExhibition && (
-                    <Link href={`/exhibitions/${nextExhibition.slug}`}>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-base lg:text-xs"
-                      >
-                        Next
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              )}
-            </div>
+                )}
+                {nextExhibition && (
+                  <Link href={`/exhibitions/${nextExhibition.slug}`}>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="text-base lg:text-xs"
+                    >
+                      Next
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

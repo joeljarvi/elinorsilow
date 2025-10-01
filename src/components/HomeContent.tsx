@@ -31,27 +31,25 @@ function LenisWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export default function HomeContent() {
-  const { filteredWorks } = useWorks();
+  const { allWorks } = useWorks();
   const searchParams = useSearchParams();
   const slug = searchParams.get("work");
 
   const initialIndex =
-    slug && filteredWorks ? filteredWorks.findIndex((w) => w.slug === slug) : 0;
+    slug && allWorks ? allWorks.findIndex((w) => w.slug === slug) : 0;
 
-  const [allWorks, setAllWorks] = useState(filteredWorks || []);
-  const [currentWorkIndex, setCurrentWorkIndex] = useState(initialIndex);
+  const [currentWorkIndex, setCurrentWorkIndex] =
+    useState<number>(initialIndex);
+  const [showInfo, setShowInfo] = useState<boolean>(true);
+  const [min, setMin] = useState<boolean>(true);
 
-  const currentWork =
-    allWorks && allWorks.length > 0 ? allWorks[currentWorkIndex] : undefined;
+  const currentWork = allWorks[currentWorkIndex];
 
-  const [showInfo, setShowInfo] = useState(true);
-  const [min, setMin] = useState(true);
-
-  // Lägg till ny work
-  const addNewWork = (newWork: Work) => {
-    setAllWorks((prev) => [...prev, newWork]);
-    setCurrentWorkIndex(allWorks.length); // pekar på nya worken
-  };
+  const prevWork = currentWorkIndex > 0 ? allWorks[currentWorkIndex - 1] : null;
+  const nextWork =
+    currentWorkIndex < allWorks.length - 1
+      ? allWorks[currentWorkIndex + 1]
+      : null;
 
   function handleSelectWork(index: number) {
     setCurrentWorkIndex(index);
@@ -61,16 +59,20 @@ export default function HomeContent() {
     <LenisWrapper>
       <div className="w-full bg-white">
         <Header
-          initialWorks={allWorks}
-          work={currentWork}
-          currentWorkIndex={currentWorkIndex}
+          initialWorks={allWorks} // full array of works
+          currentWorkIndex={currentWorkIndex} // index of the work in view
+          currentWork={currentWork} // fallback / current work
+          prevWork={prevWork} // previous work
+          nextWork={nextWork} // next work
           showInfo={showInfo}
           min={min}
         />
+
         <PopUpGubbe />
+
         <WorksCarousel
-          onSelectWork={handleSelectWork}
           initialIndex={currentWorkIndex}
+          onSelectWork={setCurrentWorkIndex}
         />
       </div>
     </LenisWrapper>

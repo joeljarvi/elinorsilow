@@ -17,9 +17,7 @@ function LenisWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (lenisRef.current) return;
 
-    const lenis = new Lenis({
-      autoRaf: true,
-    });
+    const lenis = new Lenis({ autoRaf: true });
     lenisRef.current = lenis;
 
     const raf = (time: number) => {
@@ -35,14 +33,11 @@ function LenisWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function ExhibitionsPageContent() {
-  const [currentExhibitionIndex, setCurrentExhibitionIndex] = useState(0);
   const { filteredExhibitions, loading, error } = useExhibitions();
-  const [showInfo, setShowInfo] = useState<boolean>(() => {
-    return true;
-  });
-  const [min, setMin] = useState<boolean>(() => {
-    return true;
-  });
+  const [currentExhibitionIndex, setCurrentExhibitionIndex] =
+    useState<number>(0);
+  const [showInfo, setShowInfo] = useState<boolean>(true);
+  const [min, setMin] = useState<boolean>(true);
 
   useEffect(() => {
     const handleResize = () => {
@@ -60,7 +55,6 @@ function ExhibitionsPageContent() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ✅ derive the current exhibition safely
   const currentExhibition =
     filteredExhibitions?.[currentExhibitionIndex] || null;
 
@@ -75,30 +69,27 @@ function ExhibitionsPageContent() {
       : null;
 
   return (
-    <>
-      <LenisWrapper>
-        <Header
-          currentExhibition={currentExhibition}
-          currentExhibitionIndex={currentExhibitionIndex}
-          prevExhibition={prevExhibition}
-          nextExhibition={nextExhibition}
-          min={min}
-          showInfo={showInfo}
+    <LenisWrapper>
+      <Header
+        initialExhibitions={filteredExhibitions}
+        currentExhibitionIndex={currentExhibitionIndex}
+        currentExhibition={currentExhibition}
+        showInfo={showInfo}
+        min={min}
+      />
+
+      <PopUpGubbe />
+
+      {loading && <Loader />}
+      {error && <p>Error loading exhibitions: {error.message}</p>}
+
+      {!loading && !error && (
+        <ExhibitionsCarousel
+          exhibitions={filteredExhibitions}
+          onExhibitionChange={setCurrentExhibitionIndex}
         />
-
-        <PopUpGubbe />
-
-        {loading && <Loader />}
-        {error && <p>Error loading exhibitions: {error.message}</p>}
-
-        {!loading && !error && (
-          <ExhibitionsCarousel
-            onExhibitionChange={setCurrentExhibitionIndex}
-            exhibitions={filteredExhibitions || []}
-          />
-        )}
-      </LenisWrapper>
-    </>
+      )}
+    </LenisWrapper>
   );
 }
 

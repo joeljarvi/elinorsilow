@@ -59,6 +59,7 @@ export function Carousel<T>({
       Math.floor(latest * items.length),
       items.length - 1
     );
+    console.log("New index:", newIndex);
     if (newIndex !== currentIndex) {
       setCurrentIndex(newIndex);
       onIndexChange?.(newIndex);
