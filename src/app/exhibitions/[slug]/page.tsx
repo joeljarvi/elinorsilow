@@ -48,9 +48,9 @@ export default function ExhibitionPage() {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [min, setMin] = useState(false);
+  const [min, setMin] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showInfo, setShowInfo] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -151,7 +151,7 @@ export default function ExhibitionPage() {
           {exhibition.acf.title}
         </h3>
 
-        <h3 className="absolute top-3/4 left-3 mix-blend-difference text-white  z-10 uppercase text-base lg:text-xs ">
+        <h3 className="absolute bottom-1/4 left-3 mix-blend-difference text-white  z-10 uppercase text-base lg:text-xs ">
           {exhibition.acf.venue}
         </h3>
 

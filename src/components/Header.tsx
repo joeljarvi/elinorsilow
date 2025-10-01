@@ -26,15 +26,16 @@ function MenuOverlay({
       transition={{ duration: 0.3 }}
       className={`fixed ${
         isWorkSlugPage
-          ? "top-1/4 bottom-auto"
+          ? "bottom-1/4 top-auto h-3/4 pt-3"
           : isInfoPage
-          ? "top-3 bottom-auto h-1/4"
-          : "top-auto bottom-0 h-3/4"
-      } right-0 z-50 lg:h-auto lg:relative lg:bottom-auto lg:right-auto flex flex-col lg:flex-row justify-between items-end lg:justify-between lg:items-baseline font-haas text-base px-3 pb-3 overflow-y-auto uppercase text-white lg:text-xs w-auto rounded-xs lg:px-0 lg:pb-0`}
+          ? "top-0 bottom-auto h-auto pt-3"
+          : "top-0 bottom-auto h-3/4 pt-3"
+      } right-0 z-50 lg:h-auto lg:relative lg:bottom-auto lg:right-auto flex flex-col lg:flex-row justify-between items-end lg:justify-between lg:items-baseline font-haas text-base px-3  overflow-y-auto uppercase text-white lg:text-xs w-auto rounded-xs lg:px-0 lg:pb-0`}
     >
-      <Link href="/">Works</Link>
-      <Link href="/exhibitions">Exhibitions</Link>
       <Link href="/info">Information</Link>
+      <Link href="/exhibitions">Exhibitions</Link>
+
+      <Link href="/">Works</Link>
     </motion.div>
   );
 }
@@ -90,45 +91,35 @@ export default function Header({
   const infoData = displayedWork || displayedExhibition;
 
   return (
-    <div className="w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white">
-      <div className="flex flex-col w-full p-3">
-        {/* Branding */}
-        <Link href="/">
-          <Button
-            variant="link"
-            size="sm"
-            className="font-haas text-base lg:text-xs"
-          >
-            ELINOR SILOW
-          </Button>
-        </Link>
+    <>
+      <div className="font-haas uppercase w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white">
+        <div className="flex flex-col w-full justify-start items-start p-3">
+          {/* Branding */}
+          <Link href="/">
+            <Button
+              variant="link"
+              size="sm"
+              className="font-haas text-base lg:text-xs"
+            >
+              ELINOR SILOW
+            </Button>
+          </Link>
 
-        <div className="flex gap-3 items-baseline w-full">
-          {/* Mobile menu toggle */}
-          <Button
-            variant="link"
-            size="sm"
-            className="text-base lg:text-xs flex lg:hidden"
-            onClick={() => setIsOpen(!open)}
-          >
-            {open ? "Close Menu" : "Menu"}
-          </Button>
+          <div className="flex justify-start items-start gap-3 w-full">
+            <motion.nav
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="hidden lg:flex justify-between items-baseline font-haas p-3 overflow-y-auto uppercase text-sm lg:text-xs w-auto lg:w-full rounded-xs lg:p-0"
+            >
+              <Link href="/">Works</Link>
+              <Link href="/exhibitions">Exhibitions</Link>
+              <Link href="/info">Information</Link>
+            </motion.nav>
 
-          {/* Desktop nav */}
-          <motion.nav
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="hidden lg:flex justify-between items-baseline font-haas p-3 overflow-y-auto uppercase text-sm lg:text-xs w-full rounded-xs lg:p-0"
-          >
-            <Link href="/">Works</Link>
-            <Link href="/exhibitions">Exhibitions</Link>
-            <Link href="/info">Information</Link>
-          </motion.nav>
+            {/* Mobile menu overlay */}
 
-          {/* Mobile menu overlay */}
-          <div className="w-full block lg:hidden">
             <AnimatePresence>
               <MenuOverlay
                 isInfoPage={isInfoPage}
@@ -136,21 +127,19 @@ export default function Header({
                 open={open}
               />
             </AnimatePresence>
-          </div>
 
-          {/* InfoBox */}
-          <div className="fixed bottom-0 left-0 z-20 w-full">
+            {/* InfoBox */}
+
             <AnimatePresence>
               {showInfo && infoData && (
                 <InfoBox data={infoData} showInfo={showInfo} min={min} />
               )}
             </AnimatePresence>
-          </div>
 
-          {/* Controls */}
-          <div className="flex flex-wrap gap-3 items-start justify-start lg:items-start lg:justify-start text-base lg:text-xs">
+            {/* Controls */}
+
             {isWorkSlugPage && currentWork && (
-              <div className="flex gap-3">
+              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start">
                 <Link href={`/?work=${currentWork.slug}`}>
                   <Button
                     variant="link"
@@ -186,16 +175,17 @@ export default function Header({
             )}
 
             {isExhibitionSlugPage && currentExhibition && (
-              <div className="flex gap-3 text-sm lg:text-xs">
+              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start text-base lg:text-xs">
                 <Link href="/exhibitions">
                   <Button
                     variant="link"
                     size="sm"
                     className="text-base lg:text-xs"
                   >
-                    Back to exhibitions
+                    Back
                   </Button>
                 </Link>
+
                 {prevExhibition && (
                   <Link href={`/exhibitions/${prevExhibition.slug}`}>
                     <Button
@@ -223,6 +213,15 @@ export default function Header({
           </div>
         </div>
       </div>
-    </div>
+
+      <Button
+        variant="link"
+        size="sm"
+        className="fixed bottom-3 right-3 text-base lg:text-xs flex lg:hidden z-40 mix-blend-difference text-white"
+        onClick={() => setIsOpen(!open)}
+      >
+        {open ? "Close Menu" : "Menu"}
+      </Button>
+    </>
   );
 }

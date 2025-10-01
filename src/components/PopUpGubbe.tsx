@@ -25,7 +25,7 @@ export default function PopUpGubbe() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed bottom-3  right-3 
+          className="fixed bottom-3 left-3 lg:right-3 lg:left-auto
            z-50 flex items-start gap-1.5 max-w-xs"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
