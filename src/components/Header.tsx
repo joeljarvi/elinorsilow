@@ -182,7 +182,7 @@ export default function Header({
                     size="sm"
                     className="text-base lg:text-xs"
                   >
-                    Back
+                    Back to exhibitions
                   </Button>
                 </Link>
 
