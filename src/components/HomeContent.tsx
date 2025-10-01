@@ -7,7 +7,6 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import PopUpGubbe from "@/components/PopUpGubbe";
 import Lenis from "lenis";
-import { Work } from "../../lib/wordpress";
 
 function LenisWrapper({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
@@ -40,8 +39,9 @@ export default function HomeContent() {
 
   const [currentWorkIndex, setCurrentWorkIndex] =
     useState<number>(initialIndex);
-  const [showInfo, setShowInfo] = useState<boolean>(true);
-  const [min, setMin] = useState<boolean>(true);
+
+  const showInfo = true;
+  const min = true;
 
   const currentWork = allWorks[currentWorkIndex];
 
@@ -50,10 +50,6 @@ export default function HomeContent() {
     currentWorkIndex < allWorks.length - 1
       ? allWorks[currentWorkIndex + 1]
       : null;
-
-  function handleSelectWork(index: number) {
-    setCurrentWorkIndex(index);
-  }
 
   return (
     <LenisWrapper>

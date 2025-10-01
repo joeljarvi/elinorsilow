@@ -58,16 +58,6 @@ function ExhibitionsPageContent() {
   const currentExhibition =
     filteredExhibitions?.[currentExhibitionIndex] || null;
 
-  const prevExhibition =
-    currentExhibitionIndex > 0
-      ? filteredExhibitions?.[currentExhibitionIndex - 1] || null
-      : null;
-
-  const nextExhibition =
-    currentExhibitionIndex < (filteredExhibitions?.length || 0) - 1
-      ? filteredExhibitions?.[currentExhibitionIndex + 1] || null
-      : null;
-
   return (
     <LenisWrapper>
       <Header
