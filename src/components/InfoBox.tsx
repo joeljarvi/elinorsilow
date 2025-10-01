@@ -49,7 +49,7 @@ export function InfoBox({ data, showInfo, min }: InfoBoxProps) {
         {/* Details pinned to bottom */}
         {!min && !isExhibitionsPage && (
           <div
-            className={`flex flex-col lg:flex-row gap-0 lg:gap-4 text-base max-w-2/3 lg:text-xs lg:w-full`}
+            className={`flex flex-col lg:flex-row gap-0 lg:gap-3 text-base max-w-2/3 lg:text-xs lg:w-full`}
           >
             {isWork(data) ? (
               <>

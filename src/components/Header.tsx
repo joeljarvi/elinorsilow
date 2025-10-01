@@ -139,7 +139,7 @@ export default function Header({
             {/* Controls */}
 
             {isWorkSlugPage && currentWork && (
-              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start">
+              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start text-base lg:text-xs">
                 <Link href={`/?work=${currentWork.slug}`}>
                   <Button
                     variant="link"
