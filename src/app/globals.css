@@ -8,10 +8,15 @@
   --font-light: var(--font-NewEdge666-Ultra-Light-Rounded);
   --font-haas: var(--font-neueHaas);
   --font-monument: var(--font-monument);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-pressura);
   --font-serif: var(--font-Times-Newer-Roman);
   --font-serif-italic: var(--font-Times-Newer-Roman-Italic);
   --font-serif-bold: var(--font-Times-Newer-Roman-Bold);
+  --font-walkingOCR: var(--font-walkingOCR);
+  --font-hershey: var(--font-hershey);
+  --font-hersheyItalic: var(--font-hersheyItalic);
+  --font-pressura: var(--font-pressura);
+  --font-pressuraLight: var(--font-pressuraLight);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

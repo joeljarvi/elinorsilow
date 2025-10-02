@@ -36,9 +36,29 @@ const neueHaas = localFont({
   variable: "--font-neueHaas",
 });
 
-const monument = localFont({
-  src: "assets/fonts/MonumentGrotesk-Regular.otf",
-  variable: "--font-monument",
+const hershey = localFont({
+  src: "assets/fonts/AVHersheySimplexLight.ttf",
+  variable: "--font-hershey",
+});
+
+const hersheyItalic = localFont({
+  src: "assets/fonts/AVHersheySimplexLightItalic.ttf",
+  variable: "--font-hersheyItalic",
+});
+
+const walkingOCR = localFont({
+  src: "assets/fonts/Walking-OCR-logo-text-Regular.otf",
+  variable: "--font-walkingOCR",
+});
+
+const pressura = localFont({
+  src: "assets/fonts/gt-pressura-mono-regular.woff",
+  variable: "--font-pressura",
+});
+
+const pressuraLight = localFont({
+  src: "assets/fonts/gt-pressura-mono-light.woff",
+  variable: "--font-pressuraLight",
 });
 
 export const metadata: Metadata = {
@@ -54,7 +74,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable} ${newEdge666UltraBoldRounded.variable} ${newEdge666UltraLightRounded.variable} ${neueHaas.variable} ${monument.variable} antialiased`}
+        className={`${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable} ${newEdge666UltraBoldRounded.variable} ${newEdge666UltraLightRounded.variable} ${neueHaas.variable} ${hershey.variable} ${hersheyItalic.variable} ${walkingOCR.variable} ${pressura.variable} ${pressuraLight.variable}  antialiased`}
       >
         <ThemeProvider
           attribute="class"

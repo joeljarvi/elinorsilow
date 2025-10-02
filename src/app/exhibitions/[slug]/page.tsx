@@ -33,7 +33,7 @@ function ScrollIndicator() {
 
   return (
     <button
-      className="fixed bottom-3 left-3 uppercase text-base lg:text-xs cursor-pointer mix-blend-difference text-white font-haas "
+      className="fixed bottom-3 left-3 uppercase  cursor-pointer mix-blend-difference text-white font-hersheyItalic text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5  "
       onClick={handleClick}
     >
       {atBottom ? "Scroll to top" : "Scroll down"}
@@ -123,7 +123,7 @@ export default function ExhibitionPage() {
   }
 
   return (
-    <div className="w-screen flex flex-col " ref={scrollContainerRef}>
+    <div className="w-screen flex flex-col  " ref={scrollContainerRef}>
       <Header
         currentExhibition={currentExhibition}
         currentExhibitionIndex={currentIndex}
@@ -142,22 +142,24 @@ export default function ExhibitionPage() {
               src={images[0]}
               alt={`${exhibition.acf.title} background`}
               fill
-              className="object-cover z-0 blur-lg"
+              className="object-cover z-0 blur-md opacity-20"
               priority
             />
           )}
         </ScalingSection>
-        <h3 className="absolute top-1/2 left-3  mix-blend-difference text-white  z-10 uppercase text-base lg:text-xs ">
-          {exhibition.acf.title}
-        </h3>
+        <div className="absolute top-0 left-0 h-full grid grid-rows-5 text-2xl uppercase font-hershey px-3">
+          <h3 className=" row-start-2 mix-blend-difference text-white  z-10   text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5 ">
+            {exhibition.acf.title}
+          </h3>
 
-        <h3 className="absolute bottom-1/4 left-3 mix-blend-difference text-white  z-10 uppercase text-base lg:text-xs ">
-          {exhibition.acf.venue}
-        </h3>
+          <h3 className=" row-start-3 mix-blend-difference text-white  z-10 text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5   ">
+            {exhibition.acf.venue}
+          </h3>
+        </div>
 
         {/* Description */}
         <ScalingSection>
-          <p className="font-haas text-base lg:text-lg leading-tight max-w-sm lg:max-w-2xl text-center">
+          <p className="  max-w-md font-walkingOCR lg:max-w-2xl text-left text-xl">
             {exhibition.acf.description}
           </p>
         </ScalingSection>
@@ -179,7 +181,7 @@ export default function ExhibitionPage() {
 
         {/* Credits after images */}
         <ScalingSection>
-          <p className="font-haas text-base lg:text-lg leading-tight  max-w-sm text-center">
+          <p className="leading-tight  max-w-sm text-left  lg:text-center text-xl font-walkingOCR">
             {exhibition.acf.credits}
           </p>
         </ScalingSection>

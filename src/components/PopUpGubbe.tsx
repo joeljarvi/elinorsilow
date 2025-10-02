@@ -25,26 +25,26 @@ export default function PopUpGubbe() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed bottom-3 left-3 lg:right-3 lg:left-auto
-           z-50 flex items-start gap-1.5 max-w-xs"
+          className="font-walkingOCR fixed bottom-3 left-3 lg:right-3 lg:left-auto
+           z-50 flex items-start gap-1.5 max-w-3/4 lg:max-w-md"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           transition={{ duration: 0.4 }}
         >
           {/* Text (fades in after image) */}
-          <div className="flex items-start justify-start border border-foreground rounded-xs bg-background p-3">
+          <div className="flex items-start justify-start border-[0.025rem] border-foreground rounded-xs bg-background p-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="text-xs font-haas"
+              className=""
             >
-              <p className="text-base lg:text-xs">
+              <p className="">
                 Interested in making business with Elinor?{" "}
                 <a
                   href="/contact"
-                  className="underline hover:no-underline underline-offset-6 lg:underline-offset-4"
+                  className="border-b-[0.025rem] border-b-foreground pb-1"
                 >
                   Send her a message!
                 </a>
@@ -67,8 +67,8 @@ export default function PopUpGubbe() {
                 <Image
                   src="/elli_trumpetgubbe_frilagd.png"
                   alt="Elinor Silow drawing"
-                  width={50}
-                  height={50}
+                  width={60}
+                  height={60}
                   className="object-contain dark:invert mt-16"
                 />
               </motion.div>

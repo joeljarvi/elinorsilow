@@ -11,12 +11,15 @@ interface InfoBoxProps {
   data: InfoData | null;
   showInfo: boolean;
   min: boolean;
+  setMin: (min: boolean) => void;
 }
 
-export function InfoBox({ data, showInfo, min }: InfoBoxProps) {
+export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
   const pathname = usePathname();
 
   const isWorksPage = pathname === "/";
+  const isWorkSlugPage =
+    pathname.startsWith("/works/") && pathname !== "/works";
   const isExhibitionsPage = pathname === "/exhibitions";
   const isExhibitionSlugPage =
     pathname.startsWith("/exhibitions/") && pathname !== "/exhibitions";
@@ -34,22 +37,30 @@ export function InfoBox({ data, showInfo, min }: InfoBoxProps) {
   return (
     <>
       <div
-        className={`fixed left-3 w-full pb-3 flex flex-col gap-0 lg:flex-row lg:gap-3 ${boxPosition}`}
+        className={`fixed left-3 w-full pb-3.5 flex flex-col gap-0 lg:flex-row lg:gap-3 font-hershey text-2xl  lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5 max-w-3/4 ${boxPosition}`}
       >
         {/* Title top half */}
-
-        <AnimatePresence mode="wait">
-          <TypingText
-            key={isWork(data) ? `work-${data.id}` : `exh-${data.id}`}
-            text={isWork(data) ? data.title.rendered : data.acf.title ?? ""}
-            className="text-base lg:text-xs text-left uppercase"
-          />
-        </AnimatePresence>
-
+        <div className="flex gap-1.5">
+          <AnimatePresence mode="wait">
+            <TypingText
+              key={isWork(data) ? `work-${data.id}` : `exh-${data.id}`}
+              text={isWork(data) ? data.title.rendered : data.acf.title ?? ""}
+              className="text-left uppercase "
+            />
+          </AnimatePresence>
+          {isWorkSlugPage && (
+            <button
+              onClick={() => setMin(!min)}
+              className="cursor-pointer opacity-30 pl-1.5"
+            >
+              (+)
+            </button>
+          )}
+        </div>
         {/* Details pinned to bottom */}
         {!min && !isExhibitionsPage && (
           <div
-            className={`flex flex-col lg:flex-row gap-0 lg:gap-3 text-base max-w-2/3 lg:text-xs lg:w-full`}
+            className={`flex flex-col lg:flex-row gap-0 lg:gap-3  lg:w-full`}
           >
             {isWork(data) ? (
               <>

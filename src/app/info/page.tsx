@@ -46,22 +46,22 @@ export default function InfoPage() {
   return (
     <>
       <Header />
-      <div className="flex flex-col px-3 mt-[25%] lg:mt-[12.5%]  font-haas text-base lg:text-xs">
-        <div className="flex flex-col font-haas text-base lg:text-xs mb-[25%] lg:mb-[12.5%] w-full gap-3">
+      <div className="flex flex-col px-4.5 mt-[25%] lg:mt-[12.5%]  font-hershey text-2xl">
+        <div className="flex flex-col  mb-[25%] lg:mb-[12.5%] w-full gap-3">
           <a
             href="mailto:elinor.silow@gmail.com"
-            className="font-haas text-base lg:text-xs uppercase hover:underline underline-offset-4"
+            className="uppercase hover:underline underline-offset-4"
           >
             <h2>Email</h2>
           </a>
           <a
             href="instagram.com/elinorsilow"
-            className="font-haas text-base lg:text-xs uppercase hover:underline underline-offset-4"
+            className=" uppercase hover:underline underline-offset-4"
           >
             <h2>INSTAGRAM</h2>
           </a>
         </div>
-        <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-center h-full font-haas w-full gap-8 lg:gap-6 text-base lg:text-xs ">
+        <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-center h-full  w-full gap-8 lg:gap-6  ">
           <div className="flex flex-col items-start justify-start w-sm lg:w-1/3">
             {biography && (
               <>
@@ -76,12 +76,12 @@ export default function InfoPage() {
             <ul className="w-full">
               {educations.map((edu, index) => (
                 <li
-                  className="flex justify-between items-center w-full"
+                  className="flex justify-between items-center  w-full"
                   key={index}
                 >
                   <h3 className="max-w-sm ">{edu.acf.title}</h3>
-                  <h3 className="">
-                    {edu.acf.start_year}—{edu.acf.end_year}
+                  <h3 className="text-left">
+                    {edu.acf.start_year}-{edu.acf.end_year}
                   </h3>
                   <h3 className="">{edu.acf.city}</h3>
                 </li>
@@ -94,10 +94,10 @@ export default function InfoPage() {
             <ul className="w-full">
               {grants.map((grant, index) => (
                 <li
-                  className="flex justify-between items-center w-full"
+                  className="flex justify-between items-start w-full"
                   key={index}
                 >
-                  <h3>{grant.acf.title}</h3>
+                  <h3 className="max-w-3/4">{grant.acf.title}</h3>
                   <h3 className="text-left">{grant.acf.year}</h3>
                 </li>
               ))}

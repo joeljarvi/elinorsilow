@@ -19,8 +19,7 @@ export default function WorkPage() {
 
   const [zoomed, setZoomed] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [min, setMin] = useState(false);
+  const [min, setMin] = useState(true);
   useEffect(() => {
     async function fetchWork() {
       try {
@@ -54,7 +53,8 @@ export default function WorkPage() {
         prevWork={prevWork}
         nextWork={nextWork}
         showInfo={true}
-        min={false}
+        min={min}
+        setMin={setMin}
       />
 
       <div
@@ -68,7 +68,7 @@ export default function WorkPage() {
             src={imageUrl}
             alt={work.title.rendered}
             fill
-            className={`object-contain object-center p-24 lg:p-24 bg-black ${
+            className={`object-contain object-center p-24 lg:p-24 bg-black/95 ${
               zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
             }`}
             style={{

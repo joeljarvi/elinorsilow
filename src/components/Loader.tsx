@@ -24,7 +24,7 @@ export function Loader() {
             width={2124}
             height={2123}
             priority
-            className="max-w-24 lg:max-w-48 object-cover dark:invert"
+            className="max-w-12 lg:max-w-24 object-cover dark:invert"
           />
         </motion.div>
       </AnimatePresence>

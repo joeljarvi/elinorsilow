@@ -30,12 +30,26 @@ function MenuOverlay({
           : isInfoPage
           ? "top-0 bottom-auto h-auto pt-3"
           : "top-0 bottom-auto h-3/4 pt-3"
-      } right-0 z-50 lg:h-auto lg:relative lg:bottom-auto lg:right-auto flex flex-col lg:flex-row justify-between items-end lg:justify-between lg:items-baseline font-haas text-base px-3  overflow-y-auto uppercase text-white lg:text-xs w-auto rounded-xs lg:px-0 lg:pb-0`}
+      } right-0 z-50 lg:h-auto lg:relative lg:bottom-auto lg:right-auto flex flex-col lg:flex-row justify-between items-end lg:justify-between lg:items-baseline px-3 overflow-y-auto uppercase text-white w-auto rounded-xs lg:px-0 lg:pb-0 font-hershey text-2xl`}
     >
-      <Link href="/info">Information</Link>
-      <Link href="/exhibitions">Exhibitions</Link>
-
-      <Link href="/">Works</Link>
+      <Link
+        className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
+        href="/info"
+      >
+        Information
+      </Link>
+      <Link
+        className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
+        href="/exhibitions"
+      >
+        Exhibitions
+      </Link>
+      <Link
+        className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
+        href="/"
+      >
+        Works
+      </Link>
     </motion.div>
   );
 }
@@ -54,6 +68,7 @@ interface HeaderProps {
   nextExhibition?: Exhibition | null;
 
   min?: boolean;
+  setMin?: (min: boolean) => void;
   showInfo?: boolean;
 }
 
@@ -69,7 +84,8 @@ export default function Header({
   prevExhibition,
   nextExhibition,
   showInfo = true,
-  min = false,
+  min,
+  setMin,
 }: HeaderProps) {
   const [open, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -92,15 +108,10 @@ export default function Header({
 
   return (
     <>
-      <div className="font-haas uppercase w-full fixed top-0 left-0 z-40 text-sm mix-blend-difference text-white">
+      <div className="font-hershey text-2xl uppercase w-full fixed top-0 left-0 z-40  mix-blend-difference text-white">
         <div className="flex flex-col w-full justify-start items-start p-3">
-          {/* Branding */}
           <Link href="/">
-            <Button
-              variant="link"
-              size="sm"
-              className="font-haas text-base lg:text-xs"
-            >
+            <Button variant="link" className="">
               ELINOR SILOW
             </Button>
           </Link>
@@ -111,11 +122,26 @@ export default function Header({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="hidden lg:flex justify-between items-baseline font-haas p-3 overflow-y-auto uppercase text-sm lg:text-xs w-auto lg:w-full rounded-xs lg:p-0"
+              className="hidden lg:flex justify-between items-baseline p-3 overflow-y-auto uppercase w-auto lg:w-full rounded-xs lg:p-0"
             >
-              <Link href="/">Works</Link>
-              <Link href="/exhibitions">Exhibitions</Link>
-              <Link href="/info">Information</Link>
+              <Link
+                className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
+                href="/"
+              >
+                Works
+              </Link>
+              <Link
+                className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
+                href="/exhibitions"
+              >
+                Exhibitions
+              </Link>
+              <Link
+                className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
+                href="/info"
+              >
+                Information
+              </Link>
             </motion.nav>
 
             {/* Mobile menu overlay */}
@@ -132,41 +158,34 @@ export default function Header({
 
             <AnimatePresence>
               {showInfo && infoData && (
-                <InfoBox data={infoData} showInfo={showInfo} min={min} />
+                <InfoBox
+                  data={infoData}
+                  showInfo={showInfo}
+                  min={min}
+                  setMin={setMin}
+                />
               )}
             </AnimatePresence>
 
             {/* Controls */}
 
             {isWorkSlugPage && currentWork && (
-              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start text-base lg:text-xs">
+              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start ">
                 <Link href={`/?work=${currentWork.slug}`}>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="text-base lg:text-xs"
-                  >
+                  <Button variant="link" className="">
                     Back to works
                   </Button>
                 </Link>
                 {prevWork && (
                   <Link href={`/works/${prevWork.slug}`}>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="text-base lg:text-xs"
-                    >
+                    <Button variant="link" className="">
                       Prev
                     </Button>
                   </Link>
                 )}
                 {nextWork && (
                   <Link href={`/works/${nextWork.slug}`}>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="text-base lg:text-xs"
-                    >
+                    <Button variant="link" className="">
                       Next
                     </Button>
                   </Link>
@@ -175,35 +194,23 @@ export default function Header({
             )}
 
             {isExhibitionSlugPage && currentExhibition && (
-              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start text-base lg:text-xs">
+              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start">
                 <Link href="/exhibitions">
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="text-base lg:text-xs"
-                  >
+                  <Button variant="link" className="">
                     Back to exhibitions
                   </Button>
                 </Link>
 
                 {prevExhibition && (
                   <Link href={`/exhibitions/${prevExhibition.slug}`}>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="text-base lg:text-xs"
-                    >
+                    <Button variant="link" className="">
                       Prev
                     </Button>
                   </Link>
                 )}
                 {nextExhibition && (
                   <Link href={`/exhibitions/${nextExhibition.slug}`}>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="text-base lg:text-xs"
-                    >
+                    <Button variant="link" className="">
                       Next
                     </Button>
                   </Link>
@@ -216,8 +223,7 @@ export default function Header({
 
       <Button
         variant="link"
-        size="sm"
-        className="fixed bottom-3 right-3 text-base lg:text-xs flex lg:hidden z-40 mix-blend-difference text-white"
+        className="fixed bottom-3 right-3 flex lg:hidden z-40 mix-blend-difference text-white"
         onClick={() => setIsOpen(!open)}
       >
         {open ? "Close Menu" : "Menu"}
