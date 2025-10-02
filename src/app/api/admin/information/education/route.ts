@@ -23,13 +23,14 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
 
+  // Map frontend form → WP payload
   const payload = {
-    title: "Education Post Title",
+    title: body.title || "Education Post Title",
     acf: {
-      title: "Education ACF Title",
-      start_year: "2020",
-      end_year: "2022",
-      city: "Stockholm",
+      title: body.acf?.title || body.title || "Education ACF Title",
+      start_year: body.acf?.start_year || "2020",
+      end_year: body.acf?.end_year || "2022",
+      city: body.acf?.city || "Stockholm",
     },
   };
 
