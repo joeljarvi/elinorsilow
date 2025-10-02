@@ -24,12 +24,12 @@ export async function POST(req: Request) {
   const body = await req.json();
 
   const payload = {
-    title: body.title || body.acf?.title || "Untitled Education",
+    title: "Education Post Title",
     acf: {
-      title: body.acf?.title || "",
-      start_year: body.acf?.start_year || "",
-      end_year: body.acf?.end_year || "",
-      city: body.acf?.city || "",
+      title: "Education ACF Title",
+      start_year: "2020",
+      end_year: "2022",
+      city: "Stockholm",
     },
   };
 

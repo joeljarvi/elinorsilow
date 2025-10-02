@@ -66,7 +66,15 @@ export default function InformationPage() {
     const res = await fetch("/api/admin/information/education", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ acf: eduForm }),
+      body: JSON.stringify({
+        title: eduForm.title, // WP post title
+        acf: {
+          title: eduForm.title, // ACF field "title"
+          start_year: eduForm.start_year,
+          end_year: eduForm.end_year,
+          city: eduForm.city,
+        },
+      }),
     });
     if (res.ok) {
       setEduForm({ title: "", start_year: "", end_year: "", city: "" });
