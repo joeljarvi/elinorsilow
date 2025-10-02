@@ -9,7 +9,7 @@ const authHeader = `Basic ${Buffer.from(
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const res = await fetch(`${API_URL}/exhibitions`, {
+  const res = await fetch(`${API_URL}/exhibition`, {
     method: "POST",
     headers: {
       Authorization: authHeader,
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   const created = await res.json();
 
   // Fetch again with _embed for frontend usage
-  const getRes = await fetch(`${API_URL}/exhibitions/${created.id}?_embed`, {
+  const getRes = await fetch(`${API_URL}/exhibition/${created.id}?_embed`, {
     headers: { Authorization: authHeader },
   });
   const data = await getRes.json();
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   const body = await req.json();
 
-  const res = await fetch(`${API_URL}/exhibitions/${body.id}`, {
+  const res = await fetch(`${API_URL}/exhibition/${body.id}`, {
     method: "PUT",
     headers: {
       Authorization: authHeader,
@@ -82,7 +82,7 @@ export async function PUT(req: Request) {
   const updated = await res.json();
 
   // Fetch again with _embed
-  const getRes = await fetch(`${API_URL}/exhibitions/${updated.id}?_embed`, {
+  const getRes = await fetch(`${API_URL}/exhibition/${updated.id}?_embed`, {
     headers: { Authorization: authHeader },
   });
   const data = await getRes.json();
@@ -94,7 +94,7 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   const body = await req.json();
 
-  const res = await fetch(`${API_URL}/exhibitions/${body.id}?force=true`, {
+  const res = await fetch(`${API_URL}/exhibition/${body.id}?force=true`, {
     method: "DELETE",
     headers: {
       Authorization: authHeader,

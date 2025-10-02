@@ -8,7 +8,7 @@ const authHeader = `Basic ${Buffer.from(
 
 export async function GET() {
   const res = await fetch(
-    `${API_URL}/exhibitions?_embed&acf_format=standard&per_page=100`,
+    `${API_URL}/exhibition?_embed&acf_format=standard&per_page=100`,
     {
       headers: { Authorization: authHeader },
     }

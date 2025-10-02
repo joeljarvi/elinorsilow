@@ -6,12 +6,17 @@ type EditExhibition = {
   title: string;
   start_date: string;
   end_date: string;
-  exhibition_type: string;
+  exhibition_type?: string;
   venue: string;
   city: string;
   description: string;
   credits: string;
   files: (File | null)[];
+  works: string[];
+};
+
+type ExhibitionWithImage = Exhibition & {
+  image_url: string;
 };
 
 export default function ExhibitionsPage() {
@@ -24,9 +29,11 @@ export default function ExhibitionsPage() {
   const [description, setDescription] = useState("");
   const [credits, setCredits] = useState("");
   const [files, setFiles] = useState<(File | null)[]>(Array(10).fill(null));
+  const [works, setWorks] = useState<string[]>(Array(10).fill(""));
   const [loading, setLoading] = useState(false);
 
-  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
+  const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
+
   const [loadingExhibitions, setLoadingExhibitions] = useState(true);
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -56,10 +63,10 @@ export default function ExhibitionsPage() {
         description: ex.acf.description || "",
         credits: ex.acf.credits || "",
         files: Array(10).fill(null),
+        works: Array(10).fill(""),
       };
     });
     setEditValues(initial);
-
     setLoadingExhibitions(false);
   }
 
@@ -105,6 +112,16 @@ export default function ExhibitionsPage() {
           description,
           credits,
           ...uploadedImages,
+          work_1: works[0] || "",
+          work_2: works[1] || "",
+          work_3: works[2] || "",
+          work_4: works[3] || "",
+          work_5: works[4] || "",
+          work_6: works[5] || "",
+          work_7: works[6] || "",
+          work_8: works[7] || "",
+          work_9: works[8] || "",
+          work_10: works[9] || "",
         },
       }),
     });
@@ -120,6 +137,7 @@ export default function ExhibitionsPage() {
       setDescription("");
       setCredits("");
       setFiles(Array(10).fill(null));
+      setWorks(Array(10).fill("")); // ✅ reset works
       fetchExhibitions();
     } else alert("Failed to create exhibition");
   }
@@ -175,14 +193,12 @@ export default function ExhibitionsPage() {
           className="border p-2"
         />
         <input
-          placeholder="Start Date"
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           className="border p-2"
         />
         <input
-          placeholder="End Date"
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
@@ -218,20 +234,45 @@ export default function ExhibitionsPage() {
           onChange={(e) => setCredits(e.target.value)}
           className="border p-2"
         />
+
+        {/* New exhibition file inputs with previews */}
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              type="file"
+              onChange={(e) => {
+                const newFiles = [...files];
+                newFiles[i] = e.target.files?.[0] || null;
+                setFiles(newFiles);
+              }}
+              className="p-2 border"
+            />
+            {files[i] && (
+              <img
+                src={URL.createObjectURL(files[i]!)}
+                alt={`Preview ${i + 1}`}
+                className="h-16 w-16 object-cover rounded border"
+              />
+            )}
+          </div>
+        ))}
+
         {Array.from({ length: 10 }).map((_, i) => (
           <input
             key={i}
-            type="file"
+            placeholder={`Work ${i + 1} ID`}
+            value={works[i] || ""}
             onChange={(e) => {
-              const newFiles = [...files];
-              newFiles[i] = e.target.files?.[0] || null;
-              setFiles(newFiles);
+              const newWorks = [...works];
+              newWorks[i] = e.target.value;
+              setWorks(newWorks);
             }}
-            className="p-2 border"
+            className="border p-2"
           />
         ))}
+
         <button
-          className="bg-blue-600 text-white py-2 rounded"
+          className="bg-blue-600 text-white py-2 rounded mt-2"
           disabled={loading}
         >
           {loading ? "Saving..." : "Save Exhibition"}
@@ -350,21 +391,47 @@ export default function ExhibitionsPage() {
                       })
                     }
                   />
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <input
-                      key={i}
-                      type="file"
-                      onChange={(e) => {
-                        const newFiles = [...editValues[ex.id].files];
-                        newFiles[i] = e.target.files?.[0] || null;
-                        setEditValues({
-                          ...editValues,
-                          [ex.id]: { ...editValues[ex.id], files: newFiles },
-                        });
-                      }}
-                      className="p-1 border"
-                    />
-                  ))}
+
+                  {/* File inputs with previews for editing */}
+                  {Array.from({ length: 10 }).map((_, i) => {
+                    const existingImage = (ex.acf as any)[`image_${i + 1}`]
+                      ?.url;
+                    const newFile = editValues[ex.id]?.files[i];
+
+                    return (
+                      <div key={i} className="flex items-center gap-2">
+                        <input
+                          type="file"
+                          onChange={(e) => {
+                            const newFiles = [...editValues[ex.id].files];
+                            newFiles[i] = e.target.files?.[0] || null;
+                            setEditValues({
+                              ...editValues,
+                              [ex.id]: {
+                                ...editValues[ex.id],
+                                files: newFiles,
+                              },
+                            });
+                          }}
+                          className="p-1 border"
+                        />
+                        {newFile ? (
+                          <img
+                            src={URL.createObjectURL(newFile)}
+                            alt={`New preview ${i + 1}`}
+                            className="h-16 w-16 object-cover rounded border"
+                          />
+                        ) : existingImage ? (
+                          <img
+                            src={existingImage}
+                            alt={`Existing preview ${i + 1}`}
+                            className="h-16 w-16 object-cover rounded border"
+                          />
+                        ) : null}
+                      </div>
+                    );
+                  })}
+
                   <div className="flex gap-2 mt-2">
                     <button
                       className="bg-green-600 text-white px-3 py-1 rounded"
@@ -382,7 +449,14 @@ export default function ExhibitionsPage() {
                 </>
               ) : (
                 <>
-                  <div>
+                  <div className="flex items-center gap-2">
+                    {ex.image_url && (
+                      <img
+                        src={ex.image_url}
+                        alt={ex.title.rendered}
+                        className="h-20 w-20 object-cover rounded border"
+                      />
+                    )}
                     <span className="font-medium">{ex.title.rendered}</span>
                     <span className="ml-2 text-gray-500">
                       ({ex.acf.start_date} - {ex.acf.end_date})

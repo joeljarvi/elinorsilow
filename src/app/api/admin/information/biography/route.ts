@@ -7,7 +7,7 @@ const authHeader = `Basic ${Buffer.from(
 
 // --- GET ---
 export async function GET() {
-  const res = await fetch(`${API_URL}/biographies?per_page=1`, {
+  const res = await fetch(`${API_URL}/biography?per_page=100`, {
     headers: { Authorization: authHeader },
     cache: "no-store",
   });
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const payload = await req.json();
 
-  const res = await fetch(`${API_URL}/biographies`, {
+  const res = await fetch(`${API_URL}/biography`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export async function PUT(req: Request) {
 
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/biographies/${id}`, {
+  const res = await fetch(`${API_URL}/biography/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export async function DELETE(req: Request) {
 
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/biographies/${id}?force=true`, {
+  const res = await fetch(`${API_URL}/biography/${id}?force=true`, {
     method: "DELETE",
     headers: { Authorization: authHeader },
   });
