@@ -1,6 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Exhibition, AcfImage } from "../../../../lib/wordpress";
+import {
+  Exhibition,
+  AcfImage,
+  getAllExhibitions,
+} from "../../../../lib/wordpress";
 
 type EditExhibition = {
   title: string;
@@ -33,43 +37,58 @@ export default function ExhibitionsPage() {
   const [loading, setLoading] = useState(false);
 
   const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
-
   const [loadingExhibitions, setLoadingExhibitions] = useState(true);
-
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<{
     [key: number]: EditExhibition;
   }>({});
 
+  // ✅ Fetch exhibitions on mount and normalize
   useEffect(() => {
-    fetchExhibitions();
+    async function loadExhibitions() {
+      setLoadingExhibitions(true);
+      try {
+        const data = (await getAllExhibitions()) as ExhibitionWithImage[];
+        setExhibitions(data);
+
+        const initial: { [key: number]: EditExhibition } = {};
+        data.forEach((ex) => {
+          initial[ex.id] = {
+            title: ex.title.rendered,
+            start_date: ex.acf.start_date || "",
+            end_date: ex.acf.end_date || "",
+            exhibition_type: ex.acf.exhibition_type || "",
+            venue: ex.acf.venue || "",
+            city: ex.acf.city || "",
+            description: ex.acf.description || "",
+            credits: ex.acf.credits || "",
+            files: Array(10).fill(null),
+            works: [
+              ex.acf.work_1 || "",
+              ex.acf.work_2 || "",
+              ex.acf.work_3 || "",
+              ex.acf.work_4 || "",
+              ex.acf.work_5 || "",
+              ex.acf.work_6 || "",
+              ex.acf.work_7 || "",
+              ex.acf.work_8 || "",
+              ex.acf.work_9 || "",
+              ex.acf.work_10 || "",
+            ],
+          };
+        });
+        setEditValues(initial);
+      } catch (err) {
+        console.error("Failed to fetch exhibitions:", err);
+      } finally {
+        setLoadingExhibitions(false);
+      }
+    }
+
+    loadExhibitions();
   }, []);
 
-  async function fetchExhibitions() {
-    setLoadingExhibitions(true);
-    const res = await fetch("/api/admin/exhibitions/list");
-    const data = await res.json();
-    setExhibitions(data);
-
-    const initial: { [key: number]: EditExhibition } = {};
-    data.forEach((ex: Exhibition) => {
-      initial[ex.id] = {
-        title: ex.title.rendered,
-        start_date: ex.acf.start_date || "",
-        end_date: ex.acf.end_date || "",
-        exhibition_type: ex.acf.exhibition_type || "",
-        venue: ex.acf.venue || "",
-        city: ex.acf.city || "",
-        description: ex.acf.description || "",
-        credits: ex.acf.credits || "",
-        files: Array(10).fill(null),
-        works: Array(10).fill(""),
-      };
-    });
-    setEditValues(initial);
-    setLoadingExhibitions(false);
-  }
-
+  // --- rest of your functions remain unchanged ---
   async function uploadImage(file: File): Promise<AcfImage | null> {
     const formData = new FormData();
     formData.append("file", file);
@@ -137,8 +156,10 @@ export default function ExhibitionsPage() {
       setDescription("");
       setCredits("");
       setFiles(Array(10).fill(null));
-      setWorks(Array(10).fill("")); // ✅ reset works
-      fetchExhibitions();
+      setWorks(Array(10).fill(""));
+      // Refresh exhibitions
+      const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
+      setExhibitions(refreshed);
     } else alert("Failed to create exhibition");
   }
 
@@ -166,7 +187,9 @@ export default function ExhibitionsPage() {
     });
 
     if (res.ok) {
-      fetchExhibitions();
+      // refresh exhibitions
+      const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
+      setExhibitions(refreshed);
       setEditingId(null);
     } else alert("Failed to save changes");
   }
@@ -178,8 +201,10 @@ export default function ExhibitionsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
     });
-    if (res.ok) fetchExhibitions();
-    else alert("Delete failed");
+    if (res.ok) {
+      const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
+      setExhibitions(refreshed);
+    } else alert("Delete failed");
   }
 
   return (
@@ -394,8 +419,9 @@ export default function ExhibitionsPage() {
 
                   {/* File inputs with previews for editing */}
                   {Array.from({ length: 10 }).map((_, i) => {
-                    const existingImage = (ex.acf as any)[`image_${i + 1}`]
-                      ?.url;
+                    const existingImage = ex.acf[
+                      `image_${i + 1}` as keyof typeof ex.acf
+                    ] as AcfImage | undefined;
                     const newFile = editValues[ex.id]?.files[i];
 
                     return (
@@ -421,10 +447,12 @@ export default function ExhibitionsPage() {
                             alt={`New preview ${i + 1}`}
                             className="h-16 w-16 object-cover rounded border"
                           />
-                        ) : existingImage ? (
+                        ) : existingImage?.url ? (
                           <img
-                            src={existingImage}
-                            alt={`Existing preview ${i + 1}`}
+                            src={existingImage.url}
+                            alt={
+                              existingImage.alt || `Existing preview ${i + 1}`
+                            }
                             className="h-16 w-16 object-cover rounded border"
                           />
                         ) : null}
