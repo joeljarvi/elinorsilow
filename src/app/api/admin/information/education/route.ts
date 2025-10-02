@@ -24,6 +24,7 @@ export async function GET() {
 // --- POST ---
 export async function POST(req: Request) {
   const payload = await req.json();
+  console.log("Payload to WP:", payload); // 👈 debug
 
   const res = await fetch(`${API_URL}/education`, {
     method: "POST",
@@ -35,7 +36,8 @@ export async function POST(req: Request) {
   });
 
   const data = await res.json();
-  return NextResponse.json({ ...data, id: data.id }, { status: res.status });
+  console.log("Response from WP:", data); // 👈 debug
+  return NextResponse.json(data, { status: res.status });
 }
 
 // --- PUT ---
