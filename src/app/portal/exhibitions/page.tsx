@@ -115,17 +115,15 @@ export default function ExhibitionsPage() {
     setLoading(true);
 
     // upload all files first
-    const uploadedImages: { [key: string]: AcfImage } = {};
+    const uploadedImages: { [key: string]: number } = {};
     await Promise.all(
-      files.map(
-        (file, i) =>
-          file &&
-          uploadImage(file).then((u) => {
-            if (u) uploadedImages[`image_${i + 1}`] = u;
-          })
-      )
+      files.map(async (file, i) => {
+        if (file) {
+          const uploaded = await uploadImage(file);
+          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id; // ✅ ID only
+        }
+      })
     );
-
     const res = await fetch("/api/admin/exhibitions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -174,27 +172,43 @@ export default function ExhibitionsPage() {
 
   async function handleEditSave(ex: Exhibition) {
     const values = editValues[ex.id];
-    const uploadedImages: { [key: string]: AcfImage } = {};
 
+    // Upload any new files and get their IDs
+    const uploadedImages: { [key: string]: number } = {};
     await Promise.all(
       values.files.map(async (file, i) => {
         if (file) {
           const uploaded = await uploadImage(file);
-          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded;
+          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id; // WordPress expects IDs
         }
       })
     );
 
-    const acfPayload = {
-      ...values,
-      ...uploadedImages,
+    // Build ACF payload
+    const acfPayload: any = {
+      title: values.title,
+      start_date: values.start_date,
+      end_date: values.end_date,
+      exhibition_type: values.exhibition_type || "",
+      venue: values.venue,
+      city: values.city,
+      description: values.description,
+      credits: values.credits,
+      work_1: values.works[0] || "",
+      work_2: values.works[1] || "",
+      work_3: values.works[2] || "",
+      work_4: values.works[3] || "",
+      work_5: values.works[4] || "",
+      work_6: values.works[5] || "",
+      work_7: values.works[6] || "",
+      work_8: values.works[7] || "",
+      work_9: values.works[8] || "",
+      work_10: values.works[9] || "",
+      ...uploadedImages, // add newly uploaded image IDs
     };
 
-    // remove 'files' property, WP can't handle it
-    delete acfPayload.files;
-
     const res = await fetch("/api/admin/exhibitions", {
-      method: "PUT",
+      method: "PUT", // editing existing
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: ex.id,
