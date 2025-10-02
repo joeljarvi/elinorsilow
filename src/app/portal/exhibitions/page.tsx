@@ -23,6 +23,10 @@ type EditExhibition = {
   works: string[];
 };
 
+type AcfPayload = {
+  [key: string]: string | number;
+};
+
 export default function ExhibitionsPage() {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -179,13 +183,13 @@ export default function ExhibitionsPage() {
       values.files.map(async (file, i) => {
         if (file) {
           const uploaded = await uploadImage(file);
-          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id; // WordPress expects IDs
+          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id;
         }
       })
     );
 
     // Build ACF payload
-    const acfPayload: any = {
+    const acfPayload: AcfPayload = {
       title: values.title,
       start_date: values.start_date,
       end_date: values.end_date,
@@ -204,11 +208,11 @@ export default function ExhibitionsPage() {
       work_8: values.works[7] || "",
       work_9: values.works[8] || "",
       work_10: values.works[9] || "",
-      ...uploadedImages, // add newly uploaded image IDs
+      ...uploadedImages,
     };
 
     const res = await fetch("/api/admin/exhibitions", {
-      method: "PUT", // editing existing
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: ex.id,
