@@ -90,6 +90,7 @@ export default function ExhibitionsPage() {
 
   // Upload single file to WP media
   async function uploadImage(file: File): Promise<AcfImage | null> {
+    if (!file) return null;
     const formData = new FormData();
     formData.append("file", file);
 
@@ -97,8 +98,15 @@ export default function ExhibitionsPage() {
       method: "POST",
       body: formData,
     });
-    if (!res.ok) return null;
+
+    if (!res.ok) {
+      console.error("Media upload failed", res.statusText);
+      return null;
+    }
+
     const data = await res.json();
+    if (!data || !data.id || !data.source_url) return null;
+
     return { id: data.id, url: data.source_url };
   }
 
@@ -166,8 +174,8 @@ export default function ExhibitionsPage() {
 
   async function handleEditSave(ex: Exhibition) {
     const values = editValues[ex.id];
-
     const uploadedImages: { [key: string]: AcfImage } = {};
+
     await Promise.all(
       values.files.map(async (file, i) => {
         if (file) {
@@ -177,21 +185,33 @@ export default function ExhibitionsPage() {
       })
     );
 
+    const acfPayload = {
+      ...values,
+      ...uploadedImages,
+    };
+
+    // remove 'files' property, WP can't handle it
+    delete acfPayload.files;
+
     const res = await fetch("/api/admin/exhibitions", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: ex.id,
         title: values.title,
-        acf: { ...values, ...uploadedImages },
+        acf: acfPayload,
       }),
     });
 
     if (res.ok) {
-      const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
-      setExhibitions(refreshed);
+      const data = await getAllExhibitions();
+      const normalized = normalizeExhibitions(data);
+      setExhibitions(normalized);
       setEditingId(null);
-    } else alert("Failed to save changes");
+    } else {
+      console.error(await res.text());
+      alert("Failed to save changes");
+    }
   }
 
   async function handleDelete(id: number) {
