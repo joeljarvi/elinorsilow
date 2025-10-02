@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 
 type Education = {
   id: number;
-  acf: { title: string; start_year: string; end_year: string; city: string };
+  acf: { school: string; start_year: string; end_year: string; city: string };
 };
 
 type Grant = {
@@ -22,7 +22,7 @@ export default function InformationPage() {
   const [biography, setBiography] = useState<Biography | null>(null);
 
   const [eduForm, setEduForm] = useState({
-    title: "",
+    school: "",
     start_year: "",
     end_year: "",
     city: "",
@@ -67,9 +67,9 @@ export default function InformationPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: eduForm.title, // WP post title
+        title: eduForm.school || "Education",
         acf: {
-          title: eduForm.title, // ACF field "title"
+          school: eduForm.school,
           start_year: eduForm.start_year,
           end_year: eduForm.end_year,
           city: eduForm.city,
@@ -77,7 +77,7 @@ export default function InformationPage() {
       }),
     });
     if (res.ok) {
-      setEduForm({ title: "", start_year: "", end_year: "", city: "" });
+      setEduForm({ school: "", start_year: "", end_year: "", city: "" });
       fetchAll();
     }
   }
@@ -158,10 +158,10 @@ export default function InformationPage() {
             className="flex flex-col gap-2 w-full lg:w-1/2"
           >
             <input
-              placeholder="Title"
-              value={eduForm.title}
+              placeholder="School"
+              value={eduForm.school}
               onChange={(e) =>
-                setEduForm({ ...eduForm, title: e.target.value })
+                setEduForm({ ...eduForm, school: e.target.value })
               }
               className="border p-2"
             />
@@ -199,7 +199,7 @@ export default function InformationPage() {
                 className="flex justify-between border p-2 rounded w-full"
               >
                 <span>
-                  {edu.acf.title}, {edu.acf.start_year} - {edu.acf.end_year},{" "}
+                  {edu.acf.school}, {edu.acf.start_year} - {edu.acf.end_year},{" "}
                   {edu.acf.city}
                 </span>
                 <button
