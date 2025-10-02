@@ -5,6 +5,10 @@ import {
   AcfImage,
   getAllExhibitions,
 } from "../../../../lib/wordpress";
+import {
+  ExhibitionWithImage,
+  normalizeExhibitions,
+} from "@/app/api/admin/exhibitions/normalizeExhibitions";
 
 type EditExhibition = {
   title: string;
@@ -19,12 +23,7 @@ type EditExhibition = {
   works: string[];
 };
 
-type ExhibitionWithImage = Exhibition & {
-  image_url: string;
-};
-
 export default function ExhibitionsPage() {
-  // --- create form state ---
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -37,27 +36,24 @@ export default function ExhibitionsPage() {
   const [works, setWorks] = useState<string[]>(Array(10).fill(""));
   const [loading, setLoading] = useState(false);
 
-  // --- exhibitions state ---
   const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
   const [loadingExhibitions, setLoadingExhibitions] = useState(true);
-
-  // --- editing state ---
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<{
     [key: number]: EditExhibition;
   }>({});
 
-  // --- fetch exhibitions & normalize ---
+  // Fetch and normalize
   useEffect(() => {
     async function loadExhibitions() {
       setLoadingExhibitions(true);
       try {
-        const data = (await getAllExhibitions()) as ExhibitionWithImage[];
-        setExhibitions(data);
+        const data = await getAllExhibitions();
+        const normalized = normalizeExhibitions(data);
+        setExhibitions(normalized);
 
-        // initialize editValues for editing
         const initial: { [key: number]: EditExhibition } = {};
-        data.forEach((ex) => {
+        normalized.forEach((ex) => {
           initial[ex.id] = {
             title: ex.title.rendered,
             start_date: ex.acf.start_date || "",
@@ -84,16 +80,15 @@ export default function ExhibitionsPage() {
         });
         setEditValues(initial);
       } catch (err) {
-        console.error("Failed to fetch exhibitions:", err);
+        console.error(err);
       } finally {
         setLoadingExhibitions(false);
       }
     }
-
     loadExhibitions();
   }, []);
 
-  // --- upload helper ---
+  // Upload single file to WP media
   async function uploadImage(file: File): Promise<AcfImage | null> {
     const formData = new FormData();
     formData.append("file", file);
@@ -107,19 +102,20 @@ export default function ExhibitionsPage() {
     return { id: data.id, url: data.source_url };
   }
 
-  // --- create exhibition ---
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
 
+    // upload all files first
     const uploadedImages: { [key: string]: AcfImage } = {};
     await Promise.all(
-      files.map(async (file, i) => {
-        if (file) {
-          const uploaded = await uploadImage(file);
-          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded;
-        }
-      })
+      files.map(
+        (file, i) =>
+          file &&
+          uploadImage(file).then((u) => {
+            if (u) uploadedImages[`image_${i + 1}`] = u;
+          })
+      )
     );
 
     const res = await fetch("/api/admin/exhibitions", {
@@ -153,7 +149,6 @@ export default function ExhibitionsPage() {
 
     setLoading(false);
     if (res.ok) {
-      // reset form
       setTitle("");
       setStartDate("");
       setEndDate("");
@@ -164,13 +159,11 @@ export default function ExhibitionsPage() {
       setCredits("");
       setFiles(Array(10).fill(null));
       setWorks(Array(10).fill(""));
-      // refresh exhibitions
       const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
       setExhibitions(refreshed);
     } else alert("Failed to create exhibition");
   }
 
-  // --- save edits ---
   async function handleEditSave(ex: Exhibition) {
     const values = editValues[ex.id];
 
@@ -201,7 +194,6 @@ export default function ExhibitionsPage() {
     } else alert("Failed to save changes");
   }
 
-  // --- delete ---
   async function handleDelete(id: number) {
     if (!confirm("Delete this exhibition?")) return;
     const res = await fetch("/api/admin/exhibitions", {
