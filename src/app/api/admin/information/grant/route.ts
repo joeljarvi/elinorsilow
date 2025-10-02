@@ -7,7 +7,7 @@ const authHeader = `Basic ${Buffer.from(
 
 // --- GET ---
 export async function GET() {
-  const res = await fetch(`${API_URL}/grants?per_page=100`, {
+  const res = await fetch(`${API_URL}/grant?per_page=100`, {
     headers: { Authorization: authHeader },
     cache: "no-store",
   });
@@ -25,7 +25,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const payload = await req.json();
 
-  const res = await fetch(`${API_URL}/grants`, {
+  const res = await fetch(`${API_URL}/grant`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export async function PUT(req: Request) {
 
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/grants/${id}`, {
+  const res = await fetch(`${API_URL}/grant/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export async function DELETE(req: Request) {
 
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/grants/${id}?force=true`, {
+  const res = await fetch(`${API_URL}/grant/${id}?force=true`, {
     method: "DELETE",
     headers: { Authorization: authHeader },
   });
