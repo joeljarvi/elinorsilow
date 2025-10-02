@@ -10,6 +10,13 @@ export async function POST(req: Request) {
   const formData = await req.formData();
   const file = formData.get("file") as File;
 
+  if (!file)
+    return NextResponse.json({ error: "No file provided" }, { status: 400 });
+
+  // Convert File to Buffer
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
   const uploadRes = await fetch(`${API_URL}/media`, {
     method: "POST",
     headers: {
@@ -17,9 +24,10 @@ export async function POST(req: Request) {
       "Content-Disposition": `attachment; filename="${file.name}"`,
       "Content-Type": file.type,
     },
-    body: file,
+    body: buffer,
   });
 
   const data = await uploadRes.json();
+
   return NextResponse.json(data, { status: uploadRes.status });
 }

@@ -24,6 +24,7 @@ type ExhibitionWithImage = Exhibition & {
 };
 
 export default function ExhibitionsPage() {
+  // --- create form state ---
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -36,14 +37,17 @@ export default function ExhibitionsPage() {
   const [works, setWorks] = useState<string[]>(Array(10).fill(""));
   const [loading, setLoading] = useState(false);
 
+  // --- exhibitions state ---
   const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
   const [loadingExhibitions, setLoadingExhibitions] = useState(true);
+
+  // --- editing state ---
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<{
     [key: number]: EditExhibition;
   }>({});
 
-  // ✅ Fetch exhibitions on mount and normalize
+  // --- fetch exhibitions & normalize ---
   useEffect(() => {
     async function loadExhibitions() {
       setLoadingExhibitions(true);
@@ -51,6 +55,7 @@ export default function ExhibitionsPage() {
         const data = (await getAllExhibitions()) as ExhibitionWithImage[];
         setExhibitions(data);
 
+        // initialize editValues for editing
         const initial: { [key: number]: EditExhibition } = {};
         data.forEach((ex) => {
           initial[ex.id] = {
@@ -88,7 +93,7 @@ export default function ExhibitionsPage() {
     loadExhibitions();
   }, []);
 
-  // --- rest of your functions remain unchanged ---
+  // --- upload helper ---
   async function uploadImage(file: File): Promise<AcfImage | null> {
     const formData = new FormData();
     formData.append("file", file);
@@ -102,6 +107,7 @@ export default function ExhibitionsPage() {
     return { id: data.id, url: data.source_url };
   }
 
+  // --- create exhibition ---
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -147,6 +153,7 @@ export default function ExhibitionsPage() {
 
     setLoading(false);
     if (res.ok) {
+      // reset form
       setTitle("");
       setStartDate("");
       setEndDate("");
@@ -157,18 +164,19 @@ export default function ExhibitionsPage() {
       setCredits("");
       setFiles(Array(10).fill(null));
       setWorks(Array(10).fill(""));
-      // Refresh exhibitions
+      // refresh exhibitions
       const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
       setExhibitions(refreshed);
     } else alert("Failed to create exhibition");
   }
 
+  // --- save edits ---
   async function handleEditSave(ex: Exhibition) {
     const values = editValues[ex.id];
 
     const uploadedImages: { [key: string]: AcfImage } = {};
     await Promise.all(
-      (values.files as (File | null)[]).map(async (file, i) => {
+      values.files.map(async (file, i) => {
         if (file) {
           const uploaded = await uploadImage(file);
           if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded;
@@ -187,13 +195,13 @@ export default function ExhibitionsPage() {
     });
 
     if (res.ok) {
-      // refresh exhibitions
       const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
       setExhibitions(refreshed);
       setEditingId(null);
     } else alert("Failed to save changes");
   }
 
+  // --- delete ---
   async function handleDelete(id: number) {
     if (!confirm("Delete this exhibition?")) return;
     const res = await fetch("/api/admin/exhibitions", {
@@ -260,7 +268,6 @@ export default function ExhibitionsPage() {
           className="border p-2"
         />
 
-        {/* New exhibition file inputs with previews */}
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="flex items-center gap-2">
             <input
@@ -313,117 +320,32 @@ export default function ExhibitionsPage() {
             <li key={ex.id} className="border rounded p-2 flex flex-col gap-2">
               {editingId === ex.id ? (
                 <>
-                  <input
-                    className="border p-1"
-                    value={editValues[ex.id]?.title}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          title: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <input
-                    type="date"
-                    className="border p-1"
-                    value={editValues[ex.id]?.start_date}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          start_date: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <input
-                    type="date"
-                    className="border p-1"
-                    value={editValues[ex.id]?.end_date}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          end_date: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <input
-                    className="border p-1"
-                    value={editValues[ex.id]?.exhibition_type}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          exhibition_type: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <input
-                    className="border p-1"
-                    value={editValues[ex.id]?.venue}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          venue: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <input
-                    className="border p-1"
-                    value={editValues[ex.id]?.city}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: { ...editValues[ex.id], city: e.target.value },
-                      })
-                    }
-                  />
-                  <textarea
-                    className="border p-1"
-                    value={editValues[ex.id]?.description}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          description: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <textarea
-                    className="border p-1"
-                    value={editValues[ex.id]?.credits}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [ex.id]: {
-                          ...editValues[ex.id],
-                          credits: e.target.value,
-                        },
-                      })
-                    }
-                  />
-
-                  {/* File inputs with previews for editing */}
+                  {/* Inline edit inputs */}
+                  {Object.entries(editValues[ex.id]).map(([key, value]) => {
+                    if (key === "files" || key === "works") return null;
+                    return (
+                      <input
+                        key={key}
+                        value={value as string}
+                        onChange={(e) =>
+                          setEditValues({
+                            ...editValues,
+                            [ex.id]: {
+                              ...editValues[ex.id],
+                              [key]: e.target.value,
+                            },
+                          })
+                        }
+                        className="border p-1"
+                      />
+                    );
+                  })}
+                  {/* File inputs for editing */}
                   {Array.from({ length: 10 }).map((_, i) => {
                     const existingImage = ex.acf[
                       `image_${i + 1}` as keyof typeof ex.acf
                     ] as AcfImage | undefined;
-                    const newFile = editValues[ex.id]?.files[i];
-
+                    const newFile = editValues[ex.id].files[i];
                     return (
                       <div key={i} className="flex items-center gap-2">
                         <input
@@ -459,7 +381,6 @@ export default function ExhibitionsPage() {
                       </div>
                     );
                   })}
-
                   <div className="flex gap-2 mt-2">
                     <button
                       className="bg-green-600 text-white px-3 py-1 rounded"
