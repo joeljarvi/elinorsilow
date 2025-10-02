@@ -159,7 +159,7 @@ export default function ExhibitionPage() {
 
         {/* Description */}
         <ScalingSection>
-          <p className="  max-w-md font-walkingOCR lg:max-w-2xl text-left text-xl">
+          <p className="  max-w-md font-walkingOCR lg:max-w-2xl text-left text-lg lg:text-xl">
             {exhibition.acf.description}
           </p>
         </ScalingSection>
