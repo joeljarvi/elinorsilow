@@ -22,7 +22,7 @@ const buttonVariants = cva(
         link: "font-hershey uppercase transition-all duration-600 cursor-pointer   ",
       },
       size: {
-        default: "text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5",
+        default: "text-2xl lg:text-xl  ",
         sm: "text-xs",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",

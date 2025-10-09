@@ -1,14 +1,32 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  Exhibition,
-  AcfImage,
-  getAllExhibitions,
-} from "../../../../lib/wordpress";
-import {
   ExhibitionWithImage,
   normalizeExhibitions,
 } from "@/app/api/admin/exhibitions/normalizeExhibitions";
+
+type AcfImage = { id: number; url: string; alt?: string };
+type AcfPayload = {
+  title: string;
+  start_date: string;
+  end_date: string;
+  exhibition_type?: string;
+  venue: string;
+  city: string;
+  description: string;
+  credits: string;
+  work_1: string;
+  work_2: string;
+  work_3: string;
+  work_4: string;
+  work_5: string;
+  work_6: string;
+  work_7: string;
+  work_8: string;
+  work_9: string;
+  work_10: string;
+  [key: string]: any;
+};
 
 type EditExhibition = {
   title: string;
@@ -23,11 +41,15 @@ type EditExhibition = {
   works: string[];
 };
 
-type AcfPayload = {
-  [key: string]: string | number;
-};
-
 export default function ExhibitionsPage() {
+  const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
+  const [loadingExhibitions, setLoadingExhibitions] = useState(true);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editValues, setEditValues] = useState<{
+    [key: number]: EditExhibition;
+  }>({});
+
+  // Form state
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -40,59 +62,54 @@ export default function ExhibitionsPage() {
   const [works, setWorks] = useState<string[]>(Array(10).fill(""));
   const [loading, setLoading] = useState(false);
 
-  const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
-  const [loadingExhibitions, setLoadingExhibitions] = useState(true);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editValues, setEditValues] = useState<{
-    [key: number]: EditExhibition;
-  }>({});
+  async function loadExhibitions() {
+    setLoadingExhibitions(true);
+    try {
+      const res = await fetch("/api/admin/exhibitions/list");
+      if (!res.ok) throw new Error("Failed to fetch exhibitions");
 
-  // Fetch and normalize
-  useEffect(() => {
-    async function loadExhibitions() {
-      setLoadingExhibitions(true);
-      try {
-        const data = await getAllExhibitions();
-        const normalized = normalizeExhibitions(data);
-        setExhibitions(normalized);
+      const data = await res.json();
+      const normalized = normalizeExhibitions(data);
+      setExhibitions(normalized);
 
-        const initial: { [key: number]: EditExhibition } = {};
-        normalized.forEach((ex) => {
-          initial[ex.id] = {
-            title: ex.title.rendered,
-            start_date: ex.acf.start_date || "",
-            end_date: ex.acf.end_date || "",
-            exhibition_type: ex.acf.exhibition_type || "",
-            venue: ex.acf.venue || "",
-            city: ex.acf.city || "",
-            description: ex.acf.description || "",
-            credits: ex.acf.credits || "",
-            files: Array(10).fill(null),
-            works: [
-              ex.acf.work_1 || "",
-              ex.acf.work_2 || "",
-              ex.acf.work_3 || "",
-              ex.acf.work_4 || "",
-              ex.acf.work_5 || "",
-              ex.acf.work_6 || "",
-              ex.acf.work_7 || "",
-              ex.acf.work_8 || "",
-              ex.acf.work_9 || "",
-              ex.acf.work_10 || "",
-            ],
-          };
-        });
-        setEditValues(initial);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoadingExhibitions(false);
-      }
+      const initial: { [key: number]: EditExhibition } = {};
+      normalized.forEach((ex) => {
+        initial[ex.id] = {
+          title: ex.title.rendered,
+          start_date: ex.acf.start_date || "",
+          end_date: ex.acf.end_date || "",
+          exhibition_type: ex.acf.exhibition_type || "",
+          venue: ex.acf.venue || "",
+          city: ex.acf.city || "",
+          description: ex.acf.description || "",
+          credits: ex.acf.credits || "",
+          files: Array(10).fill(null),
+          works: [
+            ex.acf.work_1 || "",
+            ex.acf.work_2 || "",
+            ex.acf.work_3 || "",
+            ex.acf.work_4 || "",
+            ex.acf.work_5 || "",
+            ex.acf.work_6 || "",
+            ex.acf.work_7 || "",
+            ex.acf.work_8 || "",
+            ex.acf.work_9 || "",
+            ex.acf.work_10 || "",
+          ],
+        };
+      });
+      setEditValues(initial);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingExhibitions(false);
     }
+  }
+
+  useEffect(() => {
     loadExhibitions();
   }, []);
 
-  // Upload single file to WP media
   async function uploadImage(file: File): Promise<AcfImage | null> {
     if (!file) return null;
     const formData = new FormData();
@@ -118,16 +135,16 @@ export default function ExhibitionsPage() {
     e.preventDefault();
     setLoading(true);
 
-    // upload all files first
     const uploadedImages: { [key: string]: number } = {};
     await Promise.all(
       files.map(async (file, i) => {
         if (file) {
           const uploaded = await uploadImage(file);
-          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id; // ✅ ID only
+          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id;
         }
       })
     );
+
     const res = await fetch("/api/admin/exhibitions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -169,15 +186,13 @@ export default function ExhibitionsPage() {
       setCredits("");
       setFiles(Array(10).fill(null));
       setWorks(Array(10).fill(""));
-      const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
-      setExhibitions(refreshed);
+
+      await loadExhibitions();
     } else alert("Failed to create exhibition");
   }
 
-  async function handleEditSave(ex: Exhibition) {
+  async function handleEditSave(ex: ExhibitionWithImage) {
     const values = editValues[ex.id];
-
-    // Upload any new files and get their IDs
     const uploadedImages: { [key: string]: number } = {};
     await Promise.all(
       values.files.map(async (file, i) => {
@@ -188,7 +203,6 @@ export default function ExhibitionsPage() {
       })
     );
 
-    // Build ACF payload
     const acfPayload: AcfPayload = {
       title: values.title,
       start_date: values.start_date,
@@ -222,9 +236,7 @@ export default function ExhibitionsPage() {
     });
 
     if (res.ok) {
-      const data = await getAllExhibitions();
-      const normalized = normalizeExhibitions(data);
-      setExhibitions(normalized);
+      await loadExhibitions();
       setEditingId(null);
     } else {
       console.error(await res.text());
@@ -240,8 +252,7 @@ export default function ExhibitionsPage() {
       body: JSON.stringify({ id }),
     });
     if (res.ok) {
-      const refreshed = (await getAllExhibitions()) as ExhibitionWithImage[];
-      setExhibitions(refreshed);
+      await loadExhibitions();
     } else alert("Delete failed");
   }
 

@@ -68,8 +68,10 @@ export function Carousel<T>({
 
   return (
     <div className={`relative ${className}`}>
-      <div className="fixed top-1/4 left-3 mix-blend-difference text-white z-40  text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5 font-hershey ">
-        {currentIndex + 1} / {items.length}
+      <div className="mix-blend-difference text-white fixed grid grid-rows-4 z-40 h-full">
+        <div className=" row-start-2  text-2xl lg:text-xl px-3  lg:px-3 font-hershey  ">
+          {currentIndex + 1} / {items.length}
+        </div>
       </div>
 
       <div

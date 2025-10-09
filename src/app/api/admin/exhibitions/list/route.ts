@@ -11,10 +11,14 @@ export async function GET() {
     `${API_URL}/exhibition?_embed&acf_format=standard&per_page=100`,
     {
       headers: { Authorization: authHeader },
+      next: { revalidate: 60 }, // optional: cache 1 min
     }
   );
 
-  if (!res.ok) return NextResponse.json([], { status: res.status });
+  if (!res.ok) {
+    console.error("Failed to fetch exhibitions:", res.statusText);
+    return NextResponse.json([], { status: res.status });
+  }
 
   const data: Exhibition[] = await res.json();
 
@@ -22,5 +26,6 @@ export async function GET() {
     ...ex,
     image_url: ex.acf?.image_1?.url || "", // fallback to first ACF image
   }));
+
   return NextResponse.json(normalized);
 }

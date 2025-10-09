@@ -4,6 +4,8 @@ import { AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Work, Exhibition } from "../../lib/wordpress";
 import { TypingText } from "./animate-ui/primitives/texts/typing";
+import { useExhibitions } from "@/context/ExhibitionsContext";
+import Link from "next/link";
 
 type InfoData = Work | Exhibition;
 
@@ -16,6 +18,7 @@ interface InfoBoxProps {
 
 export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
   const pathname = usePathname();
+  const { filteredExhibitions } = useExhibitions();
 
   const isWorksPage = pathname === "/";
   const isWorkSlugPage =
@@ -29,6 +32,15 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
 
   if (isExhibitionSlugPage || !showInfo || !data) return null;
 
+  const matchedExhibition =
+    isWork(data) && data.acf.exhibition
+      ? filteredExhibitions.find(
+          (exh) =>
+            exh.acf.title.trim().toLowerCase() ===
+            data.acf.exhibition.trim().toLowerCase()
+        )
+      : null;
+
   const boxPosition =
     isWorksPage || isExhibitionsPage
       ? "bottom-0 top-auto lg:top-1/2"
@@ -37,7 +49,7 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
   return (
     <>
       <div
-        className={`fixed left-3 w-full pb-3.5 flex flex-col gap-0 lg:flex-row lg:gap-3 font-hershey text-2xl  lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5 max-w-3/4 ${boxPosition}`}
+        className={`fixed left-3 w-full pb-3.5 flex flex-col gap-0  lg:gap-3 font-hershey text-2xl  lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-3 max-w-3/4 ${boxPosition}`}
       >
         {/* Title top half */}
         <div className="flex gap-1.5">
@@ -57,11 +69,8 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
             </button>
           )}
         </div>
-        {/* Details pinned to bottom */}
         {!min && !isExhibitionsPage && (
-          <div
-            className={`flex flex-col lg:flex-row gap-0 lg:gap-3  lg:w-full`}
-          >
+          <div className="flex flex-col lg:flex-row gap-0 lg:gap-3 lg:w-full lg:pb-1.5">
             {isWork(data) ? (
               <>
                 {data.acf.year && (
@@ -79,9 +88,21 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
                     <h3>Materials:</h3> {data.acf.materials}
                   </span>
                 )}
+
+                {/* ✅ Exhibition link */}
                 {data.acf.exhibition && (
-                  <span className="flex flex-wrap lg:flex-nowrap gap-x-1.5">
-                    <h3>Part of exhibition:</h3> {data.acf.exhibition}
+                  <span className="flex gap-1.5">
+                    <h3>Exhibition:</h3>
+                    {matchedExhibition ? (
+                      <Link
+                        href={`/exhibitions/${matchedExhibition.slug}`}
+                        className="hover:underline"
+                      >
+                        {matchedExhibition.acf.title}
+                      </Link>
+                    ) : (
+                      <span>{data.acf.exhibition}</span>
+                    )}
                   </span>
                 )}
               </>

@@ -58,7 +58,7 @@ export default function WorkPage() {
       />
 
       <div
-        className={`w-screen h-screen flex flex-col items-center justify-center relative px-0 pt-0 pb-0 lg:px-3 lg:pt-14 lg:pb-9 overflow-hidden `}
+        className={`w-screen h-screen flex flex-col items-center justify-center relative px-0 pt-0 pb-0  overflow-hidden `}
       >
         <div
           className={`relative w-full h-full  cursor-pointer`}

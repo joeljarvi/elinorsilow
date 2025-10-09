@@ -25,29 +25,16 @@ function MenuOverlay({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       className={`fixed ${
-        isWorkSlugPage
-          ? "bottom-1/4 top-auto h-3/4 pt-3"
-          : isInfoPage
-          ? "top-0 bottom-auto h-auto pt-3"
-          : "top-0 bottom-auto h-3/4 pt-3"
-      } right-0 z-50 lg:h-auto lg:relative lg:bottom-auto lg:right-auto flex flex-col lg:flex-row justify-between items-end lg:justify-between lg:items-baseline px-3 overflow-y-auto uppercase text-white w-auto rounded-xs lg:px-0 lg:pb-0 font-hershey text-2xl`}
+        isWorkSlugPage ? "h-full" : isInfoPage ? "h-full" : "h-full"
+      } right-0 top-0 z-50 grid grid-rows-4 p-3 overflow-y-auto uppercase text-white w-auto font-hershey text-2xl text-right`}
     >
-      <Link
-        className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
-        href="/info"
-      >
+      <Link className="row-start-2 text-2xl lg:text-xl" href="/info">
         Information
       </Link>
-      <Link
-        className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
-        href="/exhibitions"
-      >
+      <Link className="row-start-3 text-2xl lg:text-xl" href="/exhibitions">
         Exhibitions
       </Link>
-      <Link
-        className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
-        href="/"
-      >
+      <Link className="row-start-4 text-2xl lg:text-xl" href="/">
         Works
       </Link>
     </motion.div>
@@ -108,44 +95,78 @@ export default function Header({
 
   return (
     <>
-      <div className="font-hershey text-2xl uppercase w-full fixed top-0 left-0 z-40  mix-blend-difference text-white">
+      <div className="font-hershey text-2xl uppercase w-full fixed top-0 left-0 z-40 mix-blend-difference text-white">
         <div className="flex flex-col w-full justify-start items-start p-3">
-          <Link href="/">
-            <Button variant="link" className="">
-              ELINOR SILOW
-            </Button>
-          </Link>
+          {/* Header Top Row */}
+          <div className="flex flex-col lg:flex-row justify-between items-start w-full">
+            <Link href="/">
+              <Button variant="link">ELINOR SILOW</Button>
+            </Link>
 
-          <div className="flex justify-start items-start gap-3 w-full">
+            {/* Works Navigation */}
+            {isWorkSlugPage && currentWork && (
+              <div className="flex gap-6 w-full justify-between lg:justify-end">
+                <Link href={`/?work=${currentWork.slug}`}>
+                  <Button variant="link">Back to works</Button>
+                </Link>
+                <div className="flex gap-6">
+                  {prevWork && (
+                    <Link href={`/works/${prevWork.slug}`}>
+                      <Button variant="link">Prev</Button>
+                    </Link>
+                  )}
+                  {nextWork && (
+                    <Link href={`/works/${nextWork.slug}`}>
+                      <Button variant="link">Next</Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Exhibitions Navigation */}
+            {isExhibitionSlugPage && currentExhibition && (
+              <div className="flex gap-6 w-full justify-between lg:justify-end">
+                <Link href="/exhibitions">
+                  <Button variant="link">Back to exhibitions</Button>
+                </Link>
+                <div className="flex gap-6">
+                  {prevExhibition && (
+                    <Link href={`/exhibitions/${prevExhibition.slug}`}>
+                      <Button variant="link">Prev</Button>
+                    </Link>
+                  )}
+                  {nextExhibition && (
+                    <Link href={`/exhibitions/${nextExhibition.slug}`}>
+                      <Button variant="link">Next</Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="flex justify-start items-start gap-3 w-full mt-2">
             <motion.nav
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="hidden lg:flex justify-between items-baseline p-3 overflow-y-auto uppercase w-auto lg:w-full rounded-xs lg:p-0"
+              className="hidden lg:flex justify-between items-baseline uppercase w-auto lg:w-full"
             >
-              <Link
-                className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
-                href="/"
-              >
-                Works
+              <Link href="/">
+                <Button variant="link">Works</Button>
               </Link>
-              <Link
-                className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
-                href="/exhibitions"
-              >
-                Exhibitions
+              <Link href="/exhibitions">
+                <Button variant="link">Exhibitions</Button>
               </Link>
-              <Link
-                className="text-2xl lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-1.5"
-                href="/info"
-              >
-                Information
+              <Link href="/info">
+                <Button variant="link">Information</Button>
               </Link>
             </motion.nav>
 
-            {/* Mobile menu overlay */}
-
+            {/* Mobile Menu */}
             <AnimatePresence>
               <MenuOverlay
                 isInfoPage={isInfoPage}
@@ -154,8 +175,7 @@ export default function Header({
               />
             </AnimatePresence>
 
-            {/* InfoBox */}
-
+            {/* Info Box */}
             <AnimatePresence>
               {showInfo && infoData && (
                 <InfoBox
@@ -166,61 +186,11 @@ export default function Header({
                 />
               )}
             </AnimatePresence>
-
-            {/* Controls */}
-
-            {isWorkSlugPage && currentWork && (
-              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start ">
-                <Link href={`/?work=${currentWork.slug}`}>
-                  <Button variant="link" className="">
-                    Back to works
-                  </Button>
-                </Link>
-                {prevWork && (
-                  <Link href={`/works/${prevWork.slug}`}>
-                    <Button variant="link" className="">
-                      Prev
-                    </Button>
-                  </Link>
-                )}
-                {nextWork && (
-                  <Link href={`/works/${nextWork.slug}`}>
-                    <Button variant="link" className="">
-                      Next
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            )}
-
-            {isExhibitionSlugPage && currentExhibition && (
-              <div className="flex gap-0 lg:gap-3 w-full lg:w-auto justify-between lg:justify-start">
-                <Link href="/exhibitions">
-                  <Button variant="link" className="">
-                    Back to exhibitions
-                  </Button>
-                </Link>
-
-                {prevExhibition && (
-                  <Link href={`/exhibitions/${prevExhibition.slug}`}>
-                    <Button variant="link" className="">
-                      Prev
-                    </Button>
-                  </Link>
-                )}
-                {nextExhibition && (
-                  <Link href={`/exhibitions/${nextExhibition.slug}`}>
-                    <Button variant="link" className="">
-                      Next
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </div>
 
+      {/* Mobile Menu Toggle */}
       <Button
         variant="link"
         className="fixed bottom-3 right-3 flex lg:hidden z-40 mix-blend-difference text-white"
