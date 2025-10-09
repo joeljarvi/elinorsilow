@@ -4,6 +4,7 @@ import {
   ExhibitionWithImage,
   normalizeExhibitions,
 } from "@/app/api/admin/exhibitions/normalizeExhibitions";
+import Image from "next/image";
 
 type AcfImage = { id: number; url: string; alt?: string };
 type AcfPayload = {
@@ -25,7 +26,7 @@ type AcfPayload = {
   work_8: string;
   work_9: string;
   work_10: string;
-  [key: string]: any;
+  [key: string]: string | number | undefined;
 };
 
 type EditExhibition = {
@@ -321,10 +322,13 @@ export default function ExhibitionsPage() {
               className="p-2 border"
             />
             {files[i] && (
-              <img
+              <Image
                 src={URL.createObjectURL(files[i]!)}
                 alt={`Preview ${i + 1}`}
-                className="h-16 w-16 object-cover rounded border"
+                width={64}
+                height={64}
+                className="object-cover rounded border"
+                unoptimized
               />
             )}
           </div>
@@ -361,7 +365,6 @@ export default function ExhibitionsPage() {
             <li key={ex.id} className="border rounded p-2 flex flex-col gap-2">
               {editingId === ex.id ? (
                 <>
-                  {/* Inline edit inputs */}
                   {Object.entries(editValues[ex.id]).map(([key, value]) => {
                     if (key === "files" || key === "works") return null;
                     return (
@@ -381,12 +384,13 @@ export default function ExhibitionsPage() {
                       />
                     );
                   })}
-                  {/* File inputs for editing */}
+
                   {Array.from({ length: 10 }).map((_, i) => {
                     const existingImage = ex.acf[
                       `image_${i + 1}` as keyof typeof ex.acf
                     ] as AcfImage | undefined;
                     const newFile = editValues[ex.id].files[i];
+
                     return (
                       <div key={i} className="flex items-center gap-2">
                         <input
@@ -405,23 +409,29 @@ export default function ExhibitionsPage() {
                           className="p-1 border"
                         />
                         {newFile ? (
-                          <img
+                          <Image
                             src={URL.createObjectURL(newFile)}
                             alt={`New preview ${i + 1}`}
-                            className="h-16 w-16 object-cover rounded border"
+                            width={64}
+                            height={64}
+                            className="object-cover rounded border"
+                            unoptimized
                           />
                         ) : existingImage?.url ? (
-                          <img
+                          <Image
                             src={existingImage.url}
                             alt={
                               existingImage.alt || `Existing preview ${i + 1}`
                             }
-                            className="h-16 w-16 object-cover rounded border"
+                            width={64}
+                            height={64}
+                            className="object-cover rounded border"
                           />
                         ) : null}
                       </div>
                     );
                   })}
+
                   <div className="flex gap-2 mt-2">
                     <button
                       className="bg-green-600 text-white px-3 py-1 rounded"
@@ -441,10 +451,12 @@ export default function ExhibitionsPage() {
                 <>
                   <div className="flex items-center gap-2">
                     {ex.image_url && (
-                      <img
+                      <Image
                         src={ex.image_url}
                         alt={ex.title.rendered}
-                        className="h-20 w-20 object-cover rounded border"
+                        width={80}
+                        height={80}
+                        className="object-cover rounded border"
                       />
                     )}
                     <span className="font-medium">{ex.title.rendered}</span>
