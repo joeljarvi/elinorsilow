@@ -60,7 +60,7 @@ export type Exhibition = {
 
 export type Education = {
   acf: {
-    title: string;
+    school: string;
     start_year: string;
     end_year: string;
     city: string;

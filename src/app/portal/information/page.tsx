@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useCallback } from "react";
 
 type Education = {
@@ -30,7 +31,12 @@ export default function InformationPage() {
   const [grantForm, setGrantForm] = useState({ title: "", year: "" });
   const [bioForm, setBioForm] = useState("");
 
-  // --- SAFELY PARSE JSON ---
+  // Editing states
+  const [editingEduId, setEditingEduId] = useState<number | null>(null);
+  const [editingGrantId, setEditingGrantId] = useState<number | null>(null);
+  const [editEduValues, setEditEduValues] = useState(eduForm);
+  const [editGrantValues, setEditGrantValues] = useState(grantForm);
+
   async function safeJson(res: Response) {
     try {
       return await res.json();
@@ -38,8 +44,6 @@ export default function InformationPage() {
       return null;
     }
   }
-
-  // --- FETCH ALL ---
 
   const fetchAll = useCallback(async () => {
     const [eduRes, grantRes, bioRes] = await Promise.all([
@@ -60,6 +64,10 @@ export default function InformationPage() {
     if (bioData?.acf?.bio) setBioForm(bioData.acf.bio);
   }, []);
 
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
   // --- CREATE HANDLERS ---
   async function addEducation(e: React.FormEvent) {
     e.preventDefault();
@@ -68,12 +76,7 @@ export default function InformationPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: eduForm.school || "Education",
-        acf: {
-          school: eduForm.school,
-          start_year: eduForm.start_year,
-          end_year: eduForm.end_year,
-          city: eduForm.city,
-        },
+        acf: eduForm,
       }),
     });
     if (res.ok) {
@@ -81,10 +84,6 @@ export default function InformationPage() {
       fetchAll();
     }
   }
-
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
 
   async function addGrant(e: React.FormEvent) {
     e.preventDefault();
@@ -131,8 +130,33 @@ export default function InformationPage() {
     fetchAll();
   }
 
+  // --- EDIT HANDLERS ---
+  async function saveEducation(id: number) {
+    const res = await fetch("/api/admin/information/education", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, acf: editEduValues }),
+    });
+    if (res.ok) {
+      setEditingEduId(null);
+      fetchAll();
+    }
+  }
+
+  async function saveGrant(id: number) {
+    const res = await fetch("/api/admin/information/grant", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, acf: editGrantValues }),
+    });
+    if (res.ok) {
+      setEditingGrantId(null);
+      fetchAll();
+    }
+  }
+
   return (
-    <div className=" font-haas text-base space-y-12 z-0">
+    <div className="font-haas text-base space-y-12 z-0">
       {/* BIOGRAPHY */}
       <section>
         <h2 className="uppercase mb-2">Biography</h2>
@@ -192,22 +216,92 @@ export default function InformationPage() {
             </button>
           </form>
 
-          <ul className=" flex flex-col items-start justify-start w-full lg:w-1/2">
+          <ul className="flex flex-col items-start justify-start w-full lg:w-1/2">
             {educations.map((edu) => (
               <li
                 key={edu.id}
-                className="flex justify-between border p-2 rounded w-full"
+                className="flex justify-between border p-2 rounded w-full gap-2"
               >
-                <span>
-                  {edu.acf.school}, {edu.acf.start_year} - {edu.acf.end_year},{" "}
-                  {edu.acf.city}
-                </span>
-                <button
-                  onClick={() => deleteEducation(edu.id)}
-                  className="bg-red-600 text-white px-2 rounded"
-                >
-                  Delete
-                </button>
+                {editingEduId === edu.id ? (
+                  <>
+                    <input
+                      value={editEduValues.school}
+                      onChange={(e) =>
+                        setEditEduValues({
+                          ...editEduValues,
+                          school: e.target.value,
+                        })
+                      }
+                      className="border p-1 w-1/4"
+                    />
+                    <input
+                      value={editEduValues.start_year}
+                      onChange={(e) =>
+                        setEditEduValues({
+                          ...editEduValues,
+                          start_year: e.target.value,
+                        })
+                      }
+                      className="border p-1 w-1/4"
+                    />
+                    <input
+                      value={editEduValues.end_year}
+                      onChange={(e) =>
+                        setEditEduValues({
+                          ...editEduValues,
+                          end_year: e.target.value,
+                        })
+                      }
+                      className="border p-1 w-1/4"
+                    />
+                    <input
+                      value={editEduValues.city}
+                      onChange={(e) =>
+                        setEditEduValues({
+                          ...editEduValues,
+                          city: e.target.value,
+                        })
+                      }
+                      className="border p-1 w-1/4"
+                    />
+                    <button
+                      onClick={() => saveEducation(edu.id)}
+                      className="bg-green-600 text-white px-2 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingEduId(null)}
+                      className="bg-gray-400 text-white px-2 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {edu.acf.school}, {edu.acf.start_year} -{" "}
+                      {edu.acf.end_year}, {edu.acf.city}
+                    </span>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setEditingEduId(edu.id);
+                          setEditEduValues({ ...edu.acf });
+                        }}
+                        className="bg-yellow-500 text-white px-2 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteEducation(edu.id)}
+                        className="bg-red-600 text-white px-2 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>
@@ -246,17 +340,67 @@ export default function InformationPage() {
             {grants.map((grant) => (
               <li
                 key={grant.id}
-                className="flex justify-between border p-2 rounded"
+                className="flex justify-between border p-2 rounded gap-2"
               >
-                <span>
-                  {grant.acf.title} ({grant.acf.year})
-                </span>
-                <button
-                  onClick={() => deleteGrant(grant.id)}
-                  className="bg-red-600 text-white px-2 rounded"
-                >
-                  Delete
-                </button>
+                {editingGrantId === grant.id ? (
+                  <>
+                    <input
+                      value={editGrantValues.title}
+                      onChange={(e) =>
+                        setEditGrantValues({
+                          ...editGrantValues,
+                          title: e.target.value,
+                        })
+                      }
+                      className="border p-1 w-1/2"
+                    />
+                    <input
+                      value={editGrantValues.year}
+                      onChange={(e) =>
+                        setEditGrantValues({
+                          ...editGrantValues,
+                          year: e.target.value,
+                        })
+                      }
+                      className="border p-1 w-1/4"
+                    />
+                    <button
+                      onClick={() => saveGrant(grant.id)}
+                      className="bg-green-600 text-white px-2 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingGrantId(null)}
+                      className="bg-gray-400 text-white px-2 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {grant.acf.title} ({grant.acf.year})
+                    </span>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setEditingGrantId(grant.id);
+                          setEditGrantValues({ ...grant.acf });
+                        }}
+                        className="bg-yellow-500 text-white px-2 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteGrant(grant.id)}
+                        className="bg-red-600 text-white px-2 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>

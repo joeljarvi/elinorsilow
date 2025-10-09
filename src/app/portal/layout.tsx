@@ -4,13 +4,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-const router = useRouter();
-
 export default function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   return (
     <>
       <div className="fixed top-0 left-0 p-3 z-40 w-full bg-black  text-white">
