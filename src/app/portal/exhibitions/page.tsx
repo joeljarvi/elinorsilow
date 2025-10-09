@@ -5,6 +5,7 @@ import {
   normalizeExhibitions,
 } from "@/app/api/admin/exhibitions/normalizeExhibitions";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type AcfImage = { id: number; url: string; alt?: string };
 type AcfPayload = {
@@ -43,6 +44,7 @@ type EditExhibition = {
 };
 
 export default function ExhibitionsPage() {
+  const router = useRouter();
   const [exhibitions, setExhibitions] = useState<ExhibitionWithImage[]>([]);
   const [loadingExhibitions, setLoadingExhibitions] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -245,17 +247,25 @@ export default function ExhibitionsPage() {
     }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm("Delete this exhibition?")) return;
-    const res = await fetch("/api/admin/exhibitions", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    if (res.ok) {
-      await loadExhibitions();
-    } else alert("Delete failed");
-  }
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await fetch("/api/admin/exhibitions", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Delete failed:", err);
+        return;
+      }
+
+      router.refresh(); // funkar här om du är i en client component
+    } catch (err) {
+      console.error("Error deleting exhibition:", err);
+    }
+  };
 
   return (
     <div className="p-3 font-haas text-base">

@@ -49,7 +49,7 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
   return (
     <>
       <div
-        className={`fixed left-3 w-full pb-3.5 flex flex-col gap-0  lg:gap-3 font-hershey text-2xl  lg:text-xl px-1.5 py-0.5 lg:px-3 lg:py-3 max-w-3/4 ${boxPosition}`}
+        className={`fixed left-0 w-full flex flex-col gap-0  lg:gap-3 font-hershey text-2xl  lg:text-xl  max-w-3/4 p-3 ${boxPosition}`}
       >
         {/* Title top half */}
         <div className="flex gap-1.5">
@@ -70,7 +70,7 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
           )}
         </div>
         {!min && !isExhibitionsPage && (
-          <div className="flex flex-col lg:flex-row gap-0 lg:gap-3 lg:w-full lg:pb-1.5">
+          <div className="flex flex-col lg:flex-row gap-0 lg:gap-3 lg:w-full ">
             {isWork(data) ? (
               <>
                 {data.acf.year && (
