@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
+const router = useRouter();
 
 export default function PortalLayout({
   children,
@@ -20,7 +24,16 @@ export default function PortalLayout({
             <Link href="/portal/exhibitions">Add Exhibitions</Link>
             <Link href="/portal/information">Add Information</Link>
 
-            <Link href="/">Back to home</Link>
+            <Button
+              variant="link"
+              onClick={() => {
+                router.push("/"); // navigate home
+                router.refresh(); // refresh data on that page
+              }}
+              className="underline"
+            >
+              Back to home
+            </Button>
           </nav>
         </div>
       </div>
