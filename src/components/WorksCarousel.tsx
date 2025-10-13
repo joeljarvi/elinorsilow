@@ -3,7 +3,7 @@
 import { Carousel } from "./Carousel";
 import { Work } from "../../lib/wordpress";
 import { useWorks } from "@/context/WorksContext";
-import { motion, MotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Loader } from "./Loader";
