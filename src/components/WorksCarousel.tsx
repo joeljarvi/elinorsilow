@@ -3,7 +3,7 @@
 import { Carousel } from "./Carousel";
 import { Work } from "../../lib/wordpress";
 import { useWorks } from "@/context/WorksContext";
-import { motion, useTransform, MotionValue } from "framer-motion";
+import { motion, MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Loader } from "./Loader";
@@ -21,24 +21,18 @@ function WorkCarouselItem({
   work,
   index,
   totalWorks,
-  scrollYProgress,
   onSelectWork,
-}: Omit<WorkCarouselItemProps, "onWorkChange">) {
-  const start = index / totalWorks;
-  const end = (index + 1) / totalWorks;
-
-  // 👇 dynamiska värden beroende på device
-
+}: Omit<WorkCarouselItemProps, "onWorkChange" | "scrollYProgress">) {
   const img = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "";
 
   return (
-    <motion.div className="w-full h-screen flex items-center justify-center p-3 lg:p-64 rounded-full ">
+    <motion.div className="w-full h-screen flex items-center justify-center p-3 lg:p-64 rounded-full">
       <Link
         href={`/works/${work.slug}`}
         onClick={() => onSelectWork(index)}
         className="w-full h-full flex flex-col items-center justify-center"
       >
-        <div className="relative w-full max-w-7xl aspect-video  bg-black ">
+        <div className="relative w-full max-w-7xl aspect-video bg-black">
           {img && (
             <Image
               src={img}
@@ -82,7 +76,6 @@ export function WorksCarousel({
                 work={work}
                 index={i}
                 totalWorks={filteredWorks.length}
-                scrollYProgress={scrollYProgress}
                 onSelectWork={onSelectWork}
               />
             )}

@@ -250,6 +250,74 @@ export default function InformationPage() {
         </form>
       </section>
 
+      {/* ADD EXHIBITION */}
+      <section className="w-full">
+        <h2 className="uppercase mb-2">Add Exhibition</h2>
+        <form
+          onSubmit={addExhibitionList}
+          className="flex flex-col gap-2 w-full lg:w-1/2"
+        >
+          <input
+            placeholder="Title"
+            value={exhibitionsForm.title}
+            onChange={(e) =>
+              setExhibitionsForm({ ...exhibitionsForm, title: e.target.value })
+            }
+            className="border p-2"
+          />
+          <input
+            placeholder="Year"
+            value={exhibitionsForm.year}
+            onChange={(e) =>
+              setExhibitionsForm({ ...exhibitionsForm, year: e.target.value })
+            }
+            className="border p-2"
+          />
+          <input
+            placeholder="Type"
+            value={exhibitionsForm.exhibition_type}
+            onChange={(e) =>
+              setExhibitionsForm({
+                ...exhibitionsForm,
+                exhibition_type: e.target.value,
+              })
+            }
+            className="border p-2"
+          />
+          <input
+            placeholder="Venue"
+            value={exhibitionsForm.venue}
+            onChange={(e) =>
+              setExhibitionsForm({ ...exhibitionsForm, venue: e.target.value })
+            }
+            className="border p-2"
+          />
+          <input
+            placeholder="City"
+            value={exhibitionsForm.city}
+            onChange={(e) =>
+              setExhibitionsForm({ ...exhibitionsForm, city: e.target.value })
+            }
+            className="border p-2"
+          />
+          <textarea
+            placeholder="Description"
+            value={exhibitionsForm.description}
+            onChange={(e) =>
+              setExhibitionsForm({
+                ...exhibitionsForm,
+                description: e.target.value,
+              })
+            }
+            className="border p-2"
+            rows={3}
+          />
+          <button className="bg-blue-600 text-white py-1 rounded">
+            Add Exhibition
+          </button>
+        </form>
+      </section>
+
       {/* EXHIBITION LIST */}
       <ul className="flex flex-col w-full lg:w-1/2">
         {exhibitionList.map((ex) => (

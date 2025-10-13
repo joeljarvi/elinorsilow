@@ -23,18 +23,16 @@ export async function GET() {
     const data = await res.json();
     const bio = Array.isArray(data) ? data[0] : data;
 
-    // Keep ID from WordPress, fallback if missing
     return NextResponse.json({
       ...bio,
       id: bio?.id ?? 0,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
