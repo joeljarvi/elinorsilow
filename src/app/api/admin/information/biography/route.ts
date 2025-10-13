@@ -35,8 +35,6 @@ export async function GET() {
     );
   }
 }
-
-// --- POST ---
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
@@ -52,11 +50,9 @@ export async function POST(req: Request) {
 
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -79,11 +75,9 @@ export async function PUT(req: Request) {
 
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -102,10 +96,8 @@ export async function DELETE(req: Request) {
 
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

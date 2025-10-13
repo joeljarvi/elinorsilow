@@ -20,7 +20,6 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
   const pathname = usePathname();
   const { filteredExhibitions } = useExhibitions();
 
-  const isWorksPage = pathname === "/";
   const isWorkSlugPage =
     pathname.startsWith("/works/") && pathname !== "/works";
   const isExhibitionsPage = pathname === "/exhibitions";

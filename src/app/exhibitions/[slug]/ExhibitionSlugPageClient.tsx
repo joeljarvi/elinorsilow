@@ -1,14 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import {
-  ExhibitionsProvider,
-  useExhibitions,
-} from "@/context/ExhibitionsContext";
+import { useExhibitions } from "@/context/ExhibitionsContext";
 import Header from "@/components/Header";
 import { useParams } from "next/navigation";
 import { Loader } from "@/components/Loader";
-import { useWorks, WorksProvider } from "@/context/WorksContext";
+import { useWorks } from "@/context/WorksContext";
 import Link from "next/link";
 
 import Lenis from "lenis";

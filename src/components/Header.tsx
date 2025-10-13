@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { InfoBox } from "./InfoBox";
-import Image from "next/image";
+
 import { Work, Exhibition } from "../../lib/wordpress";
 
 function MenuOverlay({

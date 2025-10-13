@@ -8,6 +8,15 @@ import {
   Biography,
 } from "../../../../lib/wordpress";
 
+interface ExhibitionForm {
+  title: string;
+  year: string;
+  exhibition_type: string;
+  venue: string;
+  city: string;
+  description: string;
+}
+
 export default function InformationPage() {
   const [educations, setEducations] = useState<Education[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
@@ -22,7 +31,7 @@ export default function InformationPage() {
   });
   const [grantForm, setGrantForm] = useState({ title: "", year: "" });
   const [bioForm, setBioForm] = useState("");
-  const [exhibitionsForm, setExhibitionsForm] = useState({
+  const [exhibitionsForm, setExhibitionsForm] = useState<ExhibitionForm>({
     title: "",
     year: "",
     exhibition_type: "",
@@ -34,14 +43,14 @@ export default function InformationPage() {
   // Editing states
   const [editingEduId, setEditingEduId] = useState<number | null>(null);
   const [editingGrantId, setEditingGrantId] = useState<number | null>(null);
-  const [editingExhibitionId, setEditingExhibitionId] = useState<number | null>(
-    null
-  );
 
   const [editEduValues, setEditEduValues] = useState(eduForm);
   const [editGrantValues, setEditGrantValues] = useState(grantForm);
+  const [editingExhibitionId, setEditingExhibitionId] = useState<number | null>(
+    null
+  );
   const [editExhibitionValues, setEditExhibitionValues] =
-    useState(exhibitionsForm);
+    useState<ExhibitionForm>(exhibitionsForm);
 
   async function safeJson(res: Response) {
     try {
@@ -190,6 +199,18 @@ export default function InformationPage() {
     }
   }
 
+  async function saveGrant(id: number) {
+    const res = await fetch("/api/admin/information/grant", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, acf: editGrantValues }),
+    });
+    if (res.ok) {
+      setEditingGrantId(null);
+      fetchAll();
+    }
+  }
+
   async function saveExhibitionList(id: number) {
     const res = await fetch("/api/admin/information/exhibition_list", {
       method: "PUT",
@@ -204,20 +225,9 @@ export default function InformationPage() {
         description: editExhibitionValues.description,
       }),
     });
+
     if (res.ok) {
       setEditingExhibitionId(null);
-      fetchAll();
-    }
-  }
-
-  async function saveGrant(id: number) {
-    const res = await fetch("/api/admin/information/grant", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, acf: editGrantValues }),
-    });
-    if (res.ok) {
-      setEditingGrantId(null);
       fetchAll();
     }
   }
@@ -241,90 +251,108 @@ export default function InformationPage() {
       </section>
 
       {/* EXHIBITION LIST */}
-      <section className="w-full">
-        <h2 className="uppercase mb-2">Exhibitions</h2>
-        <div className="flex flex-col lg:flex-row gap-3 w-full">
-          <form
-            onSubmit={addExhibitionList}
-            className="flex flex-col gap-2 w-full lg:w-1/2"
+      <ul className="flex flex-col w-full lg:w-1/2">
+        {exhibitionList.map((ex) => (
+          <li
+            key={ex.id}
+            className="flex flex-col md:flex-row justify-between border p-2 rounded gap-2"
           >
-            <input
-              placeholder="Title"
-              value={exhibitionsForm.title}
-              onChange={(e) =>
-                setExhibitionsForm({
-                  ...exhibitionsForm,
-                  title: e.target.value,
-                })
-              }
-              className="border p-2"
-            />
-            <input
-              placeholder="Year"
-              value={exhibitionsForm.year}
-              onChange={(e) =>
-                setExhibitionsForm({ ...exhibitionsForm, year: e.target.value })
-              }
-              className="border p-2"
-            />
-            <input
-              placeholder="Type"
-              value={exhibitionsForm.exhibition_type}
-              onChange={(e) =>
-                setExhibitionsForm({
-                  ...exhibitionsForm,
-                  exhibition_type: e.target.value,
-                })
-              }
-              className="border p-2"
-            />
-            <input
-              placeholder="Venue"
-              value={exhibitionsForm.venue}
-              onChange={(e) =>
-                setExhibitionsForm({
-                  ...exhibitionsForm,
-                  venue: e.target.value,
-                })
-              }
-              className="border p-2"
-            />
-            <input
-              placeholder="City"
-              value={exhibitionsForm.city}
-              onChange={(e) =>
-                setExhibitionsForm({ ...exhibitionsForm, city: e.target.value })
-              }
-              className="border p-2"
-            />
-            <textarea
-              placeholder="Description"
-              value={exhibitionsForm.description}
-              onChange={(e) =>
-                setExhibitionsForm({
-                  ...exhibitionsForm,
-                  description: e.target.value,
-                })
-              }
-              className="border p-2"
-              rows={3}
-            />
-            <button className="bg-blue-600 text-white py-1 rounded">
-              Add Exhibition
-            </button>
-          </form>
-
-          <ul className="flex flex-col w-full lg:w-1/2">
-            {exhibitionList.map((ex) => (
-              <li
-                key={ex.id}
-                className="flex justify-between border p-2 rounded gap-2"
-              >
+            {editingExhibitionId === ex.id ? (
+              <>
+                <input
+                  value={editExhibitionValues.title}
+                  onChange={(e) =>
+                    setEditExhibitionValues({
+                      ...editExhibitionValues,
+                      title: e.target.value,
+                    })
+                  }
+                  className="border p-1 w-full md:w-1/6"
+                />
+                <input
+                  value={editExhibitionValues.year}
+                  onChange={(e) =>
+                    setEditExhibitionValues({
+                      ...editExhibitionValues,
+                      year: e.target.value,
+                    })
+                  }
+                  className="border p-1 w-full md:w-1/6"
+                />
+                <input
+                  value={editExhibitionValues.exhibition_type}
+                  onChange={(e) =>
+                    setEditExhibitionValues({
+                      ...editExhibitionValues,
+                      exhibition_type: e.target.value,
+                    })
+                  }
+                  className="border p-1 w-full md:w-1/6"
+                />
+                <input
+                  value={editExhibitionValues.venue}
+                  onChange={(e) =>
+                    setEditExhibitionValues({
+                      ...editExhibitionValues,
+                      venue: e.target.value,
+                    })
+                  }
+                  className="border p-1 w-full md:w-1/6"
+                />
+                <input
+                  value={editExhibitionValues.city}
+                  onChange={(e) =>
+                    setEditExhibitionValues({
+                      ...editExhibitionValues,
+                      city: e.target.value,
+                    })
+                  }
+                  className="border p-1 w-full md:w-1/6"
+                />
+                <textarea
+                  value={editExhibitionValues.description}
+                  onChange={(e) =>
+                    setEditExhibitionValues({
+                      ...editExhibitionValues,
+                      description: e.target.value,
+                    })
+                  }
+                  className="border p-1 w-full md:w-1/6"
+                  rows={2}
+                />
+                <div className="flex gap-1 mt-2 md:mt-0">
+                  <button
+                    onClick={() => saveExhibitionList(ex.id)}
+                    className="bg-green-600 text-white px-2 rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingExhibitionId(null)}
+                    className="bg-gray-400 text-white px-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
                 <span>
                   <strong>{ex.title.rendered}</strong> ({ex.acf.year}) —{" "}
                   {ex.acf.city}, {ex.acf.venue}
                 </span>
                 <div className="flex gap-1">
+                  <button
+                    onClick={() => {
+                      setEditingExhibitionId(ex.id);
+                      setEditExhibitionValues({
+                        ...(ex.acf as ExhibitionForm),
+                      });
+                    }}
+                    className="bg-yellow-500 text-white px-2 rounded"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => deleteExhibitionList(ex.id)}
                     className="bg-red-600 text-white px-2 rounded"
@@ -332,11 +360,11 @@ export default function InformationPage() {
                     Delete
                   </button>
                 </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
 
       {/* EDUCATION */}
       <section className="w-full">

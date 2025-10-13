@@ -8,20 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Loader } from "./Loader";
 import LenisWrapper from "./LenisWrapper";
-import { useState, useEffect } from "react";
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  return isMobile;
-}
 
 interface WorkCarouselItemProps {
   work: Work;
@@ -38,16 +24,10 @@ function WorkCarouselItem({
   scrollYProgress,
   onSelectWork,
 }: Omit<WorkCarouselItemProps, "onWorkChange">) {
-  const isMobile = useIsMobile(); // 👈 kolla om mobil
   const start = index / totalWorks;
   const end = (index + 1) / totalWorks;
 
   // 👇 dynamiska värden beroende på device
-  const scale = useTransform(
-    scrollYProgress,
-    [start, (start + end) / 2, end],
-    isMobile ? [0.95, 1, 0.95] : [0.85, 1, 0.85]
-  );
 
   const img = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "";
 
