@@ -28,7 +28,6 @@ function InfoPageContent() {
             </div>
           )}
         </div>
-
         <div className="flex flex-col p-3 w-full">
           <h2 className="mb-3 uppercase">Exhibitions</h2>
           <ul className="w-full flex flex-col gap-3">
@@ -63,8 +62,7 @@ function InfoPageContent() {
             })}
           </ul>
         </div>
-
-        {/* Grants */}
+        s{/* Grants */}
         <div className=" flex flex-col p-3 w-full">
           <h2 className="mb-2 uppercase">Grants</h2>
           <ul className="w-full">
@@ -76,7 +74,6 @@ function InfoPageContent() {
             ))}
           </ul>
         </div>
-
         {/* Education */}
         <div className="w-full flex flex-col p-3 font-hershey text-2xl lg:text-xl mb-12">
           <h2 className="mb-3 uppercase">Education</h2>
