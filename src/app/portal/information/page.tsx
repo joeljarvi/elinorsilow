@@ -1,26 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-
-type Education = {
-  id: number;
-  acf: { school: string; start_year: string; end_year: string; city: string };
-};
-
-type Grant = {
-  id: number;
-  acf: { title: string; year: string };
-};
-
-type Biography = {
-  id: string;
-  acf: { bio: string };
-};
+import {
+  Exhibition_list,
+  Education,
+  Grant,
+  Biography,
+} from "../../../../lib/wordpress";
 
 export default function InformationPage() {
   const [educations, setEducations] = useState<Education[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [biography, setBiography] = useState<Biography | null>(null);
+  const [exhibitionList, setExhibitionList] = useState<Exhibition_list[]>([]);
 
   const [eduForm, setEduForm] = useState({
     school: "",
@@ -30,12 +22,26 @@ export default function InformationPage() {
   });
   const [grantForm, setGrantForm] = useState({ title: "", year: "" });
   const [bioForm, setBioForm] = useState("");
+  const [exhibitionsForm, setExhibitionsForm] = useState({
+    title: "",
+    year: "",
+    exhibition_type: "",
+    venue: "",
+    city: "",
+    description: "",
+  });
 
   // Editing states
   const [editingEduId, setEditingEduId] = useState<number | null>(null);
   const [editingGrantId, setEditingGrantId] = useState<number | null>(null);
+  const [editingExhibitionId, setEditingExhibitionId] = useState<number | null>(
+    null
+  );
+
   const [editEduValues, setEditEduValues] = useState(eduForm);
   const [editGrantValues, setEditGrantValues] = useState(grantForm);
+  const [editExhibitionValues, setEditExhibitionValues] =
+    useState(exhibitionsForm);
 
   async function safeJson(res: Response) {
     try {
@@ -46,20 +52,24 @@ export default function InformationPage() {
   }
 
   const fetchAll = useCallback(async () => {
-    const [eduRes, grantRes, bioRes] = await Promise.all([
+    const [eduRes, grantRes, bioRes, exhibitionRes] = await Promise.all([
       fetch("/api/admin/information/education"),
       fetch("/api/admin/information/grant"),
       fetch("/api/admin/information/biography"),
+      fetch("/api/admin/information/exhibition_list"),
     ]);
 
-    const [eduData, grantData, bioData] = await Promise.all([
+    const [eduData, grantData, bioData, exhibitionData] = await Promise.all([
       safeJson(eduRes) || [],
       safeJson(grantRes) || [],
+
       safeJson(bioRes) || null,
+      safeJson(exhibitionRes) || [],
     ]);
 
     setEducations(Array.isArray(eduData) ? eduData : []);
     setGrants(Array.isArray(grantData) ? grantData : []);
+    setExhibitionList(Array.isArray(exhibitionData) ? exhibitionData : []);
     setBiography(bioData);
     if (bioData?.acf?.bio) setBioForm(bioData.acf.bio);
   }, []);
@@ -98,6 +108,33 @@ export default function InformationPage() {
     }
   }
 
+  async function addExhibitionList(e: React.FormEvent) {
+    e.preventDefault();
+    const res = await fetch("/api/admin/information/exhibition_list", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: exhibitionsForm.title,
+        year: exhibitionsForm.year,
+        exhibition_type: exhibitionsForm.exhibition_type,
+        venue: exhibitionsForm.venue,
+        city: exhibitionsForm.city,
+        description: exhibitionsForm.description,
+      }),
+    });
+    if (res.ok) {
+      setExhibitionsForm({
+        title: "",
+        year: "",
+        exhibition_type: "",
+        venue: "",
+        city: "",
+        description: "",
+      });
+      fetchAll();
+    }
+  }
+
   async function saveBiography(e: React.FormEvent) {
     e.preventDefault();
     if (!biography) return;
@@ -113,6 +150,16 @@ export default function InformationPage() {
   async function deleteEducation(id: number) {
     if (!confirm("Delete this education?")) return;
     await fetch("/api/admin/information/education", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    fetchAll();
+  }
+
+  async function deleteExhibitionList(id: number) {
+    if (!confirm("Delete this Exhibition?")) return;
+    await fetch("/api/admin/information/exhibition_list", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -139,6 +186,26 @@ export default function InformationPage() {
     });
     if (res.ok) {
       setEditingEduId(null);
+      fetchAll();
+    }
+  }
+
+  async function saveExhibitionList(id: number) {
+    const res = await fetch("/api/admin/information/exhibition_list", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id,
+        title: editExhibitionValues.title,
+        year: editExhibitionValues.year,
+        exhibition_type: editExhibitionValues.exhibition_type,
+        venue: editExhibitionValues.venue,
+        city: editExhibitionValues.city,
+        description: editExhibitionValues.description,
+      }),
+    });
+    if (res.ok) {
+      setEditingExhibitionId(null);
       fetchAll();
     }
   }
@@ -171,6 +238,104 @@ export default function InformationPage() {
             Save Biography
           </button>
         </form>
+      </section>
+
+      {/* EXHIBITION LIST */}
+      <section className="w-full">
+        <h2 className="uppercase mb-2">Exhibitions</h2>
+        <div className="flex flex-col lg:flex-row gap-3 w-full">
+          <form
+            onSubmit={addExhibitionList}
+            className="flex flex-col gap-2 w-full lg:w-1/2"
+          >
+            <input
+              placeholder="Title"
+              value={exhibitionsForm.title}
+              onChange={(e) =>
+                setExhibitionsForm({
+                  ...exhibitionsForm,
+                  title: e.target.value,
+                })
+              }
+              className="border p-2"
+            />
+            <input
+              placeholder="Year"
+              value={exhibitionsForm.year}
+              onChange={(e) =>
+                setExhibitionsForm({ ...exhibitionsForm, year: e.target.value })
+              }
+              className="border p-2"
+            />
+            <input
+              placeholder="Type"
+              value={exhibitionsForm.exhibition_type}
+              onChange={(e) =>
+                setExhibitionsForm({
+                  ...exhibitionsForm,
+                  exhibition_type: e.target.value,
+                })
+              }
+              className="border p-2"
+            />
+            <input
+              placeholder="Venue"
+              value={exhibitionsForm.venue}
+              onChange={(e) =>
+                setExhibitionsForm({
+                  ...exhibitionsForm,
+                  venue: e.target.value,
+                })
+              }
+              className="border p-2"
+            />
+            <input
+              placeholder="City"
+              value={exhibitionsForm.city}
+              onChange={(e) =>
+                setExhibitionsForm({ ...exhibitionsForm, city: e.target.value })
+              }
+              className="border p-2"
+            />
+            <textarea
+              placeholder="Description"
+              value={exhibitionsForm.description}
+              onChange={(e) =>
+                setExhibitionsForm({
+                  ...exhibitionsForm,
+                  description: e.target.value,
+                })
+              }
+              className="border p-2"
+              rows={3}
+            />
+            <button className="bg-blue-600 text-white py-1 rounded">
+              Add Exhibition
+            </button>
+          </form>
+
+          <ul className="flex flex-col w-full lg:w-1/2">
+            {exhibitionList.map((ex) => (
+              <li
+                key={ex.id}
+                className="flex justify-between border p-2 rounded gap-2"
+              >
+                <span>
+                  <strong>{ex.title.rendered}</strong> ({ex.acf.year}) —{" "}
+                  {ex.acf.city}, {ex.acf.venue}
+                </span>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => deleteExhibitionList(ex.id)}
+                    className="bg-red-600 text-white px-2 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* EDUCATION */}

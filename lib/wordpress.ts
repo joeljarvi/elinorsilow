@@ -59,6 +59,9 @@ export type Exhibition = {
 };
 
 export type Education = {
+  id: number;
+  slug: string;
+  title?: { rendered: string };
   acf: {
     school: string;
     start_year: string;
@@ -68,6 +71,9 @@ export type Education = {
 };
 
 export type Grant = {
+  id: number;
+  slug: string;
+  title?: { rendered: string };
   acf: {
     title: string;
     year: string;
@@ -75,8 +81,25 @@ export type Grant = {
 };
 
 export type Biography = {
+  id: number;
+  slug: string;
+  title?: { rendered: string };
   acf: {
     bio: string;
+  };
+};
+
+export type Exhibition_list = {
+  id: number;
+  slug: string;
+  title: { rendered: string };
+  date: string;
+  acf: {
+    year: string;
+    exhibition_type: string;
+    venue: string;
+    city: string;
+    description?: string;
   };
 };
 
@@ -155,17 +178,80 @@ export async function getCachedWorks(): Promise<Work[]> {
 }
 
 export async function getAllEducations(): Promise<Education[]> {
-  const res = await fetch(`${API_URL}/education?_embed&acf_format=standard`);
-  return await res.json();
+  const res = await fetch(`${API_URL}/education?_embed&acf_format=standard`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    console.error("Failed to fetch educations:", res.status, res.statusText);
+    return [];
+  }
+
+  const data = await res.json();
+  return Array.isArray(data)
+    ? data.map((item, i) => ({
+        ...item,
+        id: item.id ?? i, // ensure an ID
+      }))
+    : [];
 }
 
 export async function getAllGrants(): Promise<Grant[]> {
-  const res = await fetch(`${API_URL}/grant?_embed&acf_format=standard`);
-  return await res.json();
+  const res = await fetch(`${API_URL}/grant?_embed&acf_format=standard`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    console.error("Failed to fetch grants:", res.status, res.statusText);
+    return [];
+  }
+
+  const data = await res.json();
+  return Array.isArray(data)
+    ? data.map((item, i) => ({
+        ...item,
+        id: item.id ?? i,
+      }))
+    : [];
 }
 
 export async function getBiography(): Promise<Biography | null> {
-  const res = await fetch(`${API_URL}/biography?_embed&acf_format=standard`);
+  const res = await fetch(`${API_URL}/biography?_embed&acf_format=standard`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    console.error("Failed to fetch biography:", res.status, res.statusText);
+    return null;
+  }
+
   const data = await res.json();
-  return data.length ? data[0] : null;
+  if (!Array.isArray(data) || data.length === 0) return null;
+
+  const item = data[0];
+  return { ...item, id: item.id ?? 0 };
+}
+
+export async function getExhibitionList(): Promise<Exhibition_list[]> {
+  const res = await fetch(
+    `${API_URL}/exhibition_list?_embed&acf_format=standard&per_page=100`,
+    { next: { revalidate: 60 } }
+  );
+
+  if (!res.ok) {
+    console.error(
+      "Failed to fetch exhibition list:",
+      res.status,
+      res.statusText
+    );
+    return [];
+  }
+
+  const data = await res.json();
+  return Array.isArray(data)
+    ? data.map((item, i) => ({
+        ...item,
+        id: item.id ?? i,
+      }))
+    : [];
 }

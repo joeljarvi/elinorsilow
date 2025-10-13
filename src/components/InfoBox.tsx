@@ -41,15 +41,10 @@ export function InfoBox({ data, showInfo, min, setMin }: InfoBoxProps) {
         )
       : null;
 
-  const boxPosition =
-    isWorksPage || isExhibitionsPage
-      ? "bottom-0 top-auto lg:top-1/2"
-      : "bottom-0";
-
   return (
     <>
       <div
-        className={`fixed left-0 w-full flex flex-col gap-0  lg:gap-3 font-hershey text-2xl  lg:text-xl  max-w-3/4 p-3 ${boxPosition}`}
+        className={`z-60  fixed left-0 bottom-0 w-full flex flex-col gap-0  lg:gap-3 font-hershey text-2xl  lg:text-xl  max-w-3/4 p-3 `}
       >
         {/* Title top half */}
         <div className="flex gap-1.5">

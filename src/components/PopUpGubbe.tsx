@@ -26,7 +26,7 @@ export default function PopUpGubbe() {
       {visible && (
         <motion.div
           className="font-walkingOCR fixed bottom-3 left-3 lg:right-3 lg:left-auto
-           z-50 flex items-start gap-1.5 max-w-3/4"
+           z-50 flex items-start gap-1.5 max-w-3/4 lg:max-w-lg"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
@@ -43,7 +43,7 @@ export default function PopUpGubbe() {
               <p className="">
                 Interested in making business with Elinor?{" "}
                 <a
-                  href="/contact"
+                  href="mailto:elinor.silow@gmail.com"
                   className="border-b-[0.025rem] border-b-foreground pb-1"
                 >
                   Send her a message!

@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { InfoBox } from "./InfoBox";
+import Image from "next/image";
 import { Work, Exhibition } from "../../lib/wordpress";
 
 function MenuOverlay({
@@ -18,6 +19,7 @@ function MenuOverlay({
   isInfoPage: boolean;
 }) {
   if (!open) return null;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -28,6 +30,13 @@ function MenuOverlay({
         isWorkSlugPage ? "h-full" : isInfoPage ? "h-full" : "h-full"
       } right-0 top-0 z-50 grid grid-rows-4 p-3 overflow-y-auto uppercase text-white w-auto font-hershey text-2xl text-right`}
     >
+      <a
+        href="mailto:elinor.silow@gmail.com"
+        className="row-start-1 text-2xl lg:text-xl"
+      >
+        Contact
+      </a>
+
       <Link className="row-start-2 text-2xl lg:text-xl" href="/info">
         Information
       </Link>
@@ -164,9 +173,11 @@ export default function Header({
               <Link href="/info">
                 <Button variant="link">Information</Button>
               </Link>
+              <Link href="/info">
+                <Button variant="link">Contact</Button>
+              </Link>
             </motion.nav>
 
-            {/* Mobile Menu */}
             <AnimatePresence>
               <MenuOverlay
                 isInfoPage={isInfoPage}

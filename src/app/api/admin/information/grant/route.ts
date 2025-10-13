@@ -7,69 +7,97 @@ const authHeader = `Basic ${Buffer.from(
 
 // --- GET ---
 export async function GET() {
-  const res = await fetch(`${API_URL}/grant?per_page=100`, {
-    headers: { Authorization: authHeader },
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`${API_URL}/grant?per_page=100`, {
+      headers: { Authorization: authHeader },
+      cache: "no-store",
+    });
 
-  const data = await res.json();
+    if (!res.ok)
+      return NextResponse.json(
+        { error: `Failed to fetch grants: ${res.statusText}` },
+        { status: res.status }
+      );
 
-  const withIds = Array.isArray(data)
-    ? data.map((item, i) => ({ ...item, id: item.id ?? i }))
-    : [];
-
-  return NextResponse.json(withIds);
+    const data = await res.json();
+    return NextResponse.json(Array.isArray(data) ? data : []);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
 
 // --- POST ---
 export async function POST(req: Request) {
-  const payload = await req.json();
+  try {
+    const body = await req.json();
+    const res = await fetch(`${API_URL}/grant`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify(body),
+    });
 
-  const res = await fetch(`${API_URL}/grant`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authHeader,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await res.json();
-  return NextResponse.json({ ...data, id: data.id }, { status: res.status });
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
 
 // --- PUT ---
 export async function PUT(req: Request) {
-  const body = await req.json();
-  const { id, ...payload } = body;
+  try {
+    const body = await req.json();
+    const { id, ...payload } = body;
 
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/grant/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authHeader,
-    },
-    body: JSON.stringify(payload),
-  });
+    const res = await fetch(`${API_URL}/grant/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const data = await res.json();
-  return NextResponse.json({ ...data, id: data.id }, { status: res.status });
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
 
 // --- DELETE ---
 export async function DELETE(req: Request) {
-  const body = await req.json();
-  const { id } = body;
+  try {
+    const body = await req.json();
+    const { id } = body;
 
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/grant/${id}?force=true`, {
-    method: "DELETE",
-    headers: { Authorization: authHeader },
-  });
+    const res = await fetch(`${API_URL}/grant/${id}?force=true`, {
+      method: "DELETE",
+      headers: { Authorization: authHeader },
+    });
 
-  const data = await res.json();
-  return NextResponse.json({ ...data, id }, { status: res.status });
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }

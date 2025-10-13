@@ -7,75 +7,105 @@ const authHeader = `Basic ${Buffer.from(
 
 // --- GET ---
 export async function GET() {
-  const res = await fetch(`${API_URL}/biography?per_page=100`, {
-    headers: { Authorization: authHeader },
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`${API_URL}/biography?per_page=1`, {
+      headers: { Authorization: authHeader },
+      cache: "no-store",
+    });
 
-  const data = await res.json();
-  const bio = Array.isArray(data) ? data[0] : data;
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: `Failed to fetch biography: ${res.statusText}` },
+        { status: res.status }
+      );
+    }
 
-  return NextResponse.json({ ...bio, id: bio?.id ?? "bio" });
+    const data = await res.json();
+    const bio = Array.isArray(data) ? data[0] : data;
+
+    // Keep ID from WordPress, fallback if missing
+    return NextResponse.json({
+      ...bio,
+      id: bio?.id ?? 0,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
 
-// --- POST (usually only one bio, optional) ---
+// --- POST ---
 export async function POST(req: Request) {
-  const payload = await req.json();
+  try {
+    const payload = await req.json();
 
-  const res = await fetch(`${API_URL}/biography`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authHeader,
-    },
-    body: JSON.stringify(payload),
-  });
+    const res = await fetch(`${API_URL}/biography`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const data = await res.json();
-  return NextResponse.json(
-    { ...data, id: data.id ?? "bio" },
-    { status: res.status }
-  );
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
 
 // --- PUT ---
 export async function PUT(req: Request) {
-  const body = await req.json();
-  const { id, ...payload } = body;
+  try {
+    const body = await req.json();
+    const { id, ...payload } = body;
 
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/biography/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authHeader,
-    },
-    body: JSON.stringify(payload),
-  });
+    const res = await fetch(`${API_URL}/biography/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const data = await res.json();
-  return NextResponse.json(
-    { ...data, id: data.id ?? "bio" },
-    { status: res.status }
-  );
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
 
 // --- DELETE ---
 export async function DELETE(req: Request) {
-  const body = await req.json();
-  const { id } = body;
+  try {
+    const body = await req.json();
+    const { id } = body;
 
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  const res = await fetch(`${API_URL}/biography/${id}?force=true`, {
-    method: "DELETE",
-    headers: { Authorization: authHeader },
-  });
+    const res = await fetch(`${API_URL}/biography/${id}?force=true`, {
+      method: "DELETE",
+      headers: { Authorization: authHeader },
+    });
 
-  const data = await res.json();
-  return NextResponse.json(
-    { ...data, id: data.id ?? "bio" },
-    { status: res.status }
-  );
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Unknown error" },
+      { status: 500 }
+    );
+  }
 }
