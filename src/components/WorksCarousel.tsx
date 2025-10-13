@@ -12,17 +12,14 @@ import LenisWrapper from "./LenisWrapper";
 interface WorkCarouselItemProps {
   work: Work;
   index: number;
-  totalWorks: number;
-  scrollYProgress: MotionValue<number>;
   onSelectWork: (index: number) => void;
 }
 
 function WorkCarouselItem({
   work,
   index,
-  totalWorks,
   onSelectWork,
-}: Omit<WorkCarouselItemProps, "onWorkChange" | "scrollYProgress">) {
+}: Pick<WorkCarouselItemProps, "work" | "index" | "onSelectWork">) {
   const img = work._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "";
 
   return (
@@ -70,12 +67,11 @@ export function WorksCarousel({
             items={filteredWorks}
             initialIndex={initialIndex}
             onIndexChange={onSelectWork}
-            renderItem={(work, i, scrollYProgress) => (
+            renderItem={(work, i) => (
               <WorkCarouselItem
                 key={work.id}
                 work={work}
                 index={i}
-                totalWorks={filteredWorks.length}
                 onSelectWork={onSelectWork}
               />
             )}
