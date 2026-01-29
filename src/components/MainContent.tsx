@@ -169,7 +169,7 @@ export default function MainContent({}: Props) {
       <section
         className="max-w-7xl
       col-start-1 col-span-12
-      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start gap-y-4 px-4 pb-8  pt-4 bg-background"
+      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start gap-y-4 px-2 pt-2 lg:px-4 lg:pt-4 pb-8   bg-background"
       >
         {view !== "info" && (
           <Staggered

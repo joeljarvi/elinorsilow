@@ -17,7 +17,7 @@ export default function ExhibitionModal({
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-20   grid grid-cols-4 min-h-screen    "
+        className="fixed inset-0 z-20   grid grid-cols-4 min-h-screen   "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

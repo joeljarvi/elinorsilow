@@ -683,7 +683,7 @@ export default function Nav() {
 
       {/* MOBILE OVERLAY */}
       <motion.div
-        className={`fixed inset-0 z-40 lg:hidden  w-[calc(100vw-2.5rem)]    overflow-y-auto transform   p-8   ${
+        className={`fixed inset-0 z-40 lg:hidden  w-full    overflow-y-auto transform   p-4   ${
           open ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out `}
       >

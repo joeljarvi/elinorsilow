@@ -128,11 +128,11 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-3
-  p-8 lg:p-4 text-sm
-  z-40  h-[80vh] w-[calc(100vw-2.5rem)] lg:w-full 
+  p-4 lg:p-4 text-sm
+  z-40  w-full 
 "
     >
-      <div className="bg-orange-300 col-span-3 p-6 h-[80vh] overflow-y-scroll">
+      <div className="bg-orange-300 col-span-3 p-6 h-[80vh] overflow-y-scroll ">
         <div className="col-span-3 grid grid-cols-3     justify-start ">
           <span className="w-full  col-span-3 lg:col-span-2">
             <button
