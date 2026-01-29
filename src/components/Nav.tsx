@@ -1097,9 +1097,7 @@ export default function Nav() {
                                 <SelectItem value="title">
                                   title (a-ö)
                                 </SelectItem>
-                                <SelectItem value="type">
-                                  exhibiton type (solo/group)
-                                </SelectItem>
+                                <SelectItem value="type">solo/group</SelectItem>
                               </SelectContent>
                             </Select>
                           </span>
