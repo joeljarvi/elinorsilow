@@ -233,11 +233,14 @@ export default function InformationPage() {
   }
 
   return (
-    <div className="font-haas text-base space-y-12 z-0">
+    <div className="font-pressura text-base space-y-[2rem]  z-0">
       {/* BIOGRAPHY */}
       <section>
         <h2 className="uppercase mb-2">Biography</h2>
-        <form onSubmit={saveBiography} className="flex flex-col gap-2 max-w-lg">
+        <form
+          onSubmit={saveBiography}
+          className="flex flex-col gap-[0.25rem] max-w-lg"
+        >
           <textarea
             value={bioForm}
             onChange={(e) => setBioForm(e.target.value)}

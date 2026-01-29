@@ -2,10 +2,11 @@
 
 import React from "react";
 import { InfoProvider, useInfo } from "@/context/InfoContext";
-import Header from "@/components/Header";
 import { Loader } from "@/components/Loader";
 import Link from "next/link";
 import { useExhibitions } from "@/context/ExhibitionsContext";
+import VDivider from "@/components/VDivider";
+import HDivider from "@/components/HDivider";
 
 function InfoPageContent() {
   const { biography, educations, grants, exhibitionList, loading } = useInfo();
@@ -15,22 +16,29 @@ function InfoPageContent() {
 
   return (
     <>
-      <Header />
-      <div className="mt-[25vh] w-full flex flex-col lg:flex-row flex-wrap  justify-start items-start font-hershey text-2xl lg:text-xl h-auto gap-6 lg:gap-0 lg:gap-y-6  max-w-5xl ">
-        <div className="flex flex-col p-3">
+      <div className="mt-36 px-8 w-full grid grid-cols-1 md:grid-cols-2 min-h-screen font-pressura text-sm ">
+        <VDivider loading={loading} />
+        <div className="flex flex-col w-full">
           {/* Biography */}
           {biography && (
-            <div className="w-full flex flex-col">
-              <h2 className="mb-3 uppercase min-w-xs max-w-xs lg:min-w-lg lg:max-w-lg">
+            <div className="flex flex-col     ">
+              <h2 className="  font-pressura  pt-6 pl-4 lg:pl-6 pr-6 pb-4">
                 Biography
               </h2>
-              <div dangerouslySetInnerHTML={{ __html: biography.acf.bio }} />
+              <HDivider />
+              <div
+                className="pt-6 pl-4 lg:pl-6 pr-6 pb-4"
+                dangerouslySetInnerHTML={{ __html: biography.acf.bio }}
+              />
             </div>
           )}
         </div>
-        <div className="flex flex-col p-3 w-full">
-          <h2 className="mb-3 uppercase">Exhibitions</h2>
-          <ul className="w-full flex flex-col gap-3">
+        <div className="flex flex-col  w-full">
+          <h2 className="  font-pressura  pt-6 pl-4 lg:pl-6 pr-6 pb-4">
+            Exhibitions
+          </h2>
+          <HDivider />
+          <ul className="w-full flex flex-col pt-6 pl-4 lg:pl-6 pr-6 pb-4 gap-y-4">
             {exhibitionList.map((ex, i) => {
               // Find a matching exhibition by title
               const match = filteredExhibitions?.find(
@@ -40,19 +48,17 @@ function InfoPageContent() {
               );
 
               return (
-                <li key={i} className="flex justify-between">
-                  <h3 className="max-w-xs lg:max-w-lg flex flex-col">
+                <li key={i} className="flex justify-between ">
+                  <h3 className="max-w-xs lg:max-w-lg flex flex-col ">
                     {match ? (
                       <Link
                         href={`/exhibitions/${match.slug}`}
-                        className="font-hershey uppercase font-normal hover:underline"
+                        className="  hover:underline"
                       >
                         {ex.title.rendered}
                       </Link>
                     ) : (
-                      <span className="font-hershey uppercase font-normal">
-                        {ex.title.rendered}
-                      </span>
+                      <span className="">{ex.title.rendered}</span>
                     )}
                     {ex.acf.venue}, {ex.acf.exhibition_type}
                   </h3>
@@ -62,10 +68,13 @@ function InfoPageContent() {
             })}
           </ul>
         </div>
-        s{/* Grants */}
-        <div className=" flex flex-col p-3 w-full">
-          <h2 className="mb-2 uppercase">Grants</h2>
-          <ul className="w-full">
+        {/* Grants */}
+        <div className=" flex flex-col  w-full">
+          <h2 className="  pt-6 pl-4 lg:pl-6 pr-6 pb-4 font-pressura ">
+            Grants
+          </h2>
+          <HDivider />
+          <ul className="w-full flex flex-col pt-6 pl-4 lg:pl-6 pr-6 pb-4">
             {grants.map((grant, i) => (
               <li key={i} className="flex justify-between w-full">
                 <h3 className="max-w-xs lg:max-w-lg">{grant.acf.title}</h3>
@@ -75,19 +84,20 @@ function InfoPageContent() {
           </ul>
         </div>
         {/* Education */}
-        <div className="w-full flex flex-col p-3 font-hershey text-2xl lg:text-xl mb-12">
-          <h2 className="mb-3 uppercase">Education</h2>
-          <ul className="w-full">
+        <div className="w-full flex flex-col ">
+          <h2 className="  pt-6 pl-4 lg:pl-6 pr-6 pb-4 font-pressura ">
+            Education
+          </h2>
+          <HDivider />
+          <ul className="w-full flex flex-col pt-6 pl-4 lg:pl-6 pr-6 pb-16">
             {educations.map((edu, i) => (
               <li key={i} className="flex justify-between w-full">
                 <h3 className="max-w-xs lg:max-w-lg flex flex-col">
-                  <strong className="font-hershey uppercase font-normal">
-                    {edu.acf.school}
-                  </strong>
+                  {edu.acf.school}
                   {edu.acf.city}
                 </h3>
                 <h3>
-                  {edu.acf.start_year} - {edu.acf.end_year}
+                  {edu.acf.start_year}-{edu.acf.end_year}
                 </h3>
               </li>
             ))}
@@ -99,9 +109,5 @@ function InfoPageContent() {
 }
 
 export default function InfoPageClient() {
-  return (
-    <InfoProvider>
-      <InfoPageContent />
-    </InfoProvider>
-  );
+  return <InfoPageContent />;
 }

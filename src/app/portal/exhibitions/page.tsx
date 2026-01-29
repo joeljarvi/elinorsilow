@@ -7,30 +7,15 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-type AcfImage = { id: number; url: string; alt?: string };
-type AcfPayload = {
-  title: string;
-  start_date: string;
-  end_date: string;
-  exhibition_type?: string;
-  venue: string;
-  city: string;
-  description: string;
-  credits: string;
-  work_1: string;
-  work_2: string;
-  work_3: string;
-  work_4: string;
-  work_5: string;
-  work_6: string;
-  work_7: string;
-  work_8: string;
-  work_9: string;
-  work_10: string;
-  [key: string]: string | number | undefined;
+// ACF image structure (as returned by WordPress)
+export type AcfImage = {
+  id: number;
+  url: string;
+  alt?: string;
 };
 
-type EditExhibition = {
+// ACF payload structure (as stored in the WP REST API)
+export interface AcfPayload {
   title: string;
   start_date: string;
   end_date: string;
@@ -39,9 +24,34 @@ type EditExhibition = {
   city: string;
   description: string;
   credits: string;
-  files: (File | null)[];
-  works: string[];
-};
+  exhibitionBgColor?: string;
+  work_1?: string;
+  work_2?: string;
+  work_3?: string;
+  work_4?: string;
+  work_5?: string;
+  work_6?: string;
+  work_7?: string;
+  work_8?: string;
+  work_9?: string;
+  work_10?: string;
+  [key: string]: string | number | undefined;
+}
+
+// Editable exhibition (used in admin UI before saving)
+export interface EditExhibition {
+  title: string;
+  start_date: string;
+  end_date: string;
+  exhibition_type?: string;
+  venue: string;
+  city: string;
+  description: string;
+  credits: string;
+  exhibitionBgColor?: string;
+  files: (File | null)[]; // for local uploads
+  works: string[]; // corresponds to work_1...work_10
+}
 
 export default function ExhibitionsPage() {
   const router = useRouter();
@@ -51,6 +61,9 @@ export default function ExhibitionsPage() {
   const [editValues, setEditValues] = useState<{
     [key: number]: EditExhibition;
   }>({});
+  const [exhibitionBgColors, setExhibitionBgColors] = useState<
+    Record<number, string>
+  >({}); // frontend-only colors
 
   // Form state
   const [title, setTitle] = useState("");
@@ -86,6 +99,7 @@ export default function ExhibitionsPage() {
           city: ex.acf.city || "",
           description: ex.acf.description || "",
           credits: ex.acf.credits || "",
+          exhibitionBgColor: ex.acf.exhibitionBgColor || "",
           files: Array(10).fill(null),
           works: [
             ex.acf.work_1 || "",
@@ -162,6 +176,7 @@ export default function ExhibitionsPage() {
           city,
           description,
           credits,
+          exhibitionBgColor,
           ...uploadedImages,
           work_1: works[0] || "",
           work_2: works[1] || "",
@@ -189,61 +204,71 @@ export default function ExhibitionsPage() {
       setCredits("");
       setFiles(Array(10).fill(null));
       setWorks(Array(10).fill(""));
-
+      setExhibitionBgColors({}); // reset frontend colors
       await loadExhibitions();
     } else alert("Failed to create exhibition");
   }
 
-  async function handleEditSave(ex: ExhibitionWithImage) {
-    const values = editValues[ex.id];
-    const uploadedImages: { [key: string]: number } = {};
-    await Promise.all(
-      values.files.map(async (file, i) => {
-        if (file) {
-          const uploaded = await uploadImage(file);
-          if (uploaded) uploadedImages[`image_${i + 1}`] = uploaded.id;
-        }
-      })
-    );
+  async function handleEditSave(exhibition: ExhibitionWithImage) {
+    const values = editValues[exhibition.id];
+    if (!values) return;
+    let mediaId: number | undefined = exhibition.featured_media;
 
+    // Check embedded media
+    const embeddedMedia = exhibition._embedded?.["wp:featuredmedia"];
+    if (Array.isArray(embeddedMedia) && embeddedMedia.length > 0) {
+      mediaId = embeddedMedia[0].id;
+    }
+
+    // Upload new image if selected
+    const firstFile = values.files[0];
+    if (firstFile) {
+      const uploadedId = await uploadImage(firstFile);
+      if (uploadedId) mediaId = uploadedId;
+    }
+
+    // ✅ Prepare ACF payload
     const acfPayload: AcfPayload = {
       title: values.title,
       start_date: values.start_date,
       end_date: values.end_date,
-      exhibition_type: values.exhibition_type || "",
+      exhibition_type: values.exhibition_type,
       venue: values.venue,
       city: values.city,
       description: values.description,
       credits: values.credits,
-      work_1: values.works[0] || "",
-      work_2: values.works[1] || "",
-      work_3: values.works[2] || "",
-      work_4: values.works[3] || "",
-      work_5: values.works[4] || "",
-      work_6: values.works[5] || "",
-      work_7: values.works[6] || "",
-      work_8: values.works[7] || "",
-      work_9: values.works[8] || "",
-      work_10: values.works[9] || "",
-      ...uploadedImages,
+      exhibitionBgColor: values.exhibitionBgColor,
+      ...Object.fromEntries(
+        values.works.map((work, i) => [`work_${i + 1}`, work || ""])
+      ),
     };
 
-    const res = await fetch("/api/admin/exhibitions", {
+    // ✅ Send update request
+    const res = await fetch("/api/admin/exhibition", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        id: ex.id,
+        id: exhibition.id,
         title: values.title,
         acf: acfPayload,
+        featured_media: mediaId,
       }),
     });
 
     if (res.ok) {
-      await loadExhibitions();
+      const updated = await res.json();
+      const normalized: ExhibitionWithImage = {
+        ...updated,
+        image_url:
+          updated._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "",
+      };
+
+      setExhibitions((prev) =>
+        prev.map((exh) => (exh.id === exhibition.id ? normalized : exh))
+      );
       setEditingId(null);
     } else {
-      console.error(await res.text());
-      alert("Failed to save changes");
+      alert("Failed to save exhibition");
     }
   }
 
@@ -254,23 +279,22 @@ export default function ExhibitionsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-
-      if (!res.ok) {
-        const err = await res.text();
-        console.error("Delete failed:", err);
-        return;
-      }
-
-      router.refresh(); // funkar här om du är i en client component
+      if (!res.ok) console.error(await res.text());
+      router.refresh();
     } catch (err) {
-      console.error("Error deleting exhibition:", err);
+      console.error(err);
     }
   };
 
   return (
-    <div className="p-3 font-haas text-base">
-      <h2 className="text-base uppercase mb-3">Create New Exhibition</h2>
-      <form onSubmit={handleCreate} className="flex flex-col gap-2 max-w-md">
+    <div className=" font-pressura text-base flex flex-col lg:flex-row gap-[0.25rem] w-full items-start justify-start p-[0.25rem] ">
+      <form
+        onSubmit={handleCreate}
+        className="flex flex-col gap-[0.5rem] w-full lg:w-1/2"
+      >
+        <h2 className="text-base uppercase mb-[0.5rem]">
+          Create New Exhibition
+        </h2>
         <input
           placeholder="Title"
           value={title}
@@ -319,6 +343,21 @@ export default function ExhibitionsPage() {
           onChange={(e) => setCredits(e.target.value)}
           className="border p-2"
         />
+        <input
+          type="color"
+          value={editValues[editingId]?.exhibitionBgColor || "#ffffff"} // default color
+          onChange={(e) => {
+            if (editingId === null) return;
+            setEditValues({
+              ...editValues,
+              [editingId]: {
+                ...editValues[editingId],
+                exhibitionBgColor: e.target.value, // update state
+              },
+            });
+          }}
+          className="border p-1 w-12 h-10 rounded"
+        />
 
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="flex items-center gap-2">
@@ -365,135 +404,58 @@ export default function ExhibitionsPage() {
           {loading ? "Saving..." : "Save Exhibition"}
         </button>
       </form>
+      <div className="flex flex-col items-start justify-start w-full lg:w-1/2 gap-[0.5rem]">
+        <h3 className="text-base uppercase mb-[0.5rem]">
+          Existing Exhibitions
+        </h3>
+        {loadingExhibitions ? (
+          <p>Loading...</p>
+        ) : (
+          <ul className="space-y-4">
+            {exhibitions.map((ex) => (
+              <li
+                key={ex.id}
+                className="border rounded p-2 flex flex-col gap-2"
+                style={{ backgroundColor: exhibitionBgColors[ex.id] || "#fff" }}
+              >
+                <div className="flex items-center gap-2">
+                  {ex.image_url && (
+                    <Image
+                      src={ex.image_url}
+                      alt={ex.title.rendered}
+                      width={80}
+                      height={80}
+                      className="object-cover rounded border"
+                    />
+                  )}
+                  <span className="font-medium">{ex.title.rendered}</span>
+                  <span className="ml-2 text-gray-500">
+                    ({ex.acf.start_date} - {ex.acf.end_date})
+                  </span>
+                </div>
 
-      <h3 className="text-base uppercase mt-6 mb-3">Existing Exhibitions</h3>
-      {loadingExhibitions ? (
-        <p>Loading...</p>
-      ) : (
-        <ul className="space-y-4">
-          {exhibitions.map((ex) => (
-            <li key={ex.id} className="border rounded p-2 flex flex-col gap-2">
-              {editingId === ex.id ? (
-                <>
-                  {Object.entries(editValues[ex.id]).map(([key, value]) => {
-                    if (key === "files" || key === "works") return null;
-                    return (
-                      <input
-                        key={key}
-                        value={value as string}
-                        onChange={(e) =>
-                          setEditValues({
-                            ...editValues,
-                            [ex.id]: {
-                              ...editValues[ex.id],
-                              [key]: e.target.value,
-                            },
-                          })
-                        }
-                        className="border p-1"
-                      />
-                    );
-                  })}
+                <div className="flex gap-2 mt-2">
+                  <button
+                    type="button"
+                    className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    onClick={() => setEditingId(ex.id)}
+                  >
+                    Edit
+                  </button>
 
-                  {Array.from({ length: 10 }).map((_, i) => {
-                    const existingImage = ex.acf[
-                      `image_${i + 1}` as keyof typeof ex.acf
-                    ] as AcfImage | undefined;
-                    const newFile = editValues[ex.id].files[i];
-
-                    return (
-                      <div key={i} className="flex items-center gap-2">
-                        <input
-                          type="file"
-                          onChange={(e) => {
-                            const newFiles = [...editValues[ex.id].files];
-                            newFiles[i] = e.target.files?.[0] || null;
-                            setEditValues({
-                              ...editValues,
-                              [ex.id]: {
-                                ...editValues[ex.id],
-                                files: newFiles,
-                              },
-                            });
-                          }}
-                          className="p-1 border"
-                        />
-                        {newFile ? (
-                          <Image
-                            src={URL.createObjectURL(newFile)}
-                            alt={`New preview ${i + 1}`}
-                            width={64}
-                            height={64}
-                            className="object-cover rounded border"
-                            unoptimized
-                          />
-                        ) : existingImage?.url ? (
-                          <Image
-                            src={existingImage.url}
-                            alt={
-                              existingImage.alt || `Existing preview ${i + 1}`
-                            }
-                            width={64}
-                            height={64}
-                            className="object-cover rounded border"
-                          />
-                        ) : null}
-                      </div>
-                    );
-                  })}
-
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      className="bg-green-600 text-white px-3 py-1 rounded"
-                      onClick={() => handleEditSave(ex)}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="bg-gray-400 text-white px-3 py-1 rounded"
-                      onClick={() => setEditingId(null)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    {ex.image_url && (
-                      <Image
-                        src={ex.image_url}
-                        alt={ex.title.rendered}
-                        width={80}
-                        height={80}
-                        className="object-cover rounded border"
-                      />
-                    )}
-                    <span className="font-medium">{ex.title.rendered}</span>
-                    <span className="ml-2 text-gray-500">
-                      ({ex.acf.start_date} - {ex.acf.end_date})
-                    </span>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      className="bg-yellow-500 text-white px-3 py-1 rounded"
-                      onClick={() => setEditingId(ex.id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-600 text-white px-3 py-1 rounded"
-                      onClick={() => handleDelete(ex.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+                  <button
+                    type="button"
+                    className="bg-red-600 text-white px-3 py-1 rounded"
+                    onClick={() => handleDelete(ex.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

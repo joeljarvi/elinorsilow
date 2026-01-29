@@ -5,6 +5,49 @@ import { AnimationProvider } from "@/context/AnimationContext";
 import { WorksProvider } from "@/context/WorksContext";
 import { ExhibitionsProvider } from "@/context/ExhibitionsContext";
 import { ThemeProvider } from "@/context/theme-provider";
+import { InfoProvider } from "@/context/InfoContext";
+import { NavProvider } from "@/context/NavContext";
+import Nav from "@/components/Nav";
+
+const gintoNordBlack = localFont({
+  src: "assets/fonts/Ginto Nord Black.ttf",
+  variable: "--font-gintoNordBlack",
+});
+
+const gintoBlack = localFont({
+  src: "assets/fonts/Ginto Black.ttf",
+  variable: "--font-gintoBlack",
+});
+
+const gintoRegular = localFont({
+  src: "assets/fonts/Ginto Regular.ttf",
+  variable: "--font-gintoRegular",
+});
+
+const gintoMedium = localFont({
+  src: "assets/fonts/Ginto Medium.ttf",
+  variable: "--font-gintoMedium",
+});
+
+const EBGaramond = localFont({
+  src: "assets/fonts/EBGaramond12-Regular.woff",
+  variable: "--font-EBGaramond",
+});
+
+const EBGaramondItalic = localFont({
+  src: "assets/fonts/EBGaramond12-Italic.woff",
+  variable: "--font-EBGaramondItalic",
+});
+
+const libreBaskerville = localFont({
+  src: "assets/fonts/LibreBaskerville-Regular.otf",
+  variable: "--font-libreBaskerville",
+});
+
+const libreBaskervilleBold = localFont({
+  src: "assets/fonts/LibreBaskerville-Bold.otf",
+  variable: "--font-libreBaskervilleBold",
+});
 
 const timesNewerRoman = localFont({
   src: "assets/fonts/TimesNewerRoman-Regular.woff",
@@ -21,34 +64,9 @@ const timesNewerRomanBold = localFont({
   variable: "--font-Times-Newer-Roman-Bold",
 });
 
-const newEdge666UltraBoldRounded = localFont({
-  src: "assets/fonts/NewEdge666-UltraBoldRounded.woff",
-  variable: "--font-NewEdge666-Ultra-Bold-Rounded",
-});
-
-const newEdge666UltraLightRounded = localFont({
-  src: "assets/fonts/NewEdge666-UltraLightRounded.woff",
-  variable: "--font-NewEdge666-Ultra-Light-Rounded",
-});
-
 const neueHaas = localFont({
   src: "assets/fonts/NHaasGroteskTXPro-55Rg.ttf",
   variable: "--font-neueHaas",
-});
-
-const hershey = localFont({
-  src: "assets/fonts/AVHersheySimplexLight.ttf",
-  variable: "--font-hershey",
-});
-
-const hersheyItalic = localFont({
-  src: "assets/fonts/AVHersheySimplexLightItalic.ttf",
-  variable: "--font-hersheyItalic",
-});
-
-const walkingOCR = localFont({
-  src: "assets/fonts/Walking-OCR-logo-text-Regular.otf",
-  variable: "--font-walkingOCR",
 });
 
 const pressura = localFont({
@@ -68,13 +86,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal?: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable} ${newEdge666UltraBoldRounded.variable} ${newEdge666UltraLightRounded.variable} ${neueHaas.variable} ${hershey.variable} ${hersheyItalic.variable} ${walkingOCR.variable} ${pressura.variable} ${pressuraLight.variable}  antialiased`}
+        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoRegular.variable} ${gintoMedium.variable}   antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -84,7 +104,14 @@ export default function RootLayout({
         >
           <WorksProvider>
             <ExhibitionsProvider>
-              <AnimationProvider>{children}</AnimationProvider>
+              <InfoProvider>
+                <AnimationProvider>
+                  <NavProvider>
+                    <Nav />
+                    {children} {modal}
+                  </NavProvider>
+                </AnimationProvider>
+              </InfoProvider>
             </ExhibitionsProvider>
           </WorksProvider>
         </ThemeProvider>

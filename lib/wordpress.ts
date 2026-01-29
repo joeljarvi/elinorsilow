@@ -3,11 +3,11 @@ export type Work = {
   slug: string;
   title: { rendered: string };
   acf: {
-    year?: number | string;
-    medium?: string;
+    year: number;
+    category: string;
     exhibition?: string;
-    dimensions?: string;
-    materials?: string;
+    dimensions: string;
+    materials: string;
   };
   _embedded?: {
     "wp:featuredmedia"?: { id?: number; source_url?: string }[];
@@ -19,6 +19,8 @@ export type AcfImage = {
   id: number;
   url: string;
   alt?: string;
+  caption?: string;
+  description?: string; // ← add this
 };
 
 export type Exhibition = {
@@ -28,10 +30,9 @@ export type Exhibition = {
   date: string;
   acf: {
     title: string;
-    start_date: string;
-    end_date: string;
+    year: string;
     exhibition_type: string;
-    venue: string;
+    location: string;
     city: string;
     description?: string;
     credits?: string;
@@ -102,6 +103,8 @@ export type Exhibition_list = {
     description?: string;
   };
 };
+
+export type CombinedExhibition = Exhibition | Exhibition_list;
 
 const API_URL = "https://elinorsilow.com/wp-json/wp/v2";
 

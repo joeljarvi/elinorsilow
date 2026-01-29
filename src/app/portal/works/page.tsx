@@ -170,53 +170,53 @@ export default function WorksPage() {
   }
 
   return (
-    <div className="p-3 font-haas text-base">
-      <div className="flex flex-col lg:flex-row gap-2 w-full items-start justify-start ">
+    <div className="p-[0.25rem] font-pressura text-base">
+      <div className="flex flex-col lg:flex-row gap-[0.25rem] w-full items-start justify-start ">
         <form
           onSubmit={handleCreate}
-          className="flex flex-col  gap-3 w-full lg:w-1/2 "
+          className="flex flex-col  gap-[0.25rem] w-full lg:w-1/2 "
         >
-          <h2 className="text-base uppercase mb-3">Create New Work</h2>
+          <h2 className="text-base uppercase mb-[0.5rem]">Create New Work</h2>
           <input
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
           <input
             placeholder="Year"
             value={year}
             onChange={(e) => setYear(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
           <input
             placeholder="Medium"
             value={medium}
             onChange={(e) => setMedium(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
           <input
             placeholder="Exhibition"
             value={exhibition}
             onChange={(e) => setExhibition(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
           <input
             placeholder="Dimensions"
             value={dimensions}
             onChange={(e) => setDimensions(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
           <input
             placeholder="Materials"
             value={materials}
             onChange={(e) => setMaterials(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
           <input
             type="file"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className=" p-2 border"
+            className=" p-2 border rounded-md"
           />
           <button
             className="bg-blue-600 text-white py-2 rounded"
@@ -225,21 +225,21 @@ export default function WorksPage() {
             {loading ? "Saving..." : "Save Work"}
           </button>
         </form>
-        <div className="flex flex-col w-full lg:w-1/2 gap-3">
-          <h3 className="text-base uppercase mb-3 ">Existing Works</h3>
+        <div className="flex flex-col w-full lg:w-1/2 gap-[0.25rem]">
+          <h3 className="text-base uppercase mb-[0.5rem] ">Existing Works</h3>
           {loadingWorks ? (
             <p>Loading...</p>
           ) : (
-            <ul className="space-y-4">
+            <ul className="space-y-[0.25rem]">
               {works.map((w) => (
                 <li
                   key={w.id}
-                  className="border rounded p-2 flex flex-col gap-2"
+                  className="border rounded p-[1rem] flex flex-col gap-[0.25rem] text-sm"
                 >
                   {editingId === w.id ? (
                     <>
                       <input
-                        className="border p-1"
+                        className="border p-2"
                         value={editValues[w.id]?.title}
                         onChange={(e) =>
                           setEditValues({
@@ -252,7 +252,7 @@ export default function WorksPage() {
                         }
                       />
                       <input
-                        className="border p-1"
+                        className="border p-2"
                         value={editValues[w.id]?.year}
                         onChange={(e) =>
                           setEditValues({
@@ -265,7 +265,7 @@ export default function WorksPage() {
                         }
                       />
                       <input
-                        className="border p-1"
+                        className="border p-2"
                         value={editValues[w.id]?.medium}
                         onChange={(e) =>
                           setEditValues({
@@ -278,7 +278,7 @@ export default function WorksPage() {
                         }
                       />
                       <input
-                        className="border p-1"
+                        className="border p-2"
                         value={editValues[w.id]?.exhibition}
                         onChange={(e) =>
                           setEditValues({
@@ -291,7 +291,7 @@ export default function WorksPage() {
                         }
                       />
                       <input
-                        className="border p-1"
+                        className="border p-2"
                         value={editValues[w.id]?.dimensions}
                         onChange={(e) =>
                           setEditValues({
@@ -304,7 +304,7 @@ export default function WorksPage() {
                         }
                       />
                       <input
-                        className="border p-1"
+                        className="border p-2"
                         value={editValues[w.id]?.materials}
                         onChange={(e) =>
                           setEditValues({
@@ -328,7 +328,7 @@ export default function WorksPage() {
                           })
                         }
                       />
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex gap-[1rem] mt-[0.5rem]">
                         <button
                           className="bg-green-600 text-white px-3 py-1 rounded"
                           onClick={() => handleEditSave(w)}

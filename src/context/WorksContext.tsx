@@ -9,66 +9,96 @@ import React, {
 } from "react";
 import { Work, getAllWorks } from "../../lib/wordpress";
 
+type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
+type CategoryFilter = "all" | "painting" | "drawing" | "sculpture" | "textile";
+
 type WorksContextType = {
   allWorks: Work[];
-  works: Work[];
   filteredWorks: Work[];
+  availibleYears: number[];
   loading: boolean;
   error: Error | null;
-  selectedYear: string;
-  setSelectedYear: React.Dispatch<React.SetStateAction<string>>;
-  selectedCategory: string;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
-  selectedExhibition: string;
-  setSelectedExhibition: React.Dispatch<React.SetStateAction<string>>;
+  workSort: WorkSort;
+  setWorkSort: React.Dispatch<React.SetStateAction<WorkSort>>;
+  selectedYear: number | null;
+  setSelectedYear: React.Dispatch<React.SetStateAction<number | null>>;
+  categoryFilter: CategoryFilter;
+  setCategoryFilter: React.Dispatch<React.SetStateAction<CategoryFilter>>;
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  currentWorkIndex: number | null;
+  setCurrentWorkIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  normalizeSlug: (title: string) => string;
+  showInfo: boolean;
+  setShowInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  showAllWorksList: boolean;
+  setShowAllWorksList: React.Dispatch<React.SetStateAction<boolean>>;
+  activeWorkSlug: string | null;
+  setActiveWorkSlug: React.Dispatch<React.SetStateAction<string | null>>;
 };
+
+export function normalizeSlug(title: string) {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-");
+}
 
 const WorksContext = createContext<WorksContextType | undefined>(undefined);
 
 export function WorksProvider({ children }: { children: ReactNode }) {
   const [allWorks, setAllWorks] = useState<Work[]>([]);
-  const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [showInfo, setShowInfo] = useState(true);
+  const [workSort, setWorkSort] = useState<WorkSort>("year-latest");
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
-
-  const [selectedYear, setSelectedYear] = useState("all");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedExhibition, setSelectedExhibition] = useState("all");
+  const [showAllWorksList, setShowAllWorksList] = useState(false);
+  const [activeWorkSlug, setActiveWorkSlug] = useState<string | null>(null);
+  const [currentWorkIndex, setCurrentWorkIndex] = useState<number | null>(null);
 
   useEffect(() => {
     getAllWorks()
       .then((data) => {
         const normalized = data.map((w) => ({
           ...w,
+          acf: {
+            ...w.acf,
+            year: Number(w.acf.year),
+            category: w.acf.category?.toLowerCase() || "all",
+          },
           image_url: w._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "",
         }));
-        setWorks(normalized);
         setAllWorks(normalized);
       })
       .catch(setError)
       .finally(() => setLoading(false));
   }, []);
 
+  // Memoized available years
+  const availibleYears = React.useMemo(() => {
+    return Array.from(
+      new Set(
+        allWorks
+          .map((w) => w.acf.year)
+          .filter((y): y is number => Number.isFinite(y))
+      )
+    ).sort((a, b) => b - a);
+  }, [allWorks]);
+
+  // Memoized filtered works
   const filteredWorks = React.useMemo(() => {
-    let result = [...allWorks]; // use allWorks as base
+    let result = [...allWorks];
 
-    if (selectedYear !== "all") {
-      result = result.filter((w) => w.acf.year.toString() === selectedYear);
+    if (categoryFilter !== "all") {
+      result = result.filter((w) => w.acf.category === categoryFilter);
     }
 
-    if (selectedCategory !== "all") {
-      result = result.filter((w) =>
-        Array.isArray(w.acf.medium)
-          ? w.acf.medium.includes(selectedCategory)
-          : w.acf.medium === selectedCategory
-      );
-    }
-
-    if (selectedExhibition !== "all") {
-      result = result.filter((w) => w.acf.exhibition === selectedExhibition);
+    if (workSort === "year" && selectedYear) {
+      result = result.filter((w) => w.acf.year === selectedYear);
     }
 
     if (searchQuery.trim()) {
@@ -77,31 +107,48 @@ export function WorksProvider({ children }: { children: ReactNode }) {
       );
     }
 
+    switch (workSort) {
+      case "year-latest":
+        result.sort((a, b) => (b.acf.year ?? 0) - (a.acf.year ?? 0));
+        break;
+      case "year-oldest":
+        result.sort((a, b) => (a.acf.year ?? 0) - (b.acf.year ?? 0));
+        break;
+      case "title":
+        result.sort((a, b) =>
+          a.title.rendered.localeCompare(b.title.rendered, "sv")
+        );
+        break;
+    }
+
     return result;
-  }, [
-    allWorks,
-    selectedYear,
-    selectedCategory,
-    selectedExhibition,
-    searchQuery,
-  ]);
+  }, [allWorks, workSort, selectedYear, categoryFilter, searchQuery]);
 
   return (
     <WorksContext.Provider
       value={{
         allWorks,
-        works,
         filteredWorks,
+        availibleYears,
+        showInfo,
+        setShowInfo,
         loading,
         error,
+        workSort,
+        setWorkSort,
         selectedYear,
         setSelectedYear,
-        selectedCategory,
-        setSelectedCategory,
-        selectedExhibition,
-        setSelectedExhibition,
+        categoryFilter,
+        setCategoryFilter,
         searchQuery,
         setSearchQuery,
+        currentWorkIndex,
+        setCurrentWorkIndex,
+        normalizeSlug,
+        showAllWorksList,
+        setShowAllWorksList,
+        activeWorkSlug,
+        setActiveWorkSlug,
       }}
     >
       {children}

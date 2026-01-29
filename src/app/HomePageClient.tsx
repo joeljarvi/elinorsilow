@@ -1,56 +1,102 @@
 "use client";
 
-import Header from "@/components/Header";
-import { WorksCarousel } from "@/components/WorksCarousel";
+import MainContent from "../components/MainContent";
+import Nav from "@/components/Nav";
+import WorkModal from "./works/WorkModal";
+import ExhibitionModal from "./exhibitions/ExhibitionModal";
+import { Loader } from "@/components/Loader";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useWorks } from "@/context/WorksContext";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import PopUpGubbe from "@/components/PopUpGubbe";
+import { useExhibitions } from "@/context/ExhibitionsContext";
+import Staggered from "@/components/Staggered";
+import { useNav } from "@/context/NavContext";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
+import HDivider from "@/components/HDivider";
+import Image from "next/image";
+import { AnimatePresence } from "framer-motion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-function HomePageContent() {
-  const { allWorks } = useWorks();
+import type { CombinedExhibition, Exhibition, Work } from "../../lib/wordpress";
+import { PlusIcon, MinusIcon } from "@radix-ui/react-icons";
+
+interface HomePageContentProps {
+  loading: boolean;
+  fullExhibitionList: CombinedExhibition[];
+  exhibitions: Exhibition[];
+  allWorks: Work[];
+}
+
+type WorkSort = "year" | "title" | "medium";
+type ExhibitionSort = "year" | "title" | "type";
+
+function HomePageContent({
+  loading,
+  exhibitions,
+  allWorks,
+  fullExhibitionList,
+}: HomePageContentProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const slug = searchParams.get("work");
 
-  const initialIndex =
-    slug && allWorks ? allWorks.findIndex((w) => w.slug === slug) : 0;
+  // Read modal slugs from URL
+  const workSlug = searchParams.get("work");
+  const exhibitionSlug = searchParams.get("exhibition");
 
-  const [currentWorkIndex, setCurrentWorkIndex] =
-    useState<number>(initialIndex);
-
-  const showInfo = true;
-  const min = true;
-
-  const currentWork = allWorks[currentWorkIndex];
-
-  const prevWork = currentWorkIndex > 0 ? allWorks[currentWorkIndex - 1] : null;
-  const nextWork =
-    currentWorkIndex < allWorks.length - 1
-      ? allWorks[currentWorkIndex + 1]
-      : null;
+  const closeModal = () => router.push("/", { scroll: false });
+  const [open, setOpen] = useState(false);
+  const { activeWorkSlug, setActiveWorkSlug } = useWorks();
+  const { activeExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   return (
-    <div className="w-full bg-white">
-      <Header
-        initialWorks={allWorks} // full array of works
-        currentWorkIndex={currentWorkIndex} // index of the work in view
-        currentWork={currentWork} // fallback / current work
-        prevWork={prevWork} // previous work
-        nextWork={nextWork} // next work
-        showInfo={showInfo}
-        min={min}
-      />
+    <>
+      <div className="flex flex-col lg:grid lg:grid-cols-4 w-full gap-0 pt-0 lg:pt-4   ">
+        {/* DESKTOP NAV */}
 
-      <PopUpGubbe />
+        <MainContent />
 
-      <WorksCarousel
-        initialIndex={currentWorkIndex}
-        onSelectWork={setCurrentWorkIndex}
-      />
-    </div>
+        {activeWorkSlug && (
+          <WorkModal
+            slug={activeWorkSlug}
+            onClose={() => setActiveWorkSlug(null)}
+          />
+        )}
+        {activeExhibitionSlug && (
+          <ExhibitionModal
+            slug={activeExhibitionSlug}
+            onClose={() => setActiveExhibitionSlug(null)}
+          />
+        )}
+      </div>
+    </>
   );
 }
 
 export default function HomePageClient() {
-  return <HomePageContent />;
+  const {
+    exhibitions,
+    loading: exhibitionsLoading,
+    fullExhibitionList,
+  } = useExhibitions();
+  const { allWorks, loading: worksLoading } = useWorks();
+  const loading = exhibitionsLoading || worksLoading;
+
+  if (loading) return <div></div>;
+
+  return (
+    <HomePageContent
+      loading={loading}
+      exhibitions={exhibitions}
+      allWorks={allWorks}
+      fullExhibitionList={fullExhibitionList}
+    />
+  );
 }

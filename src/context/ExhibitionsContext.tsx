@@ -8,33 +8,45 @@ import React, {
   ReactNode,
   useMemo,
 } from "react";
-import { Exhibition, getAllExhibitions } from "../../lib/wordpress";
+import {
+  Exhibition,
+  getAllExhibitions,
+  getExhibitionList,
+  Exhibition_list,
+  getExhibitionBySlug as fetchExhibitionBySlug,
+} from "../../lib/wordpress";
+
 import { useDebounce } from "use-debounce";
 
-// Function to extract year from start_date and end_date
-function getYearFromExhibition(exhibition: Exhibition): number | null {
-  const startDate = exhibition.acf.start_date;
-  if (startDate) {
-    return new Date(startDate).getFullYear();
-  }
-  return null;
-}
+export type ExhibitionSort = "year" | "title" | "type";
 
 type ExhibitionsContextType = {
-  exhibitions: Exhibition[] | null;
+  exhibitions: Exhibition[];
+  getExhibitionBySlug: (slug: string) => Promise<Exhibition | null>;
+  exhibitionList: Exhibition_list[];
+  filteredExhibitions: Exhibition[];
+  soloExhibitions: Exhibition[];
+  groupExhibitions: Exhibition[];
+  fullExhibitionList: (Exhibition | Exhibition_list)[];
+
   loading: boolean;
   error: Error | null;
-  sortBy: string;
-  setSortBy: (val: string) => void;
-  selectedYear: string;
-  setSelectedYear: (val: string) => void;
+
+  exhibitionSort: ExhibitionSort;
+  setExhibitionSort: React.Dispatch<React.SetStateAction<ExhibitionSort>>;
+  exSelectedYear: string | "all";
+  exSetSelectedYear: React.Dispatch<React.SetStateAction<string>>;
+
   selectedType: string;
-  setSelectedType: (val: string) => void;
+  setSelectedType: React.Dispatch<React.SetStateAction<string>>;
+
   showDescription: boolean;
-  setShowDescription: (val: boolean) => void;
-  filteredExhibitions: Exhibition[];
-  soloExhibitions: Exhibition[]; // 👈 Add
-  groupExhibitions: Exhibition[]; // 👈 Add
+  setShowDescription: React.Dispatch<React.SetStateAction<boolean>>;
+
+  availableYears: string[];
+  debouncedSelectedYear: string;
+  activeExhibitionSlug: string | null;
+  setActiveExhibitionSlug: (slug: string | null) => void;
 };
 
 const ExhibitionsContext = createContext<ExhibitionsContextType | undefined>(
@@ -42,90 +54,140 @@ const ExhibitionsContext = createContext<ExhibitionsContextType | undefined>(
 );
 
 export function ExhibitionsProvider({ children }: { children: ReactNode }) {
-  const [exhibitions, setExhibitions] = useState<Exhibition[] | null>(null);
+  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
+  const [exhibitionList, setExhibitionList] = useState<Exhibition_list[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [sortBy, setSortBy] = useState("latest");
-  const [selectedYear, setSelectedYear] = useState("all");
+
+  const [exhibitionSort, setExhibitionSort] = useState<ExhibitionSort>("title");
+  const [exSelectedYear, exSetSelectedYear] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [showDescription, setShowDescription] = useState(true);
-
-  const [debouncedSortBy] = useDebounce(sortBy, 300);
-  const [debouncedSelectedYear] = useDebounce(selectedYear, 300);
-  const [debouncedSelectedType] = useDebounce(selectedType, 300);
+  const [activeExhibitionSlug, setActiveExhibitionSlug] = useState<
+    string | null
+  >(null);
+  const [debouncedSortBy] = useDebounce(exhibitionSort, 200);
+  const [debouncedSelectedYear] = useDebounce(exSelectedYear, 200);
+  const [debouncedSelectedType] = useDebounce(selectedType, 200);
 
   useEffect(() => {
-    getAllExhibitions()
-      .then(setExhibitions)
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+    async function fetchData() {
+      try {
+        const [exhibitionsData, exhibitionListData] = await Promise.all([
+          getAllExhibitions(),
+          getExhibitionList(),
+        ]);
+        setExhibitions(exhibitionsData);
+        setExhibitionList(exhibitionListData);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
   }, []);
 
-  const sortedExhibitions = useMemo(() => {
-    if (!exhibitions) return [];
+  const getExhibitionBySlug = async (slug: string) => {
+    // 1. Try context first (even if loading)
+    const existing = exhibitions.find((e) => e.slug === slug);
+    if (existing) return existing;
 
+    // 2. Fetch fallback
+    try {
+      const fetched = await fetchExhibitionBySlug(slug);
+
+      // 3. Cache it
+      setExhibitions((prev) => {
+        if (prev.some((e) => e.id === fetched.id)) return prev;
+        return [...prev, fetched];
+      });
+
+      return fetched;
+    } catch (err) {
+      console.error("getExhibitionBySlug failed", err);
+      return null;
+    }
+  };
+
+  // Available years from acf.year
+  const availableYears = useMemo(() => {
+    const years = exhibitions
+      .map((e) => e.acf.year)
+      .filter((y): y is string => !!y); // only keep non-empty strings
+    return Array.from(new Set(years)).sort((a, b) => Number(b) - Number(a));
+  }, [exhibitions]);
+
+  const sortedExhibitions = useMemo(() => {
     switch (debouncedSortBy) {
-      case "az":
+      case "title":
         return [...exhibitions].sort((a, b) =>
           a.title.rendered.localeCompare(b.title.rendered)
         );
-      case "random":
-        return [...exhibitions].sort(() => Math.random() - 0.5);
+      case "type":
+        return [...exhibitions].sort((a, b) =>
+          (a.acf.exhibition_type ?? "").localeCompare(
+            b.acf.exhibition_type ?? ""
+          )
+        );
+      case "year":
       default:
         return [...exhibitions].sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => Number(b.acf.year) - Number(a.acf.year)
         );
     }
   }, [exhibitions, debouncedSortBy]);
 
   const filteredExhibitions = useMemo(() => {
-    let result = [...sortedExhibitions];
-
-    // Filter by year
-    if (debouncedSelectedYear !== "all") {
-      result = result.filter((e) => {
-        const year = getYearFromExhibition(e)?.toString();
-        return year === debouncedSelectedYear;
-      });
-    }
-
-    // Filter by exhibition type
-    if (debouncedSelectedType !== "all") {
-      result = result.filter(
-        (e) => e.acf.exhibition_type?.toString() === debouncedSelectedType
-      );
-    }
-
-    return result;
+    return sortedExhibitions.filter((e) => {
+      const yearMatch =
+        debouncedSelectedYear === "all" || e.acf.year === debouncedSelectedYear;
+      const typeMatch =
+        debouncedSelectedType === "all" ||
+        e.acf.exhibition_type === debouncedSelectedType;
+      return yearMatch && typeMatch;
+    });
   }, [sortedExhibitions, debouncedSelectedYear, debouncedSelectedType]);
 
-  const soloExhibitions = useMemo(() => {
-    if (!exhibitions) return [];
-    return exhibitions.filter((ex) => ex.acf.exhibition_type === "Solo");
-  }, [exhibitions]);
+  const soloExhibitions = useMemo(
+    () => exhibitions.filter((e) => e.acf.exhibition_type === "Solo"),
+    [exhibitions]
+  );
 
-  const groupExhibitions = useMemo(() => {
-    if (!exhibitions) return [];
-    return exhibitions.filter((ex) => ex.acf.exhibition_type === "Group");
-  }, [exhibitions]);
+  const groupExhibitions = useMemo(
+    () => exhibitions.filter((e) => e.acf.exhibition_type === "Group"),
+    [exhibitions]
+  );
+
+  const fullExhibitionList = useMemo(
+    () => [...exhibitions, ...exhibitionList],
+    [exhibitions, exhibitionList]
+  );
 
   return (
     <ExhibitionsContext.Provider
       value={{
+        getExhibitionBySlug,
         exhibitions,
+        exhibitionList,
+        filteredExhibitions,
+        soloExhibitions,
+        groupExhibitions,
+        fullExhibitionList,
         loading,
         error,
-        sortBy,
-        setSortBy,
-        selectedYear,
-        setSelectedYear,
+        exhibitionSort,
+        setExhibitionSort,
+        exSelectedYear,
+        exSetSelectedYear,
         selectedType,
         setSelectedType,
         showDescription,
         setShowDescription,
-        filteredExhibitions,
-        soloExhibitions,
-        groupExhibitions,
+        availableYears,
+        debouncedSelectedYear,
+        activeExhibitionSlug,
+        setActiveExhibitionSlug,
       }}
     >
       {children}
@@ -135,10 +197,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
 
 export function useExhibitions() {
   const context = useContext(ExhibitionsContext);
-  if (context === undefined) {
-    throw new Error(
-      "useExhibitions must be used within an ExhibitionsProvider"
-    );
-  }
+  if (!context)
+    throw new Error("useExhibitions must be used within ExhibitionsProvider");
   return context;
 }

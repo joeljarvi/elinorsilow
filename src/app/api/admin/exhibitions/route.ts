@@ -27,6 +27,7 @@ export async function POST(req: Request) {
         city: body.acf.city,
         description: body.acf.description || "",
         credits: body.acf.credits || "",
+        exhibitionBgColor: body.acf.exhibitionBgColor || "",
         image_1: body.acf.image_1 || null,
         image_2: body.acf.image_2 || null,
         image_3: body.acf.image_3 || null,

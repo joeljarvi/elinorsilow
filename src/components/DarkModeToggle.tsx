@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { Button } from "./ui/button";
 
 export function DarkModeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -17,19 +18,23 @@ export function DarkModeToggle() {
   return (
     <div>
       {theme === "light" ? (
-        <button
+        <Button
+          variant="link"
+          size="linkSize"
           onClick={() => setTheme("dark")}
-          className="hover:opacity-30 transition-opacity uppercase"
+          className="font-gintoBlack "
         >
           Dark mode
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
+          variant="link"
+          size="linkSize"
           onClick={() => setTheme("light")}
-          className=" hover:opacity-30 transition-opacity uppercase "
+          className="font-gintoBlack  "
         >
-          Light mode
-        </button>
+          Light
+        </Button>
       )}
     </div>
   );

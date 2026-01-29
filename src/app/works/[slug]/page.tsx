@@ -1,5 +1,15 @@
-import WorkSlugPageClient from "./WorkSlugPageClient";
+import WorkSlugModalClient from "../WorkSlugModalClient";
 
-export default function WorkSlugPage() {
-  return <WorkSlugPageClient />;
+type Props = {
+  params: { slug: string };
+};
+
+export default async function WorkPage({ params }: Props) {
+  const { slug } = params;
+
+  return (
+    <div className="min-h-screen grid grid-cols-6 max-w-7xl ">
+      <WorkSlugModalClient slug={slug} />
+    </div>
+  );
 }
