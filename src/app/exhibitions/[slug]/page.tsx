@@ -1,15 +1,10 @@
-// src/app/exhibitions/[slug]/page.tsx
-
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
 
-export default function ExhibitionPage({
+export default async function ExhibitionPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  return (
-    <div className="min-h-screen grid grid-cols-6 max-w-7xl">
-      <ExhibitionSlugModalClient slug={params.slug} />
-    </div>
-  );
+  const { slug } = await params;
+  return <ExhibitionSlugModalClient slug={slug} />;
 }
