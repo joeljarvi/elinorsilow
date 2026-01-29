@@ -45,7 +45,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       setExhibition(ex);
       setLoading(false);
     });
-  }, [slug]);
+  }, [slug, getExhibitionBySlug]);
 
   useEffect(() => {
     if (!isCarouselOpen || !api) return;
