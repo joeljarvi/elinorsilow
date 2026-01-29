@@ -247,12 +247,14 @@ export default function MainContent({}: Props) {
         )}
 
         {view === "info" && (
-          <div className="grid grid-cols-3 gap-x-4 gap-y-8 mt-0 p-6 lg:p-0 lg:mt-[25vh] w-full col-span-3">
+          <div className="grid grid-cols-3 gap-x-4 gap-y-8 mt-0 p-6 lg:p-0 lg:mt-[25vh] w-full col-span-3 bg-blue-300">
             {/* BIOGRAPHY */}
 
             {biography && (
               <section className="col-span-3 pt-4 block   lg:hidden">
-                <h2 className="font-gintoBlack text-sm mb-1">Bio</h2>
+                <h2 className="font-gintoBlack text-base lg:text-sm mb-1">
+                  Bio
+                </h2>
                 <HDivider />
                 <div className="flex flex-col gap-y-2 mt-2">
                   <p className="whitespace-pre-line font-EBGaramond  max-w-xs">
@@ -266,7 +268,9 @@ export default function MainContent({}: Props) {
 
             {exhibitionList.length > 0 && (
               <section className="col-span-3">
-                <h2 className="font-gintoBlack text-sm mb-1">Exhibitions</h2>
+                <h2 className=" font-gintoBlack text-base lg:text-sm mb-1">
+                  Exhibitions
+                </h2>
                 <HDivider />
                 <ul className="space-y-0 mt-2">
                   {exhibitionList.map((ex) => (
@@ -284,7 +288,9 @@ export default function MainContent({}: Props) {
             {/* EDUCATION */}
             {educations.length > 0 && (
               <section className="col-span-3">
-                <h2 className="font-gintoBlack text-sm mb-1">Education</h2>
+                <h2 className="font-gintoBlack text-base lg:text-sm mb-1">
+                  Education
+                </h2>
                 <HDivider />
                 <ul className="space-y-0 mt-2">
                   {educations.map((edu) => (
@@ -302,15 +308,17 @@ export default function MainContent({}: Props) {
             {/* GRANTS */}
             {grants.length > 0 && (
               <section className="col-span-3">
-                <h2 className="font-gintoBlack text-sm mb-1">Grants</h2>
+                <h2 className="font-gintoBlack text-base lg:text-sm mb-1">
+                  Grants
+                </h2>
                 <HDivider />
                 <ul className="space-y-0 mt-2">
                   {grants.map((grant) => (
                     <li key={grant.id} className="text-sm font-EBGaramond">
                       <span className="font-gintoMedium text-xs">
                         {grant.acf.title}
-                      </span>
-                      , {grant.acf.year}
+                      </span>{" "}
+                      ({grant.acf.year})
                     </li>
                   ))}
                 </ul>

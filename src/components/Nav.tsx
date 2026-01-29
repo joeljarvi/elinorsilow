@@ -83,59 +83,65 @@ export default function Nav() {
     <>
       {/* NAV BUTTON MOBILE */}
       <button
-        className=" fixed lg:hidden left-auto  bottom-0 right-0 z-50 flex items-center justify-center   pr-6    "
+        className="fixed lg:hidden bottom-0 right-0 z-50"
         onClick={() => setOpen((prev) => !prev)}
       >
-        <AnimatePresence mode="wait">
-          {navLoading ? (
-            <motion.div
-              key="loading"
-              className="flex items-center justify-center  p-3 rounded-md  "
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, rotate: 360 }}
-              exit={{ opacity: 0 }}
-              transition={{
-                opacity: { duration: 0.3 },
-                rotate: { repeat: Infinity, duration: 2, ease: "linear" },
-              }}
-              style={{
-                transformOrigin: "50% 50%",
-                transformStyle: "preserve-3d",
-                backfaceVisibility: "hidden",
-              }}
-            >
-              <Image
-                src="/ogubbe_frilagd.png"
-                alt="loading"
-                width={2124}
-                height={2123}
-                priority
-                className="h-24 w-auto object-contain cursor-pointer pointer-events-auto dark:invert"
-              />
-            </motion.div>
-          ) : (
-            <>
-              <span className="sr-only">Open menu</span>
+        {!navLoading && (
+          <motion.div
+            key="static"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            whileHover={{ scale: 1.05 }}
+            className="p-2"
+          >
+            <Image
+              src="/elli_trumpetgubbe_frilagd.png"
+              alt="Elinor Silow"
+              width={1713}
+              height={2697}
+              className="h-24 w-auto object-contain cursor-pointer dark:invert"
+            />
+          </motion.div>
+        )}
+      </button>
+      <AnimatePresence mode="wait">
+        {navLoading && (
+          <motion.div
+            key="nav-loader"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              opacity: { duration: 0.3 },
+            }}
+            className="fixed lg:hidden inset-0 z-40 flex flex-col h-screen  bg-background/80 backdrop-blur-sm"
+          >
+            <div className="relative flex flex-col items-center justify-center h-full gap-y-0">
+              <h2
+                className="  
+ text-center font-gintoNordBlack text-4xl whitespace-wrap max-w-64  leading-8 text-foreground/30"
+              >
+                ELINOR SILOW
+              </h2>
+
               <motion.div
-                key="static"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                whileHover={{ scale: 1.05 }}
-                className="  flex items-center justify-end  p-2  "
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                className=""
               >
                 <Image
-                  src="/elli_trumpetgubbe_frilagd.png"
-                  alt="Elinor Silow"
-                  width={1713}
-                  height={2697}
-                  className="h-24 w-auto  object-contain cursor-pointer pointer-events-auto dark:invert"
+                  src="/ogubbe_frilagd.png"
+                  alt="loading"
+                  width={2124}
+                  height={2123}
+                  className="h-14 w-auto object-contain dark:invert"
                 />
               </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* DESKTOP */}
       <motion.nav
@@ -144,7 +150,6 @@ export default function Nav() {
         exit={{ opacity: 0 }}
         className="hidden  lg:flex fixed z-40 col-start-1 col-span-1   flex-col overflow-y-scroll    h-screen pt-4 px-4 pb-16 "
       >
-        {/* NAV BUTTON MOBILE */}
         <button
           className=" flex items-center justify-center mt-4 mb-4  w-24 h-24 "
           onClick={() => setOpen((prev) => !prev)}
@@ -678,36 +683,41 @@ export default function Nav() {
 
       {/* MOBILE OVERLAY */}
       <motion.div
-        className={`fixed inset-0 z-40 lg:hidden bg-background  overflow-y-auto transform ${
+        className={`fixed inset-0 z-40 lg:hidden  w-[calc(100vw-2.5rem)]    overflow-y-auto transform   p-8   ${
           open ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out min-h-screen`}
+        } transition-transform duration-300 ease-in-out `}
       >
         <motion.nav
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex lg:hidden relative  col-start-1 col-span-1   flex-col gap-x-4 overflow-y-scroll pt-24  h-full pb-16 "
+          className="flex lg:hidden relative overflow-y-scroll     flex-col gap-x-4  pt-6 px-6  l pb-16 bg-pink-300 text-red-600 h-[80vh] "
         >
-          <div className="mb-6 max-w-sm px-3 ">
+          <div className="mb-6 max-w-sm  ">
             <Button
               asChild
               variant="nav"
               size="linkSizeMd"
-              className="font-gintoBlack text-lg   px-6   "
+              className="font-gintoBlack text-lg text-red-600      "
             >
               <Link href="/">Elinor Silow</Link>
             </Button>
-            <div className="px-6  mb-4 text-base leading-snug">
+            <div className=" px-2  mb-4 text-base leading-snug">
               <p className="font-EBGaramond mt-3 mb-4  ">
                 (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
                 explores raw emotion through painting, sculpture and textile.
               </p>
               <p className="font-EBGaramond  ">
                 For inquiries, please contact:{" "}
-                <Button asChild variant="link" size="linkSize">
+                <Button
+                  asChild
+                  variant="link"
+                  size="linkSize"
+                  className="text-red-600"
+                >
                   <Link
                     href="mailto:elinor.silow@gmail.com"
-                    className="font-gintoMedium text-sm mx-0.5 hover:underline underline-offset-4"
+                    className="font-gintoRegular text-sm mx-0.5 hover:underline underline-offset-5 text-blue-600"
                   >
                     elinor.silow@gmail.com
                   </Link>
@@ -718,14 +728,14 @@ export default function Nav() {
           </div>
 
           {/* WORKS */}
-          <div className="px-6">
+          <div className="px-0">
             <div className=" flex flex-col  pt-2  ">
               <span className="flex items-center justify-between w-full pr-1  ">
                 <Button
                   asChild
                   variant="nav"
                   size="linkSizeMd"
-                  className="font-gintoBlack"
+                  className="font-gintoBlack "
                 >
                   <Link
                     href="/"
@@ -733,6 +743,7 @@ export default function Nav() {
                       router.push("/?view=works", { scroll: false });
                       setView("works");
                       setOpen(false);
+
                       setShowWorksMenu(true);
                       setShowExhibitionsMenu(false);
                       setShowExhibitionsFilter(false);
@@ -766,7 +777,7 @@ export default function Nav() {
               {/* WORKS MENU DROPDOWN */}
               {showWorksMenu && (
                 <>
-                  <div className="flex flex-col  gap-0">
+                  <div className="flex flex-col overflow-y-scroll  gap-0">
                     <Button
                       variant="nav"
                       size="linkSizeMd"
@@ -798,7 +809,7 @@ export default function Nav() {
                       >
                         <Staggered
                           items={allWorks}
-                          className="columns-1   space-y-0 border-l border-foreground pt-1  "
+                          className="columns-1   space-y-0 border-l border-foreground pt-1 bg-pink-300  "
                           renderItem={(work) => (
                             <>
                               <Button
@@ -834,7 +845,7 @@ export default function Nav() {
                       </span>
                     </Button>
                     {showWorksFilter && (
-                      <div className="pl-6">
+                      <div className="pl-6 overflow-y-scroll">
                         <HDivider />
                         <div className="flex flex-col items-start justify-start border-l border-foreground">
                           <span className=" flex items-baseline justify-start w-full pl-2  ">
@@ -1008,7 +1019,7 @@ export default function Nav() {
 
               {showExhibitionsMenu && (
                 <>
-                  <div className="flex flex-col     ">
+                  <div className="flex flex-col overflow-y-scroll     ">
                     {/* Index button */}
                     <Button
                       variant="nav"

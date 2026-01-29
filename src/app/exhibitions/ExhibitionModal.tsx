@@ -17,7 +17,7 @@ export default function ExhibitionModal({
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-20 h-screen w-full grid grid-cols-4    "
+        className="fixed inset-0 z-20   grid grid-cols-4 min-h-screen    "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -32,7 +32,7 @@ export default function ExhibitionModal({
         <motion.div
           key="modal"
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 lg:col-start-2 col-span-4 lg:col-span-3 w-full h-full bg-background  overflow-auto flex flex-col "
+          className="relative col-start-1 lg:col-start-2 col-span-4  lg:col-span-3  h-full  overflow-auto flex flex-col  "
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}

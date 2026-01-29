@@ -128,88 +128,99 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-3
-  p-4 lg:p-4 text-sm
-  z-40
+  p-8 lg:p-4 text-sm
+  z-40  h-[80vh] w-[calc(100vw-2.5rem)] lg:w-full 
 "
     >
-      <div className="col-span-3 grid grid-cols-3     justify-start ">
-        <span className="w-full  col-span-3 lg:col-span-2">
-          <button
-            onClick={() => {
-              setCarouselIndex(0);
-              setIsCarouselOpen(true);
-            }}
-            className="relative w-2/3 aspect-video overflow-hidden "
-          >
-            <Image
-              src={images[0]?.url}
-              alt=""
-              fill
-              className="object-cover transition-transform hover:scale-105"
-            />
-          </button>
-
-          <div className="flex flex-wrap items-baseline justify-start     ">
-            <h1 className="font-EBGaramondItalic   tracking-normal    ">
-              {exhibition.title.rendered}
-            </h1>
-            {exhibition.acf.location && (
-              <span className="font-EBGaramond   ">
-                , {exhibition.acf.location}
-              </span>
-            )}
-            {exhibition.acf.city && (
-              <span className="font-EBGaramond   ">
-                , {exhibition.acf.city}
-              </span>
-            )}
-
-            {exhibition.acf.year && (
-              <span className="font-EBGaramond   ">
-                , {exhibition.acf.year}
-              </span>
-            )}
-          </div>
-        </span>
-      </div>
-      <div className="mt-24 col-span-3 lg:col-span-2 max-w-sm lg:max-w-full font-EBGaramond">
-        <h3>{exhibition.acf.description}</h3>
-      </div>
-
-      <div className="col-span-3  grid grid-cols-3 gap-4 w-full  ">
-        {images.map((src, idx) => (
-          <div key={idx} className="col-span-3 lg:col-span-2 flex flex-col">
+      <div className="bg-orange-300 col-span-3 p-6 h-[80vh] overflow-y-scroll">
+        <div className="col-span-3 grid grid-cols-3     justify-start ">
+          <span className="w-full  col-span-3 lg:col-span-2">
             <button
               onClick={() => {
-                setCarouselIndex(idx);
+                setCarouselIndex(0);
                 setIsCarouselOpen(true);
               }}
-              className="relative aspect-video overflow-hidden flex flex-col"
+              className="relative w-2/3 aspect-video overflow-hidden "
             >
               <Image
-                src={src.url}
-                alt={src.desc || `Image ${idx + 1}`}
+                src={images[0]?.url}
+                alt=""
                 fill
-                className="object-cover transition-transform hover:scale-105 cursor-pointer"
+                className="object-cover transition-transform hover:scale-105"
               />
             </button>
-            {src.desc && (
-              <div className="w-full font-EBGaramond p-2">{src.desc}</div>
-            )}
-          </div>
-        ))}
-      </div>
-      <div className=" col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2">
-        <h3>{exhibition.acf.credits}</h3>
 
-        <span className="flex items-center justify-start gap-x-4">
-          <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
-            Previous
-          </button>
-          <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
-            Next
-          </button>
-        </span>
+            <div className="flex flex-wrap items-baseline justify-start max-w-64     ">
+              <h1 className="font-EBGaramondItalic   tracking-normal mr-1   ">
+                {exhibition.title.rendered}
+              </h1>
+              {exhibition.acf.location && (
+                <span className="font-EBGaramond   ">
+                  {exhibition.acf.location}
+                </span>
+              )}
+              {exhibition.acf.city && (
+                <span className="font-EBGaramond   ">
+                  , {exhibition.acf.city}
+                </span>
+              )}
+
+              {exhibition.acf.year && (
+                <span className="font-EBGaramond ml-1  ">
+                  ({exhibition.acf.year})
+                </span>
+              )}
+            </div>
+          </span>
+        </div>
+        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-full font-EBGaramond mb-3">
+          <h3>{exhibition.acf.description}</h3>
+        </div>
+
+        <div className="col-span-3  grid grid-cols-3 gap-4 w-full  ">
+          {images.map((src, idx) => (
+            <div key={idx} className="col-span-3 lg:col-span-2 flex flex-col">
+              <button
+                onClick={() => {
+                  setCarouselIndex(idx);
+                  setIsCarouselOpen(true);
+                }}
+                className="relative aspect-video overflow-hidden flex flex-col"
+              >
+                <Image
+                  src={src.url}
+                  alt={src.desc || `Image ${idx + 1}`}
+                  fill
+                  className="object-cover transition-transform hover:scale-105 cursor-pointer"
+                />
+              </button>
+              {src.desc && (
+                <div className="w-full font-EBGaramond p-2">{src.desc}</div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className=" col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2 my-6">
+          <h3>{exhibition.acf.credits}</h3>
+
+          <span className="flex items-center justify-between w-full gap-x-4">
+            <Button
+              className="   font-EBGaramond hover:font-EBGaramondItalic cursor-pointertransition-all"
+              size="linkSize"
+              variant="link"
+              onClick={onClose}
+            >
+              Back to exhibitions
+            </Button>
+            <span className="flex items-center justify-end gap-x-2"></span>
+            <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
+              Previous
+            </button>
+            <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
+              Next
+            </button>
+          </span>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -304,34 +315,6 @@ gap-4
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="fixed lg:hidden bottom-0 h-32 lg:h-12 w-full bg-background z-50 flex items-end justify-start py-3 px-4 gap-x-4 text-foreground ">
-        <Button
-          className="   font-EBGaramond hover:font-EBGaramondItalic cursor-pointertransition-all"
-          size="linkSize"
-          variant="link"
-          onClick={onClose}
-        >
-          Back to exhibitions
-        </Button>
-        <Button
-          className="   font-EBGaramond hover:font-EBGaramondItalic cursor-pointertransition-all"
-          size="linkSize"
-          variant="link"
-          onClick={onClose}
-        >
-          Previous
-        </Button>
-
-        <Button
-          className="   font-EBGaramond hover:font-EBGaramondItalic cursor-pointertransition-all"
-          size="linkSize"
-          variant="link"
-          onClick={onClose}
-        >
-          Next
-        </Button>
-      </div>
     </div>
   );
 }
