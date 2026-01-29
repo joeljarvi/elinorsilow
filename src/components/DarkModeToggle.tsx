@@ -19,10 +19,10 @@ export function DarkModeToggle() {
     <div>
       {theme === "light" ? (
         <Button
-          variant="link"
+          variant="nav"
           size="linkSize"
           onClick={() => setTheme("dark")}
-          className="font-gintoBlack "
+          className="font-EBGaramondItalic uppercase pl-6 "
         >
           Dark mode
         </Button>
@@ -31,9 +31,9 @@ export function DarkModeToggle() {
           variant="link"
           size="linkSize"
           onClick={() => setTheme("light")}
-          className="font-gintoBlack  "
+          className=" font-EBGaramondItalic uppercase pl-6  "
         >
-          Light
+          Dark mode
         </Button>
       )}
     </div>

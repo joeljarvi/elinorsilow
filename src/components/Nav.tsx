@@ -83,14 +83,14 @@ export default function Nav() {
     <>
       {/* NAV BUTTON MOBILE */}
       <button
-        className=" fixed lg:hidden bottom-0 right-0 z-50 flex items-center justify-center   w-16 h-16 p-3   "
+        className=" fixed lg:hidden left-1/2 -translate-x-1/2 bottom-0 right-0 z-50 flex items-center justify-center   p-6    "
         onClick={() => setOpen((prev) => !prev)}
       >
         <AnimatePresence mode="wait">
           {navLoading ? (
             <motion.div
               key="loading"
-              className="flex items-center justify-center "
+              className="flex items-center justify-center  p-3 rounded-md  "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, rotate: 360 }}
               exit={{ opacity: 0 }}
@@ -110,7 +110,7 @@ export default function Nav() {
                 width={2124}
                 height={2123}
                 priority
-                className="h-16 w-auto object-contain cursor-pointer pointer-events-auto dark:invert"
+                className="h-24 w-auto object-contain cursor-pointer pointer-events-auto dark:invert"
               />
             </motion.div>
           ) : (
@@ -122,14 +122,14 @@ export default function Nav() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 whileHover={{ scale: 1.05 }}
-                className="  flex items-center justify-end  mb-6 "
+                className="  flex items-center justify-end  p-2  "
               >
                 <Image
                   src="/elli_trumpetgubbe_frilagd.png"
                   alt="Elinor Silow"
                   width={1713}
                   height={2697}
-                  className="h-16 w-auto  object-contain cursor-pointer pointer-events-auto dark:invert"
+                  className="h-24 w-auto  object-contain cursor-pointer pointer-events-auto dark:invert"
                 />
               </motion.div>
             </>
@@ -686,39 +686,46 @@ export default function Nav() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex lg:hidden relative lg:fixed col-start-1 col-span-1   flex-col gap-x-4 overflow-y-scroll pt-24  h-screen pb-16 px-6"
+          className="flex lg:hidden relative lg:fixed col-start-1 col-span-1   flex-col gap-x-4 overflow-y-scroll pt-24  h-screen pb-16 "
         >
-          <div className="mt-10 mb-8 space-y-4 max-w-xs">
+          <div className="mb-6 max-w-sm ">
             <Button
               asChild
-              variant="link"
-              size="linkSize"
-              className="font-gintoBlack  "
+              variant="nav"
+              size="linkSizeMd"
+              className="font-gintoNordBlack text-xl uppercase whitespace-normal px-6   "
             >
               <Link href="/">Elinor Silow</Link>
             </Button>
-            <p className="font-EBGaramond ">
-              (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
-              explores raw emotion through painting, sculpture and textile.
-            </p>
-            <p className="font-EBGaramond">
-              Please contact her at{" "}
-              <Button asChild variant="link" size="linkSize">
-                <Link
-                  href="mailto:elinor.silow@gmail.com"
-                  className="font-gintoMedium text-xs mx-0.5 hover:underline underline-offset-4"
-                >
-                  elinor.silow@gmail.com
-                </Link>
-              </Button>
-              for collaborations and inquires.
-            </p>
+            <div className="px-8  mb-4 text-lg leading-snug">
+              <p className="font-EBGaramond mt-3 mb-4  ">
+                (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
+                explores raw emotion through painting, sculpture and textile.
+              </p>
+              <p className="font-EBGaramond  ">
+                For inquiries, please contact:{" "}
+                <Button asChild variant="link" size="linkSize">
+                  <Link
+                    href="mailto:elinor.silow@gmail.com"
+                    className="font-gintoMedium text-sm mx-0.5 hover:underline underline-offset-4"
+                  >
+                    elinor.silow@gmail.com
+                  </Link>
+                </Button>
+                for collaborations and inquires.
+              </p>
+            </div>
           </div>
 
           {/* WORKS */}
-          <div className=" flex flex-col  pt-2   ">
-            <span className="flex  justify-between w-full  mb-1">
-              <Button asChild variant="link" size="linkSize">
+          <div className=" flex flex-col  pt-2 px-4  ">
+            <span className="flex items-center justify-between w-full pr-1  ">
+              <Button
+                asChild
+                variant="nav"
+                size="linkSizeMd"
+                className="font-gintoBlack"
+              >
                 <Link
                   href="/"
                   onClick={() => {
@@ -730,9 +737,9 @@ export default function Nav() {
                     setShowExhibitionsFilter(false);
                     setShowAllExhibitionsList(false);
                   }}
-                  className={`font-gintoBlack text-left  `}
+                  className={`uppercase  `}
                 >
-                  Works
+                  Works{" "}
                 </Link>
               </Button>
               <Button
@@ -744,7 +751,7 @@ export default function Nav() {
                   setShowExhibitionsFilter(false);
                   setShowAllExhibitionsList(false);
                 }}
-                className={``}
+                className=""
               >
                 {showWorksMenu ? (
                   <MinusIcon className="w-3 h-3" />
@@ -753,156 +760,195 @@ export default function Nav() {
                 )}
               </Button>
             </span>
+
             <HDivider />
             {/* WORKS MENU DROPDOWN */}
             {showWorksMenu && (
               <>
-                <div className="flex flex-col pl-4 py-2">
+                <div className="flex flex-col  gap-0">
                   <Button
-                    variant="link"
-                    size="linkSize"
-                    onClick={() => setShowAllWorksList((prev) => !prev)}
-                    className={`font-gintoMedium text-sm  ${
-                      showAllWorksList ? "opacity-30" : ""
-                    }
+                    variant="nav"
+                    size="linkSizeMd"
+                    onClick={() => {
+                      setShowAllWorksList((prev) => !prev);
+                      setShowExhibitionsMenu(false);
+                      setShowExhibitionsFilter(false);
+                      setShowAllExhibitionsList(false);
+                    }}
+                    className={`  font-gintoMedium 
     `}
                   >
-                    Index{" "}
-                  </Button>
+                    Index
+                    <span>
+                      {" "}
+                      {showAllWorksList ? (
+                        <MinusIcon className="w-3 h-3" />
+                      ) : (
+                        <PlusIcon className="w-3 h-3" />
+                      )}
+                    </span>
+                  </Button>{" "}
+                  <HDivider />
                   {showAllWorksList && (
                     <div
-                      className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out  ${
+                      className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out   pl-6   ${
                         showAllWorksList ? "max-h-[200vh]" : "hidden"
                       }`}
                     >
                       <Staggered
                         items={allWorks}
-                        className="columns-1  pl-4 space-y-0 mb-2  "
+                        className="columns-1   space-y-0 border-l border-foreground pt-1  "
                         renderItem={(work) => (
-                          <Button
-                            variant="link"
-                            size="listSize"
-                            key={work.slug}
-                            onClick={() => openWork(work.slug)}
-                            className="break-inside-avoid text-left font-gintoMedium transition-all text-xs cursor-pointer  hover:pl-2"
-                          >
-                            {work.title.rendered}
-                          </Button>
+                          <>
+                            <Button
+                              variant="nav"
+                              size="linkSizeMd"
+                              key={work.slug}
+                              onClick={() => openWork(work.slug)}
+                              className="break-inside-avoid transition-all font-EBGaramondItalic   hover:pl-6 hover:font-EBGaramond"
+                            >
+                              {work.title.rendered}
+                            </Button>
+                            <HDivider />
+                          </>
                         )}
                       />
                     </div>
                   )}
-
                   <Button
-                    variant="link"
-                    size="linkSize"
+                    variant="nav"
+                    size="linkSizeMd"
                     onClick={() => setShowWorksFilter((prev) => !prev)}
-                    className={`font-gintoMedium text-sm  
+                    className={`font-gintoMedium pt-0.5   
     `}
                   >
-                    Filter
+                    Filters
+                    <span>
+                      {" "}
+                      {showWorksFilter ? (
+                        <MinusIcon className="w-3 h-3" />
+                      ) : (
+                        <PlusIcon className="w-3 h-3" />
+                      )}
+                    </span>
                   </Button>
-
                   {showWorksFilter && (
-                    <div className="flex flex-col items-start justify-start">
-                      <span className="pl-4 flex items-baseline justify-start w-full ">
-                        <h3 className="font-gintoMedium text-sm whitespace-nowrap">
-                          Sort by
-                        </h3>
-
-                        <Select
-                          value={workSort}
-                          onValueChange={(v) => {
-                            setWorkSort(v as WorkSort);
-                            if (v !== "year") setSelectedYear(null);
-                          }}
-                        >
-                          <SelectTrigger
-                            size="sm"
-                            className="font-gintoBlack w-full"
-                          >
-                            <SelectValue placeholder="Sort works" />
-                          </SelectTrigger>
-
-                          <SelectContent position="popper">
-                            <SelectItem value="year-latest">
-                              year (latest)
-                            </SelectItem>
-                            <SelectItem value="year-oldest">
-                              year (oldest)
-                            </SelectItem>
-                            <SelectItem value="year">
-                              year (specific)
-                            </SelectItem>
-                            <SelectItem value="title">title (a–ö)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </span>
-                      {workSort === "year" && (
-                        <span className="pl-4 flex items-baseline justify-start w-full ">
-                          <h3 className="font-gintoMedium text-sm whitespace-nowrap">
-                            Year
+                    <div className="pl-6">
+                      <HDivider />
+                      <div className="flex flex-col items-start justify-start border-l border-foreground">
+                        <span className=" flex items-baseline justify-start w-full pl-2  ">
+                          <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            Sort by
                           </h3>
 
                           <Select
-                            value={selectedYear?.toString()}
-                            onValueChange={(v) => setSelectedYear(Number(v))}
+                            value={workSort}
+                            onValueChange={(v) => {
+                              setWorkSort(v as WorkSort);
+                              if (v !== "year") setSelectedYear(null);
+                            }}
                           >
                             <SelectTrigger
-                              size="sm"
-                              className="font-gintoBlack w-full"
+                              size="default"
+                              className="font-gintoBlack w-full text-lg pt-0.5 pr-2  "
                             >
-                              <SelectValue placeholder="2024" />
+                              <SelectValue placeholder="Sort works" />
                             </SelectTrigger>
 
-                            <SelectContent position="popper">
-                              {availibleYears.map((year) => (
-                                <SelectItem key={year} value={year.toString()}>
-                                  {year}
-                                </SelectItem>
-                              ))}
+                            <SelectContent className="" position="popper">
+                              <SelectItem value="year-latest">
+                                year (latest)
+                              </SelectItem>
+                              <SelectItem value="year-oldest">
+                                year (oldest)
+                              </SelectItem>
+                              <SelectItem value="year">
+                                year (specific)
+                              </SelectItem>
+                              <SelectItem value="title">title (a–ö)</SelectItem>
                             </SelectContent>
                           </Select>
                         </span>
-                      )}
+                        <HDivider />
+                        {workSort === "year" && (
+                          <>
+                            <span className="pl-2 flex items-baseline justify-start w-full ">
+                              <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                                Year
+                              </h3>
 
-                      <span className="pl-4 flex items-baseline justify-start w-full ">
-                        <h3 className="font-gintoMedium text-sm whitespace-nowrap">
-                          Show
-                        </h3>
+                              <Select
+                                value={selectedYear?.toString()}
+                                onValueChange={(v) =>
+                                  setSelectedYear(Number(v))
+                                }
+                              >
+                                <SelectTrigger
+                                  size="default"
+                                  className="font-gintoBlack w-full text-lg pt-0.5 pr-2 "
+                                >
+                                  <SelectValue placeholder="2024" />
+                                </SelectTrigger>
 
-                        <Select
-                          value={categoryFilter}
-                          onValueChange={(v) =>
-                            setCategoryFilter(v as CategoryFilter)
-                          }
-                        >
-                          <SelectTrigger
-                            size="sm"
-                            className="font-gintoBlack w-full"
+                                <SelectContent position="popper">
+                                  {availibleYears.map((year) => (
+                                    <SelectItem
+                                      key={year}
+                                      value={year.toString()}
+                                    >
+                                      {year}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </span>
+                            <HDivider />
+                          </>
+                        )}
+
+                        <span className="pl-2 flex items-baseline justify-start w-full ">
+                          <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            Show
+                          </h3>
+
+                          <Select
+                            value={categoryFilter}
+                            onValueChange={(v) =>
+                              setCategoryFilter(v as CategoryFilter)
+                            }
                           >
-                            <SelectValue placeholder="All works" />
-                          </SelectTrigger>
+                            <SelectTrigger
+                              size="default"
+                              className="font-gintoBlack w-full text-lg pt-0.5 pr-2"
+                            >
+                              <SelectValue placeholder="All works" />
+                            </SelectTrigger>
 
-                          <SelectContent position="popper">
-                            <SelectItem value="all">all works</SelectItem>
-                            <SelectItem value="painting">paintings</SelectItem>
-                            <SelectItem value="drawing">drawings</SelectItem>
-                            <SelectItem value="sculpture">sculpture</SelectItem>
-                            <SelectItem value="textile">textiles</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </span>
-                      <span className="pl-4 flex items-baseline justify-start w-full ">
-                        <Button
-                          variant="link"
-                          size="linkSize"
-                          className="font-gintoMedium text-sm "
-                          onClick={() => setShowInfo((prev) => !prev)}
-                        >
-                          {showInfo ? "Hide description" : "Show description"}
-                        </Button>
-                      </span>
+                            <SelectContent position="popper">
+                              <SelectItem value="all">all works</SelectItem>
+                              <SelectItem value="painting">
+                                paintings
+                              </SelectItem>
+                              <SelectItem value="drawing">drawings</SelectItem>
+                              <SelectItem value="sculpture">
+                                sculpture
+                              </SelectItem>
+                              <SelectItem value="textile">textiles</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </span>
+                        <HDivider />
+                        <span className=" flex items-baseline justify-start w-full ">
+                          <Button
+                            variant="nav"
+                            size="linkSizeMd"
+                            className="font-gintoMedium  "
+                            onClick={() => setShowInfo((prev) => !prev)}
+                          >
+                            {showInfo ? "Hide description" : "Show description"}
+                          </Button>
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -912,9 +958,9 @@ export default function Nav() {
           </div>
 
           {/* EXHIBITIONS */}
-          <div className="flex flex-col pt-2  ">
-            <span className="flex items-center justify-between w-full gap-x-1 mb-1">
-              <Button asChild variant="link" size="linkSize">
+          <div className="flex flex-col pt-1 px-4  ">
+            <span className="flex items-center justify-between w-full gap-x-1 pr-1 ">
+              <Button asChild variant="nav" size="linkSizeMd">
                 <Link
                   href="/"
                   onClick={() => {
@@ -926,7 +972,7 @@ export default function Nav() {
                     setShowWorksFilter(false);
                     setShowAllWorksList(false);
                   }}
-                  className={`font-gintoBlack  text-left `}
+                  className={`font-gintoBlack  uppercase `}
                 >
                   Exhibitions
                 </Link>
@@ -953,37 +999,47 @@ export default function Nav() {
 
             {showExhibitionsMenu && (
               <>
-                <div className="flex flex-col py-2 px-4   ">
+                <div className="flex flex-col     ">
                   {/* Index button */}
                   <Button
-                    variant="link"
-                    size="linkSize"
+                    variant="nav"
+                    size="linkSizeMd"
                     onClick={() => setShowAllExhibitionsList((prev) => !prev)}
-                    className={`font-gintoMedium text-sm  ${
-                      showAllExhibitionsList ? "opacity-30" : ""
-                    }`}
+                    className={`font-gintoMedium  }`}
                   >
                     Index
+                    <span>
+                      {" "}
+                      {showAllExhibitionsList ? (
+                        <MinusIcon className="w-3 h-3" />
+                      ) : (
+                        <PlusIcon className="w-3 h-3" />
+                      )}
+                    </span>
                   </Button>
+                  <HDivider />
                   {showAllExhibitionsList && (
                     <div
-                      className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out ${
+                      className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out pl-6 ${
                         showAllExhibitionsList ? "max-h-[200vh]" : "hidden"
                       }`}
                     >
                       <Staggered
                         items={exhibitions}
-                        className="columns-1  pl-4 space-y-0 mb-2  "
+                        className="columns-1   space-y-0 border-l border-foreground   "
                         renderItem={(ex) => (
-                          <Button
-                            variant="link"
-                            size="listSize"
-                            key={ex.slug}
-                            onClick={() => openExhibition(ex.slug)}
-                            className="break-inside-avoid text-left font-gintoMedium transition-all text-xs cursor-pointer  hover:pl-2"
-                          >
-                            {ex.title.rendered}
-                          </Button>
+                          <>
+                            <Button
+                              variant="nav"
+                              size="linkSizeMd"
+                              key={ex.slug}
+                              onClick={() => openExhibition(ex.slug)}
+                              className="break-inside-avoid  font-EBGaramondItalic hover:font-EBGaramond transition-all  cursor-pointer  hover:pl-4"
+                            >
+                              {ex.title.rendered}
+                            </Button>
+                            <HDivider />
+                          </>
                         )}
                       />
                     </div>
@@ -991,94 +1047,111 @@ export default function Nav() {
 
                   {/* Filter / Sort */}
                   <Button
-                    variant="link"
-                    size="linkSize"
+                    variant="nav"
+                    size="linkSizeMd"
                     onClick={() => setShowExhibitionsFilter((prev) => !prev)}
-                    className={`font-gintoMedium text-sm `}
+                    className={`font-gintoMedium  `}
                   >
-                    Filter
+                    Filters
+                    <span>
+                      {" "}
+                      {showExhibitionsFilter ? (
+                        <MinusIcon className="w-3 h-3" />
+                      ) : (
+                        <PlusIcon className="w-3 h-3" />
+                      )}
+                    </span>
                   </Button>
                   {showExhibitionsFilter && (
-                    <div className="flex flex-col items-start justify-start  ">
-                      {/* Sort by */}
-                      <span className="pl-4 flex items-baseline justify-start w-full ">
-                        <h3 className="font-gintoMedium text-sm whitespace-nowrap">
-                          Sort by
-                        </h3>
-                        <Select
-                          value={exhibitionSort}
-                          onValueChange={(v) =>
-                            setExhibitionSort(v as ExhibitionSort)
-                          }
-                        >
-                          <SelectTrigger
-                            size="sm"
-                            className="font-gintoBlack w-full"
-                          >
-                            <SelectValue placeholder="Sort exhibitions" />
-                          </SelectTrigger>
-                          <SelectContent position="popper">
-                            <SelectItem value="year">year</SelectItem>
-                            <SelectItem value="title">title (a-ö)</SelectItem>
-                            <SelectItem value="type">
-                              exhibiton type (solo/group)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </span>
-                      {exhibitionSort === "year" && (
-                        <span className="pl-4 flex items-baseline justify-start w-full ">
-                          <h3 className="font-gintoMedium text-sm whitespace-nowrap">
-                            Show
+                    <div className="pl-6 pt-0.5">
+                      <HDivider />
+                      <div className="flex flex-col items-start justify-start border-l border-foreground ">
+                        {/* Sort by */}
+                        <span className="pl-2 flex items-baseline justify-start w-full ">
+                          <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            Sort by
                           </h3>
                           <Select
-                            value={exSelectedYear}
-                            onValueChange={exSetSelectedYear}
+                            value={exhibitionSort}
+                            onValueChange={(v) =>
+                              setExhibitionSort(v as ExhibitionSort)
+                            }
                           >
                             <SelectTrigger
-                              size="sm"
-                              className="font-gintoBlack w-full"
+                              size="default"
+                              className="font-gintoBlack w-full text-lg pt-0.5 pr-2"
                             >
-                              <SelectValue placeholder="Filter by year" />
+                              <SelectValue placeholder="Sort exhibitions" />
                             </SelectTrigger>
                             <SelectContent position="popper">
-                              <SelectItem value="all">all years</SelectItem>
-                              {availableYears.map((y) => (
-                                <SelectItem key={y} value={y}>
-                                  {y}
-                                </SelectItem>
-                              ))}
+                              <SelectItem value="year">year</SelectItem>
+                              <SelectItem value="title">title (a-ö)</SelectItem>
+                              <SelectItem value="type">
+                                exhibiton type (solo/group)
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </span>
-                      )}
+                        <HDivider />
+                        {exhibitionSort === "year" && (
+                          <>
+                            <span className="pl-2 flex items-baseline justify-start w-full  ">
+                              <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                                Show
+                              </h3>
+                              <Select
+                                value={exSelectedYear}
+                                onValueChange={exSetSelectedYear}
+                              >
+                                <SelectTrigger
+                                  size="default"
+                                  className="font-gintoBlack w-full text-lg pt-0.5 pr-2"
+                                >
+                                  <SelectValue placeholder="Filter by year" />
+                                </SelectTrigger>
+                                <SelectContent position="popper">
+                                  <SelectItem value="all">all years</SelectItem>
+                                  {availableYears.map((y) => (
+                                    <SelectItem key={y} value={y}>
+                                      {y}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </span>
+                            <HDivider />
+                          </>
+                        )}
 
-                      {/* Filter by Type */}
-                      <span className="pl-4 flex items-baseline justify-start w-full ">
-                        <h3 className="font-gintoMedium text-sm whitespace-nowrap">
-                          Show
-                        </h3>
-                        <Select
-                          value={selectedType}
-                          onValueChange={setSelectedType}
-                        >
-                          <SelectTrigger
-                            size="sm"
-                            className="font-gintoBlack w-full"
+                        {/* Filter by Type */}
+                        <span className="pl-2 flex items-baseline justify-start w-full ">
+                          <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            Show
+                          </h3>
+                          <Select
+                            value={selectedType}
+                            onValueChange={setSelectedType}
                           >
-                            <SelectValue placeholder="all exhibitions" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">all exhibitions</SelectItem>
-                            <SelectItem value="Solo">
-                              solo exhibitions
-                            </SelectItem>
-                            <SelectItem value="Group">
-                              group exhibitions
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </span>
+                            <SelectTrigger
+                              size="default"
+                              className="font-gintoBlack w-full text-lg pt-0.5 pr-2 "
+                            >
+                              <SelectValue placeholder="all exhibitions" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">
+                                all exhibitions
+                              </SelectItem>
+                              <SelectItem value="Solo">
+                                solo exhibitions
+                              </SelectItem>
+                              <SelectItem value="Group">
+                                group exhibitions
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1087,18 +1160,18 @@ export default function Nav() {
             )}
 
             {/* CONTACT */}
-            <span className="  pt-2 flex items-center justify-between w-full mb-1">
+            <span className="  pt-0.5 flex items-center justify-between w-full">
               <Button
-                variant="link"
-                size="linkSize"
-                className="font-gintoBlack"
+                variant="nav"
+                size="linkSizeMd"
+                className="font-gintoBlack uppercase"
                 asChild
                 onClick={() => setShowContact((prev) => !prev)}
               >
                 <Link href="mailto:elinor.silow@gmail.com">Contact</Link>
               </Button>
               <Button
-                variant="link"
+                variant="nav"
                 size="linkIcon"
                 onClick={() => {
                   setShowContact((prev) => !prev);
@@ -1119,20 +1192,20 @@ export default function Nav() {
 
             {showContact && (
               <>
-                <div className="flex flex-col py-2 px-4    ">
+                <div className="flex flex-col py-1 px-4    ">
                   <Button
-                    variant="link"
-                    size="linkSize"
-                    className="font-gintoMedium text-sm  "
+                    variant="nav"
+                    size="linkSizeMd"
+                    className="font-gintoMedium   "
                     asChild
                   >
                     <Link href="mailto:elinor.silow@gmail.com">E-mail</Link>
                   </Button>
 
                   <Button
-                    variant="link"
-                    size="linkSize"
-                    className="font-gintoMedium text-sm"
+                    variant="nav"
+                    size="linkSizeMd"
+                    className="font-gintoMedium "
                     asChild
                   >
                     <Link href="https://www.instagram.com/elinorsilow/">
@@ -1144,10 +1217,10 @@ export default function Nav() {
               </>
             )}
             {/* INFO */}
-            <div className="pt-2 flex flex-col gap-y-0 ">
+            <div className="pt-1 flex flex-col gap-y-0 ">
               <Button
-                variant="link"
-                size="linkSize"
+                variant="nav"
+                size="linkSizeMd"
                 onClick={() => {
                   setView("info");
                   setOpen(false);
@@ -1158,7 +1231,7 @@ export default function Nav() {
                   setShowWorksFilter(false);
                   setShowAllWorksList(false);
                 }}
-                className="font-gintoBlack text-left"
+                className="font-gintoBlack text-left uppercase"
               >
                 Information
               </Button>
