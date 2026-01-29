@@ -83,7 +83,7 @@ export default function Nav() {
     <>
       {/* NAV BUTTON MOBILE */}
       <button
-        className=" fixed lg:hidden left-1/2 -translate-x-1/2 bottom-0 right-0 z-50 flex items-center justify-center   p-6    "
+        className=" fixed lg:hidden  bottom-0 right-0 z-50 flex items-center justify-center   p-6    "
         onClick={() => setOpen((prev) => !prev)}
       >
         <AnimatePresence mode="wait">
@@ -686,7 +686,7 @@ export default function Nav() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex lg:hidden relative lg:fixed col-start-1 col-span-1   flex-col gap-x-4 overflow-y-scroll pt-24  min-h-screen pb-16 "
+          className="flex lg:hidden relative  col-start-1 col-span-1   flex-col gap-x-4 overflow-y-scroll pt-24  h-full pb-16 "
         >
           <div className="mb-6 max-w-sm px-3 ">
             <Button
