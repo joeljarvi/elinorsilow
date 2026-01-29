@@ -1,10 +1,16 @@
+"use client";
+
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
 
-interface ExhibitionPageProps {
-  params: { slug: string };
+type Params = {
+  slug: string;
+};
+
+interface Props {
+  params: Params;
 }
 
-export default function ExhibitionPage({ params }: ExhibitionPageProps) {
+export default function ExhibitionPage({ params }: Props) {
   return (
     <div className="min-h-screen grid grid-cols-6 max-w-7xl">
       <ExhibitionSlugModalClient slug={params.slug} />
