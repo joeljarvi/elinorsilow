@@ -83,7 +83,7 @@ export default function Nav() {
     <>
       {/* NAV BUTTON MOBILE */}
       <button
-        className=" fixed lg:hidden  bottom-0 right-0 z-50 flex items-center justify-center   p-6    "
+        className=" fixed lg:hidden left-auto  bottom-0 right-0 z-50 flex items-center justify-center   pr-6    "
         onClick={() => setOpen((prev) => !prev)}
       >
         <AnimatePresence mode="wait">
