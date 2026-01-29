@@ -18,7 +18,6 @@ import { useInfo } from "@/context/InfoContext";
 import HDivider from "@/components/HDivider";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
-import BorderWrapper from "./BorderWrapper";
 
 type Props = {
   showInfo?: boolean;

@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
 import { Button } from "@/components/ui/button";
-import { Cross1Icon } from "@radix-ui/react-icons";
 
 type WorkModalProps = {
   slug: string;

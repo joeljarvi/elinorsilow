@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
 import { Button } from "@/components/ui/button";
-import { Cross1Icon } from "@radix-ui/react-icons";
 
 type ExhibitionModalProps = {
   slug: string;

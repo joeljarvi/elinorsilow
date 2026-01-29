@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Work, getWorkBySlug } from "../../../lib/wordpress";
 import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
-import { Loader } from "@/components/Loader";
+
 import {
   Carousel,
   CarouselContent,
@@ -23,8 +23,6 @@ export default function WorkSlugModalClient({
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [isCarouselOpen, setIsCarouselOpen] = useState(false);
-  const [api, setApi] = useState<CarouselApi | null>(null);
 
   // Load the work by slug
   const loadWorkByIndex = useCallback(
@@ -62,7 +60,7 @@ export default function WorkSlugModalClient({
     }
   }, [slug, allWorks, contextLoading, normalizeSlug, loadWorkByIndex]);
 
-  if (loading) return <Loader />;
+  if (loading) return <div></div>;
   if (!work) return <p>Work not found</p>;
 
   const images = work._embedded?.["wp:featuredmedia"]?.map(

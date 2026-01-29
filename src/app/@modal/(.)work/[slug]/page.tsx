@@ -1,5 +1,4 @@
 import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
-import WorkModal from "../../../works/WorkModal";
 
 export default async function WorkModalPage({
   params,

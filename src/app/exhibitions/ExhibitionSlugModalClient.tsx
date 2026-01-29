@@ -10,19 +10,17 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
-import { Loader } from "@/components/Loader";
-import { Exhibition, getExhibitionBySlug } from "../../../lib/wordpress";
+
+import { Exhibition } from "../../../lib/wordpress";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CarouselApi } from "@/components/ui/carousel";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Arrow } from "@radix-ui/react-select";
-import { SelectScrollUpButton } from "@/components/ui/select";
 
 type Props = {
   slug: string;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
