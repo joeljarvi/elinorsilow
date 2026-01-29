@@ -25,7 +25,7 @@ import {
 
 import type { CombinedExhibition, Exhibition, Work } from "../../lib/wordpress";
 
-type ViewMode = "works" | "exhibitions" | "info";
+
 type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
 type ExhibitionSort = "year" | "title" | "type";
 type CategoryFilter = "all" | "painting" | "drawing" | "sculpture" | "textile";
@@ -60,7 +60,6 @@ export default function Nav() {
 
   const {
     allWorks,
-    filteredWorks,
     workSort,
     setWorkSort,
     categoryFilter,

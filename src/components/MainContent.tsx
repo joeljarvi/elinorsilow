@@ -60,13 +60,12 @@ type GridItem =
     });
 
 export default function MainContent({}: Props) {
-  const { view, setView, open, setOpen } = useNav();
-  const { filteredWorks, showInfo, setActiveWorkSlug, workSort } = useWorks();
+  const { view, setOpen } = useNav();
+  const { filteredWorks, showInfo, setActiveWorkSlug } = useWorks();
   const {
     filteredExhibitions,
-    activeExhibitionSlug,
+
     setActiveExhibitionSlug,
-    exhibitionSort,
   } = useExhibitions();
 
   const { biography, educations, grants, exhibitionList } = useInfo();

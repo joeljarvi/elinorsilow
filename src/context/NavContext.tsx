@@ -6,7 +6,6 @@ import {
   useState,
   ReactNode,
   Dispatch,
-  SetStateAction,
 } from "react";
 
 export type ViewMode = "works" | "exhibitions" | "info";
