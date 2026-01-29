@@ -15,7 +15,6 @@ import { Exhibition } from "../../../lib/wordpress";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CarouselApi } from "@/components/ui/carousel";
 
-import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
 type Props = {
@@ -24,11 +23,7 @@ type Props = {
 };
 
 export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
-  const {
-    exhibitions,
-
-    getExhibitionBySlug,
-  } = useExhibitions();
+  const { getExhibitionBySlug } = useExhibitions();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +31,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     if (!slug) return;
@@ -95,35 +89,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       api.scrollTo(carouselIndex, true);
     }
   }, [isCarouselOpen, carouselIndex, api]);
-
-  const goNextExhibition = () => {
-    if (!exhibition || !exhibitions) return;
-
-    const currentIndex = exhibitions.findIndex((e) => e.id === exhibition.id);
-
-    if (currentIndex === -1) return;
-
-    // Get next exhibition, loop to start if at end
-    const nextIndex = (currentIndex + 1) % exhibitions.length;
-    const nextEx = exhibitions[nextIndex];
-
-    // Navigate to next exhibition slug
-    router.push(`/exhibitions/${nextEx.slug}`);
-  };
-  const goPreviousExhibition = () => {
-    if (!exhibition || !exhibitions) return;
-
-    const currentIndex = exhibitions.findIndex((e) => e.id === exhibition.id);
-
-    if (currentIndex === -1) return;
-
-    // Get next exhibition, loop to start if at end
-    const prevIndex = (currentIndex - 1) % exhibitions.length;
-    const prevEx = exhibitions[prevIndex];
-
-    // Navigate to next exhibition slug
-    router.push(`/exhibitions/${prevEx.slug}`);
-  };
 
   if (loading || !exhibition || !exhibition.acf) {
     return <div></div>;
@@ -238,16 +203,10 @@ gap-4
         <h3>{exhibition.acf.credits}</h3>
 
         <span className="flex items-center justify-start gap-x-4">
-          <button
-            onClick={goPreviousExhibition}
-            className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer"
-          >
+          <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
             Previous
           </button>
-          <button
-            onClick={goNextExhibition}
-            className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer"
-          >
+          <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
             Next
           </button>
         </span>

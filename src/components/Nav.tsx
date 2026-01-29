@@ -23,17 +23,9 @@ import {
   SelectValue,
 } from "./ui/select";
 
-import type { CombinedExhibition, Exhibition, Work } from "../../lib/wordpress";
-
-
 type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
 type ExhibitionSort = "year" | "title" | "type";
 type CategoryFilter = "all" | "painting" | "drawing" | "sculpture" | "textile";
-
-interface NavProps {
-  loading: boolean;
-  fullExhibitionList: CombinedExhibition[];
-}
 
 export default function Nav() {
   const [showWorksMenu, setShowWorksMenu] = useState(false);
@@ -46,7 +38,7 @@ export default function Nav() {
   const [showExhibitionsFilter, setShowExhibitionsFilter] = useState(false);
 
   const {
-    loading,
+    loading: loadingExhibitions,
     exhibitions,
     exhibitionSort,
     setExhibitionSort,
@@ -59,6 +51,7 @@ export default function Nav() {
   } = useExhibitions();
 
   const {
+    loading: loadingWorks,
     allWorks,
     workSort,
     setWorkSort,
@@ -84,6 +77,8 @@ export default function Nav() {
     setOpen(false);
   };
 
+  const navLoading = loadingWorks || loadingExhibitions;
+
   return (
     <>
       {/* NAV BUTTON MOBILE */}
@@ -92,7 +87,7 @@ export default function Nav() {
         onClick={() => setOpen((prev) => !prev)}
       >
         <AnimatePresence mode="wait">
-          {loading ? (
+          {navLoading ? (
             <motion.div
               key="loading"
               className="flex items-center justify-center "
@@ -155,7 +150,7 @@ export default function Nav() {
           onClick={() => setOpen((prev) => !prev)}
         >
           <AnimatePresence mode="wait">
-            {loading ? (
+            {navLoading ? (
               <motion.div
                 key="loading"
                 className="w-24 h-24 flex items-center justify-center p-4"

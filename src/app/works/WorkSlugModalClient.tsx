@@ -9,12 +9,16 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 type WorkSlugModalClientProps = { slug: string };
+
+type EmbeddedMedia = {
+  source_url: string;
+  alt_text?: string;
+};
 
 export default function WorkSlugModalClient({
   slug,
@@ -63,9 +67,9 @@ export default function WorkSlugModalClient({
   if (loading) return <div></div>;
   if (!work) return <p>Work not found</p>;
 
-  const images = work._embedded?.["wp:featuredmedia"]?.map(
-    (m: any) => m.source_url
-  ) || [work.image_url || "/placeholder.jpg"];
+  const images: string[] = (
+    work._embedded?.["wp:featuredmedia"] as EmbeddedMedia[] | undefined
+  )?.map((m) => m.source_url) || [work.image_url || "/placeholder.jpg"];
 
   // Navigate to prev/next
   const goPrev = () => loadWorkByIndex(currentIndex - 1);

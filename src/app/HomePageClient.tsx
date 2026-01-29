@@ -6,11 +6,7 @@ import ExhibitionModal from "./exhibitions/ExhibitionModal";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 
-interface HomePageContentProps {
-  loading: boolean;
-}
-
-function HomePageContent({ loading }: HomePageContentProps) {
+function HomePageContent({}) {
   const { activeWorkSlug, setActiveWorkSlug } = useWorks();
   const { activeExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
@@ -43,5 +39,5 @@ export default function HomePageClient() {
 
   if (loading) return <div></div>;
 
-  return <HomePageContent loading={loading} />;
+  return <HomePageContent />;
 }
