@@ -96,7 +96,7 @@ export default function Nav() {
             className="p-2"
           >
             <Image
-              src="/elli_trumpetgubbe_frilagd.png"
+              src="/elli_trumpetgubbe_new_frilagd.png"
               alt="Elinor Silow"
               width={1713}
               height={2697}
@@ -131,7 +131,7 @@ export default function Nav() {
                 className=""
               >
                 <Image
-                  src="/ogubbe_frilagd.png"
+                  src="/ogubbe_frilagd_new.png"
                   alt="loading"
                   width={2124}
                   height={2123}
@@ -173,7 +173,7 @@ export default function Nav() {
                 }}
               >
                 <Image
-                  src="/ogubbe_frilagd.png"
+                  src="/ogubbe_frilagd_new.png"
                   alt="loading"
                   width={2124}
                   height={2123}
@@ -193,7 +193,7 @@ export default function Nav() {
                   className="ml-4 w-24 h-24 flex items-center justify-start"
                 >
                   <Image
-                    src="/elli_trumpetgubbe_frilagd.png"
+                    src="/elli_trumpetgubbe_new_frilagd.png"
                     alt="Elinor Silow"
                     width={1713}
                     height={2697}
@@ -683,7 +683,7 @@ export default function Nav() {
 
       {/* MOBILE OVERLAY */}
       <motion.div
-        className={`fixed inset-0 z-40 lg:hidden  w-full    overflow-y-auto transform   p-4   ${
+        className={`fixed inset-0 z-40 lg:hidden min-h-screen  w-full    overflow-y-auto transform   pt-4 px-4 pb-8   ${
           open ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out `}
       >
@@ -691,7 +691,7 @@ export default function Nav() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="flex lg:hidden relative overflow-y-scroll     flex-col gap-x-4  pt-6 px-6  l pb-16 bg-pink-300 text-red-600 h-[80vh] "
+          className="flex lg:hidden relative overflow-y-scroll     flex-col gap-x-4  pt-6 px-6  l pb-16 bg-pink-300 text-red-600 h-full "
         >
           <div className="mb-6 max-w-sm  ">
             <Button
