@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/context/theme-provider";
 import { InfoProvider } from "@/context/InfoContext";
 import { NavProvider } from "@/context/NavContext";
 import Nav from "@/components/Nav";
+import MobileNavButton from "@/components/MobileNavButton";
 
 const gintoNordBlack = localFont({
   src: "assets/fonts/Ginto Nord Black.ttf",
@@ -102,18 +103,19 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WorksProvider>
-            <ExhibitionsProvider>
-              <InfoProvider>
-                <AnimationProvider>
-                  <NavProvider>
+          <NavProvider>
+            <WorksProvider>
+              <ExhibitionsProvider>
+                <InfoProvider>
+                  <AnimationProvider>
                     <Nav />
+                    <MobileNavButton />
                     {children} {modal}
-                  </NavProvider>
-                </AnimationProvider>
-              </InfoProvider>
-            </ExhibitionsProvider>
-          </WorksProvider>
+                  </AnimationProvider>
+                </InfoProvider>
+              </ExhibitionsProvider>
+            </WorksProvider>
+          </NavProvider>
         </ThemeProvider>
       </body>
     </html>

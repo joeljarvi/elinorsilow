@@ -15,7 +15,7 @@ export default function Staggered<T>({
   getKey,
   className = "",
   delay = 0.06,
-  loading,
+  loading = false,
 }: StaggeredProps<T>) {
   const container = {
     hidden: { opacity: 0 },
@@ -39,10 +39,8 @@ export default function Staggered<T>({
       <AnimatePresence>
         {items.map((data, i) => (
           <motion.li
-            key={getKey ? getKey(data) : i} // typed key
+            key={getKey ? getKey(data) : i}
             variants={item}
-            initial="hidden"
-            animate="show"
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
           >

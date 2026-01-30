@@ -34,16 +34,16 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
         >
-          <Button
+          {/* <Button
             className="fixed  bottom-0 left-0  lg:top-0 lg:right-0 lg:left-auto lg:bottom-auto   z-50 font-EBGaramond hover:font-EBGaramondItalic cursor-pointer  text-sm mb-3 pt-2 px-3 flex items-baseline transition-all"
             size="linkSize"
             variant="link"
             onClick={onClose}
           >
             Back
-          </Button>
+          </Button> */}
 
-          <WorkSlugModalClient slug={slug} />
+          <WorkSlugModalClient onClose={onClose} slug={slug} />
         </motion.div>
       </motion.div>
     </AnimatePresence>

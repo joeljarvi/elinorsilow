@@ -12,8 +12,12 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ResetIcon } from "@radix-ui/react-icons";
 
-type WorkSlugModalClientProps = { slug: string };
+type WorkSlugModalClientProps = {
+  slug: string;
+  onClose?: () => void;
+};
 
 type EmbeddedMedia = {
   source_url: string;
@@ -22,8 +26,9 @@ type EmbeddedMedia = {
 
 export default function WorkSlugModalClient({
   slug,
+  onClose,
 }: WorkSlugModalClientProps) {
-  const { allWorks, normalizeSlug, loading: contextLoading } = useWorks();
+  const { allWorks, normalizeSlug, workLoading: contextLoading } = useWorks();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -81,17 +86,27 @@ export default function WorkSlugModalClient({
     col-span-6 lg:col-span-4
     relative flex flex-col lg:flex-col-reverse  h-screen items-start justify-between w-full    "
     >
-      <div className="  flex flex-wrap items-baseline text-left justify-start max-w-full  text-sm font-EBGaramond  bg-transparent   mt-0  lg:mt-2  pt-2 px-3 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4   ">
-        <span className="font-EBGaramondItalic mr-1">
-          {work.title.rendered},
-        </span>
-        {work.acf.materials && (
-          <span className="mr-1">{work.acf.materials},</span>
-        )}
-        {work.acf.dimensions && (
-          <span className="mr-1">{work.acf.dimensions},</span>
-        )}
-        {work.acf.year && <span>{work.acf.year}</span>}
+      <div className="flex justify-start  w-full items-baseline bg-transparent gap-x-1   mt-0  lg:mt-2  pt-2 px-3 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
+        <div className="  flex flex-wrap items-baseline text-left justify-start max-w-full  text-sm font-EBGaramond    ">
+          <span className="font-EBGaramondItalic mr-1">
+            {work.title.rendered},
+          </span>
+          {work.acf.materials && (
+            <span className="mr-1">{work.acf.materials},</span>
+          )}
+          {work.acf.dimensions && (
+            <span className="mr-1">{work.acf.dimensions}</span>
+          )}
+          {work.acf.year && <span>({work.acf.year})</span>}{" "}
+          <Button
+            className="  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
+            size="listSize"
+            variant="link"
+            onClick={onClose}
+          >
+            Back
+          </Button>
+        </div>
       </div>
       {/* Carousel */}
       <Carousel className="w-full h-full px-6 pt-0 lg:px-4 lg:pt-4 ">

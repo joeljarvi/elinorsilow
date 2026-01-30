@@ -15,6 +15,7 @@ import {
   Exhibition_list,
   getExhibitionBySlug as fetchExhibitionBySlug,
 } from "../../lib/wordpress";
+import { useNav } from "./NavContext";
 
 import { useDebounce } from "use-debounce";
 
@@ -29,7 +30,7 @@ type ExhibitionsContextType = {
   groupExhibitions: Exhibition[];
   fullExhibitionList: (Exhibition | Exhibition_list)[];
 
-  loading: boolean;
+  exLoading: boolean;
   error: Error | null;
 
   exhibitionSort: ExhibitionSort;
@@ -47,6 +48,7 @@ type ExhibitionsContextType = {
   debouncedSelectedYear: string;
   activeExhibitionSlug: string | null;
   setActiveExhibitionSlug: (slug: string | null) => void;
+  openExhibition: (slug: string) => void;
 };
 
 const ExhibitionsContext = createContext<ExhibitionsContextType | undefined>(
@@ -56,7 +58,7 @@ const ExhibitionsContext = createContext<ExhibitionsContextType | undefined>(
 export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [exhibitionList, setExhibitionList] = useState<Exhibition_list[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [exLoading, setExLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const [exhibitionSort, setExhibitionSort] = useState<ExhibitionSort>("title");
@@ -69,6 +71,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [debouncedSortBy] = useDebounce(exhibitionSort, 200);
   const [debouncedSelectedYear] = useDebounce(exSelectedYear, 200);
   const [debouncedSelectedType] = useDebounce(selectedType, 200);
+  const { view, setViewLoading, setOpen } = useNav();
 
   useEffect(() => {
     async function fetchData() {
@@ -82,7 +85,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         setError(err as Error);
       } finally {
-        setLoading(false);
+        setExLoading(false);
       }
     }
     fetchData();
@@ -164,6 +167,17 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
     [exhibitions, exhibitionList]
   );
 
+  useEffect(() => {
+    if (view === "exhibitions" && !exLoading) {
+      setViewLoading(false);
+    }
+  }, [view, exLoading]);
+
+  const openExhibition = (slug: string) => {
+    setActiveExhibitionSlug(slug);
+    setOpen(false);
+  };
+
   return (
     <ExhibitionsContext.Provider
       value={{
@@ -174,7 +188,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
         soloExhibitions,
         groupExhibitions,
         fullExhibitionList,
-        loading,
+        exLoading,
         error,
         exhibitionSort,
         setExhibitionSort,
@@ -188,6 +202,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
         debouncedSelectedYear,
         activeExhibitionSlug,
         setActiveExhibitionSlug,
+        openExhibition,
       }}
     >
       {children}

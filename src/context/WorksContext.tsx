@@ -8,15 +8,21 @@ import React, {
   ReactNode,
 } from "react";
 import { Work, getAllWorks } from "../../lib/wordpress";
+import { useNav } from "./NavContext";
 
-type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
-type CategoryFilter = "all" | "painting" | "drawing" | "sculpture" | "textile";
+export type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
+export type CategoryFilter =
+  | "all"
+  | "painting"
+  | "drawing"
+  | "sculpture"
+  | "textile";
 
 type WorksContextType = {
   allWorks: Work[];
   filteredWorks: Work[];
   availibleYears: number[];
-  loading: boolean;
+  workLoading: boolean;
   error: Error | null;
   workSort: WorkSort;
   setWorkSort: React.Dispatch<React.SetStateAction<WorkSort>>;
@@ -35,6 +41,7 @@ type WorksContextType = {
   setShowAllWorksList: React.Dispatch<React.SetStateAction<boolean>>;
   activeWorkSlug: string | null;
   setActiveWorkSlug: React.Dispatch<React.SetStateAction<string | null>>;
+  openWork: (slug: string) => void;
 };
 
 export function normalizeSlug(title: string) {
@@ -49,7 +56,7 @@ const WorksContext = createContext<WorksContextType | undefined>(undefined);
 
 export function WorksProvider({ children }: { children: ReactNode }) {
   const [allWorks, setAllWorks] = useState<Work[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [workLoading, setWorkLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [showInfo, setShowInfo] = useState(true);
   const [workSort, setWorkSort] = useState<WorkSort>("year-latest");
@@ -59,6 +66,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   const [showAllWorksList, setShowAllWorksList] = useState(false);
   const [activeWorkSlug, setActiveWorkSlug] = useState<string | null>(null);
   const [currentWorkIndex, setCurrentWorkIndex] = useState<number | null>(null);
+  const { view, setViewLoading, setOpen } = useNav();
 
   useEffect(() => {
     getAllWorks()
@@ -75,7 +83,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         setAllWorks(normalized);
       })
       .catch(setError)
-      .finally(() => setLoading(false));
+      .finally(() => setWorkLoading(false));
   }, []);
 
   // Memoized available years
@@ -124,6 +132,17 @@ export function WorksProvider({ children }: { children: ReactNode }) {
     return result;
   }, [allWorks, workSort, selectedYear, categoryFilter, searchQuery]);
 
+  useEffect(() => {
+    if (view === "works" && !workLoading) {
+      setViewLoading(false);
+    }
+  }, [view, workLoading]);
+
+  const openWork = (slug: string) => {
+    setActiveWorkSlug(slug);
+    setOpen(false);
+  };
+
   return (
     <WorksContext.Provider
       value={{
@@ -132,7 +151,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         availibleYears,
         showInfo,
         setShowInfo,
-        loading,
+        workLoading,
         error,
         workSort,
         setWorkSort,
@@ -149,6 +168,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         setShowAllWorksList,
         activeWorkSlug,
         setActiveWorkSlug,
+        openWork,
       }}
     >
       {children}

@@ -17,13 +17,14 @@ import {
   Grant,
   Exhibition_list,
 } from "../../lib/wordpress";
+import { useNav } from "./NavContext";
 
 interface InfoContextProps {
   biography: Biography | null;
   educations: Education[];
   grants: Grant[];
   exhibitionList: Exhibition_list[];
-  loading: boolean;
+  infoLoading: boolean;
   refresh: () => void;
 }
 
@@ -34,10 +35,12 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
   const [educations, setEducations] = useState<Education[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [exhibitionList, setExhibitionList] = useState<Exhibition_list[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [infoLoading, setInfoLoading] = useState(true);
+
+  const { view, setViewLoading } = useNav();
 
   const fetchData = async () => {
-    setLoading(true);
+    setInfoLoading(true);
     try {
       const [bio, edu, gr, exhibitions] = await Promise.all([
         getBiography(),
@@ -52,13 +55,19 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error("Error fetching info:", err);
     } finally {
-      setLoading(false);
+      setInfoLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (view === "info" && !infoLoading) {
+      setViewLoading(false);
+    }
+  }, [view, infoLoading]);
 
   return (
     <InfoContext.Provider
@@ -67,7 +76,7 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
         educations,
         grants,
         exhibitionList,
-        loading,
+        infoLoading,
         refresh: fetchData,
       }}
     >
