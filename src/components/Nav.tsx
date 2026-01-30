@@ -281,7 +281,7 @@ export default function Nav() {
                           >
                             <Staggered
                               items={allWorks}
-                              className="columns-1   space-y-0 border-l border-foreground pt-1 bg-pink-300  "
+                              className="columns-1   space-y-0 border-l border-foreground pt-1   "
                               renderItem={(work) => (
                                 <>
                                   <Button

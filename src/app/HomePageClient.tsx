@@ -284,7 +284,7 @@ function MainContent({}: Props) {
                         key={ex.id}
                         className="text-sm font-EBGaramond  flex flex-wrap items-baseline"
                       >
-                        <span className="font-gintoMedium text-xs">
+                        <span className="font-EBGaramondItalic ">
                           {ex.title.rendered}
                         </span>
                         , {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
@@ -309,7 +309,7 @@ function MainContent({}: Props) {
                   renderItem={(edu) => (
                     <>
                       <li key={edu.id} className="text-sm font-EBGaramond ">
-                        <span className="font-gintoMedium text-xs">
+                        <span className="font-EBGaramondItalic">
                           {edu.acf.school}
                         </span>
                         , {edu.acf.city} ({edu.acf.start_year}–
@@ -335,7 +335,7 @@ function MainContent({}: Props) {
                   renderItem={(grant) => (
                     <>
                       <li key={grant.id} className="text-sm font-EBGaramond ">
-                        <span className="font-gintoMedium text-xs">
+                        <span className="font-EBGaramondItalic  ">
                           {grant.acf.title}
                         </span>{" "}
                         ({grant.acf.year})
