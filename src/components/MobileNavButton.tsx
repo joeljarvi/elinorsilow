@@ -782,7 +782,7 @@ export default function NavButton() {
               rotate: { repeat: Infinity, duration: 2, ease: "linear" },
               opacity: { duration: 0.4, ease: "easeOut" },
             }}
-            className="relative w-24 h-24"
+            className="relative w-24 h-24 mr-4"
           >
             <Image
               src="/ogubbe_frilagd_new.png"
@@ -803,7 +803,7 @@ export default function NavButton() {
               duration: 0.6,
               ease: "linear",
             }}
-            className="relative w-24 h-24"
+            className="relative w-24 h-24 mr-2"
           >
             <Image
               src="/elli_trumpetgubbe_new_frilagd.png"
