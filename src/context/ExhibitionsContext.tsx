@@ -43,7 +43,7 @@ type ExhibitionsContextType = {
 
   showDescription: boolean;
   setShowDescription: React.Dispatch<React.SetStateAction<boolean>>;
-
+  uniqueExYears: string[];
   availableYears: string[];
   debouncedSelectedYear: string;
   activeExhibitionSlug: string | null;
@@ -167,6 +167,8 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
     [exhibitions, exhibitionList]
   );
 
+  const uniqueExYears = Array.from(new Set(availableYears));
+
   useEffect(() => {
     if (view === "exhibitions" && !exLoading) {
       setViewLoading(false);
@@ -203,6 +205,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
         activeExhibitionSlug,
         setActiveExhibitionSlug,
         openExhibition,
+        uniqueExYears,
       }}
     >
       {children}

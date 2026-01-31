@@ -42,6 +42,7 @@ type WorksContextType = {
   activeWorkSlug: string | null;
   setActiveWorkSlug: React.Dispatch<React.SetStateAction<string | null>>;
   openWork: (slug: string) => void;
+  uniqueYears: number[];
 };
 
 export function normalizeSlug(title: string) {
@@ -132,6 +133,8 @@ export function WorksProvider({ children }: { children: ReactNode }) {
     return result;
   }, [allWorks, workSort, selectedYear, categoryFilter, searchQuery]);
 
+  const uniqueYears = Array.from(new Set(availibleYears));
+
   useEffect(() => {
     if (view === "works" && !workLoading) {
       setViewLoading(false);
@@ -169,6 +172,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         activeWorkSlug,
         setActiveWorkSlug,
         openWork,
+        uniqueYears,
       }}
     >
       {children}

@@ -147,11 +147,11 @@
   vertical-align: middle;
 }
 
-.vignette {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 40%),
-    radial-gradient(
-      ellipse at center,
-      rgba(0, 0, 0, 0) 50%,
-      rgba(0, 0, 0, 0.3) 100%
-    );
+/* globals.css */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
