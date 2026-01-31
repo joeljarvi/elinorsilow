@@ -128,14 +128,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-3
-  p-2 lg:p-4 text-sm
-  z-40  w-full bg-background 
+  pt-4 px-4 pb-4  lg:p-4 text-sm
+  z-40  w-full bg-background  scroll-bar-hide
 "
     >
       <div className=" col-span-3  ">
         <div className="col-span-3 grid grid-cols-3     justify-start ">
           <Button
-            className="absolute lg:hidden top-2 right-3  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
+            className="fixed lg:hidden top-4 right-4  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
             size="listSize"
             variant="link"
             onClick={onClose}
