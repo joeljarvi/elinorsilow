@@ -238,7 +238,7 @@ function MobileNavOverlay() {
                   onClick={() => {
                     router.push("/?view=works", { scroll: false });
                     goToView("works");
-
+                    handleOpen();
                     handleOpenWorksMenu();
                   }}
                   className={` `}
@@ -466,7 +466,7 @@ function MobileNavOverlay() {
                       scroll: false,
                     });
                     goToView("exhibitions");
-
+                    handleOpen();
                     handleOpenExhibitionsMenu();
                   }}
                   className={`font-gintoBlack   `}
@@ -730,6 +730,7 @@ function MobileNavOverlay() {
               size="linkSizeMd"
               onClick={() => {
                 goToView("info");
+                handleOpen();
               }}
               className="font-gintoBlack text-left  px-4"
             >
