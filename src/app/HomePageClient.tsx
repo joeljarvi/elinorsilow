@@ -279,7 +279,7 @@ function MainContent({}: Props) {
           />
         )}
         {view === "info" && (
-          <div className="border-l border-foreground mt-0  w-full flex flex-col lg:grid lg:grid-cols-3    ">
+          <div className="lg:border-l lg:border-foreground mt-0  w-full flex flex-col lg:grid lg:grid-cols-3    ">
             <div className=" w-full flex flex-col lg:col-start-1 lg:col-span-3 items-start justify-start  ">
               <h3 className="font-gintoBlack text-base leading-relaxed pl-2 pt-2 pr-0 lg:pr-4  lg:pl-4 lg:pt-2  ">
                 About
