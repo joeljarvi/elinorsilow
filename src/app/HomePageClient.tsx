@@ -521,7 +521,7 @@ function MainContent({}: Props) {
             </div>
             <HDivider className=" lg:col-span-3 mt-2" />
             <div className="lg:col-start-1 lg:col-span-2 pl-2 pt-4 pr-0 lg:pr-4 lg:pl-4  lg:pt-4 pb-2 lg:pb-4    leading-snug ">
-              <p className=" border-1 p-2 border-foreground font-gintoRegular text-xs max-w-sm lg:max-w-full ">
+              <p className=" border-1 p-2 border-foreground font-gintoRegular text-xs max-w-xs lg:max-w-full ">
                 All content on this site, including images, text, and design, is
                 the intellectual property of{" "}
                 <span className=" font-gintoBlack">Elinor Silow</span> unless
