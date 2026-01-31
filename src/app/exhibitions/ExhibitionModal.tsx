@@ -32,7 +32,7 @@ export default function ExhibitionModal({
         <motion.div
           key="modal"
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 lg:col-start-2 col-span-3  lg:col-span-3  h-full  overflow-auto flex flex-col scrollbar-hide "
+          className="relative col-start-1 lg:col-start-2 col-span-4  lg:col-span-3  h-full  overflow-auto flex flex-col scrollbar-hide "
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
