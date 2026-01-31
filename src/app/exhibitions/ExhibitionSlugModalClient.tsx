@@ -158,7 +158,7 @@ gap-4
               />
             </button>
 
-            <div className="flex flex-wrap items-baseline justify-start max-w-full  text-sm lg:text-base lg:max-w-full   ">
+            <div className="flex flex-wrap items-baseline justify-start max-w-full  text-sm lg:text-base lg:max-w-full mt-1 lg:mt-0   ">
               <h1 className="font-EBGaramondItalic   tracking-normal mr-1   ">
                 {exhibition.title.rendered}
               </h1>
@@ -181,7 +181,7 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-3">
+        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-1 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
