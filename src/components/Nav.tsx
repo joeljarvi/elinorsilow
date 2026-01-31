@@ -171,7 +171,7 @@ export default function Nav() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="hidden lg:fixed w-[calc(25%+0.05rem)] z-30  lg:flex   flex-row     h-screen bg-transparent     "
+      className="hidden lg:fixed w-[calc(25%+0.05rem)] z-30  lg:flex   flex-row     h-screen bg-transparent      "
     >
       <button
         onClick={() => setOpen((prev) => !prev)}

@@ -128,43 +128,40 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-3
-  pt-2 px-2 pb-4  lg:p-4 text-sm
+  pt-2 px-2 pb-4  lg:px-4 lg:pt-4 text-xs lg:text-sm
   z-40  w-full bg-background  scroll-bar-hide
 "
     >
       <div className=" col-span-3  ">
         <div className="col-span-3 grid grid-cols-3     justify-start ">
-          <Button
-            className="fixed lg:hidden top-4 right-4  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
-            size="listSize"
-            variant="link"
-            onClick={onClose}
-          >
-            Back
-          </Button>
-          <span className="w-full  col-span-3 lg:col-span-2">
-            <button
+          <span className="w-full  col-span-3 lg:col-span-2 flex flex-col items-start justify-start">
+            {/* <button
               onClick={() => {
                 setCarouselIndex(0);
                 setIsCarouselOpen(true);
               }}
-              className="relative w-3/4 aspect-video overflow-hidden "
+              className="relative w-full h-full aspect-video overflow-hidden max-w-3/4  "
             >
               <Image
                 src={images[0]?.url}
                 alt=""
                 fill
-                className="object-cover transition-transform hover:scale-105"
+                className="object-contain  object-left transition-transform hover:scale-105 "
               />
-            </button>
+            </button> */}
 
-            <div className="flex flex-wrap items-baseline justify-start max-w-full w-full text-sm lg:text-base lg:max-w-full mt-1 lg:mt-0 px-2   ">
-              <h1 className="font-EBGaramondItalic   tracking-normal mr-1   ">
+            <div className="flex flex-wrap items-baseline justify-start max-w-full w-full text-xs lg:text-sm lg:max-w-full  lg:mt-0 px-2   ">
+              <h1 className="font-EBGaramondItalic   tracking-normal mr-2   ">
                 {exhibition.title.rendered}
               </h1>
+              {exhibition.acf.exhibition_type && (
+                <span className="font-EBGaramond   ">
+                  {exhibition.acf.exhibition_type}
+                </span>
+              )}
               {exhibition.acf.location && (
                 <span className="font-EBGaramond   ">
-                  {exhibition.acf.location}
+                  , {exhibition.acf.location}
                 </span>
               )}
               {exhibition.acf.city && (
@@ -178,10 +175,18 @@ gap-4
                   ({exhibition.acf.year})
                 </span>
               )}
+              <Button
+                className="  font-EBGaramondAC      transition-all  tracking-wide justify-start items-baseline  rounded  text-base gap-x-1  ml-2 uppercase"
+                size="listSize"
+                variant="link"
+                onClick={onClose}
+              >
+                Back
+              </Button>
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-sm  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-2 lg:mb-2">
+        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-sm  lg:max-w-lg font-EBGaramond text-xs lg:text-sm mb-2 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
@@ -193,24 +198,24 @@ gap-4
                   setCarouselIndex(idx);
                   setIsCarouselOpen(true);
                 }}
-                className="relative aspect-video overflow-hidden flex flex-col"
+                className="relative aspect-video overflow-hidden flex flex-col w-full h-full"
               >
                 <Image
                   src={src.url}
                   alt={src.desc || `Image ${idx + 1}`}
                   fill
-                  className="object-cover transition-transform hover:scale-105 cursor-pointer"
+                  className="object-contain object-left transition-transform hover:scale-105 cursor-pointer"
                 />
               </button>
               {src.desc && (
-                <div className="w-full font-EBGaramond text-sm lg:text-base px-2 mt-2">
+                <div className="w-full font-EBGaramond text-xs lg:text-sm px-2 mt-2">
                   {src.desc}
                 </div>
               )}
             </div>
           ))}
         </div>
-        <div className=" col-span-3 lg:col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-base  ">
+        <div className=" col-span-3 lg:col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2 mt-8 lg:mt-4 text-xs lg:text-sm  ">
           <h3 className="max-w-sm lg:max-w-lg">{exhibition.acf.credits}</h3>
           <HDivider />
           <span className="flex items-center justify-start w-full gap-x-4">
@@ -274,7 +279,7 @@ gap-4
                             src={img.url}
                             alt={img.desc || `Image ${idx + 1}`}
                             fill
-                            className={`object-center object-contain transition-transform duration-300 py-2 px-2  ${
+                            className={`object-center object-contain transition-transform duration-300 p-2 lg:p-4  ${
                               isZoomed
                                 ? "scale-150 cursor-zoom-out"
                                 : "cursor-zoom-in"
@@ -285,7 +290,7 @@ gap-4
 
                         {/* Description */}
                         {img.desc && (
-                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
+                          <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
                             {img.desc}
                           </div>
                         )}

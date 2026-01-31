@@ -216,7 +216,7 @@ function MainContent({}: Props) {
             loading={loadingStaggered}
             items={items}
             getKey={(item) => item.id} // proper type
-            className={` p-2 lg:p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3
+            className={` p-2 lg:p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 
     gap-y-16 `}
             renderItem={(item: GridItem) => (
               <div
@@ -245,7 +245,7 @@ function MainContent({}: Props) {
                 )}
 
                 {showInfo && (
-                  <div className="p-2 text-xs lg:text-sm font-EBGaramond flex flex-wrap max-w-xs items-baseline justify-start">
+                  <div className="flex  p-2 text-xs  font-EBGaramond  flex-wrap max-w-xs items-baseline justify-start">
                     <span className="font-EBGaramondItalic mr-1">
                       {item.title}
                     </span>
