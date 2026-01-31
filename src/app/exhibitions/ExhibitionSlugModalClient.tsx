@@ -148,7 +148,7 @@ gap-4
                 setCarouselIndex(0);
                 setIsCarouselOpen(true);
               }}
-              className="relative w-2/3 aspect-video overflow-hidden "
+              className="relative w-3/4 aspect-video overflow-hidden "
             >
               <Image
                 src={images[0]?.url}
