@@ -86,8 +86,8 @@ export default function WorkSlugModalClient({
     col-span-6 lg:col-span-4
     relative flex flex-col   min-h-screen items-start justify-between w-full pb-4    "
     >
-      <div className="flex justify-start  w-full items-baseline bg-transparent gap-x-1   mt-0   pt-2 px-4 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
-        <div className="  flex flex-wrap items-baseline text-left justify-start max-w-full  text-sm lg:text-sm font-EBGaramond    ">
+      <div className="flex justify-start  w-full items-baseline bg-transparent gap-x-1   mt-0   pt-4 px-4 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
+        <div className="  flex flex-wrap items-baseline text-left justify-start max-w-sm  text-sm lg:text-sm font-EBGaramond    ">
           <span className="font-EBGaramondItalic mr-1">
             {work.title.rendered},
           </span>
