@@ -153,7 +153,7 @@ function MobileNavOverlay() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className={` fixed inset-0 z-40 min-h-screen  w-full   overflow-y-auto transform   bg-background   ${
+        className={` fixed inset-0 z-40 h-screen  w-full    transform   bg-background   ${
           open ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out flex flex-col items-start justify-start `}
       >
@@ -171,7 +171,7 @@ function MobileNavOverlay() {
           exit={{ x: -500 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className={`
-              overflow-y-scroll scroll-smooth scrollbar-hide flex flex-col w-full pt-30 
+              overflow-y-scroll scroll-smooth scrollbar-hide flex flex-col w-full min-h-screen pt-30 
               ${
                 showWorksMenu || showExhibitionsMenu || showContact
                   ? "snap-y snap-proximity"
