@@ -302,10 +302,13 @@ function MobileNavOverlay() {
                               variant="nav"
                               size="linkSize"
                               key={work.slug}
+                              asChild
                               onClick={() => openWork(work.slug)}
                               className="break-inside-avoid transition-all pl-8 font-EBGaramondItalic   hover:pl-10 hover:font-EBGaramond text-base"
                             >
-                              {work.title.rendered}
+                              <Link href={`/works/${work.slug}`}>
+                                {work.title.rendered}
+                              </Link>
                             </Button>
                             <HDivider color="border-blue-600" />
                           </>
@@ -530,10 +533,12 @@ function MobileNavOverlay() {
                                   variant="nav"
                                   size="linkSize"
                                   key={`ex-${ex.id}`}
-                                  onClick={() => openExhibition(slug)}
+                                  asChild
                                   className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 hover:font-EBGaramond transition-all cursor-pointer hover:text-blue-600 pl-8 hover:pl-10"
                                 >
-                                  {ex.title.rendered}
+                                  <Link href={`/exhibitions/${slug}`}>
+                                    {ex.title.rendered}
+                                  </Link>
                                 </Button>
                               ) : (
                                 <span
