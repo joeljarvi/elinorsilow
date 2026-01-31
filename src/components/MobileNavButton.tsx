@@ -772,7 +772,7 @@ export default function NavButton() {
   return (
     <>
       <button
-        className="fixed lg:hidden bottom-0 right-0 left-auto top-auto z-50  flex items-center justify-center w-24 h-24"
+        className="fixed lg:hidden bottom-5 right-0 left-auto top-auto z-50  flex items-center justify-center w-24 h-24"
         onClick={handleOpen}
       >
         {showNavLoader ? (
