@@ -128,7 +128,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-3
-  pt-4 px-4 pb-4  lg:p-4 text-sm
+  pt-2 px-2 pb-4  lg:p-4 text-sm
   z-40  w-full bg-background  scroll-bar-hide
 "
     >
