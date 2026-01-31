@@ -14,7 +14,7 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import { Exhibition } from "../../../lib/wordpress";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CarouselApi } from "@/components/ui/carousel";
-
+import HDivider from "@/components/HDivider";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
 type Props = {
@@ -128,12 +128,20 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-3
-  p-4 lg:p-4 text-sm
+  p-2 lg:p-4 text-sm
   z-40  w-full bg-background 
 "
     >
-      <div className="bg-orange-300 col-span-3 p-6   ">
+      <div className=" col-span-3  ">
         <div className="col-span-3 grid grid-cols-3     justify-start ">
+          <Button
+            className="absolute lg:hidden top-2 right-3  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
+            size="listSize"
+            variant="link"
+            onClick={onClose}
+          >
+            Back
+          </Button>
           <span className="w-full  col-span-3 lg:col-span-2">
             <button
               onClick={() => {
@@ -150,7 +158,7 @@ gap-4
               />
             </button>
 
-            <div className="flex flex-wrap items-baseline justify-start max-w-64     ">
+            <div className="flex flex-wrap items-baseline justify-start max-w-full  text-sm lg:text-base lg:max-w-full   ">
               <h1 className="font-EBGaramondItalic   tracking-normal mr-1   ">
                 {exhibition.title.rendered}
               </h1>
@@ -173,11 +181,11 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-full font-EBGaramond mb-3">
+        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-3">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
-        <div className="col-span-3  grid grid-cols-3 gap-4 w-full  ">
+        <div className="col-span-3  grid grid-cols-3 gap-2 lg:gap-4 w-full  ">
           {images.map((src, idx) => (
             <div key={idx} className="col-span-3 lg:col-span-2 flex flex-col">
               <button
@@ -195,30 +203,41 @@ gap-4
                 />
               </button>
               {src.desc && (
-                <div className="w-full font-EBGaramond p-2">{src.desc}</div>
+                <div className="w-full font-EBGaramond text-sm lg:text-base px-2 mt-2">
+                  {src.desc}
+                </div>
               )}
             </div>
           ))}
         </div>
-        <div className=" col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2 my-6">
-          <h3>{exhibition.acf.credits}</h3>
-
-          <span className="flex items-center justify-between w-full gap-x-4">
+        <div className=" col-span-3 lg:col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-base  ">
+          <h3 className="max-w-sm lg:max-w-lg">{exhibition.acf.credits}</h3>
+          <HDivider />
+          <span className="flex items-center justify-start w-full gap-x-4">
             <Button
-              className="   font-EBGaramond hover:font-EBGaramondItalic cursor-pointertransition-all"
-              size="linkSize"
+              className="hidden lg:flex font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
+              size="listSize"
               variant="link"
               onClick={onClose}
             >
-              Back to exhibitions
+              Back
             </Button>
-            <span className="flex items-center justify-end gap-x-2"></span>
-            <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
-              Previous
-            </button>
-            <button className="font-EBGaramond hover:font-EBGaramondItalic transition-all cursor-pointer">
+            <Button
+              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
+              size="listSize"
+              variant="link"
+              onClick={onClose}
+            >
+              Prev
+            </Button>
+            <Button
+              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
+              size="listSize"
+              variant="link"
+              onClick={onClose}
+            >
               Next
-            </button>
+            </Button>
           </span>
         </div>
       </div>
@@ -304,8 +323,8 @@ gap-4
 
               {/* Back button */}
               <Button
-                className="absolute top-4 right-4 z-40 font-EBGaramond hover:font-EBGaramondItalic cursor-pointer transition-all"
-                size="sm"
+                className="absolute top-2 right-3  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
+                size="listSize"
                 variant="link"
                 onClick={() => setIsCarouselOpen(false)}
               >

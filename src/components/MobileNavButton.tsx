@@ -26,7 +26,7 @@ function MobileNavOverlay() {
   const {
     open,
     setOpen,
-
+    handleOpen,
     goToView,
     showWorksMenu,
     setShowWorksMenu,
@@ -84,54 +84,52 @@ function MobileNavOverlay() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className={` fixed inset-0 z-40 min-h-screen  w-full   overflow-y-auto transform   p-2 bg-background   ${
+        className={` fixed inset-0 z-40 min-h-screen  w-full   overflow-y-auto transform   bg-background   ${
           open ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out `}
+        } transition-transform duration-300 ease-in-out flex flex-col items-start justify-start `}
       >
-        <motion.nav
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="flex lg:hidden relative overflow-y-scroll     flex-col gap-x-4  pt-6 px-6  l pb-16 bg-pink-300 text-red-600  "
+        <motion.div
+          initial={{ x: -100 }}
+          animate={{ x: 0 }}
+          exit={{ x: -500 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="    overflow-y-scroll flex flex-col items-start justify-start w-full pt-24    "
         >
-          <div className="mb-6 max-w-sm  ">
+          <div className="max-w-sm w-full  ">
             <Button
               asChild
               variant="nav"
-              size="linkSizeMd"
-              className="font-gintoBlack text-lg text-red-600      "
+              size="linkSize"
+              className="font-gintoBlack text-lg px-2     "
             >
               <Link href="/">Elinor Silow</Link>
             </Button>
-            <div className=" px-2  mb-4 text-base leading-snug">
-              <p className="font-EBGaramond mt-3 mb-4  ">
-                (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
-                explores raw emotion through painting, sculpture and textile.
-              </p>
-              <p className="font-EBGaramond  ">
-                For inquiries, please contact:{" "}
-                <Button
-                  asChild
-                  variant="link"
-                  size="linkSize"
-                  className="text-red-600"
-                >
-                  <Link
-                    href="mailto:elinor.silow@gmail.com"
-                    className="font-gintoRegular text-sm mx-0.5 hover:underline underline-offset-5 text-blue-600"
-                  >
-                    elinor.silow@gmail.com
-                  </Link>
-                </Button>
-                for collaborations and inquires.
-              </p>
-            </div>
+
+            <p className="font-EBGaramond mt-2 mb-2 px-2  ">
+              (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
+              explores raw emotion through painting, sculpture and textile.
+            </p>
+
+            <p className="font-EBGaramond  px-2 ">
+              Please contact
+              <Button
+                asChild
+                variant="link"
+                size="linkSize"
+                className="text-blue-600 text-base px-1"
+              >
+                <Link href="mailto:elinor.silow@gmail.com" className="  ">
+                  elinor.silow@gmail.com
+                </Link>
+              </Button>
+              for collaborations and inquires.
+            </p>
           </div>
 
-          {/* WORKS */}
-          <div className="px-0">
-            <div className=" flex flex-col  pt-2  ">
-              <span className="flex items-center justify-between w-full pr-1  ">
+          <div className="w-full mt-8  ">
+            {/* WORKS */}
+            <div className=" flex flex-col  pt-1   ">
+              <span className="flex items-center justify-between w-full px-2  ">
                 <Button
                   asChild
                   variant="nav"
@@ -143,14 +141,14 @@ function MobileNavOverlay() {
                     onClick={() => {
                       router.push("/?view=works", { scroll: false });
                       goToView("works");
-                      setOpen(false);
+                      handleOpen();
                       handleOpenWorksMenu();
 
                       setShowExhibitionsMenu(false);
                       setShowExhibitionsFilter(false);
                       setShowAllExhibitionsList(false);
                     }}
-                    className={`uppercase  `}
+                    className={` `}
                   >
                     Works{" "}
                   </Link>
@@ -178,7 +176,7 @@ function MobileNavOverlay() {
               {/* WORKS MENU DROPDOWN */}
               {showWorksMenu && (
                 <>
-                  <div className="flex flex-col overflow-y-scroll  gap-0">
+                  <div className="flex flex-col overflow-y-scroll  gap-0 ">
                     <Button
                       variant="nav"
                       size="linkSizeMd"
@@ -188,7 +186,7 @@ function MobileNavOverlay() {
                         setShowExhibitionsFilter(false);
                         setShowAllExhibitionsList(false);
                       }}
-                      className={`  font-gintoMedium 
+                      className={`  font-gintoMedium pl-4 pr-3 
 `}
                     >
                       Index
@@ -204,25 +202,24 @@ function MobileNavOverlay() {
                     <HDivider />
                     {showAllWorksList && (
                       <div
-                        className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out   pl-6   ${
+                        className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out     ${
                           showAllWorksList ? "max-h-[200vh]" : "hidden"
                         }`}
                       >
                         <Staggered
                           items={allWorks}
-                          className="columns-1   space-y-0 border-l border-foreground pt-1 bg-pink-300  "
+                          className="columns-1   space-y-0  pt-1 pl-6 "
                           renderItem={(work) => (
                             <>
                               <Button
                                 variant="nav"
-                                size="linkSizeMd"
+                                size="linkSize"
                                 key={work.slug}
                                 onClick={() => openWork(work.slug)}
-                                className="break-inside-avoid transition-all font-EBGaramondItalic   hover:pl-6 hover:font-EBGaramond"
+                                className="break-inside-avoid transition-all font-EBGaramondItalic   hover:pl-2 hover:font-EBGaramond text-base"
                               >
                                 {work.title.rendered}
                               </Button>
-                              <HDivider />
                             </>
                           )}
                         />
@@ -232,7 +229,7 @@ function MobileNavOverlay() {
                       variant="nav"
                       size="linkSizeMd"
                       onClick={handleOpenWorksFilter}
-                      className={`font-gintoMedium pt-0.5   
+                      className={`font-gintoMedium pt-0.5 pl-4 pr-3   
 `}
                     >
                       Filters
@@ -246,10 +243,10 @@ function MobileNavOverlay() {
                       </span>
                     </Button>
                     {showWorksFilter && (
-                      <div className="pl-6 overflow-y-scroll">
+                      <div className="pl-0 overflow-y-scroll">
                         <HDivider />
-                        <div className="flex flex-col items-start justify-start border-l border-foreground">
-                          <span className=" flex items-baseline justify-start w-full pl-2  ">
+                        <div className="flex flex-col items-start justify-start pl-6">
+                          <span className=" flex items-baseline justify-start w-full pl-2 border-l border-foreground  ">
                             <h3 className="font-gintoMedium text-lg whitespace-nowrap">
                               Sort by
                             </h3>
@@ -263,7 +260,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoBlack w-full text-lg pt-0.5 pr-2  "
+                                className="font-gintoMedium w-full text-lg pt-0.5 pr-3  "
                               >
                                 <SelectValue placeholder="Sort works" />
                               </SelectTrigger>
@@ -287,7 +284,7 @@ function MobileNavOverlay() {
                           <HDivider />
                           {workSort === "year" && (
                             <>
-                              <span className="pl-2 flex items-baseline justify-start w-full ">
+                              <span className="pl-2 flex items-baseline justify-start w-full border-l border-foreground  ">
                                 <h3 className="font-gintoMedium text-lg whitespace-nowrap">
                                   Year
                                 </h3>
@@ -300,7 +297,7 @@ function MobileNavOverlay() {
                                 >
                                   <SelectTrigger
                                     size="default"
-                                    className="font-gintoBlack w-full text-lg pt-0.5 pr-2 "
+                                    className="font-gintoMedium w-full text-lg pt-0.5 pr-3 "
                                   >
                                     <SelectValue placeholder="2024" />
                                   </SelectTrigger>
@@ -321,7 +318,7 @@ function MobileNavOverlay() {
                             </>
                           )}
 
-                          <span className="pl-2 flex items-baseline justify-start w-full ">
+                          <span className="pl-2 flex items-baseline justify-start border-l border-foreground w-full ">
                             <h3 className="font-gintoMedium text-lg whitespace-nowrap">
                               Show
                             </h3>
@@ -334,7 +331,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoBlack w-full text-lg pt-0.5 pr-2"
+                                className="font-gintoMedium w-full text-lg pt-0.5 pr-3"
                               >
                                 <SelectValue placeholder="All works" />
                               </SelectTrigger>
@@ -357,7 +354,7 @@ function MobileNavOverlay() {
                             </Select>
                           </span>
                           <HDivider />
-                          <span className=" flex items-baseline justify-start w-full ">
+                          <span className=" flex items-baseline justify-start w-full border-l border-foreground pl-2  ">
                             <Button
                               variant="nav"
                               size="linkSizeMd"
@@ -380,20 +377,22 @@ function MobileNavOverlay() {
 
             {/* EXHIBITIONS */}
             <div className="flex flex-col pt-1  ">
-              <span className="flex items-center justify-between w-full gap-x-1 pr-1 ">
+              <span className="flex items-center justify-between w-full  px-2 ">
                 <Button asChild variant="nav" size="linkSizeMd">
                   <Link
                     href="/"
                     onClick={() => {
-                      router.push("/?view=exhibitions", { scroll: false });
+                      router.push("/?view=exhibitions", {
+                        scroll: false,
+                      });
                       goToView("exhibitions");
-                      setOpen(false);
+                      handleOpen();
                       handleOpenExhibitionsMenu();
                       setShowWorksMenu(false);
                       setShowWorksFilter(false);
                       setShowAllWorksList(false);
                     }}
-                    className={`font-gintoBlack  uppercase `}
+                    className={`font-gintoBlack   `}
                   >
                     Exhibitions
                   </Link>
@@ -427,7 +426,7 @@ function MobileNavOverlay() {
                       variant="nav"
                       size="linkSizeMd"
                       onClick={handleOpenAllExhibitionsList}
-                      className={`font-gintoMedium  }`}
+                      className={`font-gintoMedium pl-4 pr-3  }`}
                     >
                       Index
                       <span>
@@ -442,28 +441,28 @@ function MobileNavOverlay() {
                     <HDivider />
                     {showAllExhibitionsList && (
                       <div
-                        className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out pl-6 ${
+                        className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out  ${
                           showAllExhibitionsList ? "max-h-[200vh]" : "hidden"
                         }`}
                       >
                         <Staggered
                           items={exhibitions}
-                          className="columns-1   space-y-0 border-l border-foreground   "
+                          className="columns-1 pl-6 pr-8  space-y-0  py-2  "
                           renderItem={(ex) => (
                             <>
                               <Button
                                 variant="nav"
-                                size="linkSizeMd"
+                                size="linkSize"
                                 key={ex.slug}
                                 onClick={() => openExhibition(ex.slug)}
-                                className="break-inside-avoid  font-EBGaramondItalic hover:font-EBGaramond transition-all  cursor-pointer  hover:pl-4"
+                                className="text-base break-inside-avoid  font-EBGaramondItalic hover:font-EBGaramond transition-all  cursor-pointer  hover:pl-2"
                               >
                                 {ex.title.rendered}
                               </Button>
-                              <HDivider />
                             </>
                           )}
                         />
+                        <HDivider />
                       </div>
                     )}
 
@@ -472,7 +471,7 @@ function MobileNavOverlay() {
                       variant="nav"
                       size="linkSizeMd"
                       onClick={handleOpenExhibitionsFilter}
-                      className={`font-gintoMedium  `}
+                      className={`font-gintoMedium  pl-4 pr-3     `}
                     >
                       Filters
                       <span>
@@ -485,11 +484,11 @@ function MobileNavOverlay() {
                       </span>
                     </Button>
                     {showExhibitionsFilter && (
-                      <div className="pl-6 pt-0.5">
+                      <div className=" pt-0.5">
                         <HDivider />
-                        <div className="flex flex-col items-start justify-start border-l border-foreground ">
+                        <div className="flex flex-col items-start justify-start  pl-6 ">
                           {/* Sort by */}
-                          <span className="pl-2 flex items-baseline justify-start w-full ">
+                          <span className="pl-2 flex items-baseline justify-start w-full border-l border-foreground  ">
                             <h3 className="font-gintoMedium text-lg whitespace-nowrap">
                               Sort by
                             </h3>
@@ -501,7 +500,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoBlack w-full text-lg pt-0.5 pr-2"
+                                className="font-gintoMedium w-full text-lg pt-0.5 pr-3"
                               >
                                 <SelectValue placeholder="Sort exhibitions" />
                               </SelectTrigger>
@@ -517,7 +516,7 @@ function MobileNavOverlay() {
                           <HDivider />
                           {exhibitionSort === "year" && (
                             <>
-                              <span className="pl-2 flex items-baseline justify-start w-full  ">
+                              <span className="pl-2 flex items-baseline justify-start w-full border-l border-foreground  ">
                                 <h3 className="font-gintoMedium text-lg whitespace-nowrap">
                                   Show
                                 </h3>
@@ -527,7 +526,7 @@ function MobileNavOverlay() {
                                 >
                                   <SelectTrigger
                                     size="default"
-                                    className="font-gintoBlack w-full text-lg pt-0.5 pr-2"
+                                    className="font-gintoMedium w-full text-lg pt-0.5 pr-3"
                                   >
                                     <SelectValue placeholder="Filter by year" />
                                   </SelectTrigger>
@@ -548,7 +547,7 @@ function MobileNavOverlay() {
                           )}
 
                           {/* Filter by Type */}
-                          <span className="pl-2 flex items-baseline justify-start w-full ">
+                          <span className="pl-2 flex border-l border-foreground items-baseline justify-start w-full ">
                             <h3 className="font-gintoMedium text-lg whitespace-nowrap">
                               Show
                             </h3>
@@ -558,7 +557,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoBlack w-full text-lg pt-0.5 pr-2 "
+                                className="font-gintoMedium w-full text-lg pt-0.5 pr-3 "
                               >
                                 <SelectValue placeholder="all exhibitions" />
                               </SelectTrigger>
@@ -584,15 +583,14 @@ function MobileNavOverlay() {
               )}
 
               {/* CONTACT */}
-              <span className="  pt-0.5 flex items-center justify-between w-full">
+              <span className="  pt-0.5 flex items-center justify-between w-full pl-2 pr-1">
                 <Button
                   variant="nav"
                   size="linkSizeMd"
-                  className="font-gintoBlack uppercase"
-                  asChild
+                  className="font-gintoBlack "
                   onClick={handleOpenContact}
                 >
-                  <Link href="mailto:elinor.silow@gmail.com">Contact</Link>
+                  Contact
                 </Button>
                 <Button
                   variant="nav"
@@ -616,20 +614,20 @@ function MobileNavOverlay() {
 
               {showContact && (
                 <>
-                  <div className="flex flex-col py-1     ">
+                  <div className="flex flex-col py-1      ">
                     <Button
                       variant="nav"
                       size="linkSizeMd"
-                      className="font-gintoMedium   "
+                      className="font-gintoMedium  pl-4  "
                       asChild
                     >
                       <Link href="mailto:elinor.silow@gmail.com">E-mail</Link>
                     </Button>
-
+                    <HDivider />
                     <Button
                       variant="nav"
                       size="linkSizeMd"
-                      className="font-gintoMedium "
+                      className="font-gintoMedium pl-4"
                       asChild
                     >
                       <Link href="https://www.instagram.com/elinorsilow/">
@@ -647,7 +645,7 @@ function MobileNavOverlay() {
                   size="linkSizeMd"
                   onClick={() => {
                     goToView("info");
-                    setOpen(false);
+                    handleOpen();
                     setShowWorksMenu(false);
                     setShowExhibitionsMenu(false);
                     setShowExhibitionsFilter(false);
@@ -655,15 +653,18 @@ function MobileNavOverlay() {
                     setShowWorksFilter(false);
                     setShowAllWorksList(false);
                   }}
-                  className="font-gintoBlack text-left uppercase"
+                  className="font-gintoBlack text-left  px-2"
                 >
                   Information
                 </Button>
-                <DarkModeToggle />
+                <HDivider />
+                <div className="px-2 pt-0.5 pb-2">
+                  <DarkModeToggle />
+                </div>
               </div>
             </div>
           </div>
-        </motion.nav>
+        </motion.div>
       </motion.div>
     </AnimatePresence>
   );

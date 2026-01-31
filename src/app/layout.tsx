@@ -40,6 +40,11 @@ const EBGaramondItalic = localFont({
   variable: "--font-EBGaramondItalic",
 });
 
+const EBGaramondAC = localFont({
+  src: "assets/fonts/EBGaramond12-AllSC.woff",
+  variable: "--font-EBGaramondAC",
+});
+
 const libreBaskerville = localFont({
   src: "assets/fonts/LibreBaskerville-Regular.otf",
   variable: "--font-libreBaskerville",
@@ -95,7 +100,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoRegular.variable} ${gintoMedium.variable}   antialiased`}
+        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoRegular.variable} ${gintoMedium.variable}   antialiased`}
       >
         <ThemeProvider
           attribute="class"

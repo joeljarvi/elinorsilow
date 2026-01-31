@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import VDivider from "@/components/VDivider";
 import type {
   Work,
   Exhibition,
@@ -21,6 +22,7 @@ import type {
 } from "../../lib/wordpress";
 import HDivider from "@/components/HDivider";
 import Staggered from "@/components/Staggered";
+import Link from "next/link";
 
 type Props = {
   showInfo?: boolean;
@@ -85,6 +87,14 @@ function MainContent({}: Props) {
 
   const { biography, educations, grants, exhibitionList, infoLoading } =
     useInfo();
+
+  const soloExhibitions = exhibitionList.filter(
+    (ex) => ex.acf.exhibition_type === "Solo Exhibition"
+  );
+
+  const groupExhibitions = exhibitionList.filter(
+    (ex) => ex.acf.exhibition_type === "Group Exhibition"
+  );
 
   const router = useRouter();
 
@@ -169,6 +179,11 @@ function MainContent({}: Props) {
     exhibitionList,
   ]);
 
+  const findExhibitionSlug = (title: string) => {
+    const match = filteredExhibitions.find((ex) => ex.title.rendered === title);
+    return match?.slug;
+  };
+
   useEffect(() => {
     if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
       setInitialLoaded(true);
@@ -194,14 +209,14 @@ function MainContent({}: Props) {
       <section
         className="max-w-7xl
       col-start-1 col-span-12
-      lg:col-start-2 lg:col-span-9 flex flex-col items-center justify-center gap-y-4 p-2 lg:p-4   bg-background"
+      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0  "
       >
         {view !== "info" && (
           <Staggered
             loading={loadingStaggered}
             items={items}
             getKey={(item) => item.id} // proper type
-            className={` grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3
+            className={` p-2 lg:p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3
     gap-y-16 `}
             renderItem={(item: GridItem) => (
               <div
@@ -248,7 +263,7 @@ function MainContent({}: Props) {
                           </span>
                         )}
                         {item.meta.acf.year && (
-                          <span>{item.meta.acf.year}</span>
+                          <span className="">{item.meta.acf.year}</span>
                         )}
                       </>
                     )}
@@ -263,88 +278,260 @@ function MainContent({}: Props) {
             )}
           />
         )}
-
         {view === "info" && (
-          <div className=" mt-0  w-full flex flex-col ">
-            {/* BIOGRAPHY */}
+          <div className="border-l border-foreground mt-0  w-full flex flex-col lg:grid lg:grid-cols-3    ">
+            <div className=" w-full flex flex-col lg:col-start-1 lg:col-span-3 items-start justify-start  ">
+              <h3 className="font-gintoBlack text-base leading-relaxed pl-2 pt-2 pr-0 lg:pr-4  lg:pl-4 lg:pt-2  ">
+                About
+              </h3>
+              <HDivider className="" />
+              <p className="font-EBGaramond mt-2 max-w-sm  pl-2 pr-0 pt-0 lg:pl-4  lg:pr-4 ">
+                Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
+                artist who explores raw emotion through painting, sculpture and
+                textile.
+              </p>
+              <div className="flex flex-col items-start justify-center mt-2 font-EBGaramond pl-2 lg:pl-4 pr-0 lg:pr-4">
+                <p className=" ">
+                  Gösta Ekmans väg 10 <br />
+                  129 35 Hägersten
+                </p>
+                <Link
+                  href="mailto:elinor.silow@gmail.com"
+                  className=" mb-4 lg:mb-2  text-blue-600"
+                >
+                  elinor.silow@gmail.com
+                </Link>
+              </div>
+            </div>
+            <HDivider className="hidden lg:block lg:col-span-3" />
 
-            {exhibitionList.length > 0 && (
-              <section className="flex flex-col items-start justify-start w-full">
-                <h2 className=" font-gintoBlack text-base  leading-relaxed">
-                  Exhibitions
+            {soloExhibitions.length > 0 && (
+              <section className="flex flex-col lg:col-span-3 items-start justify-start w-full">
+                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 font-gintoBlack text-base leading-relaxed">
+                  Solo Exhibitions
                 </h2>
                 <HDivider />
+
                 <Staggered
                   loading={loadingStaggered}
-                  items={exhibitionList}
-                  className="w-full columns-1   space-y-0  py-2  "
-                  renderItem={(ex) => (
-                    <>
-                      <li
+                  items={soloExhibitions}
+                  className="w-full columns-1 space-y-0 py-2 pl-2 lg:pl-4 pr-0 lg:pr-4"
+                  renderItem={(ex) => {
+                    const slug = findExhibitionSlug(ex.title.rendered);
+
+                    return (
+                      <div
                         key={ex.id}
-                        className="text-sm font-EBGaramond  flex flex-wrap items-baseline"
+                        className="text-base font-EBGaramond flex flex-wrap"
                       >
-                        <span className="font-EBGaramondItalic ">
-                          {ex.title.rendered}
-                        </span>
-                        , {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
-                      </li>
-                    </>
-                  )}
+                        {slug ? (
+                          <Link
+                            href={`/?exhibition=${slug}`}
+                            className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
+                            onClick={() => {
+                              setActiveExhibitionSlug(slug);
+                              setOpen(false);
+                            }}
+                          >
+                            {ex.title.rendered}
+                          </Link>
+                        ) : (
+                          <span className="font-EBGaramondItalic mr-2">
+                            {ex.title.rendered}
+                          </span>
+                        )}
+                        {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
+                      </div>
+                    );
+                  }}
                 />
               </section>
             )}
+            <HDivider className="hidden lg:block lg:col-span-3" />
+            {groupExhibitions.length > 0 && (
+              <section className="flex flex-col lg:col-span-2 items-start justify-start w-full ">
+                <h2 className="font-gintoBlack text-base leading-relaxed pl-2 pt-0 lg:pl-4 lg:pt-2">
+                  All Exhibitions
+                </h2>
+                <HDivider />
 
+                <Staggered
+                  loading={loadingStaggered}
+                  items={groupExhibitions}
+                  className="w-full columns-1 space-y-0 py-2 pr-2 lg:pr-4 pl-2  lg:pl-4"
+                  renderItem={(ex) => {
+                    const slug = findExhibitionSlug(ex.title.rendered);
+
+                    return (
+                      <div
+                        key={ex.id}
+                        className="text-base font-EBGaramond flex flex-wrap"
+                      >
+                        {slug ? (
+                          <Link
+                            href={`/?exhibition=${slug}`}
+                            className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
+                            onClick={() => {
+                              setActiveExhibitionSlug(slug);
+                              setOpen(false);
+                            }}
+                          >
+                            {ex.title.rendered}
+                          </Link>
+                        ) : (
+                          <span className="font-EBGaramondItalic mr-2">
+                            {ex.title.rendered}
+                          </span>
+                        )}
+                        {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
+                      </div>
+                    );
+                  }}
+                />
+              </section>
+            )}
+            {/* GRANTS */}
+            {grants.length > 0 && (
+              <section className=" flex items-start justify-start ">
+                <VDivider className="hidden lg:block" />
+                <div className="flex flex-col items-start justify-start w-full ">
+                  <h2 className="font-gintoBlack text-base  leading-relaxed pl-2  pt-0 lg:pl-4 lg:pt-2">
+                    Grants
+                  </h2>
+                  <HDivider />
+                  <Staggered
+                    loading={loadingStaggered}
+                    items={grants}
+                    className="columns-1   space-y-0  w-full py-2 pr-2 pl-2 lg:pr-4 lg:pl-4"
+                    renderItem={(grant) => (
+                      <>
+                        <div
+                          key={grant.id}
+                          className="text-base font-EBGaramond  "
+                        >
+                          <span className="font-EBGaramondItalic mr-1  ">
+                            {grant.acf.title}
+                          </span>{" "}
+                          ({grant.acf.year})
+                        </div>
+                      </>
+                    )}
+                  />
+                </div>
+              </section>
+            )}
+            <HDivider className="hidden lg:block lg:col-span-3" />
             {/* EDUCATION */}
             {educations.length > 0 && (
-              <section className="flex flex-col items-start justify-start w-full">
-                <h2 className="font-gintoBlack text-base leading-relaxed ">
+              <section className="flex flex-col items-start justify-start lg:col-span-1 w-full ">
+                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 font-gintoBlack text-base leading-relaxed  ">
                   Education
                 </h2>
                 <HDivider />
                 <Staggered
                   loading={loadingStaggered}
                   items={educations}
-                  className="columns-1   space-y-0  w-full py-2 "
+                  className=" pl-2 pr-0 lg:pl-4 lg:pr-4 columns-1   space-y-0  w-full py-2 "
                   renderItem={(edu) => (
                     <>
-                      <li key={edu.id} className="text-sm font-EBGaramond ">
-                        <span className="font-EBGaramondItalic">
+                      <div
+                        key={edu.id}
+                        className="text-base font-EBGaramond flex-wrap items-baseline justify-start "
+                      >
+                        <span className="font-EBGaramondItalic mr-2">
                           {edu.acf.school}
                         </span>
-                        , {edu.acf.city} ({edu.acf.start_year}–
-                        {edu.acf.end_year})
-                      </li>
+                        {edu.acf.city} ({edu.acf.start_year}–{edu.acf.end_year})
+                      </div>
                     </>
                   )}
                 />
               </section>
             )}
+            <div className="   flex  items-start justify-start font-EBGaramond   lg:col-span-2  ">
+              <VDivider className="hidden lg:block " />
+              <div className="flex flex-col items-start justify-start  ">
+                <h3 className="font-gintoBlack text-base leading-relaxed pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
+                  Press
+                </h3>
+                <HDivider className="" />
+                <div className="columns-1   space-y-0  w-full pt-1.5  pr-0 pl-2 lg:pr-4 lg:pl-4 pb-1.5">
+                  <div className="flex flex-wrap items-baseline justify-start font-EBGaramond text-base gap-x-1  ">
+                    <Button
+                      className="items-baseline  font-EBGaramondItalic text-base mr-1"
+                      variant="link"
+                      size="linkSize"
+                    >
+                      Hjärtat
+                    </Button>
+                    <p className="text-base ">Lappalainen Hjertström, L-E</p>
+                    <p>(2022)</p>
+                    <p className="font-EBGaramondItalic">Kunstkritikk</p>
+                    <p className=" ">Availible at:</p>
+                    <Link
+                      className="text-blue-600"
+                      href="https://kunstkritikk.se/hjartats-energi/"
+                    >
+                      https://kunstkritikk.se/hjartats-energi/
+                    </Link>
+                  </div>
+                  <div className="flex flex-wrap items-baseline justify-start font-EBGaramond gap-x-1 ">
+                    <Button
+                      className="  items-baseline  font-EBGaramondItalic text-base mr-1"
+                      variant="link"
+                      size="linkSize"
+                    >
+                      Gameplay
+                    </Button>
+                    <p className="text-base ">Slöör, S</p>
+                    <p>(2025)</p>
+                    <p className="font-EBGaramondItalic">Omkonst</p>
+                    <p className=" ">Availible at:</p>
+                    <Link
+                      className="text-blue-600"
+                      href="https://omkonst.se/25-gameplay.shtml"
+                    >
+                      https://omkonst.se/25-gameplay.shtml
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            {/* GRANTS */}
-            {grants.length > 0 && (
-              <section className="flex flex-col items-start justify-start w-full">
-                <h2 className="font-gintoBlack text-base  leading-relaxed">
-                  Grants
-                </h2>
-                <HDivider />
-                <Staggered
-                  loading={loadingStaggered}
-                  items={grants}
-                  className="columns-1   space-y-0  w-full py-2"
-                  renderItem={(grant) => (
-                    <>
-                      <li key={grant.id} className="text-sm font-EBGaramond ">
-                        <span className="font-EBGaramondItalic  ">
-                          {grant.acf.title}
-                        </span>{" "}
-                        ({grant.acf.year})
-                      </li>
-                    </>
-                  )}
-                />
-              </section>
-            )}
+            <HDivider className="hidden lg:block lg:col-span-3" />
+            <div className=" w-full flex flex-col items-start justify-start lg:col-span-3  font-EBGaramond">
+              <h3 className="font-gintoBlack text-base leading-relaxed pt-0 pl-2 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
+                Colophon
+              </h3>
+              <HDivider className="" />
+
+              <span className=" flex flex-wrap items-baseline justify-start gap-x-1 mt-2 pl-2 lg:pl-4 pr-0 lg:pr-4">
+                Design & code:
+                <Link className="font-EBGaramondItalic text-blue-600" href="/">
+                  Joel Järvi
+                </Link>
+              </span>
+
+              <div className="  flex flex-wrap items-baseline justify-start gap-x-1 mb-0 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4 ">
+                Fonts: <span className="font-EBGaramondItalic">Ginto</span> by
+                Dinamo Typefaces and
+                <span className="font-EBGaramondItalic">EB Garamond</span>
+                (12)
+              </div>
+            </div>
+            <HDivider className=" lg:col-span-3 mt-2" />
+            <div className="lg:col-start-1 lg:col-span-2 pl-2 pt-4 pr-0 lg:pr-4 lg:pl-4  lg:pt-4 pb-2 lg:pb-4    leading-snug ">
+              <p className=" border-1 p-2 border-foreground font-gintoRegular text-xs max-w-sm lg:max-w-full ">
+                All content on this site, including images, text, and design, is
+                the intellectual property of{" "}
+                <span className=" font-gintoBlack">Elinor Silow</span> unless
+                otherwise stated. No part of this website may be copied,
+                reproduced, distributed, or used without explicit written
+                permission from the copyright holder. Unauthorized use,
+                including downloading, publishing, or sharing, may constitute
+                copyright infringement and is subject to legal action.
+              </p>
+            </div>
           </div>
         )}
       </section>

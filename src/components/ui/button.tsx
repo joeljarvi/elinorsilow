@@ -26,7 +26,7 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md  text-sm",
         lg: "h-10  px-8",
         linkSize: "h-6  px-0 py-0 text-sm",
-        linkSizeMd: "h-9  px-2 pt-0.5 text-lg",
+        linkSizeMd: "h-9    pt-0.5 text-lg",
         listSize: "h-auto px-0 py-0",
         linkIcon: "h-6 w-6 px-0 py-0",
         icon: "h-9 w-9",

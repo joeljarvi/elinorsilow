@@ -4,6 +4,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 export function DarkModeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -20,20 +21,20 @@ export function DarkModeToggle() {
       {theme === "light" ? (
         <Button
           variant="nav"
-          size="linkSize"
+          size="linkSizeMd"
           onClick={() => setTheme("dark")}
-          className="font-EBGaramondItalic uppercase pl-6 "
+          className="font-gintoBlack  "
         >
-          Dark mode
+          Night
         </Button>
       ) : (
         <Button
-          variant="link"
-          size="linkSize"
+          variant="nav"
+          size="linkSizeMd"
           onClick={() => setTheme("light")}
-          className=" font-EBGaramondItalic uppercase pl-6  "
+          className=" font-gintoBlack    "
         >
-          Dark mode
+          Day
         </Button>
       )}
     </div>

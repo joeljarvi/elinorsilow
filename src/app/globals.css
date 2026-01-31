@@ -22,11 +22,11 @@
   --font-libreBaskervilleBold: var(--font-libreBaskervilleBold);
   --font-EBGaramond: var(--font-EBGaramond);
   --font-EBGaramondItalic: var(--font-EBGaramondItalic);
+  --font-EBGaramondAC: var(--font-EBGaramondAC);
   --font-gintoNordBlack: var(--font-gintoNordBlack);
   --font-gintoBlack: var(--font-gintoBlack);
   --font-gintoRegular: var(--font-gintoRegular);
   --font-gintoMedium: var(--font-gintoMedium);
-  --font-fraunces: var(--font-fraunces);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

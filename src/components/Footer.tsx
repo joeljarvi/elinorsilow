@@ -1,149 +1,41 @@
 "use client";
 
-import HDivider from "@/components/HDivider";
-import VDivider from "@/components/VDivider";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useNav } from "@/context/NavContext";
+import { useWorks } from "@/context/WorksContext";
+import { useExhibitions } from "@/context/ExhibitionsContext";
+import { useInfo } from "@/context/InfoContext";
+import HDivider from "./HDivider";
 
 export default function Footer() {
+  const [initialLoaded, setInitialLoaded] = useState(false);
+  const { viewLoading } = useNav();
+  const { workLoading } = useWorks();
+  const { exLoading } = useExhibitions();
+  const { infoLoading } = useInfo();
+
+  useEffect(() => {
+    if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
+      setInitialLoaded(true);
+    }
+  }, [initialLoaded, workLoading, exLoading, infoLoading]);
+
+  const initialAppLoading = !initialLoaded;
+  const showGlobalLoader = initialAppLoading || viewLoading;
+
+  if (showGlobalLoader) {
+    return null;
+  }
   return (
-    <div className="col-start-1 col-span-12 lg:col-start-2 lg:col-span-9 flex flex-col  font-EBGaramond text-sm  justify-start gap-y-0 gap-x-4 items-baseline w-full p-2 lg:p-4  ">
-      <div className=" w-full flex flex-col items-start justify-start mb-2 ">
-        <h3 className="font-gintoBlack text-base leading-relaxed">Press</h3>
-        <HDivider className="" />
-        <Link
-          href="https://www.instagram.com/elinorsilow/"
-          className="mt-2 text-blue-600"
-        >
-          Kunstkritikk
-        </Link>
-        <Link
-          href="https://www.instagram.com/elinorsilow/"
-          className=" text-blue-600"
-        >
-          Omkonst
-        </Link>
-      </div>
-      <div className=" w-full flex flex-col items-start justify-start ">
-        <h3 className="font-gintoBlack text-base leading-relaxed">About</h3>
-        <HDivider className="" />
-        <p className="font-EBGaramond mt-2 max-w-sm  ">
-          (b. 1993) in Malmö, Sweden, is a Stockholm based artist who explores
-          raw emotion through painting, sculpture and textile.
-        </p>
-        <div className="flex flex-col items-start justify-center mt-2">
-          <p className="">
-            Elinor Silow <br />
-            Gösta Ekmans väg 10 <br />
-            129 35 Hägersten
-          </p>
-          <Link
-            href="mailto:elinor.silow@gmail.com"
-            className="mt-2 mb-4 underline text-blue-600"
-          >
-            elinor.silow@gmail.com
-          </Link>
-        </div>
-      </div>
-
-      {/* <div className=" w-full flex flex-col items-start justify-start ">
-        <h3 className="font-gintoBlack text-base leading-relaxed">Menu</h3>
-        <HDivider className="" />
-
-        <span className=" flex flex-wrap gap-x-4 gap-y-1 items-baseline justify-between w-full pr-3 pt-2 pb-1.5 ">
-          <Button
-            className="w-min font-EBGaramond hover:font-EBGaramondItalic"
-            variant="nav"
-            size="listSize"
-            asChild
-          >
-            <Link href="/">Home</Link>
-          </Button>{" "}
-          <Button
-            className="w-min font-EBGaramond hover:font-EBGaramondItalic"
-            variant="nav"
-            size="listSize"
-            asChild
-          >
-            <Link href="/">Works</Link>
-          </Button>{" "}
-          <Button
-            className="w-min font-EBGaramond hover:font-EBGaramondItalic  "
-            variant="nav"
-            size="listSize"
-            asChild
-          >
-            <Link href="/">Exhibitions</Link>
-          </Button>
-          <Button
-            className="w-min font-EBGaramond hover:font-EBGaramondItalic  "
-            variant="nav"
-            size="listSize"
-            asChild
-          >
-            <Link href="/">Information</Link>
-          </Button>
-          <Button
-            asChild
-            variant="nav"
-            size="listSize"
-            className="w-min font-EBGaramond hover:font-EBGaramondItalic  "
-          >
-            <Link href="mailto:elinor.silow@gmail.com" className="">
-              Contact
-            </Link>
-          </Button>
-        </span>
-      </div> */}
-
-      <div className=" w-full flex flex-col items-start justify-start ">
-        <h3 className="font-gintoBlack text-base leading-relaxed">Colophon</h3>
-        <HDivider className="" />
-
-        <span className="col-start-1 col-span-1 flex flex-wrap items-baseline justify-start gap-x-1 mt-2">
-          Design & code:
-          <Link className="font-EBGaramondItalic text-blue-600" href="/">
-            Joel Järvi
-          </Link>
-        </span>
-
-        <div className="  flex flex-wrap items-baseline justify-start gap-x-1 mb-0">
-          Fonts: <span className="font-EBGaramondItalic">Ginto</span> by Dinamo
-          Typefaces and
-          <span className="font-EBGaramondItalic">EB Garamond</span>(12)
-        </div>
-        <span className=" flex flex-wrap items-baseline justify-start gap-x-1 mt-0 mb-2">
-          All photography by the artist, unlesss otherwise stated.
-        </span>
-        <HDivider className="" />
-      </div>
-      {/* <h3 className="font-gintoBlack">Copyright</h3>
-    <HDivider /> */}
-
-      <div className="flex flex-col items-start justify-start ">
-        <p className=" border-1 p-2 border-foreground font-gintoMedium text-xs  mt-4 mb-2  leading-snug max-w-sm">
-          All content on this site, including images, text, and design, is the
-          intellectual property of{" "}
-          <span className=" text-red-600">Elinor Silow</span> unless otherwise
-          stated. No part of this website may be copied, reproduced,
-          distributed, or used without explicit written permission from the
-          copyright holder. Unauthorized use, including downloading, publishing,
-          or sharing, may constitute copyright infringement and is subject to
-          legal action.
-        </p>
-        <span className="flex flex-wrap items-baseline justify-start gap-x-1 mt-2 mb-2 ">
-          Copyright{" "}
-          <Link className="font-EBGaramondItalic text-red-600" href="/">
-            Elinor Silow
-          </Link>{" "}
-          2026. All rights reserved.
-        </span>
-        <svg
+    <div className="col-start-1 col-span-12  flex flex-col lg:grid lg:grid-cols-12  font-EBGaramond text-sm  justify-start gap-y-0 gap-x-4 items-baseline w-full  lg:p-0   ">
+      <HDivider className="col-span-12 hidden lg:block" />
+      <div className="col-start-4 col-span-8 flex flex-col items-start justify-start p-2 lg:p-4 lg:border-l lg:border-foreground">
+        {/* <svg
           width="250"
           height="100"
           viewBox="0 0 250 100"
           fill="currentColor"
-          className="h-16 w-min bg-transparent text-red-600 "
+          className="h-16 w-min bg-transparent text-foreground mb-2 "
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
@@ -154,7 +46,11 @@ export default function Footer() {
           <path d="M167.441 34C168.535 34 169.414 33.6224 170.078 32.8672C170.742 32.112 171.074 31.1029 171.074 29.8398C171.074 28.6289 170.742 27.6849 170.078 27.0078C169.427 26.3307 168.548 25.9922 167.441 25.9922C166.322 25.9922 165.43 26.3307 164.766 27.0078C164.115 27.6849 163.789 28.6289 163.789 29.8398C163.789 31.1029 164.121 32.112 164.785 32.8672C165.449 33.6224 166.335 34 167.441 34Z" />
           <path d="M209.121 30.2891C210.124 30.2891 210.898 30.0547 211.445 29.5859C212.005 29.1042 212.285 28.4531 212.285 27.6328C212.285 26.8516 212.005 26.2526 211.445 25.8359C210.885 25.4062 210.111 25.1914 209.121 25.1914H206.367V30.2891H209.121Z" />
           <path d="M140.957 74C142.051 74 142.93 73.6224 143.594 72.8672C144.258 72.112 144.59 71.1029 144.59 69.8398C144.59 68.6289 144.258 67.6849 143.594 67.0078C142.943 66.3307 142.064 65.9922 140.957 65.9922C139.837 65.9922 138.945 66.3307 138.281 67.0078C137.63 67.6849 137.305 68.6289 137.305 69.8398C137.305 71.1029 137.637 72.112 138.301 72.8672C138.965 73.6224 139.85 74 140.957 74Z" />
-        </svg>
+        </svg> */}
+        <div className="flex flex-wrap items-baseline justify-start gap-x-1 text-xs lg:text-sm ">
+          Copyright <span className="font-EBGaramondItalic">Elinor Silow</span>
+          2026. All rights reserved.
+        </div>
       </div>
     </div>
   );

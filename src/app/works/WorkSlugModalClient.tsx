@@ -99,7 +99,7 @@ export default function WorkSlugModalClient({
           )}
           {work.acf.year && <span>({work.acf.year})</span>}{" "}
           <Button
-            className="  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
+            className="  font-EBGaramondAC      transition-all  tracking-wide justify-start items-baseline  rounded  text-base gap-x-1  ml-2 uppercase"
             size="listSize"
             variant="link"
             onClick={onClose}
