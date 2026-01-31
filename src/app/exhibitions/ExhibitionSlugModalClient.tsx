@@ -181,7 +181,7 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-1 lg:mb-2">
+        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-2 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 

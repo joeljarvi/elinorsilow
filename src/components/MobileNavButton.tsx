@@ -302,13 +302,10 @@ function MobileNavOverlay() {
                               variant="nav"
                               size="linkSize"
                               key={work.slug}
-                              asChild
                               onClick={() => openWork(work.slug)}
-                              className="break-inside-avoid transition-all pl-8 font-EBGaramondItalic   hover:pl-10 hover:font-EBGaramond text-base"
+                              className="break-inside-avoid transition-all pl-8 font-EBGaramondItalic   hover:pl-10 hover:font-EBGaramond text-base text-blue-600 hover:text-blue-600"
                             >
-                              <Link href={`/works/${work.slug}`}>
-                                {work.title.rendered}
-                              </Link>
+                              {work.title.rendered}
                             </Button>
                             <HDivider color="border-blue-600" />
                           </>

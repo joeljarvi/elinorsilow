@@ -14,7 +14,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-30 h-screen w-full grid grid-cols-4 bg-background  "
+        className="fixed inset-0 z-10 h-screen w-full grid grid-cols-4 bg-background  "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
