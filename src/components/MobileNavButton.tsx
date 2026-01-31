@@ -171,7 +171,7 @@ function MobileNavOverlay() {
           exit={{ x: -500 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className={`
-              overflow-y-scroll scroll-smooth scrollbar-hide flex flex-col w-full min-h-screen pt-30 
+              overflow-y-scroll scroll-smooth scrollbar-hide flex flex-col w-full min-h-screen pt-30 bg-background 
               ${
                 showWorksMenu || showExhibitionsMenu || showContact
                   ? "snap-y snap-proximity"
