@@ -240,13 +240,13 @@ function MainContent({}: Props) {
                     width={1200}
                     height={1600}
                     loading="eager"
-                    className="w-3/4 lg:w-1/2 h-auto object-contain object-left"
+                    className="w-1/2 h-auto object-contain object-left"
                   />
                 )}
 
                 {showInfo && (
-                  <div className="flex  p-2 text-xs  font-EBGaramond  flex-wrap max-w-xs items-baseline justify-start">
-                    <span className="font-EBGaramondItalic mr-1">
+                  <div className="flex  p-2 text-sm  font-EBGaramond  flex-wrap max-w-sm items-baseline justify-start">
+                    <span className="font-EBGaramondItalic mr-2">
                       {item.title}
                     </span>
 
