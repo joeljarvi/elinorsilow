@@ -158,7 +158,7 @@ gap-4
               />
             </button>
 
-            <div className="flex flex-wrap items-baseline justify-start max-w-full  text-sm lg:text-base lg:max-w-full mt-1 lg:mt-0   ">
+            <div className="flex flex-wrap items-baseline justify-start max-w-full w-full text-sm lg:text-base lg:max-w-full mt-1 lg:mt-0 px-2   ">
               <h1 className="font-EBGaramondItalic   tracking-normal mr-1   ">
                 {exhibition.title.rendered}
               </h1>
@@ -181,7 +181,7 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-2 lg:mb-2">
+        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-sm  lg:max-w-lg font-EBGaramond text-sm lg:text-base mb-2 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
@@ -252,10 +252,10 @@ gap-4
           >
             {/* backdrop only on content area */}
             <div
-              className="col-start-2 col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0"
+              className="col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0"
               onClick={() => setIsCarouselOpen(false)}
             />
-            <div className="relative inset-y-0 right-0 col-start-2 col-span-3 lg:relative lg:col-start-2 lg:col-span-3 w-full h-full pointer-events-auto bg-background">
+            <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 lg:relative  w-full h-full pointer-events-auto bg-background">
               <Carousel
                 setApi={setApi}
                 opts={{ startIndex: carouselIndex }}
@@ -269,12 +269,12 @@ gap-4
                     >
                       <motion.div className="relative h-full w-full flex flex-col items-start justify-start pointer-events-auto">
                         {/* Image */}
-                        <div className="relative w-full h-[calc(100vh-6rem)] lg:h-[calc(100vh-2rem)] aspect-video flex items-center justify-center">
+                        <div className="relative w-full h-screen aspect-video flex items-center justify-center">
                           <Image
                             src={img.url}
                             alt={img.desc || `Image ${idx + 1}`}
                             fill
-                            className={`object-center object-contain transition-transform duration-300 py-4  ${
+                            className={`object-center object-contain transition-transform duration-300 py-2 px-2  ${
                               isZoomed
                                 ? "scale-150 cursor-zoom-out"
                                 : "cursor-zoom-in"
@@ -285,7 +285,7 @@ gap-4
 
                         {/* Description */}
                         {img.desc && (
-                          <div className="px-4 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-xs lg:max-w-5xl mx-auto   ">
+                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
                             {img.desc}
                           </div>
                         )}
@@ -296,7 +296,7 @@ gap-4
               </Carousel>
 
               {/* Prev */}
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.stopPropagation();
                   api?.scrollNext();
@@ -314,7 +314,7 @@ gap-4
                 className="absolute z-30 right-4 top-1/2 -translate-y-1/2 pointer-events-auto  leading-none"
               >
                 <ArrowRightIcon className="w-3 h-3" />
-              </button>
+              </button> */}
 
               {/* Counter */}
               {/* <div className="fixed z-40 top-4 left-4 mix-blend-difference text-background px-3 py-1 rounded font-EBGaramond select-none pointer-events-none text-sm">

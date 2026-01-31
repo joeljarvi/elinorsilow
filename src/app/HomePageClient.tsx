@@ -216,7 +216,7 @@ function MainContent({}: Props) {
             loading={loadingStaggered}
             items={items}
             getKey={(item) => item.id} // proper type
-            className={` p-4 lg:p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3
+            className={` p-2 lg:p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3
     gap-y-16 `}
             renderItem={(item: GridItem) => (
               <div
