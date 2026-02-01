@@ -228,13 +228,13 @@ export default function Nav() {
             exit={{ x: -500 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className={`
-              overflow-y-scroll scroll-smooth scrollbar-hide flex flex-col w-full pt-30 border-r border-r-foreground
+              overflow-y-scroll scroll-smooth scrollbar-hide flex flex-col w-full pt-32 border-r border-r-foreground
               ${
                 showWorksMenu || showExhibitionsMenu || showContact
                   ? "snap-y snap-proximity"
                   : "snap-none"
               }
-              scroll-pt-30
+              scroll-pt-32
             `}
           >
             <motion.div
@@ -243,26 +243,26 @@ export default function Nav() {
               initial="hidden"
               animate="visible"
               exit="hidden"
-              className="max-w-sm w-full mb-2 snap-start snap-stop-always "
+              className="max-w-xs w-full  snap-start snap-stop-always "
             >
               <motion.div variants={item} className=" ">
                 <Button
                   asChild
                   variant="nav"
                   size="linkSizeMd"
-                  className="font-gintoBlack text-lg px-4      "
+                  className="font-gintoBlack text-base px-4      "
                 >
                   <Link href="/">Elinor Silow</Link>
                 </Button>
               </motion.div>
-              <motion.div variants={item} className="px-4 ">
-                <p className="font-EBGaramond mt-3 mb-4  ">
+              <motion.div variants={item} className="px-4  ">
+                <p className="font-EBGaramond mt-3 mb-4 text-sm  ">
                   (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
                   explores raw emotion through painting, sculpture and textile.
                 </p>
               </motion.div>
               <motion.div variants={item} className="px-4 ">
-                <p className="font-EBGaramond  ">
+                <p className="font-EBGaramond text-sm ">
                   Please contact
                   <Button
                     asChild
@@ -282,13 +282,13 @@ export default function Nav() {
             {/* MENU */}
 
             {/* WORKS */}
-            <div className=" flex flex-col  pt-1 snap-start snap-stop-always w-full   ">
+            <div className=" flex flex-col  mt-8 snap-start snap-stop-always w-full   ">
               <span className="flex items-center justify-between w-full px-4  ">
                 <Button
                   asChild
                   variant="nav"
-                  size="linkSizeMd"
-                  className="font-gintoBlack "
+                  size="linkSize"
+                  className="font-gintoBlack text-base "
                 >
                   <Link
                     href="/"
@@ -319,18 +319,18 @@ export default function Nav() {
                 </Button>
               </span>
 
-              <HDivider />
+              {/* <HDivider /> */}
               {/* WORKS MENU DROPDOWN */}
               {showWorksMenu && (
                 <>
-                  <div className="flex flex-col overflow-y-scroll  gap-0 ">
+                  <div className="pt-1 flex flex-col overflow-y-scroll  gap-0 ">
                     <Button
                       variant="nav"
-                      size="linkSizeMd"
+                      size="linkSize"
                       onClick={() => {
                         handleOpenAllWorksList();
                       }}
-                      className={`  font-gintoMedium pl-6 pr-5 
+                      className={`  font-EBGaramond pl-6 pr-5 text-base 
 `}
                     >
                       Index
@@ -343,7 +343,7 @@ export default function Nav() {
                         )}
                       </span>
                     </Button>{" "}
-                    <HDivider />
+                    {/* <HDivider /> */}
                     {showAllWorksList && (
                       <div
                         className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out     ${
@@ -353,7 +353,7 @@ export default function Nav() {
                         <Staggered
                           items={sortAZ(allWorks)}
                           loading={workLoading}
-                          className="columns-1   space-y-0  pt-1  "
+                          className="columns-1   space-y-0    "
                           renderItem={(work) => (
                             <>
                               <Button
@@ -373,9 +373,9 @@ export default function Nav() {
                     )}
                     <Button
                       variant="nav"
-                      size="linkSizeMd"
+                      size="linkSize"
                       onClick={handleOpenWorksFilter}
-                      className={`font-gintoMedium pt-0.5 pl-6 pr-5   
+                      className={`font-EBGaramond text-base pt-0.5 pl-6 pr-5   
 `}
                     >
                       Filters
@@ -389,11 +389,10 @@ export default function Nav() {
                       </span>
                     </Button>
                     {showWorksFilter && (
-                      <div className="pl-0 overflow-y-scroll">
-                        <HDivider />
+                      <div className="pt-0  overflow-y-scroll">
                         <div className="flex flex-col items-start justify-start ">
                           <span className=" flex items-baseline justify-start w-full pl-8   ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-base whitespace-nowrap">
                               Sort by
                             </h3>
 
@@ -405,8 +404,8 @@ export default function Nav() {
                               }}
                             >
                               <SelectTrigger
-                                size="default"
-                                className="font-gintoMedium w-full text-lg pt-0.5 pr-5  "
+                                size="sm"
+                                className="font-EBGaramond w-full text-base pt-0.5 pr-5  "
                               >
                                 <SelectValue placeholder="Sort works" />
                               </SelectTrigger>
@@ -427,11 +426,11 @@ export default function Nav() {
                               </SelectContent>
                             </Select>
                           </span>
-                          <HDivider />
+                          {/* <HDivider /> */}
                           {workSort === "year" && (
                             <>
                               <span className="pl-8 flex items-baseline justify-start w-full  ">
-                                <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                                <h3 className="font-EBGaramond text-base whitespace-nowrap">
                                   Year
                                 </h3>
 
@@ -442,8 +441,8 @@ export default function Nav() {
                                   }
                                 >
                                   <SelectTrigger
-                                    size="default"
-                                    className="font-gintoMedium w-full text-lg pt-0.5 pr-5 "
+                                    size="sm"
+                                    className="font-EBGaramond w-full text-base pt-0.5 pr-5 "
                                   >
                                     <SelectValue placeholder="2024" />
                                   </SelectTrigger>
@@ -460,12 +459,11 @@ export default function Nav() {
                                   </SelectContent>
                                 </Select>
                               </span>
-                              <HDivider />
                             </>
                           )}
 
                           <span className="pl-8 flex items-baseline justify-start  w-full ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-base whitespace-nowrap">
                               Show
                             </h3>
 
@@ -476,8 +474,8 @@ export default function Nav() {
                               }
                             >
                               <SelectTrigger
-                                size="default"
-                                className="font-gintoMedium w-full text-lg pt-0.5 pr-5"
+                                size="sm"
+                                className="font-EBGaramond w-full text-base pt-0.5 pr-5"
                               >
                                 <SelectValue placeholder="All works" />
                               </SelectTrigger>
@@ -499,12 +497,12 @@ export default function Nav() {
                               </SelectContent>
                             </Select>
                           </span>
-                          <HDivider />
-                          <span className=" flex items-baseline justify-start w-full  pl-8  ">
+
+                          <span className=" flex items-baseline justify-start w-full  pl-8  mb-2 ">
                             <Button
                               variant="nav"
-                              size="linkSizeMd"
-                              className="font-gintoMedium  "
+                              size="linkSize"
+                              className="font-EBGaramond text-base "
                               onClick={() => setShowInfo((prev) => !prev)}
                             >
                               {showInfo
@@ -516,7 +514,6 @@ export default function Nav() {
                       </div>
                     )}
                   </div>
-                  <HDivider />
                 </>
               )}
             </div>
@@ -524,7 +521,12 @@ export default function Nav() {
             {/* EXHIBITIONS */}
             <div className="flex flex-col pt-1 snap-start snap-stop-always w-full  ">
               <span className="flex items-center justify-between w-full  px-4 ">
-                <Button asChild variant="nav" size="linkSizeMd">
+                <Button
+                  asChild
+                  className="font-gintoBlack text-base"
+                  variant="nav"
+                  size="linkSize"
+                >
                   <Link
                     href="/"
                     onClick={() => {
@@ -535,7 +537,7 @@ export default function Nav() {
 
                       handleOpenExhibitionsMenu();
                     }}
-                    className={`font-gintoBlack   `}
+                    className={`   `}
                   >
                     Exhibitions
                   </Link>
@@ -555,17 +557,16 @@ export default function Nav() {
                   )}
                 </Button>
               </span>
-              <HDivider />
 
               {showExhibitionsMenu && (
                 <>
-                  <div className="flex flex-col overflow-y-scroll     ">
+                  <div className="flex flex-col overflow-y-scroll pt-1     ">
                     {/* Index button */}
                     <Button
                       variant="nav"
-                      size="linkSizeMd"
+                      size="linkSize"
                       onClick={handleOpenAllExhibitionsList}
-                      className={`font-gintoMedium pl-6 pr-5  }`}
+                      className={`font-EBGaramond text-base pl-6 pr-5  }`}
                     >
                       Index
                       <span>
@@ -577,7 +578,7 @@ export default function Nav() {
                         )}
                       </span>
                     </Button>
-                    <HDivider />
+
                     {showAllExhibitionsList && (
                       <div
                         className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out  ${
@@ -586,7 +587,7 @@ export default function Nav() {
                       >
                         <Staggered
                           items={exhibitionIndex}
-                          className="columns-1 space-y-0 pt-1"
+                          className="columns-1 space-y-0 pt-0"
                           renderItem={(ex) => {
                             const slug = findExhibitionSlug(ex.title.rendered);
                             return (
@@ -621,9 +622,9 @@ export default function Nav() {
                     {/* Filter / Sort */}
                     <Button
                       variant="nav"
-                      size="linkSizeMd"
+                      size="linkSize"
                       onClick={handleOpenExhibitionsFilter}
-                      className={`font-gintoMedium  pl-6 pr-5     `}
+                      className={`font-EBGaramond text-base  pl-6 pr-5     `}
                     >
                       Filters
                       <span>
@@ -636,12 +637,11 @@ export default function Nav() {
                       </span>
                     </Button>
                     {showExhibitionsFilter && (
-                      <div className=" pt-0.5">
-                        <HDivider />
+                      <div className=" ">
                         <div className="flex flex-col items-start justify-start  ">
                           {/* Sort by */}
                           <span className="pl-8 flex items-baseline justify-start w-full  ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-base whitespace-nowrap">
                               Sort by
                             </h3>
                             <Select
@@ -651,8 +651,8 @@ export default function Nav() {
                               }
                             >
                               <SelectTrigger
-                                size="default"
-                                className="font-gintoMedium w-full text-lg pt-0.5 pr-5"
+                                size="sm"
+                                className="font-EBGaramond w-full text-base pt-0.5 pr-5"
                               >
                                 <SelectValue placeholder="Sort exhibitions" />
                               </SelectTrigger>
@@ -665,11 +665,11 @@ export default function Nav() {
                               </SelectContent>
                             </Select>
                           </span>
-                          <HDivider />
+
                           {exhibitionSort === "year" && (
                             <>
                               <span className="pl-8 flex items-baseline justify-start w-full   ">
-                                <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                                <h3 className="font-EBGaramond text-base whitespace-nowrap">
                                   Show
                                 </h3>
                                 <Select
@@ -677,8 +677,8 @@ export default function Nav() {
                                   onValueChange={exSetSelectedYear}
                                 >
                                   <SelectTrigger
-                                    size="default"
-                                    className="font-gintoMedium w-full text-lg pt-0.5 pr-5"
+                                    size="sm"
+                                    className="font-EBGaramond w-full text-base pt-0.5 pr-5"
                                   >
                                     <SelectValue placeholder="Filter by year" />
                                   </SelectTrigger>
@@ -697,13 +697,12 @@ export default function Nav() {
                                   </SelectContent>
                                 </Select>
                               </span>
-                              <HDivider />
                             </>
                           )}
 
                           {/* Filter by Type */}
                           <span className="pl-8 flex  items-baseline justify-start w-full ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-base whitespace-nowrap">
                               Show
                             </h3>
                             <Select
@@ -711,8 +710,8 @@ export default function Nav() {
                               onValueChange={setSelectedType}
                             >
                               <SelectTrigger
-                                size="default"
-                                className="font-gintoMedium w-full text-lg pt-0.5 pr-5 "
+                                size="sm"
+                                className="font-EBGaramond w-full text-base pt-0.5 pr-5 "
                               >
                                 <SelectValue placeholder="all exhibitions" />
                               </SelectTrigger>
@@ -733,17 +732,16 @@ export default function Nav() {
                       </div>
                     )}
                   </div>
-                  <HDivider />
                 </>
               )}
             </div>
-            <div className="flex flex-col pt-1 snap-start snap-stop-always w-full  ">
+            <div className="flex flex-col  snap-start snap-stop-always w-full  ">
               {/* CONTACT */}
               <span className=" snap-start snap-stop-always  pt-0.5 flex items-center justify-between w-full pl-4 pr-3">
                 <Button
                   variant="nav"
-                  size="linkSizeMd"
-                  className="font-gintoBlack "
+                  size="linkSize"
+                  className="font-gintoBlack text-base "
                   onClick={handleOpenContact}
                 >
                   Contact
@@ -764,24 +762,22 @@ export default function Nav() {
                 </Button>
               </span>
 
-              <HDivider />
-
               {showContact && (
                 <>
                   <div className="flex flex-col py-1      ">
                     <Button
                       variant="nav"
-                      size="linkSizeMd"
-                      className="font-gintoMedium  pl-8  "
+                      size="linkSize"
+                      className="font-EBGaramond text-base  pl-6  "
                       asChild
                     >
                       <Link href="mailto:elinor.silow@gmail.com">E-mail</Link>
                     </Button>
-                    <HDivider />
+
                     <Button
                       variant="nav"
-                      size="linkSizeMd"
-                      className="font-gintoMedium pl-8"
+                      size="linkSize"
+                      className="font-EBGaramond text-base pl-6"
                       asChild
                     >
                       <Link href="https://www.instagram.com/elinorsilow/">
@@ -797,15 +793,15 @@ export default function Nav() {
             <div className="pt-1 flex flex-col gap-y-0 snap-start snap-stop-always w-full">
               <Button
                 variant="nav"
-                size="linkSizeMd"
+                size="linkSize"
                 onClick={() => {
                   goToView("info");
                 }}
-                className="font-gintoBlack text-left  px-4"
+                className="font-gintoBlack text-left text-base  px-4"
               >
                 Information
               </Button>
-              <HDivider />
+
               <div className="px-4 pt-0.5 pb-2">
                 <DarkModeToggle />
               </div>

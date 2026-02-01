@@ -184,6 +184,20 @@ function MainContent({}: Props) {
     return match?.slug;
   };
 
+  const getWorkSizeClass = (dimensions?: string) => {
+    if (!dimensions) return "h-[25vh]";
+
+    const nums = dimensions.match(/\d+/g);
+    if (!nums || nums.length < 2) return "h-[25vh]";
+
+    const [w, h] = nums.map(Number);
+    const area = w * h;
+
+    // tweak threshold to taste
+    if (area > 3000) return "h-[75vh]";
+    return "h-[25vh]";
+  };
+
   useEffect(() => {
     if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
       setInitialLoaded(true);
@@ -207,7 +221,7 @@ function MainContent({}: Props) {
   return (
     <>
       <section
-        className="max-w-7xl
+        className="max-w-7xl mx-auto
       col-start-1 col-span-12
       lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0  "
       >
@@ -216,11 +230,11 @@ function MainContent({}: Props) {
             loading={loadingStaggered}
             items={items}
             getKey={(item) => item.id} // proper type
-            className={` p-2 lg:p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 
+            className={` w-full p-2 lg:p-4 flex flex-col items-center justify-center   
     gap-y-16 `}
             renderItem={(item: GridItem) => (
               <div
-                className="h-full flex flex-col cursor-pointer"
+                className=" flex flex-col cursor-pointer"
                 onClick={() => {
                   if (item.type === "work") {
                     setActiveWorkSlug(item.slug);
@@ -233,19 +247,9 @@ function MainContent({}: Props) {
                   }
                 }}
               >
-                {item.image && (
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    width={1200}
-                    height={1600}
-                    loading="eager"
-                    className="w-1/2 h-auto object-contain object-left"
-                  />
-                )}
-
+                {" "}
                 {showInfo && (
-                  <div className="flex  p-2 text-sm  font-EBGaramond  flex-wrap max-w-sm items-baseline justify-start">
+                  <div className="flex  p-2 text-sm  font-EBGaramond  flex-wrap  items-baseline justify-center">
                     <span className="font-EBGaramondItalic mr-2">
                       {item.title}
                     </span>
@@ -274,6 +278,27 @@ function MainContent({}: Props) {
                     )}
                   </div>
                 )}
+                <div
+                  className={`
+    relative w-full
+    ${
+      item.type === "work"
+        ? getWorkSizeClass(item.meta.acf.dimensions)
+        : "h-[50vh]"
+    }
+    flex flex-col items-start justify-start
+  `}
+                >
+                  {item.image && (
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      loading="eager"
+                      className=" h-auto object-contain object-top "
+                    />
+                  )}
+                </div>
               </div>
             )}
           />

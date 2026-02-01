@@ -84,12 +84,12 @@ export default function WorkSlugModalClient({
     <div
       className="col-start-1 lg:col-start-2
     col-span-6 lg:col-span-4
-    relative flex flex-col   min-h-screen items-start justify-between w-full pb-4    "
+    relative flex flex-col   min-h-screen items-center justify-center lg:items-start lg:justify-start w-full    "
     >
-      <div className="flex justify-start  w-full items-baseline bg-transparent gap-x-1   mt-0   pt-4 px-4 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
-        <div className="  flex flex-wrap items-baseline text-left justify-start max-w-sm  text-sm lg:text-sm font-EBGaramond    ">
-          <span className="font-EBGaramondItalic mr-1">
-            {work.title.rendered},
+      <div className="flex flex-col justify-center lg:justify-start  w-full items-baseline bg-transparent gap-x-1   mt-0   pt-4 px-4 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
+        <div className="  flex flex-wrap items-baseline text-center justify-center mx-auto lg:max-w-full max-w-sm  text-sm lg:text-sm font-EBGaramond    ">
+          <span className="font-EBGaramondItalic mr-2">
+            {work.title.rendered}
           </span>
           {work.acf.materials && (
             <span className="mr-1">{work.acf.materials},</span>
@@ -109,19 +109,19 @@ export default function WorkSlugModalClient({
         </div>
       </div>
       {/* Carousel */}
-      <Carousel className="w-full h-full px-2 pt-2 lg:px-4 lg:pt-4 ">
+      <Carousel className="w-full h-full  ">
         <CarouselContent>
           {images.map((src, idx) => (
             <CarouselItem
               key={idx}
-              className="w-full flex justify-end lg:justify-start items-end lg:items-start"
+              className="w-full flex justify-center lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-10.5rem)] lg:h-[calc(100vh-6rem)]">
+              <div className="relative w-full h-[calc(100vh-10.5rem)] lg:h-[calc(100vh-6rem)] flex flex-col  lg:items-start justify-center items-center">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
-                  className="w-auto max-w-[80vw] lg:max-w-[100vw] h-auto object-contain object-left lg:object-top-left "
+                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain object-top mx-auto  "
                 />
               </div>
             </CarouselItem>

@@ -27,7 +27,7 @@ export default function Footer() {
     return null;
   }
   return (
-    <div className="col-start-1 col-span-12 lg:col-start-2 lg:col-span-3  flex flex-col   font-EBGaramond text-sm  justify-start gap-y-0 gap-x-4 items-start w-full p-2  lg:p-4   ">
+    <div className="col-start-1 col-span-12 lg:col-start-2 lg:col-span-3  flex flex-col   font-EBGaramond text-sm  justify-center items-center gap-y-0 gap-x-4  w-full p-2  lg:p-4   ">
       {/* <svg
           width="250"
           height="100"
@@ -45,7 +45,7 @@ export default function Footer() {
           <path d="M209.121 30.2891C210.124 30.2891 210.898 30.0547 211.445 29.5859C212.005 29.1042 212.285 28.4531 212.285 27.6328C212.285 26.8516 212.005 26.2526 211.445 25.8359C210.885 25.4062 210.111 25.1914 209.121 25.1914H206.367V30.2891H209.121Z" />
           <path d="M140.957 74C142.051 74 142.93 73.6224 143.594 72.8672C144.258 72.112 144.59 71.1029 144.59 69.8398C144.59 68.6289 144.258 67.6849 143.594 67.0078C142.943 66.3307 142.064 65.9922 140.957 65.9922C139.837 65.9922 138.945 66.3307 138.281 67.0078C137.63 67.6849 137.305 68.6289 137.305 69.8398C137.305 71.1029 137.637 72.112 138.301 72.8672C138.965 73.6224 139.85 74 140.957 74Z" />
         </svg> */}
-      <div className="flex flex-wrap items-baseline justify-start gap-x-1 text-xs lg:text-sm ">
+      <div className="flex flex-wrap items-baseline justify-center lg:justify-start gap-x-1 text-xs lg:text-sm mb-2 ">
         Copyright <span className="font-EBGaramondItalic">Elinor Silow</span>
         2026. All rights reserved.
       </div>

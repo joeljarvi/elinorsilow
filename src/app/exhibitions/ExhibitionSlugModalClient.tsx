@@ -133,8 +133,8 @@ gap-4
 "
     >
       <div className=" col-span-3  ">
-        <div className="col-span-3 grid grid-cols-3     justify-start ">
-          <span className="w-full  col-span-3 lg:col-span-2 flex flex-col items-start justify-start">
+        <div className="col-span-3 flex flex-col lg:grid grid-cols-3     justify-center items-center w-full ">
+          <span className="w-full  col-span-3 lg:col-span-2 flex flex-col items-center justify-center lg:items-start lg:justify-start">
             {/* <button
               onClick={() => {
                 setCarouselIndex(0);
@@ -150,7 +150,7 @@ gap-4
               />
             </button> */}
 
-            <div className="flex flex-wrap items-baseline justify-start max-w-full w-full text-sm lg:text-sm lg:max-w-full  lg:mt-0 px-2   ">
+            <div className="flex flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full text-sm lg:text-sm lg:max-w-full  lg:mt-0 px-2   ">
               <h1 className="font-EBGaramondItalic   tracking-normal mr-2   ">
                 {exhibition.title.rendered}
               </h1>
@@ -186,7 +186,7 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-92  lg:max-w-lg font-EBGaramond text-sm lg:text-sm mb-2 lg:mb-2">
+        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-92  lg:max-w-lg font-EBGaramond mx-auto text-center lg:text-left text-sm lg:text-sm mb-2 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
@@ -204,7 +204,7 @@ gap-4
                   src={src.url}
                   alt={src.desc || `Image ${idx + 1}`}
                   fill
-                  className="object-contain object-left transition-transform hover:scale-105 cursor-pointer"
+                  className="object-contain object-center lg:object-left transition-transform hover:scale-105 cursor-pointer"
                 />
               </button>
               {src.desc && (
@@ -215,10 +215,12 @@ gap-4
             </div>
           ))}
         </div>
-        <div className=" col-span-3 lg:col-span-3 font-EBGaramond pb-0 flex flex-col items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-sm  ">
-          <h3 className="max-w-sm lg:max-w-lg">{exhibition.acf.credits}</h3>
+        <div className=" col-span-3 lg:col-span-3 font-EBGaramond pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-sm mx-auto w-full  ">
+          <h3 className="max-w-sm lg:max-w-lg mx-auto text-center">
+            {exhibition.acf.credits}
+          </h3>
           <HDivider />
-          <span className="flex items-center justify-start w-full gap-x-4">
+          <span className="flex items-center justify-center lg:items-center lg:justify-start w-full gap-x-4">
             <Button
               className="hidden lg:flex font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
               size="listSize"
@@ -328,7 +330,7 @@ gap-4
 
               {/* Back button */}
               <Button
-                className="absolute top-2 right-3  font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2 uppercase"
+                className="absolute top-4 left-1/2 -translate-x-1/2  font-EBGaramondAC flex z-50     transition-all  tracking-wide justify-start items-baseline  rounded  text-base gap-x-1   uppercase"
                 size="listSize"
                 variant="link"
                 onClick={() => setIsCarouselOpen(false)}
