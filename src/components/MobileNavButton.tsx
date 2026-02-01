@@ -232,8 +232,8 @@ function MobileNavOverlay() {
                 <Button
                   asChild
                   variant="link"
-                  size="linkSizeMd"
-                  className="font-gintoBlack "
+                  size="linkSize"
+                  className="font-gintoBlack text-base "
                 >
                   <Link
                     href="/"
@@ -268,14 +268,14 @@ function MobileNavOverlay() {
               {/* WORKS MENU DROPDOWN */}
               {showWorksMenu && (
                 <>
-                  <div className="flex flex-col justify-center items-center overflow-y-scroll  gap-0 ">
+                  <div className="flex flex-col justify-center items-center overflow-y-scroll  gap-0 pt-1">
                     <Button
                       variant="link"
-                      size="linkSizeMd"
+                      size="linkSize"
                       onClick={() => {
                         handleOpenAllWorksList();
                       }}
-                      className={`  font-EBGaramond  
+                      className={`  font-EBGaramond  text-lg items-center justify-center 
 `}
                     >
                       Index
@@ -319,7 +319,7 @@ function MobileNavOverlay() {
                       variant="link"
                       size="linkSizeMd"
                       onClick={handleOpenWorksFilter}
-                      className={`font-gintoBlack pt-0.5  w-full   
+                      className={`font-EBGaramond pt-0.5 gap-x-2 w-full   
 `}
                     >
                       Filters
@@ -337,7 +337,7 @@ function MobileNavOverlay() {
                         <HDivider />
                         <div className="flex flex-col items-center justify-center ">
                           <span className=" flex items-baseline justify-center w-full    ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-lg whitespace-nowrap">
                               Sort by
                             </h3>
 
@@ -350,7 +350,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoMedium  text-lg pt-0.5 pr-5  "
+                                className="font-EBGaramond  text-lg pt-0.5  "
                               >
                                 <SelectValue placeholder="Sort works" />
                               </SelectTrigger>
@@ -375,7 +375,7 @@ function MobileNavOverlay() {
                           {workSort === "year" && (
                             <>
                               <span className="flex items-baseline justify-center   ">
-                                <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                                <h3 className="font-EBGaramond text-lg whitespace-nowrap">
                                   Year
                                 </h3>
 
@@ -387,7 +387,7 @@ function MobileNavOverlay() {
                                 >
                                   <SelectTrigger
                                     size="default"
-                                    className="font-gintoMedium  text-lg pt-0.5  "
+                                    className="font-EBGaramond  text-lg pt-0.5  "
                                   >
                                     <SelectValue placeholder="2024" />
                                   </SelectTrigger>
@@ -409,7 +409,7 @@ function MobileNavOverlay() {
                           )}
 
                           <span className="flex items-baseline justify-center   ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-lg whitespace-nowrap">
                               Show
                             </h3>
 
@@ -421,7 +421,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoMedium  text-lg pt-0.5 "
+                                className="font-EBGaramond text-lg pt-0.5 "
                               >
                                 <SelectValue placeholder="All works" />
                               </SelectTrigger>
@@ -444,11 +444,11 @@ function MobileNavOverlay() {
                             </Select>
                           </span>
                           <HDivider />
-                          <span className=" flex items-baseline justify-center w-full  ">
+                          <span className=" flex items-baseline justify-center w-full  pt-2 pb-1 ">
                             <Button
                               variant="link"
-                              size="linkSizeMd"
-                              className="font-gintoMedium  "
+                              size="linkSize"
+                              className="font-EBGaramond text-lg  "
                               onClick={() => setShowInfo((prev) => !prev)}
                             >
                               {showInfo
@@ -468,7 +468,12 @@ function MobileNavOverlay() {
             {/* EXHIBITIONS */}
             <div className="flex flex-col pt-1 snap-start snap-stop-always w-full  ">
               <span className="flex items-center justify-center gap-x-1    ">
-                <Button asChild variant="link" size="linkSizeMd">
+                <Button
+                  asChild
+                  className="font-gintoBlack text-base mb-1 pt-1 "
+                  size="linkSize"
+                  variant="link"
+                >
                   <Link
                     href="/"
                     onClick={() => {
@@ -530,7 +535,7 @@ function MobileNavOverlay() {
                       >
                         <Staggered
                           items={exhibitionIndex}
-                          className="flex flex-col justify-center items-stretch   space-y-0  pt-1 mx-auto w-full"
+                          className="flex flex-col justify-center items-stretch   space-y-0  mx-auto w-full "
                           renderItem={(ex) => {
                             const slug = findExhibitionSlug(ex.title.rendered);
                             return (
@@ -541,14 +546,14 @@ function MobileNavOverlay() {
                                     size="linkSize"
                                     key={`ex-${ex.id}`}
                                     onClick={() => openExhibition(slug)}
-                                    className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 text-center w-full hover:font-EBGaramond transition-all cursor-pointer hover:text-blue-600 "
+                                    className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 text-center w-full hover:font-EBGaramond leading-relaxed  pt-1 pb-0.5 transition-all cursor-pointer hover:text-blue-600 "
                                   >
                                     {ex.title.rendered}
                                   </Button>
                                 ) : (
                                   <span
                                     key={`list-${ex.id}`}
-                                    className="block text-center font-EBGaramondItalic text-foreground/80 w-full"
+                                    className="block text-center font-EBGaramondItalic pt-1 pb-0.5 text-foreground/80 w-full"
                                   >
                                     {ex.title.rendered}
                                   </span>
@@ -565,9 +570,9 @@ function MobileNavOverlay() {
                     {/* Filter / Sort */}
                     <Button
                       variant="link"
-                      size="linkSizeMd"
+                      size="linkSize"
                       onClick={handleOpenExhibitionsFilter}
-                      className={`font-gintoMedium       `}
+                      className={`font-EBGaramond text-lg   pt-2      `}
                     >
                       Filters
                       <span>
@@ -580,12 +585,12 @@ function MobileNavOverlay() {
                       </span>
                     </Button>
                     {showExhibitionsFilter && (
-                      <div className=" pt-0.5">
+                      <div className=" pt-2">
                         <HDivider />
                         <div className="flex flex-col items-center justify-center  ">
                           {/* Sort by */}
                           <span className="flex items-baseline justify-center w-full  ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-lg whitespace-nowrap">
                               Sort by
                             </h3>
                             <Select
@@ -596,7 +601,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoMedium l text-lg pt-0.5 "
+                                className="font-EBGaramond text-lg pt-0.5 "
                               >
                                 <SelectValue placeholder="Sort exhibitions" />
                               </SelectTrigger>
@@ -613,7 +618,7 @@ function MobileNavOverlay() {
                           {exhibitionSort === "year" && (
                             <>
                               <span className=" flex items-baseline justify-center   ">
-                                <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                                <h3 className="font-EBGaramond text-lg whitespace-nowrap">
                                   Show
                                 </h3>
                                 <Select
@@ -647,7 +652,7 @@ function MobileNavOverlay() {
 
                           {/* Filter by Type */}
                           <span className=" flex  items-baseline justify-center  ">
-                            <h3 className="font-gintoMedium text-lg whitespace-nowrap">
+                            <h3 className="font-EBGaramond text-lg whitespace-nowrap">
                               Show
                             </h3>
                             <Select
@@ -656,7 +661,7 @@ function MobileNavOverlay() {
                             >
                               <SelectTrigger
                                 size="default"
-                                className="font-gintoMedium  text-lg pt-0.5  "
+                                className="font-EBGaramond  text-lg pt-0.5  "
                               >
                                 <SelectValue placeholder="all exhibitions" />
                               </SelectTrigger>
@@ -686,8 +691,8 @@ function MobileNavOverlay() {
               <span className=" snap-start snap-stop-always  pt-0.5 flex items-center justify-center gap-x-2  ">
                 <Button
                   variant="link"
-                  size="linkSizeMd"
-                  className="font-gintoBlack "
+                  size="linkSize"
+                  className="font-gintoBlack text-base "
                   onClick={handleOpenContact}
                 >
                   Contact
@@ -712,11 +717,11 @@ function MobileNavOverlay() {
 
               {showContact && (
                 <>
-                  <div className="flex flex-col py-1      ">
+                  <div className="flex flex-col py-2      ">
                     <Button
                       variant="link"
-                      size="linkSizeMd"
-                      className="font-gintoMedium   "
+                      size="linkSize"
+                      className="font-EBGaramond text-lg  "
                       asChild
                     >
                       <Link href="mailto:elinor.silow@gmail.com">E-mail</Link>
@@ -724,8 +729,8 @@ function MobileNavOverlay() {
                     <HDivider />
                     <Button
                       variant="link"
-                      size="linkSizeMd"
-                      className="font-gintoMedium "
+                      size="linkSize"
+                      className="font-EBGaramond text-lg pt-2 "
                       asChild
                     >
                       <Link href="https://www.instagram.com/elinorsilow/">
@@ -741,12 +746,12 @@ function MobileNavOverlay() {
             <div className="pt-1 flex flex-col gap-y-0 snap-start snap-stop-always w-full justify-center items-center ">
               <Button
                 variant="link"
-                size="linkSizeMd"
+                size="linkSize"
                 onClick={() => {
                   goToView("info");
                   handleOpen();
                 }}
-                className="font-gintoBlack text-center "
+                className="font-gintoBlack text-base text-center "
               >
                 Information
               </Button>
