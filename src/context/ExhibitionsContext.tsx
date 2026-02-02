@@ -29,7 +29,8 @@ type ExhibitionsContextType = {
   soloExhibitions: Exhibition[];
   groupExhibitions: Exhibition[];
   fullExhibitionList: (Exhibition | Exhibition_list)[];
-
+  open: boolean;
+  setOpen: (v: boolean) => void;
   exLoading: boolean;
   error: Error | null;
 
@@ -71,7 +72,7 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [debouncedSortBy] = useDebounce(exhibitionSort, 200);
   const [debouncedSelectedYear] = useDebounce(exSelectedYear, 200);
   const [debouncedSelectedType] = useDebounce(selectedType, 200);
-  const { view, setViewLoading, setOpen } = useNav();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -169,12 +170,6 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
 
   const uniqueExYears = Array.from(new Set(availableYears));
 
-  useEffect(() => {
-    if (view === "exhibitions" && !exLoading) {
-      setViewLoading(false);
-    }
-  }, [view, exLoading]);
-
   const openExhibition = (slug: string) => {
     setActiveExhibitionSlug(slug);
     setOpen(false);
@@ -183,6 +178,8 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   return (
     <ExhibitionsContext.Provider
       value={{
+        open,
+        setOpen,
         getExhibitionBySlug,
         exhibitions,
         exhibitionList,

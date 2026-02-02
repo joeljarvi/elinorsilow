@@ -108,19 +108,19 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NavProvider>
-            <WorksProvider>
-              <ExhibitionsProvider>
-                <InfoProvider>
+          <WorksProvider>
+            <ExhibitionsProvider>
+              <InfoProvider>
+                <NavProvider>
                   <AnimationProvider>
                     <Nav />
                     <MobileNavButton />
                     {children} {modal}
                   </AnimationProvider>
-                </InfoProvider>
-              </ExhibitionsProvider>
-            </WorksProvider>
-          </NavProvider>
+                </NavProvider>
+              </InfoProvider>
+            </ExhibitionsProvider>
+          </WorksProvider>
         </ThemeProvider>
       </body>
     </html>

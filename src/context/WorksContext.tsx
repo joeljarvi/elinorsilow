@@ -19,6 +19,8 @@ export type CategoryFilter =
   | "textile";
 
 type WorksContextType = {
+  open: boolean;
+  setOpen: (v: boolean) => void;
   allWorks: Work[];
   filteredWorks: Work[];
   availibleYears: number[];
@@ -67,7 +69,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   const [showAllWorksList, setShowAllWorksList] = useState(false);
   const [activeWorkSlug, setActiveWorkSlug] = useState<string | null>(null);
   const [currentWorkIndex, setCurrentWorkIndex] = useState<number | null>(null);
-  const { view, setViewLoading, setOpen } = useNav();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getAllWorks()
@@ -135,12 +137,6 @@ export function WorksProvider({ children }: { children: ReactNode }) {
 
   const uniqueYears = Array.from(new Set(availibleYears));
 
-  useEffect(() => {
-    if (view === "works" && !workLoading) {
-      setViewLoading(false);
-    }
-  }, [view, workLoading]);
-
   const openWork = (slug: string) => {
     setActiveWorkSlug(slug);
     setOpen(false);
@@ -149,6 +145,8 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   return (
     <WorksContext.Provider
       value={{
+        open,
+        setOpen,
         allWorks,
         filteredWorks,
         availibleYears,

@@ -218,23 +218,6 @@ export async function getAllGrants(): Promise<Grant[]> {
     : [];
 }
 
-export async function getBiography(): Promise<Biography | null> {
-  const res = await fetch(`${API_URL}/biography?_embed&acf_format=standard`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
-    console.error("Failed to fetch biography:", res.status, res.statusText);
-    return null;
-  }
-
-  const data = await res.json();
-  if (!Array.isArray(data) || data.length === 0) return null;
-
-  const item = data[0];
-  return { ...item, id: item.id ?? 0 };
-}
-
 export async function getExhibitionList(): Promise<Exhibition_list[]> {
   const res = await fetch(
     `${API_URL}/exhibition_list?_embed&acf_format=standard&per_page=100`,

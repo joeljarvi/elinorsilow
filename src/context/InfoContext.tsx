@@ -8,19 +8,15 @@ import React, {
   ReactNode,
 } from "react";
 import {
-  getBiography,
   getAllEducations,
   getAllGrants,
   getExhibitionList,
-  Biography,
   Education,
   Grant,
   Exhibition_list,
 } from "../../lib/wordpress";
-import { useNav } from "./NavContext";
 
 interface InfoContextProps {
-  biography: Biography | null;
   educations: Education[];
   grants: Grant[];
   exhibitionList: Exhibition_list[];
@@ -31,24 +27,20 @@ interface InfoContextProps {
 const InfoContext = createContext<InfoContextProps | undefined>(undefined);
 
 export const InfoProvider = ({ children }: { children: ReactNode }) => {
-  const [biography, setBiography] = useState<Biography | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [exhibitionList, setExhibitionList] = useState<Exhibition_list[]>([]);
   const [infoLoading, setInfoLoading] = useState(true);
 
-  const { view, setViewLoading } = useNav();
-
   const fetchData = async () => {
     setInfoLoading(true);
     try {
-      const [bio, edu, gr, exhibitions] = await Promise.all([
-        getBiography(),
+      const [edu, gr, exhibitions] = await Promise.all([
         getAllEducations(),
         getAllGrants(),
         getExhibitionList(),
       ]);
-      setBiography(bio);
+
       setEducations(edu);
       setGrants(gr);
       setExhibitionList(exhibitions);
@@ -63,16 +55,9 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (view === "info" && !infoLoading) {
-      setViewLoading(false);
-    }
-  }, [view, infoLoading]);
-
   return (
     <InfoContext.Provider
       value={{
-        biography,
         educations,
         grants,
         exhibitionList,

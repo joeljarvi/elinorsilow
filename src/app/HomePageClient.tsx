@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import WorkModal from "./works/WorkModal";
 import ExhibitionModal from "./exhibitions/ExhibitionModal";
 import { useWorks } from "@/context/WorksContext";
@@ -12,6 +12,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import VDivider from "@/components/VDivider";
+import { ReactLenis } from "lenis/react";
+import type { LenisRef } from "lenis/react";
+import { cancelFrame, frame, AnimatePresence, motion } from "framer-motion";
+import Loader from "@/components/Loader";
+
 import type {
   Work,
   Exhibition,
@@ -65,12 +70,10 @@ type GridItem =
     });
 
 function MainContent({}: Props) {
-  const ITEMS_PER_BATCH = 12;
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
-  const [initialLoaded, setInitialLoaded] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [initialAnimDone, setInitialAnimDone] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
-  const { view, setOpen, viewLoading } = useNav();
+  const { view, setOpen } = useNav();
   const {
     filteredWorks,
     showInfo,
@@ -85,8 +88,7 @@ function MainContent({}: Props) {
     exLoading,
   } = useExhibitions();
 
-  const { biography, educations, grants, exhibitionList, infoLoading } =
-    useInfo();
+  const { educations, grants, exhibitionList, infoLoading } = useInfo();
 
   const soloExhibitions = exhibitionList.filter(
     (ex) => ex.acf.exhibition_type === "Solo Exhibition"
@@ -124,18 +126,6 @@ function MainContent({}: Props) {
 
     // INFO section remains the same
     if (view === "info") {
-      const bioItem: GridItem[] = biography
-        ? [
-            {
-              type: "biography",
-              id: biography.id,
-              slug: biography.slug,
-              title: biography.title?.rendered ?? "Biography",
-              meta: biography,
-            },
-          ]
-        : [];
-
       const educationItems: GridItem[] = educations.map((edu) => ({
         type: "education",
         id: edu.id,
@@ -160,12 +150,7 @@ function MainContent({}: Props) {
         meta: ex,
       }));
 
-      return [
-        ...bioItem,
-        ...educationItems,
-        ...grantItems,
-        ...exhibitionListItems,
-      ];
+      return [...educationItems, ...grantItems, ...exhibitionListItems];
     }
 
     return [];
@@ -173,7 +158,7 @@ function MainContent({}: Props) {
     view,
     filteredWorks, // updates when work filters change
     filteredExhibitions, // updates when exhibition filters change
-    biography,
+
     educations,
     grants,
     exhibitionList,
@@ -185,52 +170,74 @@ function MainContent({}: Props) {
   };
 
   const getWorkSizeClass = (dimensions?: string) => {
-    if (!dimensions) return "h-[25vh]";
+    if (!dimensions) return "w-[calc(100vw-2rem)] lg:w-[calc(25vw-2rem)]";
 
     const nums = dimensions.match(/\d+/g);
-    if (!nums || nums.length < 2) return "h-[25vh]";
+    if (!nums || nums.length < 2)
+      return "w-[calc(100vw-2rem)] lg:w-[calc(25vw-2rem)]";
 
-    const [w, h] = nums.map(Number);
-    const area = w * h;
+    const [w] = nums.map(Number);
+    const area = w;
 
     // tweak threshold to taste
-    if (area > 3000) return "h-[75vh]";
-    return "h-[25vh]";
+    if (area > 120) return "w-[calc(100vw-2rem)] lg:w-[calc(25vw-2rem)]";
+    if (area > 30 && area < 120)
+      return "w-[calc(66.6vw-2rem)] lg:w-[calc(12.5vw-2rem)]";
+    return "w-[calc(33.3vw-2rem)] lg:w-[calc(8.3vw-2rem)]";
   };
 
+  // Start loader animation immediately
   useEffect(() => {
-    if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
-      setInitialLoaded(true);
+    // Immediately mark animation done if data is ready
+    if (!workLoading && !exLoading && !infoLoading) {
+      setInitialAnimDone(true);
+      setDataLoaded(true);
     }
-  }, [initialLoaded, workLoading, exLoading, infoLoading]);
 
-  useEffect(() => {
-    const fallback = setTimeout(() => setInitialLoaded(true), 2000);
+    // Optional: fallback in case something hangs
+    const fallback = setTimeout(() => {
+      setInitialAnimDone(true);
+      setDataLoaded(true);
+    }, 1000); // 1s max wait for slow connections
+
     return () => clearTimeout(fallback);
-  }, []);
+  }, [workLoading, exLoading, infoLoading]);
 
-  const initialAppLoading = !initialLoaded;
-  const showGlobalLoader = initialAppLoading || viewLoading;
-
-  const loadingStaggered = workLoading || exLoading || infoLoading;
-
-  if (showGlobalLoader) {
-    return null;
-  }
+  const showLoader = !(initialAnimDone && dataLoaded);
+  const showGlobalLoader = workLoading || exLoading || infoLoading;
 
   return (
     <>
-      <section
+      <AnimatePresence mode="wait">
+        {showLoader && (
+          <Loader
+            key={view}
+            text={
+              view === "works"
+                ? "Works"
+                : view === "exhibitions"
+                ? "Exhibitions"
+                : "Info"
+            }
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.section
+        key={view}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showGlobalLoader ? 0 : 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className="max-w-7xl mx-auto
       col-start-1 col-span-12
-      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0  "
+      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0  scrollbar-hide "
       >
         {view !== "info" && (
           <Staggered
-            loading={loadingStaggered}
+            loading={showGlobalLoader}
             items={items}
             getKey={(item) => item.id} // proper type
-            className={` w-full p-2 lg:p-4 flex flex-col items-center justify-center   
+            className={` w-full p-2 lg:p-4 flex flex-col  items-center justify-center lg:grid lg:grid-cols-3 gap-x-4 lg:justify-start lg:items-start  
     gap-y-16 `}
             renderItem={(item: GridItem) => (
               <div
@@ -249,7 +256,7 @@ function MainContent({}: Props) {
               >
                 {" "}
                 {showInfo && (
-                  <div className="flex  p-2 text-sm  font-EBGaramond  flex-wrap  items-baseline justify-center">
+                  <div className="flex lg:hidden p-2 text-sm  font-EBGaramond  flex-wrap  items-baseline justify-center lg:justify-start">
                     <span className="font-EBGaramondItalic mr-2">
                       {item.title}
                     </span>
@@ -280,11 +287,11 @@ function MainContent({}: Props) {
                 )}
                 <div
                   className={`
-    relative w-full
+    relative h-[66.6vh] lg:h-[50vh] mx-auto lg:mx-0
     ${
       item.type === "work"
         ? getWorkSizeClass(item.meta.acf.dimensions)
-        : "h-[50vh]"
+        : "w-[calc(100vw-2rem)] lg:w-[calc(25vw-2rem)]"
     }
     flex flex-col items-start justify-start
   `}
@@ -295,7 +302,8 @@ function MainContent({}: Props) {
                       alt={item.title}
                       fill
                       loading="eager"
-                      className=" h-auto object-contain object-top "
+                      priority
+                      className=" h-auto object-contain object-top lg:object-top-left "
                     />
                   )}
                 </div>
@@ -338,7 +346,7 @@ function MainContent({}: Props) {
                 <HDivider />
 
                 <Staggered
-                  loading={loadingStaggered}
+                  loading={showGlobalLoader}
                   items={soloExhibitions}
                   className="w-full columns-1 space-y-0 py-2 pl-2 lg:pl-4 pr-0 lg:pr-4"
                   renderItem={(ex) => {
@@ -381,7 +389,7 @@ function MainContent({}: Props) {
                 <HDivider />
 
                 <Staggered
-                  loading={loadingStaggered}
+                  loading={showGlobalLoader}
                   items={groupExhibitions}
                   className="w-full columns-1 space-y-0 py-2 pr-2 lg:pr-4 pl-2  lg:pl-4"
                   renderItem={(ex) => {
@@ -425,7 +433,7 @@ function MainContent({}: Props) {
                   </h2>
                   <HDivider />
                   <Staggered
-                    loading={loadingStaggered}
+                    loading={showGlobalLoader}
                     items={grants}
                     className="columns-1   space-y-0  w-full py-2 pr-2 pl-2 lg:pr-4 lg:pl-4"
                     renderItem={(grant) => (
@@ -454,7 +462,7 @@ function MainContent({}: Props) {
                 </h2>
                 <HDivider />
                 <Staggered
-                  loading={loadingStaggered}
+                  loading={showGlobalLoader}
                   items={educations}
                   className=" pl-2 pr-0 lg:pl-4 lg:pr-4 columns-1   space-y-0  w-full py-2 "
                   renderItem={(edu) => (
@@ -559,7 +567,7 @@ function MainContent({}: Props) {
             </div>
           </div>
         )}
-      </section>
+      </motion.section>
 
       {activeWorkSlug && (
         <WorkModal
@@ -579,10 +587,35 @@ function MainContent({}: Props) {
 }
 
 export default function HomePageClient() {
+  const lenisRef = useRef<LenisRef>(null);
+
+  useEffect(() => {
+    function update(data: { timestamp: number }) {
+      const time = data.timestamp;
+      lenisRef.current?.lenis?.raf(time);
+    }
+
+    frame.update(update, true);
+
+    return () => cancelFrame(update);
+  }, []);
+
   return (
-    <div className="w-full grid grid-cols-12 lg:grid-cols-4 ">
-      <MainContent />
-      <Footer />
-    </div>
+    <ReactLenis
+      root
+      ref={lenisRef}
+      options={{
+        autoRaf: false,
+        smoothWheel: true,
+        duration: 1.15,
+        easing: (t) => 1 - Math.pow(1 - t, 4),
+      }}
+      className="h-screen overflow-y-scroll scrollbar-hide"
+    >
+      <div className="min-h-full w-full grid grid-cols-12 lg:grid-cols-4   ">
+        <MainContent />
+        <Footer />
+      </div>
+    </ReactLenis>
   );
 }
