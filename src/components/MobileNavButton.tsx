@@ -69,7 +69,7 @@ function MobileNavOverlay() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden inset-0 z-30 h-screen w-full bg-background flex flex-col items-center justify-center"
+          className="fixed lg:hidden inset-0 z-30 h-screen w-full bg-background flex flex-col items-center justify-center pointer-events-auto"
         >
           <Button
             className="  absolute top-4 left-1/2 -translate-x-1/2 font-EBGaramondAC flex z-50 transition-all tracking-wide justify-start items-baseline rounded text-base gap-x-1 uppercase"

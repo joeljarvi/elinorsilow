@@ -32,6 +32,17 @@ type WorksContextType = {
   setSelectedYear: React.Dispatch<React.SetStateAction<number | null>>;
   categoryFilter: CategoryFilter;
   setCategoryFilter: React.Dispatch<React.SetStateAction<CategoryFilter>>;
+
+  stagedWorkSort: WorkSort;
+  setStagedWorkSort: React.Dispatch<React.SetStateAction<WorkSort>>;
+  stagedSelectedYear: number | null;
+  setStagedSelectedYear: React.Dispatch<React.SetStateAction<number | null>>;
+  stagedCategoryFilter: CategoryFilter;
+  setStagedCategoryFilter: React.Dispatch<React.SetStateAction<CategoryFilter>>;
+  applyFilters: () => Promise<void>;
+  clearFilters: () => Promise<void>;
+  isApplyingFilters: boolean;
+
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   currentWorkIndex: number | null;
@@ -65,6 +76,12 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   const [workSort, setWorkSort] = useState<WorkSort>("year-latest");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
+
+  const [stagedWorkSort, setStagedWorkSort] = useState<WorkSort>("year-latest");
+  const [stagedSelectedYear, setStagedSelectedYear] = useState<number | null>(null);
+  const [stagedCategoryFilter, setStagedCategoryFilter] = useState<CategoryFilter>("all");
+  const [isApplyingFilters, setIsApplyingFilters] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllWorksList, setShowAllWorksList] = useState(false);
   const [activeWorkSlug, setActiveWorkSlug] = useState<string | null>(null);
@@ -88,6 +105,29 @@ export function WorksProvider({ children }: { children: ReactNode }) {
       .catch(setError)
       .finally(() => setWorkLoading(false));
   }, []);
+
+  const applyFilters = async () => {
+    setIsApplyingFilters(true);
+    // Simulate a small delay for the loader if it's too fast
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    setWorkSort(stagedWorkSort);
+    setSelectedYear(stagedSelectedYear);
+    setCategoryFilter(stagedCategoryFilter);
+    setIsApplyingFilters(false);
+  };
+
+  const clearFilters = async () => {
+    setIsApplyingFilters(true);
+    setStagedWorkSort("year-latest");
+    setStagedSelectedYear(null);
+    setStagedCategoryFilter("all");
+    
+    setWorkSort("year-latest");
+    setSelectedYear(null);
+    setCategoryFilter("all");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setIsApplyingFilters(false);
+  };
 
   // Memoized available years
   const availibleYears = React.useMemo(() => {
@@ -160,6 +200,17 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         setSelectedYear,
         categoryFilter,
         setCategoryFilter,
+
+        stagedWorkSort,
+        setStagedWorkSort,
+        stagedSelectedYear,
+        setStagedSelectedYear,
+        stagedCategoryFilter,
+        setStagedCategoryFilter,
+        applyFilters,
+        clearFilters,
+        isApplyingFilters,
+
         searchQuery,
         setSearchQuery,
         currentWorkIndex,

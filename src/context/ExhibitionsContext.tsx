@@ -42,6 +42,16 @@ type ExhibitionsContextType = {
   selectedType: string;
   setSelectedType: React.Dispatch<React.SetStateAction<string>>;
 
+  stagedExhibitionSort: ExhibitionSort;
+  setStagedExhibitionSort: React.Dispatch<React.SetStateAction<ExhibitionSort>>;
+  stagedExSelectedYear: string;
+  setStagedExSelectedYear: React.Dispatch<React.SetStateAction<string>>;
+  stagedSelectedType: string;
+  setStagedSelectedType: React.Dispatch<React.SetStateAction<string>>;
+  applyFilters: () => Promise<void>;
+  clearFilters: () => Promise<void>;
+  isApplyingFilters: boolean;
+
   showDescription: boolean;
   setShowDescription: React.Dispatch<React.SetStateAction<boolean>>;
   uniqueExYears: string[];
@@ -65,6 +75,12 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [exhibitionSort, setExhibitionSort] = useState<ExhibitionSort>("title");
   const [exSelectedYear, exSetSelectedYear] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
+
+  const [stagedExhibitionSort, setStagedExhibitionSort] = useState<ExhibitionSort>("title");
+  const [stagedExSelectedYear, setStagedExSelectedYear] = useState("all");
+  const [stagedSelectedType, setStagedSelectedType] = useState("all");
+  const [isApplyingFilters, setIsApplyingFilters] = useState(false);
+
   const [showDescription, setShowDescription] = useState(true);
   const [activeExhibitionSlug, setActiveExhibitionSlug] = useState<
     string | null
@@ -73,6 +89,28 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [debouncedSelectedYear] = useDebounce(exSelectedYear, 200);
   const [debouncedSelectedType] = useDebounce(selectedType, 200);
   const [open, setOpen] = useState(false);
+
+  const applyFilters = async () => {
+    setIsApplyingFilters(true);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    setExhibitionSort(stagedExhibitionSort);
+    exSetSelectedYear(stagedExSelectedYear);
+    setSelectedType(stagedSelectedType);
+    setIsApplyingFilters(false);
+  };
+
+  const clearFilters = async () => {
+    setIsApplyingFilters(true);
+    setStagedExhibitionSort("title");
+    setStagedExSelectedYear("all");
+    setStagedSelectedType("all");
+
+    setExhibitionSort("title");
+    exSetSelectedYear("all");
+    setSelectedType("all");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setIsApplyingFilters(false);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -195,6 +233,17 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
         exSetSelectedYear,
         selectedType,
         setSelectedType,
+
+        stagedExhibitionSort,
+        setStagedExhibitionSort,
+        stagedExSelectedYear,
+        setStagedExSelectedYear,
+        stagedSelectedType,
+        setStagedSelectedType,
+        applyFilters,
+        clearFilters,
+        isApplyingFilters,
+
         showDescription,
         setShowDescription,
         availableYears,

@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
 import { Button } from "@/components/ui/button";
+import { useRef } from "react";
+import { ReactLenis, useLenis } from "lenis/react";
 
 type ExhibitionModalProps = {
   slug: string;
@@ -13,42 +15,74 @@ export default function ExhibitionModal({
   slug,
   onClose,
 }: ExhibitionModalProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-20   grid grid-cols-4 min-h-screen scrollbar-hide overflow-hidden   "
+        className="fixed inset-0 z-20   grid grid-cols-4 min-h-screen scrollbar-hide overflow-hidden bg-background   "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* BACKDROP only over content columns (col 2-4) */}
         <div
-          className="col-start-2 col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0 lg:px-8 lg:pt-4 "
+          className="col-start-2 col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0  pb-8lg:px-8 lg:pt-4 "
           onClick={onClose}
         />
 
         {/* MODAL only in content area (col 2-4) */}
         <motion.div
           key="modal"
+          ref={containerRef}
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 lg:col-start-2 col-span-4  lg:col-span-3  h-full  overflow-auto flex flex-col scrollbar-hide "
+          className="relative col-start-1 lg:col-start-2 col-span-4  lg:col-span-3  h-full  overflow-hidden flex flex-col scrollbar-hide bg-background "
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
         >
-          <Button
-            className="hidden lg:absolute top-0 right-0   z-50 font-EBGaramond hover:font-EBGaramondItalic cursor-pointer py-6 px-6 transition-all"
-            size="linkSize"
-            variant="link"
-            onClick={onClose}
+          <ReactLenis
+            root={false}
+            className="h-full overflow-y-auto scrollbar-hide"
+            options={{
+              smoothWheel: true,
+              duration: 1.15,
+              easing: (t) => 1 - Math.pow(1 - t, 4),
+            }}
           >
-            Back
-          </Button>
+            <Button
+              className="hidden lg:absolute top-0 right-0   z-50 font-EBGaramond hover:font-EBGaramondItalic cursor-pointer py-6 px-6 transition-all"
+              size="linkSize"
+              variant="link"
+              onClick={onClose}
+            >
+              Back
+            </Button>
 
-          <ExhibitionSlugModalClient slug={slug} onClose={onClose} />
+            <ExhibitionSlugModalClient slug={slug} onClose={onClose} />
+
+            <BackToTop />
+          </ReactLenis>
         </motion.div>
       </motion.div>
     </AnimatePresence>
+  );
+}
+
+function BackToTop() {
+  const lenis = useLenis();
+
+  return (
+    <div className="w-full flex justify-center lg:justify-start pt-4 pb-4 px-6  ">
+      <Button
+        variant="link"
+        size="linkSize"
+        className="font-EBGaramondAC flex z-50     transition-all  tracking-wide justify-start items-baseline  rounded  text-base gap-x-1   uppercase"
+        onClick={() => lenis?.scrollTo(0)}
+      >
+        Back to Top
+      </Button>
+    </div>
   );
 }

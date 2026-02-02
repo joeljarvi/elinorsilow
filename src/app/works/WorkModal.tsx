@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
-import { Button } from "@/components/ui/button";
+import { ReactLenis } from "lenis/react";
 
 type WorkModalProps = {
   slug: string;
@@ -29,21 +29,22 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
         <motion.div
           key="modal"
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 col-span-4 lg:col-start-2  w-full h-screen  bg-background  overflow-auto flex flex-col"
+          className="relative col-start-1 col-span-4 lg:col-start-2  w-full h-screen  bg-background   flex flex-col overflow-hidden"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
         >
-          {/* <Button
-            className="fixed  bottom-0 left-0  lg:top-0 lg:right-0 lg:left-auto lg:bottom-auto   z-50 font-EBGaramond hover:font-EBGaramondItalic cursor-pointer  text-sm mb-3 pt-2 px-3 flex items-baseline transition-all"
-            size="linkSize"
-            variant="link"
-            onClick={onClose}
+          <ReactLenis
+            root={false}
+            className="h-full overflow-y-auto scrollbar-hide"
+            options={{
+              smoothWheel: true,
+              duration: 1.15,
+              easing: (t) => 1 - Math.pow(1 - t, 4),
+            }}
           >
-            Back
-          </Button> */}
-
-          <WorkSlugModalClient onClose={onClose} slug={slug} />
+            <WorkSlugModalClient onClose={onClose} slug={slug} />
+          </ReactLenis>
         </motion.div>
       </motion.div>
     </AnimatePresence>

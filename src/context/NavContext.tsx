@@ -55,7 +55,7 @@ interface NavContextValue {
 const NavContext = createContext<NavContextValue | undefined>(undefined);
 
 export function NavProvider({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [openDesktopNav, setOpenDesktopNav] = useState(true);
   const [view, setView] = useState<ViewMode>("works");
   const [viewLoading, setViewLoading] = useState(false);
@@ -71,6 +71,12 @@ export function NavProvider({ children }: { children: ReactNode }) {
   const { workLoading } = useWorks();
   const { exLoading } = useExhibitions();
   const { infoLoading } = useInfo();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setOpen(false);
+    }
+  }, []);
 
   if (!NavContext.Provider) {
     throw new Error("NavContext.Provider is undefined");

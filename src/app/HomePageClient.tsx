@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import WorkModal from "./works/WorkModal";
 import ExhibitionModal from "./exhibitions/ExhibitionModal";
 import { useWorks } from "@/context/WorksContext";
@@ -12,9 +12,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import VDivider from "@/components/VDivider";
-import { ReactLenis } from "lenis/react";
-import type { LenisRef } from "lenis/react";
-import { cancelFrame, frame, AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Loader from "@/components/Loader";
 
 import type {
@@ -28,6 +26,7 @@ import type {
 import HDivider from "@/components/HDivider";
 import Staggered from "@/components/Staggered";
 import Link from "next/link";
+import { useLenis } from "lenis/react";
 
 type Props = {
   showInfo?: boolean;
@@ -72,6 +71,8 @@ type GridItem =
 function MainContent({}: Props) {
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+
+  const lenis = useLenis();
 
   const { view, setOpen } = useNav();
   const {
@@ -230,7 +231,7 @@ function MainContent({}: Props) {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="max-w-7xl mx-auto
       col-start-1 col-span-12
-      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0  scrollbar-hide "
+      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0   "
       >
         {view !== "info" && (
           <Staggered
@@ -239,9 +240,9 @@ function MainContent({}: Props) {
             getKey={(item) => item.id} // proper type
             className={` w-full p-2 lg:p-4 flex flex-col  items-center justify-center lg:grid lg:grid-cols-3 gap-x-4 lg:justify-start lg:items-start  
     gap-y-16 `}
-            renderItem={(item: GridItem) => (
+            renderItem={(item: GridItem, index: number) => (
               <div
-                className=" flex flex-col cursor-pointer"
+                className="  flex flex-col  cursor-pointer pointer-events-auto "
                 onClick={() => {
                   if (item.type === "work") {
                     setActiveWorkSlug(item.slug);
@@ -256,7 +257,7 @@ function MainContent({}: Props) {
               >
                 {" "}
                 {showInfo && (
-                  <div className="flex lg:hidden p-2 text-sm  font-EBGaramond  flex-wrap  items-baseline justify-center lg:justify-start">
+                  <div className="flex  p-2 text-sm  font-EBGaramond  flex-wrap  items-baseline justify-center lg:justify-start ">
                     <span className="font-EBGaramondItalic mr-2">
                       {item.title}
                     </span>
@@ -287,11 +288,11 @@ function MainContent({}: Props) {
                 )}
                 <div
                   className={`
-    relative h-[66.6vh] lg:h-[50vh] mx-auto lg:mx-0
+    relative  h-[66.6vh] lg:h-[50vh] mx-auto lg:mx-0
     ${
       item.type === "work"
         ? getWorkSizeClass(item.meta.acf.dimensions)
-        : "w-[calc(100vw-2rem)] lg:w-[calc(25vw-2rem)]"
+        : "w-[calc(100vw-2rem)] lg:w-[calc(16.6vw-2rem)]"
     }
     flex flex-col items-start justify-start
   `}
@@ -301,9 +302,10 @@ function MainContent({}: Props) {
                       src={item.image}
                       alt={item.title}
                       fill
-                      loading="eager"
-                      priority
-                      className=" h-auto object-contain object-top lg:object-top-left "
+                      priority={index < 6}
+                      loading={index < 6 ? "eager" : "lazy"}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className=" h-auto object-contain object-top lg:object-top-left cursor-pointer "
                     />
                   )}
                 </div>
@@ -314,16 +316,16 @@ function MainContent({}: Props) {
         {view === "info" && (
           <div className="lg:border-l lg:border-foreground mt-0  w-full flex flex-col lg:grid lg:grid-cols-3    ">
             <div className=" w-full flex flex-col lg:col-start-1 lg:col-span-3 items-start justify-start  ">
-              <h3 className="font-gintoBlack text-base leading-relaxed pl-2 pt-2 pr-0 lg:pr-4  lg:pl-4 lg:pt-2  ">
+              <h3 className="h3 pl-2 pt-2 pr-0 lg:pr-4  lg:pl-4 lg:pt-2  ">
                 About
               </h3>
               <HDivider className="" />
-              <p className="font-EBGaramond mt-2 max-w-sm  pl-2 pr-0 pt-0 lg:pl-4  lg:pr-4 ">
+              <p className="p mt-2 max-w-sm  pl-2 pr-0 pt-0 lg:pl-4  lg:pr-4 ">
                 Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
                 artist who explores raw emotion through painting, sculpture and
                 textile.
               </p>
-              <div className="flex flex-col items-start justify-center mt-2 font-EBGaramond pl-2 lg:pl-4 pr-0 lg:pr-4">
+              <div className="flex flex-col items-start justify-center mt-2 p pl-2 lg:pl-4 pr-0 lg:pr-4">
                 <p className=" ">
                   Gösta Ekmans väg 10 <br />
                   129 35 Hägersten
@@ -340,7 +342,7 @@ function MainContent({}: Props) {
 
             {soloExhibitions.length > 0 && (
               <section className="flex flex-col lg:col-span-3 items-start justify-start w-full">
-                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 font-gintoBlack text-base leading-relaxed">
+                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 h2">
                   Solo Exhibitions
                 </h2>
                 <HDivider />
@@ -348,33 +350,38 @@ function MainContent({}: Props) {
                 <Staggered
                   loading={showGlobalLoader}
                   items={soloExhibitions}
-                  className="w-full columns-1 space-y-0 py-2 pl-2 lg:pl-4 pr-0 lg:pr-4"
+                  className="w-full columns-1 space-y-0 py-0 pl-0 pr-0"
                   renderItem={(ex) => {
                     const slug = findExhibitionSlug(ex.title.rendered);
 
                     return (
-                      <div
-                        key={ex.id}
-                        className="text-base font-EBGaramond flex flex-wrap"
-                      >
-                        {slug ? (
-                          <Link
-                            href={`/?exhibition=${slug}`}
-                            className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
-                            onClick={() => {
-                              setActiveExhibitionSlug(slug);
-                              setOpen(false);
-                            }}
-                          >
-                            {ex.title.rendered}
-                          </Link>
-                        ) : (
-                          <span className="font-EBGaramondItalic mr-2">
-                            {ex.title.rendered}
-                          </span>
-                        )}
-                        {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
-                      </div>
+                      <>
+                        <div
+                          key={ex.id}
+                          className="p flex flex-wrap pl-2 lg:pl-4 pr-0 lg:pr-4 py-1"
+                        >
+                          {slug ? (
+                            <Link
+                              href={`/?exhibition=${slug}`}
+                              className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
+                              onClick={() => {
+                                setActiveExhibitionSlug(slug);
+                                setOpen(false);
+                              }}
+                            >
+                              {ex.title.rendered}
+                            </Link>
+                          ) : (
+                            <span className="font-EBGaramondItalic mr-2">
+                              {ex.title.rendered}
+                            </span>
+                          )}
+                          {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
+                        </div>
+                        <HDivider
+                          color={slug ? "border-blue-600" : "border-foreground"}
+                        />
+                      </>
                     );
                   }}
                 />
@@ -383,7 +390,7 @@ function MainContent({}: Props) {
             <HDivider className="hidden lg:block lg:col-span-3" />
             {groupExhibitions.length > 0 && (
               <section className="flex flex-col lg:col-span-2 items-start justify-start w-full ">
-                <h2 className="font-gintoBlack text-base leading-relaxed pl-2 pt-0 lg:pl-4 lg:pt-2">
+                <h2 className="h2 pl-2 pt-0 lg:pl-4 lg:pt-2">
                   All Exhibitions
                 </h2>
                 <HDivider />
@@ -391,33 +398,38 @@ function MainContent({}: Props) {
                 <Staggered
                   loading={showGlobalLoader}
                   items={groupExhibitions}
-                  className="w-full columns-1 space-y-0 py-2 pr-2 lg:pr-4 pl-2  lg:pl-4"
+                  className="w-full columns-1 space-y-0 py-0 pr-0 pl-0"
                   renderItem={(ex) => {
                     const slug = findExhibitionSlug(ex.title.rendered);
 
                     return (
-                      <div
-                        key={ex.id}
-                        className="text-base font-EBGaramond flex flex-wrap"
-                      >
-                        {slug ? (
-                          <Link
-                            href={`/?exhibition=${slug}`}
-                            className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
-                            onClick={() => {
-                              setActiveExhibitionSlug(slug);
-                              setOpen(false);
-                            }}
-                          >
-                            {ex.title.rendered}
-                          </Link>
-                        ) : (
-                          <span className="font-EBGaramondItalic mr-2">
-                            {ex.title.rendered}
-                          </span>
-                        )}
-                        {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
-                      </div>
+                      <>
+                        <div
+                          key={ex.id}
+                          className="p flex flex-wrap pl-2 lg:pl-4 pr-2 lg:pr-4 py-1"
+                        >
+                          {slug ? (
+                            <Link
+                              href={`/?exhibition=${slug}`}
+                              className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
+                              onClick={() => {
+                                setActiveExhibitionSlug(slug);
+                                setOpen(false);
+                              }}
+                            >
+                              {ex.title.rendered}
+                            </Link>
+                          ) : (
+                            <span className="font-EBGaramondItalic mr-2">
+                              {ex.title.rendered}
+                            </span>
+                          )}
+                          {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
+                        </div>
+                        <HDivider
+                          color={slug ? "border-blue-600" : "border-foreground"}
+                        />
+                      </>
                     );
                   }}
                 />
@@ -428,25 +440,24 @@ function MainContent({}: Props) {
               <section className=" flex items-start justify-start ">
                 <VDivider className="hidden lg:block" />
                 <div className="flex flex-col items-start justify-start w-full ">
-                  <h2 className="font-gintoBlack text-base  leading-relaxed pl-2  pt-0 lg:pl-4 lg:pt-2">
-                    Grants
-                  </h2>
+                  <h2 className="h2 pl-2  pt-0 lg:pl-4 lg:pt-2">Grants</h2>
                   <HDivider />
                   <Staggered
                     loading={showGlobalLoader}
                     items={grants}
-                    className="columns-1   space-y-0  w-full py-2 pr-2 pl-2 lg:pr-4 lg:pl-4"
+                    className="columns-1   space-y-0  w-full py-0 pr-0 pl-0"
                     renderItem={(grant) => (
                       <>
                         <div
                           key={grant.id}
-                          className="text-base font-EBGaramond  "
+                          className="p pl-2 lg:pl-4 pr-2 lg:pr-4 py-1"
                         >
                           <span className="font-EBGaramondItalic mr-1  ">
                             {grant.acf.title}
                           </span>{" "}
                           ({grant.acf.year})
                         </div>
+                        <HDivider />
                       </>
                     )}
                   />
@@ -457,39 +468,38 @@ function MainContent({}: Props) {
             {/* EDUCATION */}
             {educations.length > 0 && (
               <section className="flex flex-col items-start justify-start lg:col-span-1 w-full ">
-                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 font-gintoBlack text-base leading-relaxed  ">
-                  Education
-                </h2>
+                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 h2  ">Education</h2>
                 <HDivider />
                 <Staggered
                   loading={showGlobalLoader}
                   items={educations}
-                  className=" pl-2 pr-0 lg:pl-4 lg:pr-4 columns-1   space-y-0  w-full py-2 "
+                  className=" pl-0 pr-0 columns-1   space-y-0  w-full py-0 "
                   renderItem={(edu) => (
                     <>
                       <div
                         key={edu.id}
-                        className="text-base font-EBGaramond flex-wrap items-baseline justify-start "
+                        className="p flex-wrap items-baseline justify-start pl-2 lg:pl-4 pr-2 lg:pr-4 py-1"
                       >
                         <span className="font-EBGaramondItalic mr-2">
                           {edu.acf.school}
                         </span>
                         {edu.acf.city} ({edu.acf.start_year}–{edu.acf.end_year})
                       </div>
+                      <HDivider />
                     </>
                   )}
                 />
               </section>
             )}
-            <div className="   flex  items-start justify-start font-EBGaramond   lg:col-span-2  ">
+            <div className="   flex  items-start justify-start p   lg:col-span-2  ">
               <VDivider className="hidden lg:block " />
-              <div className="flex flex-col items-start justify-start  ">
-                <h3 className="font-gintoBlack text-base leading-relaxed pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
+              <div className="flex flex-col items-start justify-start w-full ">
+                <h3 className="h3 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
                   Press
                 </h3>
                 <HDivider className="" />
-                <div className="columns-1   space-y-0  w-full pt-1.5  pr-0 pl-2 lg:pr-4 lg:pl-4 pb-1.5">
-                  <div className="flex flex-wrap items-baseline justify-start font-EBGaramond text-base gap-x-1  ">
+                <div className="columns-1   space-y-0  w-full pt-0  pr-0 pl-0 pb-0">
+                  <div className="flex flex-wrap items-baseline justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 ">
                     <Button
                       className="items-baseline  font-EBGaramondItalic text-base mr-1"
                       variant="link"
@@ -508,7 +518,8 @@ function MainContent({}: Props) {
                       https://kunstkritikk.se/hjartats-energi/
                     </Link>
                   </div>
-                  <div className="flex flex-wrap items-baseline justify-start font-EBGaramond gap-x-1 ">
+                  <HDivider color="border-blue-600" />
+                  <div className="flex flex-wrap items-baseline justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1">
                     <Button
                       className="  items-baseline  font-EBGaramondItalic text-base mr-1"
                       variant="link"
@@ -527,13 +538,14 @@ function MainContent({}: Props) {
                       https://omkonst.se/25-gameplay.shtml
                     </Link>
                   </div>
+                  <HDivider color="border-blue-600" />
                 </div>
               </div>
             </div>
 
             <HDivider className="hidden lg:block lg:col-span-3" />
-            <div className=" w-full flex flex-col items-start justify-start lg:col-span-3  font-EBGaramond">
-              <h3 className="font-gintoBlack text-base leading-relaxed pt-0 pl-2 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
+            <div className=" w-full flex flex-col items-start justify-start lg:col-span-3  p">
+              <h3 className="h3 pt-0 pl-2 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
                 Colophon
               </h3>
               <HDivider className="" />
@@ -567,6 +579,16 @@ function MainContent({}: Props) {
             </div>
           </div>
         )}
+        <div className="w-full flex justify-center py-8">
+          <Button
+            variant="link"
+            size="sm"
+            className="p text-foreground hover:text-foreground/70"
+            onClick={() => lenis?.scrollTo(0)}
+          >
+            Back to Top
+          </Button>
+        </div>
       </motion.section>
 
       {activeWorkSlug && (
@@ -587,35 +609,10 @@ function MainContent({}: Props) {
 }
 
 export default function HomePageClient() {
-  const lenisRef = useRef<LenisRef>(null);
-
-  useEffect(() => {
-    function update(data: { timestamp: number }) {
-      const time = data.timestamp;
-      lenisRef.current?.lenis?.raf(time);
-    }
-
-    frame.update(update, true);
-
-    return () => cancelFrame(update);
-  }, []);
-
   return (
-    <ReactLenis
-      root
-      ref={lenisRef}
-      options={{
-        autoRaf: false,
-        smoothWheel: true,
-        duration: 1.15,
-        easing: (t) => 1 - Math.pow(1 - t, 4),
-      }}
-      className="h-screen overflow-y-scroll scrollbar-hide"
-    >
-      <div className="min-h-full w-full grid grid-cols-12 lg:grid-cols-4   ">
-        <MainContent />
-        <Footer />
-      </div>
-    </ReactLenis>
+    <div className="min-h-full w-full grid grid-cols-12 lg:grid-cols-4   ">
+      <MainContent />
+      <Footer />
+    </div>
   );
 }

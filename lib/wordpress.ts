@@ -108,6 +108,19 @@ export type CombinedExhibition = Exhibition | Exhibition_list;
 
 const API_URL = "https://elinorsilow.com/wp-json/wp/v2";
 
+function transformWork(work: any): Work {
+  const media = work._embedded?.["wp:featuredmedia"]?.[0];
+  const image_url =
+    media?.media_details?.sizes?.large?.source_url ||
+    media?.media_details?.sizes?.medium_large?.source_url ||
+    media?.source_url;
+
+  return {
+    ...work,
+    image_url,
+  };
+}
+
 export async function getAllWorks(): Promise<Work[]> {
   const res = await fetch(
     `${API_URL}/work?_embed&acf_format=standard&per_page=100`,
@@ -121,15 +134,16 @@ export async function getAllWorks(): Promise<Work[]> {
 
   const data = await res.json();
 
-  return Array.isArray(data) ? data : [];
+  return Array.isArray(data) ? data.map(transformWork) : [];
 }
+
 export async function getWorkBySlug(slug: string): Promise<Work | null> {
   const res = await fetch(
     `${API_URL}/work?slug=${slug}&_embed&acf_format=standard&per_page=100`,
     { next: { revalidate: 60 } }
   );
   const data = await res.json();
-  return data.length ? data[0] : null;
+  return data.length ? transformWork(data[0]) : null;
 }
 
 export async function getAllExhibitions(): Promise<Exhibition[]> {
@@ -176,7 +190,7 @@ export async function getCachedWorks(): Promise<Work[]> {
   if (!res.ok) return [];
 
   const data = await res.json();
-  cachedWorks = Array.isArray(data) ? data : [];
+  cachedWorks = Array.isArray(data) ? data.map(transformWork) : [];
   return cachedWorks;
 }
 

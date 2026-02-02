@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "lucide-react";
@@ -11,11 +11,14 @@ import {
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 
-import { Exhibition } from "../../../lib/wordpress";
+import { Exhibition, getExhibitionBySlug } from "../../../lib/wordpress";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CarouselApi } from "@/components/ui/carousel";
 import HDivider from "@/components/HDivider";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import useSwipe from "@/hooks/use-swipe";
+import { useRouter } from "next/navigation";
+import { useLenis } from "lenis/react";
 
 type Props = {
   slug: string;
@@ -23,21 +26,51 @@ type Props = {
 };
 
 export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
-  const { getExhibitionBySlug } = useExhibitions();
+  const router = useRouter();
+  const lenis = useLenis();
+  const { filteredExhibitions, getExhibitionBySlug: getFromContext } =
+    useExhibitions();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
   const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
 
+  const loadExhibitionByIndex = useCallback(
+    async (index: number) => {
+      if (
+        !filteredExhibitions ||
+        index < 0 ||
+        index >= filteredExhibitions.length
+      )
+        return;
+      const ex = filteredExhibitions[index];
+      setExhibition(ex);
+      setCurrentIndex(index);
+      setLoading(false);
+      window.history.replaceState(null, "", `/?exhibition=${ex.slug}`);
+    },
+    [filteredExhibitions]
+  );
+
   useEffect(() => {
     if (!slug) return;
-
     setLoading(true);
 
-    getExhibitionBySlug(slug).then((ex) => {
+    if (filteredExhibitions && filteredExhibitions.length > 0) {
+      const index = filteredExhibitions.findIndex((e) => e.slug === slug);
+      if (index >= 0) {
+        setExhibition(filteredExhibitions[index]);
+        setCurrentIndex(index);
+        setLoading(false);
+        return;
+      }
+    }
+
+    getFromContext(slug).then((ex) => {
       if (!ex) {
         setLoading(false);
         return;
@@ -45,8 +78,37 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       setExhibition(ex);
       setLoading(false);
     });
-  }, [slug, getExhibitionBySlug]);
+  }, [slug, getFromContext, filteredExhibitions]);
 
+  const goPrev = useCallback(() => {
+    if (currentIndex > 0) loadExhibitionByIndex(currentIndex - 1);
+  }, [currentIndex, loadExhibitionByIndex]);
+
+  const goNext = useCallback(() => {
+    if (filteredExhibitions && currentIndex < filteredExhibitions.length - 1)
+      loadExhibitionByIndex(currentIndex + 1);
+  }, [currentIndex, filteredExhibitions, loadExhibitionByIndex]);
+
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: goNext,
+    onSwipedRight: goPrev,
+  });
+
+  useEffect(() => {
+    // Only handle global keys if carousel is CLOSED
+    if (isCarouselOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onClose) onClose();
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isCarouselOpen, goPrev, goNext, onClose]);
+
+  // Carousel specific keys
   useEffect(() => {
     if (!isCarouselOpen || !api) return;
 
@@ -123,12 +185,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
   return (
     <div
+      {...swipeHandlers}
       className="col-start-1 lg:col-start-2
     col-span-6 lg:col-span-4
     relative
 gap-4
  grid grid-cols-3
-  pt-4 px-2 pb-4  lg:px-4 lg:pt-4 text-sm lg:text-sm
+  pt-4 px-2 pb-2  lg:px-4 lg:pt-4 text-sm lg:text-sm
   z-40  w-full bg-background  scroll-bar-hide
 "
     >
@@ -150,8 +213,8 @@ gap-4
               />
             </button> */}
 
-            <div className="flex flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full text-sm lg:text-sm lg:max-w-full  lg:mt-0 px-2   ">
-              <h1 className="font-EBGaramondItalic   tracking-normal mr-2   ">
+            <div className="flex flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full p text-sm lg:text-sm lg:max-w-full  lg:mt-0 px-2   ">
+              <h1 className="text-sm font-EBGaramondItalic tracking-normal mr-2">
                 {exhibition.title.rendered}
               </h1>
               {exhibition.acf.exhibition_type && (
@@ -186,7 +249,7 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-92  lg:max-w-lg font-EBGaramond mx-auto text-center lg:text-left text-sm lg:text-sm mb-2 lg:mb-2">
+        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-92  lg:max-w-lg p mx-auto text-center lg:text-left text-sm lg:text-sm mb-2 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
@@ -208,15 +271,15 @@ gap-4
                 />
               </button>
               {src.desc && (
-                <div className="w-full font-EBGaramond text-sm lg:text-sm px-2 mt-2">
+                <div className="w-full p text-sm lg:text-sm px-2 mt-2 text-center lg:text-left">
                   {src.desc}
                 </div>
               )}
             </div>
           ))}
         </div>
-        <div className=" col-span-3 lg:col-span-3 font-EBGaramond pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-sm mx-auto w-full  ">
-          <h3 className="max-w-sm lg:max-w-lg mx-auto text-center">
+        <div className=" col-span-3 lg:col-span-3 p pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-sm mx-auto w-full  ">
+          <h3 className="max-w-sm lg:max-w-lg mx-auto text-center lg:text-left lg:mx-0">
             {exhibition.acf.credits}
           </h3>
           <HDivider />
@@ -230,23 +293,42 @@ gap-4
               Back
             </Button>
             <Button
-              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
+              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base disabled:opacity-50"
               size="listSize"
               variant="link"
-              onClick={onClose}
+              onClick={goPrev}
+              disabled={currentIndex <= 0}
             >
               Prev
             </Button>
             <Button
-              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
+              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base disabled:opacity-50"
               size="listSize"
               variant="link"
-              onClick={onClose}
+              onClick={goNext}
+              disabled={
+                !filteredExhibitions ||
+                currentIndex >= filteredExhibitions.length - 1
+              }
             >
               Next
             </Button>
           </span>
         </div>
+        {/* <div className="col-span-3 flex justify-center py-8">
+          <Button
+            variant="link"
+            size="sm"
+            className="p text-foreground hover:text-foreground/70"
+            onClick={() => {
+              const el = document.querySelector(".overflow-auto");
+              if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+              else window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            Back to Top
+          </Button>
+        </div> */}
       </div>
 
       <AnimatePresence>

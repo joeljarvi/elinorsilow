@@ -9,6 +9,7 @@ import { InfoProvider } from "@/context/InfoContext";
 import { NavProvider } from "@/context/NavContext";
 import Nav from "@/components/Nav";
 import MobileNavButton from "@/components/MobileNavButton";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const gintoNordBlack = localFont({
   src: "assets/fonts/Ginto Nord Black.ttf",
@@ -115,7 +116,9 @@ export default function RootLayout({
                   <AnimationProvider>
                     <Nav />
                     <MobileNavButton />
-                    {children} {modal}
+                    <SmoothScroll>
+                      {children} {modal}
+                    </SmoothScroll>
                   </AnimationProvider>
                 </NavProvider>
               </InfoProvider>

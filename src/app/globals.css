@@ -142,6 +142,23 @@
     @apply bg-background text-foreground;
   }
 }
+@layer components {
+  .h1 {
+    @apply font-EBGaramondItalic text-xl lg:text-sm leading-tight;
+  }
+  .h2 {
+    @apply font-gintoBlack text-base leading-relaxed;
+  }
+  .h3 {
+    @apply font-gintoBlack text-base leading-relaxed;
+  }
+  .p {
+    @apply font-EBGaramond text-base leading-normal;
+  }
+  .small {
+    @apply font-EBGaramond text-sm leading-normal;
+  }
+}
 .text-trim {
   line-height: 1;
   vertical-align: middle;
