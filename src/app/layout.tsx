@@ -21,9 +21,19 @@ const gintoBlack = localFont({
   variable: "--font-gintoBlack",
 });
 
+const gintoBlackItalic = localFont({
+  src: "assets/fonts/Ginto Black Italic.ttf",
+  variable: "--font-gintoBlackItalic",
+});
+
 const gintoRegular = localFont({
   src: "assets/fonts/Ginto Regular.ttf",
   variable: "--font-gintoRegular",
+});
+
+const gintoRegularItalic = localFont({
+  src: "assets/fonts/Ginto Regular Italic.ttf",
+  variable: "--font-gintoRegularItalic",
 });
 
 const gintoMedium = localFont({
@@ -101,7 +111,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoRegular.variable} ${gintoMedium.variable}   antialiased`}
+        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoBlackItalic.variable} ${gintoRegular.variable}  ${gintoRegularItalic.variable} ${gintoMedium.variable}   antialiased`}
       >
         <ThemeProvider
           attribute="class"

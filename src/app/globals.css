@@ -25,7 +25,9 @@
   --font-EBGaramondAC: var(--font-EBGaramondAC);
   --font-gintoNordBlack: var(--font-gintoNordBlack);
   --font-gintoBlack: var(--font-gintoBlack);
+  --font-gintoBlackItalic: var(--font-gintoBlackItalic);
   --font-gintoRegular: var(--font-gintoRegular);
+  --font-gintoRegularItalic: var(--font-gintoRegularItalic);
   --font-gintoMedium: var(--font-gintoMedium);
 
   --radius-sm: calc(var(--radius) - 4px);

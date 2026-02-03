@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90 font-gintoMedium justify-center",
+          "bg-background text-foreground  hover:bg-background/90 font-gintoMedium justify-center",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 justify-center",
         outline:
@@ -23,7 +23,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md  text-sm",
+        sm: "h-8 text-sm",
         lg: "h-10  px-8",
         linkSize: "h-6  px-0 py-0 text-sm",
         linkSizeMd: "h-9    pt-0.5 text-lg",

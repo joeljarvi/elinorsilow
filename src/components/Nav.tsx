@@ -7,7 +7,7 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import Staggered from "@/components/Staggered";
 import { LenisRef, ReactLenis } from "lenis/react";
 
-import { PlusIcon, MinusIcon } from "@radix-ui/react-icons";
+import { PlusIcon, MinusIcon, FilePlusIcon } from "@radix-ui/react-icons";
 import {
   motion,
   AnimatePresence,
@@ -76,12 +76,6 @@ export default function Nav() {
 
   const {
     allWorks,
-    workSort,
-    setWorkSort,
-    categoryFilter,
-    setCategoryFilter,
-    selectedYear,
-    setSelectedYear,
 
     stagedWorkSort,
     setStagedWorkSort,
@@ -103,12 +97,6 @@ export default function Nav() {
 
   const {
     exhibitions,
-    exhibitionSort,
-    setExhibitionSort,
-    exSelectedYear,
-    exSetSelectedYear,
-    selectedType,
-    setSelectedType,
 
     stagedExhibitionSort,
     setStagedExhibitionSort,
@@ -131,6 +119,7 @@ export default function Nav() {
   const {
     viewLoading,
     goToView,
+    view,
     showWorksMenu,
     open,
     setOpen,
@@ -341,10 +330,9 @@ export default function Nav() {
 
               {/* WORKS */}
               <div className=" flex flex-col mt-12 lg:mt-8 snap-start snap-stop-always w-full   ">
-                <span className="flex items-center justify-between w-full px-4  ">
+                <span className="flex items-center w-full relative">
                   <Button
-                    variant="nav"
-                    size="linkSize"
+                    variant="default"
                     onClick={() => {
                       router.push("/?view=works", { scroll: false });
                       goToView("works");
@@ -354,11 +342,22 @@ export default function Nav() {
                       handleOpenWorksMenu();
                       if (!isDesktop) setOpen(false);
                     }}
-                    className="h2 text-base justify-center lg:justify-start "
+                    className={`${
+                      view === "works"
+                        ? "opacity-30 font-gintoBlackItalic hover:font-gintoBlack"
+                        : "font-gintoBlack hover:font-gintoBlackItalic"
+                    } text-xl lg:text-lg justify-center lg:justify-start items-center w-full  `}
                   >
                     Works{" "}
                   </Button>
+                  <Button
+                    onClick={handleOpenWorksMenu}
+                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   "
+                  >
+                    {showWorksMenu ? "[close]" : "[+]"}
+                  </Button>
                 </span>
+                <HDivider />
 
                 {/* WORKS MENU DROPDOWN */}
                 <AnimatePresence>
@@ -370,18 +369,31 @@ export default function Nav() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="pt-1  mb-2 flex flex-col  gap-0 ">
-                        <Button
-                          variant="nav"
-                          size="linkSize"
-                          onClick={() => {
-                            handleOpenAllWorksList();
-                          }}
-                          className={`p px-6 font-EBGaramond text-base justify-center lg:justify-start  
-`}
-                        >
-                          Index
-                        </Button>{" "}
+                      {" "}
+                      <div className=" pt-2  flex flex-col  gap-0 ">
+                        <span className="flex justify-between items-center w-full relative ">
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => {
+                              handleOpenAllWorksList();
+                            }}
+                            className={` text-base justify-start items-center w-full pl-4   ${
+                              showAllWorksList
+                                ? "font-EBGaramondItalic"
+                                : "font-EBGaramond"
+                            }`}
+                          >
+                            Index
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleOpenAllWorksList}
+                            className={`w-min absolute top-0 right-0 font-EBGaramond  text-sm justify-center lg:justify-start items-center pr-4  `}
+                          >
+                            {showAllWorksList ? "[close]" : "[+]"}
+                          </Button>
+                        </span>
                         {/* <HDivider /> */}
                         {showAllWorksList && (
                           <div
@@ -389,66 +401,61 @@ export default function Nav() {
                               showAllWorksList ? "max-h-[200vh]" : "hidden"
                             }`}
                           >
-                            <HDivider />
+                            <HDivider color="border-blue-600" />
                             <Staggered
                               items={sortAZ(allWorks)}
                               loading={workLoading}
-                              className="flex flex-col items-stretch justify-center lg:justify-start   space-y-0 mb-1   "
+                              className="flex flex-col items-stretch justify-center lg:justify-start   space-y-0 mb-1  "
                               renderItem={(work) => (
                                 <>
                                   <Button
-                                    variant="nav"
-                                    size="linkSize"
+                                    variant="default"
+                                    size="sm"
                                     key={work.slug}
                                     onClick={() => {
                                       openWork(work.slug);
                                       if (!isDesktop) setOpen(false);
                                     }}
-                                    className="break-inside-avoid transition-all pl-0 hover:pl-0 lg:pl-8 p font-EBGaramondItalic justify-center lg:justify-start   lg:hover:pl-10 text-base text-blue-600 hover:text-blue-600"
+                                    className="transition-all   font-EBGaramondItalic hover:font-EBGaramond w-full justify-center lg:justify-start text-center  px-8  text-base text-blue-600 hover:text-blue-600 border-b border-b-blue-600"
                                   >
                                     {work.title.rendered}
                                   </Button>
-                                  <HDivider color="border-blue-600" />
                                 </>
                               )}
                             />
                           </div>
                         )}
-                        <Button
-                          variant="nav"
-                          size="linkSize"
-                          onClick={handleOpenWorksFilter}
-                          className={`font-EBGaramond text-base pt-0.5 px-6 justify-center lg:justify-start 
-`}
-                        >
-                          Filters
-                        </Button>
+                        <span className="flex justify-between items-center w-full relative ">
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={handleOpenWorksFilter}
+                            className={` text-base  w-full justify-start  items-center  pl-4 ${
+                              showWorksFilter
+                                ? "font-EBGaramondItalic"
+                                : "font-EBGaramond"
+                            }`}
+                          >
+                            Filters
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleOpenWorksFilter}
+                            className={`w-min font-EBGaramond  text-sm justify-center lg:justify-start items-center  pr-4 `}
+                          >
+                            {showWorksFilter ? "[close]" : "[+]"}
+                          </Button>
+                        </span>
                         {showWorksFilter && (
-                          <div className=" pt-1  ">
+                          <div className=" pt-2 mb-2 ">
                             <HDivider />
-                            <div className="flex flex-col gap-y-1 items-center justify-center lg:items-start lg:justify-start">
+                            <div className="flex flex-col items-center justify-center lg:items-start lg:justify-start ">
                               {isApplyingWorksFilters ? (
-                                <div className=" pl-0 lg:pl-6 py-4 font-EBGaramondItalic text-sm animate-pulse">
+                                <div className=" pl-0 lg:pl-6 my-2  font-EBGaramondItalic text-base animate-pulse flex items-center">
                                   Applying filters…
                                 </div>
                               ) : (
-                                <div className=" w-full">
-                                  <span className="flex items-baseline justify-center lg:justify-start w-full lg:pl-6 pt-1 ">
-                                    <Button
-                                      variant="link"
-                                      size="sm"
-                                      className=" font-gintoRegular text-xs uppercase tracking-wider "
-                                      onClick={() =>
-                                        setShowInfo((prev) => !prev)
-                                      }
-                                    >
-                                      {showInfo
-                                        ? "Hide description"
-                                        : "Show description"}
-                                    </Button>
-                                  </span>
-                                  <HDivider />
-
+                                <div className=" w-full flex flex-col items-center justify-center lg:items-start lg:justify-start pt-2">
                                   <Select
                                     value={stagedWorkSort}
                                     onValueChange={(v) => {
@@ -458,8 +465,8 @@ export default function Nav() {
                                     }}
                                   >
                                     <SelectTrigger
-                                      size="sm"
-                                      className="mt-2 p w-full text-base pt-2 pb-1 px-8"
+                                      size="default"
+                                      className=" w-full pl-4 "
                                     >
                                       <SelectValue placeholder="Sort works" />
                                     </SelectTrigger>
@@ -489,8 +496,8 @@ export default function Nav() {
                                         }
                                       >
                                         <SelectTrigger
-                                          size="sm"
-                                          className="font-EBGaramond   p w-full text-base pt-2 pb-1 px-8"
+                                          size="default"
+                                          className="font-EBGaramond    w-full pl-4  "
                                         >
                                           <SelectValue placeholder="2024" />
                                         </SelectTrigger>
@@ -518,8 +525,8 @@ export default function Nav() {
                                     }
                                   >
                                     <SelectTrigger
-                                      size="sm"
-                                      className="mb-2 font-EBGaramond  p  w-full text-base pt-2 pb-1 px-8"
+                                      size="default"
+                                      className=" font-EBGaramond    pl-4 w-full  "
                                     >
                                       <SelectValue placeholder="All works" />
                                     </SelectTrigger>
@@ -543,63 +550,89 @@ export default function Nav() {
                                     </SelectContent>
                                   </Select>
 
-                                  <HDivider />
-                                  <div className="flex gap-2 px-8 lg:pl-8 items-center justify-center lg:justify-start  w-full lg:pr-4 py-1">
+                                  <HDivider className="mt-2" />
+                                  <div className="flex justify-between  px-4 items-center   w-full py-2  ">
                                     <Button
-                                      variant="link"
+                                      variant="default"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider underline underline-offset-4 justify-center lg:justify-start"
+                                      className="font-EBGaramond hover:font-EBGaramondItalic text-sm justify-start text-center lg:text-left w-full  "
                                       onClick={async () => {
                                         await applyWorksFilters();
                                         if (!isDesktop) setOpen(false);
                                       }}
                                     >
-                                      Apply Filters
+                                      [apply filters]
                                     </Button>
+
                                     <Button
-                                      variant="link"
+                                      variant="default"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider justify-center lg:justify-start"
+                                      className="font-EBGaramond hover:font-EBGaramondItalic text-sm justify-end text-center lg:text-left w-full lg:w-min  "
                                       onClick={async () => {
                                         await clearWorksFilters();
                                         if (!isDesktop) setOpen(false);
                                       }}
                                     >
-                                      Clear (X)
+                                      [clear filters]
                                     </Button>
                                   </div>
-                                  <HDivider />
                                 </div>
                               )}
                             </div>
+                            <HDivider />
                           </div>
                         )}
+                        <span className="flex items-baseline justify-center lg:justify-start w-full pb-2  ">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => {
+                              setShowInfo(!showInfo);
+                            }}
+                            className={` text-sm  justify-end font-EBGaramond hover:font-EBGaramondItalic w-full pl-4 pr-4`}
+                          >
+                            [
+                            {showInfo ? "hide description" : "show description"}
+                            ]
+                          </Button>
+                        </span>
                       </div>
+                      <HDivider />
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
               {/* EXHIBITIONS */}
-              <div className="flex flex-col items-center justify-center lg:justify-start snap-start snap-stop-always w-full px-0 lg:px-4  ">
-                <Button
-                  onClick={() => {
-                    router.push("/?view=exhibitions", {
-                      scroll: false,
-                    });
-                    goToView("exhibitions");
-                    setActiveWorkSlug(null);
-                    setActiveExhibitionSlug(null);
-                    handleOpenExhibitionsMenu();
-                    if (!isDesktop) setOpen(false);
-                  }}
-                  className="justify-center lg:justify-start h2 text-base"
-                  variant="nav"
-                  size="linkSize"
-                >
-                  Exhibitions
-                </Button>
-
+              <div className="flex flex-col items-center justify-center lg:justify-start snap-start snap-stop-always w-full px-0   ">
+                <span className=" flex items-center w-full relative ">
+                  <Button
+                    onClick={() => {
+                      router.push("/?view=exhibitions", {
+                        scroll: false,
+                      });
+                      goToView("exhibitions");
+                      setActiveWorkSlug(null);
+                      setActiveExhibitionSlug(null);
+                      handleOpenExhibitionsMenu();
+                      if (!isDesktop) setOpen(false);
+                    }}
+                    className={`${
+                      view === "exhibitions"
+                        ? "opacity-30 font-gintoBlackItalic hover:font-gintoBlack"
+                        : "font-gintoBlack hover:font-gintoBlackItalic"
+                    } text-xl lg:text-lg justify-center lg:justify-start items-center w-full  `}
+                  >
+                    Exhibitions
+                  </Button>
+                  <Button
+                    onClick={handleOpenExhibitionsMenu}
+                    className=" w-min absolute top-0 right-0 font-EBGaramond  text-sm justify-center lg:justify-start items-center "
+                  >
+                    {showExhibitionsMenu ? "[close]" : "[+]"}
+                  </Button>
+                </span>
+                <HDivider />
                 <AnimatePresence>
                   {showExhibitionsMenu && (
                     <motion.div
@@ -609,16 +642,30 @@ export default function Nav() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden w-full"
                     >
-                      <div className="pt-1  mb-2 flex flex-col  gap-0 overflow-y-scroll   ">
+                      <div className="mt-2  mb-2 flex flex-col  gap-0 overflow-y-scroll   ">
                         {/* Index button */}
-                        <Button
-                          variant="nav"
-                          size="linkSize"
-                          onClick={handleOpenAllExhibitionsList}
-                          className={`font-EBGaramond text-base px-0 lg:px-6 justify-center lg:justify-start  }`}
-                        >
-                          Index
-                        </Button>
+                        <span className="flex justify-between items-center w-full relative">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={handleOpenAllExhibitionsList}
+                            className={`${
+                              showAllExhibitionsList
+                                ? "font-EBGaramondItalic hover:font-EBGaramond"
+                                : "font-EBGaramond hover:font-EBGaramondItalic"
+                            } text-base  pl-4 justify-start hover:font-EBGaramondItalic w-full   }`}
+                          >
+                            Index
+                          </Button>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={handleOpenAllExhibitionsList}
+                            className={`w-min absolute top-0 right-0 px-4 font-EBGaramond `}
+                          >
+                            {showAllExhibitionsList ? "[close]" : "[+]"}
+                          </Button>
+                        </span>
 
                         {showAllExhibitionsList && (
                           <div
@@ -628,7 +675,7 @@ export default function Nav() {
                                 : "hidden"
                             }`}
                           >
-                            <HDivider />
+                            <HDivider color="border-blue-600" />
                             <Staggered
                               items={exhibitionIndex}
                               className="flex flex-col items-stretch justify-center lg:justify-start space-y-0 pt-1 mb-1 w-full"
@@ -640,21 +687,21 @@ export default function Nav() {
                                   <>
                                     {slug ? (
                                       <Button
-                                        variant="nav"
-                                        size="linkSize"
+                                        variant="default"
+                                        size="sm"
                                         key={`ex-${ex.id}`}
                                         onClick={() => {
                                           openExhibition(slug);
                                           if (!isDesktop) setOpen(false);
                                         }}
-                                        className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 hover:font-EBGaramond transition-all cursor-pointer hover:text-blue-600 pl-0  lg:pl-8 hover:pl-10 justify-center lg:justify-start text-center lg:text-left w-full"
+                                        className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 hover:font-EBGaramond transition-all cursor-pointer hover:text-blue-600 pl-0  lg:pl-8 lg:hover:pl-10 justify-center lg:justify-start text-center lg:text-left w-full"
                                       >
                                         {ex.title.rendered}
                                       </Button>
                                     ) : (
                                       <span
                                         key={`list-${ex.id}`}
-                                        className="block pl-0  lg:pl-8 py-1 font-EBGaramondItalic text-foreground/80 text-center lg:text-left w-full "
+                                        className="block pl-0  lg:pl-8 py-1 font-EBGaramondItalic text-blue-600/30 text-center lg:text-left w-full "
                                       >
                                         {ex.title.rendered}
                                       </span>
@@ -669,18 +716,32 @@ export default function Nav() {
                         )}
 
                         {/* Filter / Sort */}
-                        <Button
-                          variant="nav"
-                          size="linkSize"
-                          onClick={handleOpenExhibitionsFilter}
-                          className={`font-EBGaramond text-base  px-6   justify-center lg:justify-start w-full   `}
-                        >
-                          Filters
-                        </Button>
+                        <span className="flex justify-between items-center w-full relative">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={handleOpenExhibitionsFilter}
+                            className={`font-EBGaramond text-base  pl-4   justify-start w-full ${
+                              showExhibitionsFilter
+                                ? "font-EBGaramondItalic hover:font-EBGaramond"
+                                : "font-EBGaramond hover:font-EBGaramondItalic"
+                            }   `}
+                          >
+                            Filters
+                          </Button>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={handleOpenExhibitionsFilter}
+                            className={`w-min  px-4 font-EBGaramond `}
+                          >
+                            {showExhibitionsFilter ? "[close]" : "[+]"}
+                          </Button>
+                        </span>
                         {showExhibitionsFilter && (
                           <div className="">
                             <HDivider className="mt-1 mb-1" />
-                            <div className="pt-1 flex flex-col gap-y-1 justify-center items-center lg:items-start lg:justify-start">
+                            <div className="pt-2 flex flex-col  justify-center items-center lg:items-start lg:justify-start">
                               {isApplyingExhibitionsFilters ? (
                                 <div className="pl-0 lg:pl-8 py-4 font-EBGaramondItalic text-sm animate-pulse text-center lg:text-left">
                                   Applying filters…
@@ -698,8 +759,8 @@ export default function Nav() {
                                     }
                                   >
                                     <SelectTrigger
-                                      size="sm"
-                                      className="font-EBGaramond w-full text-base px-8 "
+                                      size="default"
+                                      className="font-EBGaramond w-full text-base px-4 "
                                     >
                                       <SelectValue placeholder="Sort exhibitions" />
                                     </SelectTrigger>
@@ -723,8 +784,8 @@ export default function Nav() {
                                         onValueChange={setStagedExSelectedYear}
                                       >
                                         <SelectTrigger
-                                          size="sm"
-                                          className="font-EBGaramond w-full text-base px-8 "
+                                          size="default"
+                                          className="font-EBGaramond w-full text-base px-4 "
                                         >
                                           <SelectValue placeholder="Filter by year" />
                                         </SelectTrigger>
@@ -752,8 +813,8 @@ export default function Nav() {
                                     onValueChange={setStagedSelectedType}
                                   >
                                     <SelectTrigger
-                                      size="sm"
-                                      className="font-EBGaramond w-full text-base px-8"
+                                      size="default"
+                                      className="font-EBGaramond w-full text-base px-4"
                                     >
                                       <SelectValue placeholder="all exhibitions" />
                                     </SelectTrigger>
@@ -770,65 +831,71 @@ export default function Nav() {
                                     </SelectContent>
                                   </Select>
 
-                                  <HDivider className="mt-1" />
-                                  <div className="flex gap-2 px-8 items-center justify-center lg:justify-start  w-full py-1 ">
+                                  <HDivider className="mt-2  " />
+                                  <div className="flex  px-4 items-center justify-between   w-full pt-2   ">
                                     <Button
-                                      variant="link"
+                                      variant="default"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider underline underline-offset-4 justify-center lg:justify-start"
+                                      className="w-full font-EBGaramond text-sm  justify-start"
                                       onClick={async () => {
                                         await applyExhibitionsFilters();
                                         if (!isDesktop) setOpen(false);
                                       }}
                                     >
-                                      Apply Filters
+                                      [apply filters]
                                     </Button>
                                     <Button
-                                      variant="link"
+                                      variant="default"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider justify-center lg:justify-start"
+                                      className="w-full font-EBGaramond text-sm  justify-end"
                                       onClick={async () => {
                                         await clearExhibitionsFilters();
                                         if (!isDesktop) setOpen(false);
                                       }}
                                     >
-                                      Clear (X)
+                                      [clear filters]
                                     </Button>
                                   </div>
-                                  <HDivider />
                                 </>
                               )}
                             </div>
                           </div>
                         )}
                       </div>
+                      <HDivider />
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
               <div className="flex flex-col  snap-start snap-stop-always w-full  ">
                 {/* CONTACT */}
-
-                <Button
-                  variant="nav"
-                  size="linkSize"
-                  className="h2 text-base justify-center lg:justify-start w-full px-4 "
-                  onClick={() => {
-                    handleOpenContact();
-                    setActiveWorkSlug(null);
-                    setActiveExhibitionSlug(null);
-                  }}
-                >
-                  Contact
-                </Button>
-
+                <span className="flex items-center w-full relative">
+                  <Button
+                    variant="default"
+                    className=" text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                    onClick={() => {
+                      handleOpenContact();
+                      setActiveWorkSlug(null);
+                      setActiveExhibitionSlug(null);
+                    }}
+                  >
+                    Contact
+                  </Button>
+                  <Button
+                    onClick={handleOpenContact}
+                    className=" w-min absolute top-0 right-0 font-EBGaramond  text-sm justify-center lg:justify-start items-center "
+                  >
+                    {showContact ? "[close]" : "[+]"}
+                  </Button>
+                </span>
+                <HDivider />
                 {showContact && (
                   <>
-                    <div className="flex flex-col pt-1  mb-2 px-6    ">
+                    <div className="flex flex-col    mt-2  mb-2    ">
                       <Button
-                        variant="nav"
-                        size="linkSize"
-                        className="font-EBGaramond text-base text-blue-600 hover:text-blue-600   justify-center lg:justify-start w-full  "
+                        variant="default"
+                        size="sm"
+                        className="text-base px-8  justify-center lg:justify-start font-EBGaramond hover:font-EBGaramondItalic w-full text-blue-600   "
                         asChild
                         onClick={() => {
                           if (!isDesktop) setOpen(false);
@@ -838,9 +905,9 @@ export default function Nav() {
                       </Button>
 
                       <Button
-                        variant="nav"
-                        size="linkSize"
-                        className="font-EBGaramond text-base text-blue-600 hover:text-blue-600   justify-center lg:justify-start w-full "
+                        variant="default"
+                        size="sm"
+                        className="text-base px-8  justify-center lg:justify-start font-EBGaramond hover:font-EBGaramondItalic w-full text-blue-600"
                         asChild
                         onClick={() => {
                           if (!isDesktop) setOpen(false);
@@ -851,14 +918,14 @@ export default function Nav() {
                         </Link>
                       </Button>
                     </div>
+                    <HDivider />
                   </>
                 )}
               </div>
               {/* INFO */}
-              <div className=" flex flex-col gap-y-0 snap-start snap-stop-always w-full">
+              <div className=" flex flex-col gap-y-0 snap-start snap-stop-always w-full ">
                 <Button
-                  variant="nav"
-                  size="linkSize"
+                  variant="default"
                   onClick={() => {
                     router.push("/?view=information", { scroll: false });
                     goToView("info");
@@ -866,12 +933,16 @@ export default function Nav() {
                     setActiveExhibitionSlug(null);
                     if (!isDesktop) setOpen(false);
                   }}
-                  className="h2 justify-center lg:justify-start  text-base  px-4"
+                  className={`${
+                    view === "info"
+                      ? "opacity-30 font-gintoBlackItalic hover:font-gintoBlack"
+                      : "font-gintoBlack hover:font-gintoBlackItalic"
+                  } text-xl lg:text-lg justify-center lg:justify-start items-center w-full   `}
                 >
                   Information
                 </Button>
-
-                <div className="px-4  pb-2">
+                <HDivider />
+                <div className="  pb-2">
                   <DarkModeToggle />
                 </div>
               </div>

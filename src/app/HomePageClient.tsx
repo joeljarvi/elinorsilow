@@ -264,22 +264,20 @@ function MainContent({}: Props) {
 
                     {item.type === "work" && (
                       <>
-                        <div className="flex flex-wrap items-baseline justify-center">
-                          {item.meta.acf.materials && (
-                            <span className="mr-1">
-                              {item.meta.acf.materials},
-                            </span>
-                          )}
-                          {item.meta.acf.dimensions && (
-                            <span className="mr-1 ">
-                              {item.meta.acf.dimensions}
-                            </span>
-                          )}
+                        {item.meta.acf.materials && (
+                          <span className="mr-1 ">
+                            {item.meta.acf.materials},
+                          </span>
+                        )}
+                        {item.meta.acf.dimensions && (
+                          <span className="mr-1 ">
+                            {item.meta.acf.dimensions}
+                          </span>
+                        )}
 
-                          {item.meta.acf.year && (
-                            <span className="">({item.meta.acf.year})</span>
-                          )}
-                        </div>
+                        {item.meta.acf.year && (
+                          <span className="">({item.meta.acf.year})</span>
+                        )}
                       </>
                     )}
                     {item.type === "exhibition" && (
