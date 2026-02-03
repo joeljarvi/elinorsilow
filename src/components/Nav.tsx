@@ -812,7 +812,7 @@ export default function Nav() {
                 <Button
                   variant="nav"
                   size="linkSize"
-                  className="h2 text-base justify-center lg:justify-start w-full "
+                  className="h2 text-base justify-center lg:justify-start w-full px-4 "
                   onClick={() => {
                     handleOpenContact();
                     setActiveWorkSlug(null);
