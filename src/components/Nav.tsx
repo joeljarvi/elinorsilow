@@ -354,29 +354,12 @@ export default function Nav() {
                       handleOpenWorksMenu();
                       if (!isDesktop) setOpen(false);
                     }}
-                    className="h2 text-base "
+                    className="h2 text-base justify-center lg:justify-start "
                   >
                     Works{" "}
                   </Button>
-                  <Button
-                    variant="link"
-                    size="linkIcon"
-                    onClick={() => {
-                      handleOpenWorksMenu();
-                      setActiveWorkSlug(null);
-                      setActiveExhibitionSlug(null);
-                    }}
-                    className=""
-                  >
-                    {showWorksMenu ? (
-                      <MinusIcon className="w-3 h-3" />
-                    ) : (
-                      <PlusIcon className="w-3 h-3" />
-                    )}
-                  </Button>
                 </span>
 
-                {/* <HDivider /> */}
                 {/* WORKS MENU DROPDOWN */}
                 <AnimatePresence>
                   {showWorksMenu && (
@@ -387,25 +370,17 @@ export default function Nav() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="pt-1 pb-1 mb-2 flex flex-col  gap-0 ">
+                      <div className="pt-1  mb-2 flex flex-col  gap-0 ">
                         <Button
                           variant="nav"
                           size="linkSize"
                           onClick={() => {
                             handleOpenAllWorksList();
                           }}
-                          className={`p pl-6 pr-5 text-base 
+                          className={`p px-6 font-EBGaramond text-base justify-center lg:justify-start  
 `}
                         >
                           Index
-                          <span>
-                            {" "}
-                            {showAllWorksList ? (
-                              <MinusIcon className="w-3 h-3" />
-                            ) : (
-                              <PlusIcon className="w-3 h-3" />
-                            )}
-                          </span>
                         </Button>{" "}
                         {/* <HDivider /> */}
                         {showAllWorksList && (
@@ -414,10 +389,11 @@ export default function Nav() {
                               showAllWorksList ? "max-h-[200vh]" : "hidden"
                             }`}
                           >
+                            <HDivider />
                             <Staggered
                               items={sortAZ(allWorks)}
                               loading={workLoading}
-                              className="columns-1   space-y-0    "
+                              className="flex flex-col items-stretch justify-center lg:justify-start   space-y-0 mb-1   "
                               renderItem={(work) => (
                                 <>
                                   <Button
@@ -428,7 +404,7 @@ export default function Nav() {
                                       openWork(work.slug);
                                       if (!isDesktop) setOpen(false);
                                     }}
-                                    className="break-inside-avoid transition-all pl-8 p font-EBGaramondItalic   hover:pl-10 text-base text-blue-600 hover:text-blue-600"
+                                    className="break-inside-avoid transition-all pl-0 hover:pl-0 lg:pl-8 p font-EBGaramondItalic justify-center lg:justify-start   lg:hover:pl-10 text-base text-blue-600 hover:text-blue-600"
                                   >
                                     {work.title.rendered}
                                   </Button>
@@ -442,30 +418,22 @@ export default function Nav() {
                           variant="nav"
                           size="linkSize"
                           onClick={handleOpenWorksFilter}
-                          className={`font-EBGaramond text-base pt-0.5 pl-6 pr-5     
+                          className={`font-EBGaramond text-base pt-0.5 px-6 justify-center lg:justify-start 
 `}
                         >
                           Filters
-                          <span>
-                            {" "}
-                            {showWorksFilter ? (
-                              <MinusIcon className="w-3 h-3" />
-                            ) : (
-                              <PlusIcon className="w-3 h-3" />
-                            )}
-                          </span>
                         </Button>
                         {showWorksFilter && (
                           <div className=" pt-1  ">
-                            <div className="flex flex-col gap-y-1 items-start justify-start">
-                              <HDivider />
+                            <HDivider />
+                            <div className="flex flex-col gap-y-1 items-center justify-center lg:items-start lg:justify-start">
                               {isApplyingWorksFilters ? (
-                                <div className="pl-6 py-4 font-EBGaramondItalic text-sm animate-pulse">
+                                <div className=" pl-0 lg:pl-6 py-4 font-EBGaramondItalic text-sm animate-pulse">
                                   Applying filters…
                                 </div>
                               ) : (
-                                <>
-                                  <span className="flex items-baseline justify-start w-full pl-6 ">
+                                <div className=" w-full">
+                                  <span className="flex items-baseline justify-center lg:justify-start w-full lg:pl-6 pt-1 ">
                                     <Button
                                       variant="link"
                                       size="sm"
@@ -480,125 +448,107 @@ export default function Nav() {
                                     </Button>
                                   </span>
                                   <HDivider />
-                                  <span className="flex items-baseline justify-start w-full pl-8 ">
-                                    <h3 className="p text-base whitespace-nowrap">
-                                      Sort by
-                                    </h3>
 
-                                    <Select
-                                      value={stagedWorkSort}
-                                      onValueChange={(v) => {
-                                        setStagedWorkSort(v as WorkSort);
-                                        if (v !== "year")
-                                          setStagedSelectedYear(null);
-                                      }}
+                                  <Select
+                                    value={stagedWorkSort}
+                                    onValueChange={(v) => {
+                                      setStagedWorkSort(v as WorkSort);
+                                      if (v !== "year")
+                                        setStagedSelectedYear(null);
+                                    }}
+                                  >
+                                    <SelectTrigger
+                                      size="sm"
+                                      className="mt-2 p w-full text-base pt-2 pb-1 px-8"
                                     >
-                                      <SelectTrigger
-                                        size="sm"
-                                        className="p w-full text-base pt-0.5 pr-5"
-                                      >
-                                        <SelectValue placeholder="Sort works" />
-                                      </SelectTrigger>
+                                      <SelectValue placeholder="Sort works" />
+                                    </SelectTrigger>
 
-                                      <SelectContent
-                                        className=""
-                                        position="popper"
-                                      >
-                                        <SelectItem value="year-latest">
-                                          year (latest)
-                                        </SelectItem>
-                                        <SelectItem value="year-oldest">
-                                          year (oldest)
-                                        </SelectItem>
-                                        <SelectItem value="year">
-                                          year (specific)
-                                        </SelectItem>
-                                        <SelectItem value="title">
-                                          title (a–ö)
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </span>
+                                    <SelectContent className="w-full">
+                                      <SelectItem value="year-latest">
+                                        Sort by year (latest)
+                                      </SelectItem>
+                                      <SelectItem value="year-oldest">
+                                        Sort by year (oldest)
+                                      </SelectItem>
+                                      <SelectItem value="year">
+                                        Sort by year (specific)
+                                      </SelectItem>
+                                      <SelectItem value="title">
+                                        Sort by title (a–ö)
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+
                                   {stagedWorkSort === "year" && (
                                     <>
-                                      <span className="pl-8 flex items-baseline justify-start w-full">
-                                        <h3 className="font-EBGaramond text-base whitespace-nowrap">
-                                          Year
-                                        </h3>
-
-                                        <Select
-                                          value={stagedSelectedYear?.toString()}
-                                          onValueChange={(v) =>
-                                            setStagedSelectedYear(Number(v))
-                                          }
+                                      <Select
+                                        value={stagedSelectedYear?.toString()}
+                                        onValueChange={(v) =>
+                                          setStagedSelectedYear(Number(v))
+                                        }
+                                      >
+                                        <SelectTrigger
+                                          size="sm"
+                                          className="font-EBGaramond   p w-full text-base pt-2 pb-1 px-8"
                                         >
-                                          <SelectTrigger
-                                            size="sm"
-                                            className="font-EBGaramond w-full text-base pt-0.5 pr-5"
-                                          >
-                                            <SelectValue placeholder="2024" />
-                                          </SelectTrigger>
+                                          <SelectValue placeholder="2024" />
+                                        </SelectTrigger>
 
-                                          <SelectContent position="popper">
-                                            {uniqueYears.map((year) => (
-                                              <SelectItem
-                                                key={`work-year-${year}`}
-                                                value={year.toString()}
-                                              >
-                                                {year}
-                                              </SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      </span>
+                                        <SelectContent position="popper">
+                                          {uniqueYears.map((year) => (
+                                            <SelectItem
+                                              key={`work-year-${year}`}
+                                              value={year.toString()}
+                                            >
+                                              {year}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                     </>
                                   )}
 
-                                  <span className="pl-8 flex items-baseline justify-start w-full">
-                                    <h3 className="font-EBGaramond text-base whitespace-nowrap">
-                                      Show
-                                    </h3>
-
-                                    <Select
-                                      value={stagedCategoryFilter}
-                                      onValueChange={(v) =>
-                                        setStagedCategoryFilter(
-                                          v as CategoryFilter
-                                        )
-                                      }
+                                  <Select
+                                    value={stagedCategoryFilter}
+                                    onValueChange={(v) =>
+                                      setStagedCategoryFilter(
+                                        v as CategoryFilter
+                                      )
+                                    }
+                                  >
+                                    <SelectTrigger
+                                      size="sm"
+                                      className="mb-2 font-EBGaramond  p  w-full text-base pt-2 pb-1 px-8"
                                     >
-                                      <SelectTrigger
-                                        size="sm"
-                                        className="font-EBGaramond w-full text-base pt-0.5 pr-5"
-                                      >
-                                        <SelectValue placeholder="All works" />
-                                      </SelectTrigger>
+                                      <SelectValue placeholder="All works" />
+                                    </SelectTrigger>
 
-                                      <SelectContent position="popper">
-                                        <SelectItem value="all">
-                                          all works
-                                        </SelectItem>
-                                        <SelectItem value="painting">
-                                          paintings
-                                        </SelectItem>
-                                        <SelectItem value="drawing">
-                                          drawings
-                                        </SelectItem>
-                                        <SelectItem value="sculpture">
-                                          sculpture
-                                        </SelectItem>
-                                        <SelectItem value="textile">
-                                          textiles
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </span>
+                                    <SelectContent position="popper">
+                                      <SelectItem value="all">
+                                        All works
+                                      </SelectItem>
+                                      <SelectItem value="painting">
+                                        Paintings
+                                      </SelectItem>
+                                      <SelectItem value="drawing">
+                                        Drawings (Coming soon)
+                                      </SelectItem>
+                                      <SelectItem value="sculpture">
+                                        Sculpture
+                                      </SelectItem>
+                                      <SelectItem value="textile">
+                                        Textile
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+
                                   <HDivider />
-                                  <div className="flex gap-2 pl-8 items-center justify-start  w-full pr-4">
+                                  <div className="flex gap-2 px-8 lg:pl-8 items-center justify-center lg:justify-start  w-full lg:pr-4 py-1">
                                     <Button
                                       variant="link"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider underline underline-offset-4 justify-start"
+                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider underline underline-offset-4 justify-center lg:justify-start"
                                       onClick={async () => {
                                         await applyWorksFilters();
                                         if (!isDesktop) setOpen(false);
@@ -609,7 +559,7 @@ export default function Nav() {
                                     <Button
                                       variant="link"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider justify-start"
+                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider justify-center lg:justify-start"
                                       onClick={async () => {
                                         await clearWorksFilters();
                                         if (!isDesktop) setOpen(false);
@@ -619,7 +569,7 @@ export default function Nav() {
                                     </Button>
                                   </div>
                                   <HDivider />
-                                </>
+                                </div>
                               )}
                             </div>
                           </div>
@@ -631,42 +581,24 @@ export default function Nav() {
               </div>
 
               {/* EXHIBITIONS */}
-              <div className="flex flex-col snap-start snap-stop-always w-full  ">
-                <span className="flex items-center justify-between w-full  px-4 ">
-                  <Button
-                    onClick={() => {
-                      router.push("/?view=exhibitions", {
-                        scroll: false,
-                      });
-                      goToView("exhibitions");
-                      setActiveWorkSlug(null);
-                      setActiveExhibitionSlug(null);
-                      handleOpenExhibitionsMenu();
-                      if (!isDesktop) setOpen(false);
-                    }}
-                    className="h2 text-base"
-                    variant="nav"
-                    size="linkSize"
-                  >
-                    Exhibitions
-                  </Button>
-                  <Button
-                    variant="link"
-                    size="linkIcon"
-                    onClick={() => {
-                      handleOpenExhibitionsMenu();
-                      setActiveWorkSlug(null);
-                      setActiveExhibitionSlug(null);
-                    }}
-                    className={``}
-                  >
-                    {showExhibitionsMenu ? (
-                      <MinusIcon className="w-3 h-3" />
-                    ) : (
-                      <PlusIcon className="w-3 h-3" />
-                    )}
-                  </Button>
-                </span>
+              <div className="flex flex-col items-center justify-center lg:justify-start snap-start snap-stop-always w-full px-0 lg:px-4  ">
+                <Button
+                  onClick={() => {
+                    router.push("/?view=exhibitions", {
+                      scroll: false,
+                    });
+                    goToView("exhibitions");
+                    setActiveWorkSlug(null);
+                    setActiveExhibitionSlug(null);
+                    handleOpenExhibitionsMenu();
+                    if (!isDesktop) setOpen(false);
+                  }}
+                  className="justify-center lg:justify-start h2 text-base"
+                  variant="nav"
+                  size="linkSize"
+                >
+                  Exhibitions
+                </Button>
 
                 <AnimatePresence>
                   {showExhibitionsMenu && (
@@ -675,38 +607,31 @@ export default function Nav() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
+                      className="overflow-hidden w-full"
                     >
-                      <div className="flex flex-col overflow-y-scroll pt-1 pb-1 mb-2     ">
+                      <div className="pt-1  mb-2 flex flex-col  gap-0 overflow-y-scroll   ">
                         {/* Index button */}
                         <Button
                           variant="nav"
                           size="linkSize"
                           onClick={handleOpenAllExhibitionsList}
-                          className={`font-EBGaramond text-base pl-6 pr-5  }`}
+                          className={`font-EBGaramond text-base px-0 lg:px-6 justify-center lg:justify-start  }`}
                         >
                           Index
-                          <span>
-                            {" "}
-                            {showAllExhibitionsList ? (
-                              <MinusIcon className="w-3 h-3" />
-                            ) : (
-                              <PlusIcon className="w-3 h-3" />
-                            )}
-                          </span>
                         </Button>
 
                         {showAllExhibitionsList && (
                           <div
-                            className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out  ${
+                            className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out w-full  ${
                               showAllExhibitionsList
                                 ? "max-h-[200vh]"
                                 : "hidden"
                             }`}
                           >
+                            <HDivider />
                             <Staggered
                               items={exhibitionIndex}
-                              className="columns-1 space-y-0 pt-0 mb-1"
+                              className="flex flex-col items-stretch justify-center lg:justify-start space-y-0 pt-1 mb-1 w-full"
                               renderItem={(ex) => {
                                 const slug = findExhibitionSlug(
                                   ex.title.rendered
@@ -722,20 +647,20 @@ export default function Nav() {
                                           openExhibition(slug);
                                           if (!isDesktop) setOpen(false);
                                         }}
-                                        className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 hover:font-EBGaramond transition-all cursor-pointer hover:text-blue-600 pl-8 hover:pl-10"
+                                        className="text-base break-inside-avoid font-EBGaramondItalic text-blue-600 hover:font-EBGaramond transition-all cursor-pointer hover:text-blue-600 pl-0  lg:pl-8 hover:pl-10 justify-center lg:justify-start text-center lg:text-left w-full"
                                       >
                                         {ex.title.rendered}
                                       </Button>
                                     ) : (
                                       <span
                                         key={`list-${ex.id}`}
-                                        className="block pl-8 py-1 font-EBGaramondItalic text-foreground/80"
+                                        className="block pl-0  lg:pl-8 py-1 font-EBGaramondItalic text-foreground/80 text-center lg:text-left w-full "
                                       >
                                         {ex.title.rendered}
                                       </span>
                                     )}
 
-                                    <HDivider color="border-blue-600" />
+                                    <HDivider color="border-blue-600 w-full" />
                                   </>
                                 );
                               }}
@@ -748,131 +673,109 @@ export default function Nav() {
                           variant="nav"
                           size="linkSize"
                           onClick={handleOpenExhibitionsFilter}
-                          className={`font-EBGaramond text-base  pl-6 pr-5     `}
+                          className={`font-EBGaramond text-base  px-6   justify-center lg:justify-start w-full   `}
                         >
                           Filters
-                          <span>
-                            {" "}
-                            {showExhibitionsFilter ? (
-                              <MinusIcon className="w-3 h-3" />
-                            ) : (
-                              <PlusIcon className="w-3 h-3" />
-                            )}
-                          </span>
                         </Button>
                         {showExhibitionsFilter && (
                           <div className="">
                             <HDivider className="mt-1 mb-1" />
-                            <div className="pt-1 flex flex-col gap-y-1 items-start justify-start">
+                            <div className="pt-1 flex flex-col gap-y-1 justify-center items-center lg:items-start lg:justify-start">
                               {isApplyingExhibitionsFilters ? (
-                                <div className="pl-8 py-4 font-EBGaramondItalic text-sm animate-pulse">
+                                <div className="pl-0 lg:pl-8 py-4 font-EBGaramondItalic text-sm animate-pulse text-center lg:text-left">
                                   Applying filters…
                                 </div>
                               ) : (
                                 <>
                                   {/* Sort by */}
-                                  <span className="pl-8 flex items-baseline justify-start w-full">
-                                    <h3 className="font-EBGaramond text-base whitespace-nowrap">
-                                      Sort by
-                                    </h3>
-                                    <Select
-                                      value={stagedExhibitionSort}
-                                      onValueChange={(v) =>
-                                        setStagedExhibitionSort(
-                                          v as ExhibitionSort
-                                        )
-                                      }
+
+                                  <Select
+                                    value={stagedExhibitionSort}
+                                    onValueChange={(v) =>
+                                      setStagedExhibitionSort(
+                                        v as ExhibitionSort
+                                      )
+                                    }
+                                  >
+                                    <SelectTrigger
+                                      size="sm"
+                                      className="font-EBGaramond w-full text-base px-8 "
                                     >
-                                      <SelectTrigger
-                                        size="sm"
-                                        className="font-EBGaramond w-full text-base pt-0.5 pr-5"
-                                      >
-                                        <SelectValue placeholder="Sort exhibitions" />
-                                      </SelectTrigger>
-                                      <SelectContent position="popper">
-                                        <SelectItem value="year">
-                                          year
-                                        </SelectItem>
-                                        <SelectItem value="title">
-                                          title (a-ö)
-                                        </SelectItem>
-                                        <SelectItem value="type">
-                                          solo/group
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </span>
+                                      <SelectValue placeholder="Sort exhibitions" />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                      <SelectItem value="year">
+                                        Sort by year
+                                      </SelectItem>
+                                      <SelectItem value="title">
+                                        Sort by title (a-ö)
+                                      </SelectItem>
+                                      <SelectItem value="type">
+                                        Sort by solo/group
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
 
                                   {stagedExhibitionSort === "year" && (
                                     <>
-                                      <span className="pl-8 flex items-baseline justify-start w-full">
-                                        <h3 className="font-EBGaramond text-base whitespace-nowrap">
-                                          Show
-                                        </h3>
-                                        <Select
-                                          value={stagedExSelectedYear}
-                                          onValueChange={
-                                            setStagedExSelectedYear
-                                          }
+                                      <Select
+                                        value={stagedExSelectedYear}
+                                        onValueChange={setStagedExSelectedYear}
+                                      >
+                                        <SelectTrigger
+                                          size="sm"
+                                          className="font-EBGaramond w-full text-base px-8 "
                                         >
-                                          <SelectTrigger
-                                            size="sm"
-                                            className="font-EBGaramond w-full text-base pt-0.5 pr-5"
-                                          >
-                                            <SelectValue placeholder="Filter by year" />
-                                          </SelectTrigger>
-                                          <SelectContent position="popper">
-                                            <SelectItem value="all">
-                                              all years
+                                          <SelectValue placeholder="Filter by year" />
+                                        </SelectTrigger>
+                                        <SelectContent position="popper">
+                                          <SelectItem value="all">
+                                            All
+                                          </SelectItem>
+                                          {uniqueExYears.map((year) => (
+                                            <SelectItem
+                                              key={`ex-year-${year}`}
+                                              value={year.toString()}
+                                            >
+                                              {year}
                                             </SelectItem>
-                                            {uniqueExYears.map((year) => (
-                                              <SelectItem
-                                                key={`ex-year-${year}`}
-                                                value={year.toString()}
-                                              >
-                                                {year}
-                                              </SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      </span>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                     </>
                                   )}
 
                                   {/* Filter by Type */}
-                                  <span className="pl-8 flex items-baseline justify-start w-full">
-                                    <h3 className="font-EBGaramond text-base whitespace-nowrap">
-                                      Show
-                                    </h3>
-                                    <Select
-                                      value={stagedSelectedType}
-                                      onValueChange={setStagedSelectedType}
+
+                                  <Select
+                                    value={stagedSelectedType}
+                                    onValueChange={setStagedSelectedType}
+                                  >
+                                    <SelectTrigger
+                                      size="sm"
+                                      className="font-EBGaramond w-full text-base px-8"
                                     >
-                                      <SelectTrigger
-                                        size="sm"
-                                        className="font-EBGaramond w-full text-base pt-0.5 pr-5"
-                                      >
-                                        <SelectValue placeholder="all exhibitions" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="all">
-                                          all exhibitions
-                                        </SelectItem>
-                                        <SelectItem value="Solo">
-                                          solo exhibitions
-                                        </SelectItem>
-                                        <SelectItem value="Group">
-                                          group exhibitions
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </span>
+                                      <SelectValue placeholder="all exhibitions" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="all">
+                                        All exhibitions
+                                      </SelectItem>
+                                      <SelectItem value="Solo">
+                                        solo exhibitions
+                                      </SelectItem>
+                                      <SelectItem value="Group">
+                                        group exhibitions
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+
                                   <HDivider className="mt-1" />
-                                  <div className="flex gap-2 pl-8 items-center justify-start  w-full pr-4">
+                                  <div className="flex gap-2 px-8 items-center justify-center lg:justify-start  w-full py-1 ">
                                     <Button
                                       variant="link"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider underline underline-offset-4 justify-start"
+                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider underline underline-offset-4 justify-center lg:justify-start"
                                       onClick={async () => {
                                         await applyExhibitionsFilters();
                                         if (!isDesktop) setOpen(false);
@@ -883,7 +786,7 @@ export default function Nav() {
                                     <Button
                                       variant="link"
                                       size="sm"
-                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider justify-start"
+                                      className="w-full font-gintoRegular text-xs uppercase tracking-wider justify-center lg:justify-start"
                                       onClick={async () => {
                                         await clearExhibitionsFilters();
                                         if (!isDesktop) setOpen(false);
@@ -905,44 +808,27 @@ export default function Nav() {
               </div>
               <div className="flex flex-col  snap-start snap-stop-always w-full  ">
                 {/* CONTACT */}
-                <span className=" snap-start snap-stop-always   flex items-center justify-between w-full pl-4 pr-3">
-                  <Button
-                    variant="nav"
-                    size="linkSize"
-                    className="h2 text-base "
-                    onClick={() => {
-                      handleOpenContact();
-                      setActiveWorkSlug(null);
-                      setActiveExhibitionSlug(null);
-                    }}
-                  >
-                    Contact
-                  </Button>
-                  <Button
-                    variant="nav"
-                    size="linkIcon"
-                    onClick={() => {
-                      handleOpenContact();
-                      setActiveWorkSlug(null);
-                      setActiveExhibitionSlug(null);
-                    }}
-                    className={``}
-                  >
-                    {showContact ? (
-                      <MinusIcon className="w-3 h-3" />
-                    ) : (
-                      <PlusIcon className="w-3 h-3" />
-                    )}
-                  </Button>
-                </span>
+
+                <Button
+                  variant="nav"
+                  size="linkSize"
+                  className="h2 text-base justify-center lg:justify-start w-full "
+                  onClick={() => {
+                    handleOpenContact();
+                    setActiveWorkSlug(null);
+                    setActiveExhibitionSlug(null);
+                  }}
+                >
+                  Contact
+                </Button>
 
                 {showContact && (
                   <>
-                    <div className="flex flex-col pt-1  mb-2     ">
+                    <div className="flex flex-col pt-1  mb-2 px-6    ">
                       <Button
                         variant="nav"
                         size="linkSize"
-                        className="font-EBGaramond text-base text-blue-600 hover:text-blue-600  pl-6  "
+                        className="font-EBGaramond text-base text-blue-600 hover:text-blue-600   justify-center lg:justify-start w-full  "
                         asChild
                         onClick={() => {
                           if (!isDesktop) setOpen(false);
@@ -954,7 +840,7 @@ export default function Nav() {
                       <Button
                         variant="nav"
                         size="linkSize"
-                        className="font-EBGaramond text-base pl-6 text-blue-600 hover:text-blue-600"
+                        className="font-EBGaramond text-base text-blue-600 hover:text-blue-600   justify-center lg:justify-start w-full "
                         asChild
                         onClick={() => {
                           if (!isDesktop) setOpen(false);
@@ -980,7 +866,7 @@ export default function Nav() {
                     setActiveExhibitionSlug(null);
                     if (!isDesktop) setOpen(false);
                   }}
-                  className="h2 text-left text-base  px-4"
+                  className="h2 justify-center lg:justify-start  text-base  px-4"
                 >
                   Information
                 </Button>

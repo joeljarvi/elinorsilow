@@ -257,26 +257,29 @@ function MainContent({}: Props) {
               >
                 {" "}
                 {showInfo && (
-                  <div className="flex  p-2 text-sm  font-EBGaramond  flex-wrap  items-baseline justify-center lg:justify-start ">
-                    <span className="font-EBGaramondItalic mr-2">
+                  <div className="flex  p-2 text-sm text-center lg:text-left  font-EBGaramond flex-wrap items-center   lg:items-baseline justify-center lg:justify-start ">
+                    <span className="font-EBGaramondItalic mr-2 text-center lg:text-left ">
                       {item.title}
                     </span>
 
                     {item.type === "work" && (
                       <>
-                        {item.meta.acf.materials && (
-                          <span className="mr-1">
-                            {item.meta.acf.materials},
-                          </span>
-                        )}
-                        {item.meta.acf.dimensions && (
-                          <span className="mr-1">
-                            {item.meta.acf.dimensions},
-                          </span>
-                        )}
-                        {item.meta.acf.year && (
-                          <span className="">{item.meta.acf.year}</span>
-                        )}
+                        <div className="flex flex-wrap items-baseline justify-center">
+                          {item.meta.acf.materials && (
+                            <span className="mr-1">
+                              {item.meta.acf.materials},
+                            </span>
+                          )}
+                          {item.meta.acf.dimensions && (
+                            <span className="mr-1 ">
+                              {item.meta.acf.dimensions}
+                            </span>
+                          )}
+
+                          {item.meta.acf.year && (
+                            <span className="">({item.meta.acf.year})</span>
+                          )}
+                        </div>
                       </>
                     )}
                     {item.type === "exhibition" && (

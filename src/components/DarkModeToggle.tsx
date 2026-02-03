@@ -23,18 +23,18 @@ export function DarkModeToggle() {
           variant="link"
           size="linkSize"
           onClick={() => setTheme("dark")}
-          className="font-gintoBlack text-base  "
+          className="font-gintoBlack text-base w-full justify-center lg:justify-start  "
         >
-          Night
+          Dark mode
         </Button>
       ) : (
         <Button
           variant="link"
           size="linkSize"
           onClick={() => setTheme("light")}
-          className=" font-gintoBlack text-base    "
+          className=" font-gintoBlack text-base w-full justify-center lg:justify-start   "
         >
-          Day
+          Light mode
         </Button>
       )}
     </div>
