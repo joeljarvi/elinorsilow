@@ -155,7 +155,7 @@
     @apply font-gintoBlack text-base leading-relaxed;
   }
   .p {
-    @apply font-EBGaramond text-base leading-normal;
+    @apply font-EBGaramond text-sm leading-normal;
   }
   .small {
     @apply font-EBGaramond text-sm leading-normal;

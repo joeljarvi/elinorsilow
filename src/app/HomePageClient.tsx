@@ -582,15 +582,15 @@ function MainContent({}: Props) {
                 </span>
                 <HDivider className="" />
                 <div className="flex flex-col items-stretch justify-center lg:justify-start  space-y-0  w-full pt-0  pr-0 pl-0 pb-0">
-                  <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 h-16 lg:h-8 ">
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 px-4 lg:pl-4  lg:pr-4 py-1  ">
                     <Button
                       size="sm"
-                      className="items-center font-EBGaramondItalic text-base mr-1"
+                      className="items-center font-EBGaramondItalic text-sm mr-1"
                       variant="default"
                     >
                       Hjärtat
                     </Button>
-                    <p className="text-base ">Lappalainen Hjertström, L-E</p>
+                    <p className=" ">Lappalainen Hjertström, L-E</p>
                     <p>(2022)</p>
                     <p className="font-EBGaramondItalic">Kunstkritikk</p>
                     <p className=" ">Availible at:</p>
@@ -604,13 +604,13 @@ function MainContent({}: Props) {
                   <HDivider />
                   <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 h-16 lg:h-8">
                     <Button
-                      className="  items-baseline  font-EBGaramondItalic text-base mr-1"
+                      className="   font-EBGaramondItalic text-sm mr-1"
                       variant="link"
                       size="linkSize"
                     >
                       Gameplay
                     </Button>
-                    <p className="text-base ">Slöör, S</p>
+                    <p className=" ">Slöör, S</p>
                     <p>(2025)</p>
                     <p className="font-EBGaramondItalic">Omkonst</p>
                     <p className=" ">Availible at:</p>
@@ -645,13 +645,13 @@ function MainContent({}: Props) {
               </span>
               <HDivider className="" />
 
-              <span className=" flex flex-wrap items-baseline justify-center lg:justify-start gap-x-1 mt-2 pl-2 lg:pl-4 pr-0 lg:pr-4 h-8 w-full">
+              <span className=" flex flex-wrap items-center justify-center lg:justify-start gap-x-1 mt-2 pl-2 lg:pl-4 pr-0 lg:pr-4 w-full text-sm">
                 Design & code:
                 <Link className="font-EBGaramondItalic text-blue-600" href="/">
                   Joel Järvi
                 </Link>
               </span>
-              <HDivider />
+
               <div className="  flex flex-wrap items-center justify-center lg:justify-start gap-x-1 mb-0 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4  h-8 w-full">
                 Fonts: <span className="font-EBGaramondItalic">Ginto</span> by
                 Dinamo Typefaces and
