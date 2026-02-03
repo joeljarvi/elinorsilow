@@ -291,9 +291,8 @@ export default function Nav() {
                 <motion.div variants={item} className=" ">
                   <Button
                     asChild
-                    variant="nav"
-                    size="linkSizeMd"
-                    className="h2 text-center justify-center lg:justify-start lg:text-left text-base px-4      "
+                    variant="default"
+                    className="text-xl  text-center justify-center  lg:text-left  px-4  font-gintoBlack  w-full  "
                     onClick={() => {
                       if (!isDesktop) setOpen(false);
                     }}
@@ -302,22 +301,26 @@ export default function Nav() {
                   </Button>
                 </motion.div>
                 <motion.div variants={item} className="px-4  ">
-                  <p className="p mt-3 mb-4 justify-center  lg:justify-start text-center lg:text-left text-sm   ">
+                  <p className="p mt-3 mb-4 justify-center  lg:justify-start text-center lg:text-left    ">
                     (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
                     explores raw emotion through painting, sculpture and
                     textile.
                   </p>
                 </motion.div>
                 <motion.div variants={item} className="px-4 ">
-                  <p className="small text-center lg:text-left ">
+                  <p className="p text-center lg:text-left ">
                     Please contact
                     <Button
                       asChild
                       variant="link"
                       size="linkSize"
-                      className="text-blue-600 text-sm px-1"
+                      className="text-blue-600 
+                       px-1 p text-base"
                     >
-                      <Link href="mailto:elinor.silow@gmail.com" className="  ">
+                      <Link
+                        href="mailto:elinor.silow@gmail.com"
+                        className=" p "
+                      >
                         elinor.silow@gmail.com
                       </Link>
                     </Button>
@@ -357,7 +360,6 @@ export default function Nav() {
                     {showWorksMenu ? "[close]" : "[+]"}
                   </Button>
                 </span>
-                <HDivider />
 
                 {/* WORKS MENU DROPDOWN */}
                 <AnimatePresence>
@@ -369,7 +371,7 @@ export default function Nav() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      {" "}
+                      <HDivider />
                       <div className=" pt-2  flex flex-col  gap-0 ">
                         <span className="flex justify-between items-center w-full relative ">
                           <Button
@@ -589,7 +591,7 @@ export default function Nav() {
                             onClick={() => {
                               setShowInfo(!showInfo);
                             }}
-                            className={` text-sm  justify-end font-EBGaramond hover:font-EBGaramondItalic w-full pl-4 pr-4`}
+                            className={` text-sm justify-center lg:justify-end font-EBGaramond hover:font-EBGaramondItalic w-full pl-4 pr-4`}
                           >
                             [
                             {showInfo ? "hide description" : "show description"}
@@ -632,7 +634,7 @@ export default function Nav() {
                     {showExhibitionsMenu ? "[close]" : "[+]"}
                   </Button>
                 </span>
-                <HDivider />
+
                 <AnimatePresence>
                   {showExhibitionsMenu && (
                     <motion.div
@@ -642,6 +644,8 @@ export default function Nav() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden w-full"
                     >
+                      {" "}
+                      <HDivider />
                       <div className="mt-2  mb-2 flex flex-col  gap-0 overflow-y-scroll   ">
                         {/* Index button */}
                         <span className="flex justify-between items-center w-full relative">
@@ -888,9 +892,10 @@ export default function Nav() {
                     {showContact ? "[close]" : "[+]"}
                   </Button>
                 </span>
-                <HDivider />
+
                 {showContact && (
                   <>
+                    <HDivider />
                     <div className="flex flex-col    mt-2  mb-2    ">
                       <Button
                         variant="default"
@@ -941,7 +946,7 @@ export default function Nav() {
                 >
                   Information
                 </Button>
-                <HDivider />
+
                 <div className="  pb-2">
                   <DarkModeToggle />
                 </div>

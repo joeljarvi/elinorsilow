@@ -149,7 +149,7 @@
     @apply font-EBGaramondItalic text-xl lg:text-sm leading-tight;
   }
   .h2 {
-    @apply font-gintoBlack text-base leading-relaxed;
+    @apply font-gintoBlack text-xl lg:text-lg leading-relaxed;
   }
   .h3 {
     @apply font-gintoBlack text-base leading-relaxed;

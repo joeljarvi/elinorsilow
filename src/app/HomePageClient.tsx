@@ -315,43 +315,69 @@ function MainContent({}: Props) {
           />
         )}
         {view === "info" && (
-          <div className="lg:border-l lg:border-foreground mt-0  w-full flex flex-col lg:grid lg:grid-cols-3    ">
-            <div className=" w-full flex flex-col lg:col-start-1 lg:col-span-3 items-start justify-start  ">
-              <h3 className="h3 pl-2 pt-2 pr-0 lg:pr-4  lg:pl-4 lg:pt-2  ">
-                About
-              </h3>
-              <HDivider className="" />
-              <p className="p mt-2 max-w-sm  pl-2 pr-0 pt-0 lg:pl-4  lg:pr-4 ">
+          <div className="   w-full flex flex-col items-start justify-start   ">
+            <div className=" w-full flex flex-col  items-center lg:items-start justify-start  ">
+              <span className="flex items-center justify-center w-full relative">
+                <Button
+                  variant="default"
+                  className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                >
+                  About
+                </Button>
+
+                <Button
+                  variant="default"
+                  size="sm"
+                  className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                >
+                  [+]
+                </Button>
+              </span>
+              <HDivider />
+
+              {/* <p className="p mt-2 max-w-sm mx-auto lg:mx-0 text-center lg:text-left  pl-2 pr-0 pt-0 lg:pl-4  lg:pr-4 ">
                 Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
                 artist who explores raw emotion through painting, sculpture and
                 textile.
               </p>
-              <div className="flex flex-col items-start justify-center mt-2 p pl-2 lg:pl-4 pr-0 lg:pr-4">
+              <div className="flex flex-col items-center text-center lg:text-left  lg:items-start justify-center mt-2 p pl-2 lg:pl-4 pr-0 lg:pr-4 ">
                 <p className=" ">
                   Gösta Ekmans väg 10 <br />
                   129 35 Hägersten
                 </p>
                 <Link
                   href="mailto:elinor.silow@gmail.com"
-                  className=" mb-4 lg:mb-2  text-blue-600"
+                  className=" mb-8 lg:mb-2  text-blue-600"
                 >
                   elinor.silow@gmail.com
                 </Link>
-              </div>
+              </div> */}
             </div>
-            <HDivider className="hidden lg:block lg:col-span-3" />
 
             {soloExhibitions.length > 0 && (
-              <section className="flex flex-col lg:col-span-3 items-start justify-start w-full">
-                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 h2">
-                  Solo Exhibitions
-                </h2>
+              <section className="flex flex-col  items-center lg:items-start justify-start w-full">
+                <span className="flex items-center w-full relative">
+                  <Button
+                    variant="default"
+                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                  >
+                    Solo Exhibitions
+                  </Button>
+
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                  >
+                    [+]
+                  </Button>
+                </span>
                 <HDivider />
 
                 <Staggered
                   loading={showGlobalLoader}
                   items={soloExhibitions}
-                  className="w-full columns-1 space-y-0 py-0 pl-0 pr-0"
+                  className="w-full flex flex-col items-stretch justify-start space-y-0 py-0 pl-0 pr-0"
                   renderItem={(ex) => {
                     const slug = findExhibitionSlug(ex.title.rendered);
 
@@ -359,19 +385,20 @@ function MainContent({}: Props) {
                       <>
                         <div
                           key={ex.id}
-                          className="p flex flex-wrap pl-2 lg:pl-4 pr-0 lg:pr-4 py-1"
+                          className="p flex flex-wrap items-center justify-center lg:justify-start pl-2 lg:pl-4 pr-0 lg:pr-4  h-8"
                         >
                           {slug ? (
-                            <Link
-                              href={`/?exhibition=${slug}`}
-                              className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
+                            <Button
                               onClick={() => {
                                 setActiveExhibitionSlug(slug);
                                 setOpen(false);
                               }}
+                              className="font-EBGaramondItalic  text-blue-600 mr-2 text-base"
+                              variant="default"
+                              size="sm"
                             >
                               {ex.title.rendered}
-                            </Link>
+                            </Button>
                           ) : (
                             <span className="font-EBGaramondItalic mr-2">
                               {ex.title.rendered}
@@ -388,18 +415,31 @@ function MainContent({}: Props) {
                 />
               </section>
             )}
-            <HDivider className="hidden lg:block lg:col-span-3" />
+
             {groupExhibitions.length > 0 && (
-              <section className="flex flex-col lg:col-span-2 items-start justify-start w-full ">
-                <h2 className="h2 pl-2 pt-0 lg:pl-4 lg:pt-2">
-                  All Exhibitions
-                </h2>
+              <section className="flex flex-col  items-start justify-start w-full ">
+                <span className="flex items-center w-full relative">
+                  <Button
+                    variant="default"
+                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                  >
+                    All Exhibitions
+                  </Button>
+
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                  >
+                    [+]
+                  </Button>
+                </span>
                 <HDivider />
 
                 <Staggered
                   loading={showGlobalLoader}
                   items={groupExhibitions}
-                  className="w-full columns-1 space-y-0 py-0 pr-0 pl-0"
+                  className="w-full flex flex-col items-stretch justify-center lg:justify-start space-y-0 py-0 pr-0 pl-0"
                   renderItem={(ex) => {
                     const slug = findExhibitionSlug(ex.title.rendered);
 
@@ -407,19 +447,20 @@ function MainContent({}: Props) {
                       <>
                         <div
                           key={ex.id}
-                          className="p flex flex-wrap pl-2 lg:pl-4 pr-2 lg:pr-4 py-1"
+                          className="p flex flex-wrap justify-center lg:justify-start items-center pl-2 lg:pl-4 pr-2 lg:pr-4  h-8"
                         >
                           {slug ? (
-                            <Link
-                              href={`/?exhibition=${slug}`}
-                              className="font-EBGaramondItalic hover:underline text-blue-600 mr-2"
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="font-EBGaramondItalic  text-blue-600 mr-2 text-base"
                               onClick={() => {
                                 setActiveExhibitionSlug(slug);
                                 setOpen(false);
                               }}
                             >
                               {ex.title.rendered}
-                            </Link>
+                            </Button>
                           ) : (
                             <span className="font-EBGaramondItalic mr-2">
                               {ex.title.rendered}
@@ -438,20 +479,34 @@ function MainContent({}: Props) {
             )}
             {/* GRANTS */}
             {grants.length > 0 && (
-              <section className=" flex items-start justify-start ">
-                <VDivider className="hidden lg:block" />
+              <section className=" flex items-start justify-start w-full ">
                 <div className="flex flex-col items-start justify-start w-full ">
-                  <h2 className="h2 pl-2  pt-0 lg:pl-4 lg:pt-2">Grants</h2>
+                  <span className="flex items-center justify-center w-full relative">
+                    <Button
+                      variant="default"
+                      className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                    >
+                      Grants
+                    </Button>
+
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                    >
+                      [+]
+                    </Button>
+                  </span>
                   <HDivider />
                   <Staggered
                     loading={showGlobalLoader}
                     items={grants}
-                    className="columns-1   space-y-0  w-full py-0 pr-0 pl-0"
+                    className="flex flex-col items-stretch justify-center lg:justify-start   space-y-0  w-full py-0 pr-0 pl-0"
                     renderItem={(grant) => (
                       <>
                         <div
                           key={grant.id}
-                          className="p pl-2 lg:pl-4 pr-2 lg:pr-4 py-1"
+                          className="p flex flex-wrap items-center justify-center lg:justify-start pl-2 lg:pl-4 pr-2 lg:pr-4 h-8"
                         >
                           <span className="font-EBGaramondItalic mr-1  ">
                             {grant.acf.title}
@@ -465,21 +520,36 @@ function MainContent({}: Props) {
                 </div>
               </section>
             )}
-            <HDivider className="hidden lg:block lg:col-span-3" />
+
             {/* EDUCATION */}
             {educations.length > 0 && (
-              <section className="flex flex-col items-start justify-start lg:col-span-1 w-full ">
-                <h2 className=" pl-2 pt-0 lg:pl-4 lg:pt-2 h2  ">Education</h2>
+              <section className="flex flex-col items-start justify-start  w-full ">
+                <span className="flex items-center justify-center w-full relative">
+                  <Button
+                    variant="default"
+                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                  >
+                    Education
+                  </Button>
+
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                  >
+                    [+]
+                  </Button>
+                </span>
                 <HDivider />
                 <Staggered
                   loading={showGlobalLoader}
                   items={educations}
-                  className=" pl-0 pr-0 columns-1   space-y-0  w-full py-0 "
+                  className=" pl-0 pr-0 flex flex-col items-stretch justify-center lg:justify-start  space-y-0  w-full py-0 "
                   renderItem={(edu) => (
                     <>
                       <div
                         key={edu.id}
-                        className="p flex-wrap items-baseline justify-start pl-2 lg:pl-4 pr-2 lg:pr-4 py-1"
+                        className="p flex flex-wrap items-center justify-center lg:justify-start pl-2 lg:pl-4 pr-2 lg:pr-4 h-8"
                       >
                         <span className="font-EBGaramondItalic mr-2">
                           {edu.acf.school}
@@ -492,19 +562,31 @@ function MainContent({}: Props) {
                 />
               </section>
             )}
-            <div className="   flex  items-start justify-start p   lg:col-span-2  ">
-              <VDivider className="hidden lg:block " />
+            <div className="   flex  items-start justify-start p   w-full  ">
               <div className="flex flex-col items-start justify-start w-full ">
-                <h3 className="h3 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
-                  Press
-                </h3>
+                <span className="flex items-center justify-center w-full relative">
+                  <Button
+                    variant="default"
+                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                  >
+                    Press
+                  </Button>
+
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                  >
+                    [+]
+                  </Button>
+                </span>
                 <HDivider className="" />
-                <div className="columns-1   space-y-0  w-full pt-0  pr-0 pl-0 pb-0">
-                  <div className="flex flex-wrap items-baseline justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 ">
+                <div className="flex flex-col items-stretch justify-center lg:justify-start  space-y-0  w-full pt-0  pr-0 pl-0 pb-0">
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 h-16 lg:h-8 ">
                     <Button
-                      className="items-baseline  font-EBGaramondItalic text-base mr-1"
-                      variant="link"
-                      size="linkSize"
+                      size="sm"
+                      className="items-center font-EBGaramondItalic text-base mr-1"
+                      variant="default"
                     >
                       Hjärtat
                     </Button>
@@ -519,8 +601,8 @@ function MainContent({}: Props) {
                       https://kunstkritikk.se/hjartats-energi/
                     </Link>
                   </div>
-                  <HDivider color="border-blue-600" />
-                  <div className="flex flex-wrap items-baseline justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1">
+                  <HDivider />
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 h-16 lg:h-8">
                     <Button
                       className="  items-baseline  font-EBGaramondItalic text-base mr-1"
                       variant="link"
@@ -544,30 +626,42 @@ function MainContent({}: Props) {
               </div>
             </div>
 
-            <HDivider className="hidden lg:block lg:col-span-3" />
-            <div className=" w-full flex flex-col items-start justify-start lg:col-span-3  p">
-              <h3 className="h3 pt-0 pl-2 pr-0 lg:pr-4 lg:pl-4 lg:pt-2">
-                Colophon
-              </h3>
+            <div className=" w-full flex flex-col items-start justify-start   p">
+              <span className="flex items-center justify-center w-full relative">
+                <Button
+                  variant="default"
+                  className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
+                >
+                  Colophon
+                </Button>
+
+                <Button
+                  variant="default"
+                  size="sm"
+                  className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
+                >
+                  [+]
+                </Button>
+              </span>
               <HDivider className="" />
 
-              <span className=" flex flex-wrap items-baseline justify-start gap-x-1 mt-2 pl-2 lg:pl-4 pr-0 lg:pr-4">
+              <span className=" flex flex-wrap items-baseline justify-center lg:justify-start gap-x-1 mt-2 pl-2 lg:pl-4 pr-0 lg:pr-4 h-8 w-full">
                 Design & code:
                 <Link className="font-EBGaramondItalic text-blue-600" href="/">
                   Joel Järvi
                 </Link>
               </span>
-
-              <div className="  flex flex-wrap items-baseline justify-start gap-x-1 mb-0 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4 ">
+              <HDivider />
+              <div className="  flex flex-wrap items-center justify-center lg:justify-start gap-x-1 mb-0 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4  h-8 w-full">
                 Fonts: <span className="font-EBGaramondItalic">Ginto</span> by
                 Dinamo Typefaces and
                 <span className="font-EBGaramondItalic">EB Garamond</span>
                 (12)
               </div>
             </div>
-            <HDivider className=" lg:col-span-3 mt-2" />
-            <div className="lg:col-start-1 lg:col-span-2 pl-2 pt-4 pr-0 lg:pr-4 lg:pl-4  lg:pt-4 pb-2 lg:pb-4    leading-snug ">
-              <p className=" border-1 p-2 border-foreground font-gintoRegular text-xs max-w-xs lg:max-w-full ">
+            <HDivider className="  mt-2" />
+            <div className=" pl-2 pt-4 pr-0 lg:pr-4 lg:pl-4  lg:pt-4 pb-2 lg:pb-4  flex flex-col items-center justify-center lg:justify-start w-full  leading-snug ">
+              <p className=" border-1 p-2 border-foreground font-gintoRegular text-xs max-w-sm lg:max-w-full  text-center lg:text-left">
                 All content on this site, including images, text, and design, is
                 the intellectual property of{" "}
                 <span className=" font-gintoBlack">Elinor Silow</span> unless
