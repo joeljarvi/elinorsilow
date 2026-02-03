@@ -271,7 +271,7 @@ export default function Nav() {
             }}
             className={`
            h-full overflow-y-scroll scrollbar-hide flex flex-col w-full pt-24 lg:pt-32 
-           scroll-pt-24 lg:scroll-pt-32 bg-background shadow pb-24 pointer-events-auto
+           scroll-pt-24 lg:scroll-pt-32 bg-background shadow pb-48 pointer-events-auto
          `}
           >
             <motion.div
@@ -286,13 +286,13 @@ export default function Nav() {
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
-                className="max-w-xs mx-auto  lg:mx-0 w-full  snap-start snap-stop-always "
+                className="max-w-xs mx-auto  lg:mx-0 w-full  snap-start snap-stop-always  "
               >
                 <motion.div variants={item} className=" ">
                   <Button
                     asChild
                     variant="default"
-                    className="text-xl  text-center justify-center  lg:text-left  px-4  font-gintoBlack  w-full  "
+                    className="text-xl  text-center justify-center lg:justify-start  lg:text-left  px-4  font-gintoBlack  w-full  "
                     onClick={() => {
                       if (!isDesktop) setOpen(false);
                     }}
@@ -369,10 +369,10 @@ export default function Nav() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
+                      className="overflow-hidden px-4 mb-2 "
                     >
                       <HDivider />
-                      <div className=" pt-2  flex flex-col  gap-0 ">
+                      <div className=" pt-2  flex flex-col  gap-0 border-x-foreground border-x  ">
                         <span className="flex justify-between items-center w-full relative ">
                           <Button
                             size="sm"
@@ -642,11 +642,11 @@ export default function Nav() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden w-full"
+                      className="overflow-hidden w-full px-4 mb-2"
                     >
                       {" "}
                       <HDivider />
-                      <div className="mt-2  mb-2 flex flex-col  gap-0 overflow-y-scroll   ">
+                      <div className="pt-2  pb-2 flex flex-col  gap-0 overflow-y-scroll border-x border-x-foreground   ">
                         {/* Index button */}
                         <span className="flex justify-between items-center w-full relative">
                           <Button
@@ -894,13 +894,19 @@ export default function Nav() {
                 </span>
 
                 {showContact && (
-                  <>
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden w-full px-4 mb-2"
+                  >
                     <HDivider />
-                    <div className="flex flex-col    mt-2  mb-2    ">
+                    <div className="flex flex-col    pt-2  pb-2  border-x border-foreground  ">
                       <Button
                         variant="default"
                         size="sm"
-                        className="text-base px-8  justify-center lg:justify-start font-EBGaramond hover:font-EBGaramondItalic w-full text-blue-600   "
+                        className="text-base px-4  justify-center lg:justify-start font-EBGaramond hover:font-EBGaramondItalic w-full text-blue-600   "
                         asChild
                         onClick={() => {
                           if (!isDesktop) setOpen(false);
@@ -912,7 +918,7 @@ export default function Nav() {
                       <Button
                         variant="default"
                         size="sm"
-                        className="text-base px-8  justify-center lg:justify-start font-EBGaramond hover:font-EBGaramondItalic w-full text-blue-600"
+                        className="text-base px-4  justify-center lg:justify-start font-EBGaramond hover:font-EBGaramondItalic w-full text-blue-600"
                         asChild
                         onClick={() => {
                           if (!isDesktop) setOpen(false);
@@ -924,7 +930,7 @@ export default function Nav() {
                       </Button>
                     </div>
                     <HDivider />
-                  </>
+                  </motion.div>
                 )}
               </div>
               {/* INFO */}
