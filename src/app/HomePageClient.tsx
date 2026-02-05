@@ -315,47 +315,45 @@ function MainContent({}: Props) {
           />
         )}
         {view === "info" && (
-          <div className="   w-full flex flex-col items-start justify-start   ">
-            <div className=" w-full flex flex-col items-start justify-start  ">
-              <h2 className=" h3 flex items-center justify-start w-full relative font-gintoBlack px-4">
-                About
-              </h2>
-
-              <p className="p mt-2 max-w-xs  mx-0 text-left   pt-0 px-4 ">
-                Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
-                artist who explores raw emotion through painting, sculpture and
-                textile.
-              </p>
-              <div className="p mt-2 max-w-xs  mx-0 text-left   pt-0 px-4  ">
-                <p className=" ">
-                  Gösta Ekmans väg 10 <br />
-                  129 35 Hägersten
+          <div className="w-full flex flex-col lg:grid lg:grid-cols-2 lg:gap-x-12 items-start justify-start px-4">
+            {/* LEFT COLUMN */}
+            <div className="flex flex-col items-start justify-start w-full">
+              {/* About Section */}
+              <div className="w-full flex flex-col items-start justify-start mb-12">
+                <h2 className="h3 font-gintoBlack mb-2">About</h2>
+                <p className="p max-w-xs text-left mb-4">
+                  Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
+                  artist who explores raw emotion through painting, sculpture and
+                  textile.
                 </p>
-                <Link
-                  href="mailto:elinor.silow@gmail.com"
-                  className=" mb-16 lg:mb-8  text-blue-600"
-                >
-                  elinor.silow@gmail.com
-                </Link>
+                <div className="p text-left">
+                  <p>
+                    Gösta Ekmans väg 10 <br />
+                    129 35 Hägersten
+                  </p>
+                  <Link
+                    href="mailto:elinor.silow@gmail.com"
+                    className="text-blue-600"
+                  >
+                    elinor.silow@gmail.com
+                  </Link>
+                </div>
               </div>
-            </div>
 
-            {soloExhibitions.length > 0 && (
-              <section className="flex flex-col  items-start justify-start w-full">
-                <h3 className="h3 px-4 mt-8">Solo Exhibitions</h3>
-
-                <Staggered
-                  loading={showGlobalLoader}
-                  items={soloExhibitions}
-                  className="w-full flex flex-col items-stretch justify-start space-y-0 py-0 pl-0 pr-0"
-                  renderItem={(ex) => {
-                    const slug = findExhibitionSlug(ex.title.rendered);
-
-                    return (
-                      <>
+              {/* Solo Exhibitions */}
+              {soloExhibitions.length > 0 && (
+                <section className="flex flex-col items-start justify-start w-full mb-12">
+                  <h3 className="h3 mb-4">Solo Exhibitions</h3>
+                  <Staggered
+                    loading={showGlobalLoader}
+                    items={soloExhibitions}
+                    className="w-full flex flex-col items-stretch justify-start space-y-1"
+                    renderItem={(ex) => {
+                      const slug = findExhibitionSlug(ex.title.rendered);
+                      return (
                         <div
                           key={ex.id}
-                          className="text-xs font-gintoRegular leading-loose flex flex-wrap items-center justify-start px-4 lg:pl-4 pr-0 lg:pr-4  "
+                          className="text-xs font-gintoRegular leading-loose flex flex-wrap items-center justify-start"
                         >
                           {slug ? (
                             <Button
@@ -363,48 +361,48 @@ function MainContent({}: Props) {
                                 setActiveExhibitionSlug(slug);
                                 setOpen(false);
                               }}
-                              className="font-gintoRegularItalic  text-blue-600  text-xs tracking-wide mr-1"
+                              className="font-gintoRegularItalic text-blue-600 text-xs tracking-wide mr-1"
                               variant="link"
                               size="listSize"
                             >
                               {ex.title.rendered},
                             </Button>
                           ) : (
-                            <span className="font-gintoRegular  text-xs tracking-wide mr-1">
+                            <span className="font-gintoRegular text-xs tracking-wide mr-1">
                               {ex.title.rendered},
                             </span>
                           )}
                           {ex.acf.year}, {ex.acf.venue}, {ex.acf.city}
                         </div>
-                      </>
-                    );
-                  }}
-                />
-              </section>
-            )}
+                      );
+                    }}
+                  />
+                </section>
+              )}
+            </div>
 
-            {groupExhibitions.length > 0 && (
-              <section className="flex flex-col  items-start justify-start w-full ">
-                <h3 className="h3 px-4 mt-8">All exhibitions</h3>
-
-                <Staggered
-                  loading={showGlobalLoader}
-                  items={groupExhibitions}
-                  className="w-full flex flex-col items-stretch justify-start space-y-0 py-0 px-4"
-                  renderItem={(ex) => {
-                    const slug = findExhibitionSlug(ex.title.rendered);
-
-                    return (
-                      <>
+            {/* RIGHT COLUMN */}
+            <div className="flex flex-col items-start justify-start w-full">
+              {/* Group Exhibitions */}
+              {groupExhibitions.length > 0 && (
+                <section className="flex flex-col items-start justify-start w-full mb-12">
+                  <h3 className="h3 mb-4">All exhibitions</h3>
+                  <Staggered
+                    loading={showGlobalLoader}
+                    items={groupExhibitions}
+                    className="w-full flex flex-col items-stretch justify-start space-y-1"
+                    renderItem={(ex) => {
+                      const slug = findExhibitionSlug(ex.title.rendered);
+                      return (
                         <div
                           key={ex.id}
-                          className=" flex flex-wrap justify-start items-center  text-xs leading-loose font-gintoRegular  "
+                          className="flex flex-wrap justify-start items-center text-xs leading-loose font-gintoRegular"
                         >
                           {slug ? (
                             <Button
                               variant="link"
                               size="listSize"
-                              className=" font-gintoRegularItalic text-blue-600 mr-2 text-xs tracking-wide leading-loose"
+                              className="font-gintoRegularItalic text-blue-600 mr-2 text-xs tracking-wide leading-loose"
                               onClick={() => {
                                 setActiveExhibitionSlug(slug);
                                 setOpen(false);
@@ -413,211 +411,129 @@ function MainContent({}: Props) {
                               {ex.title.rendered}
                             </Button>
                           ) : (
-                            <span className=" mr-2 text-xs tracking-wide leading-loose">
+                            <span className="mr-2 text-xs tracking-wide leading-loose">
                               {ex.title.rendered}
                             </span>
                           )}
                           {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
                         </div>
-                      </>
-                    );
-                  }}
-                />
-              </section>
-            )}
-            {/* GRANTS */}
-            {grants.length > 0 && (
-              <section className=" flex items-start justify-start w-full ">
-                <div className="flex flex-col items-start justify-start w-full ">
-                  <span className="flex items-center justify-center w-full relative">
-                    <Button
-                      variant="default"
-                      className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                    >
-                      Grants
-                    </Button>
+                      );
+                    }}
+                  />
+                </section>
+              )}
 
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                    >
-                      [+]
-                    </Button>
-                  </span>
-                  <HDivider />
-                  <Staggered
-                    loading={showGlobalLoader}
-                    items={grants}
-                    className="flex flex-col items-stretch justify-center lg:justify-start   space-y-0  w-full py-0 pr-0 pl-0"
-                    renderItem={(grant) => (
-                      <>
+              {/* Achievements (Grants & Education) */}
+              <div className="w-full space-y-12">
+                {/* GRANTS */}
+                {grants.length > 0 && (
+                  <section className="flex flex-col items-start justify-start w-full">
+                    <h3 className="h3 font-gintoBlack mb-4">Grants</h3>
+                    <Staggered
+                      loading={showGlobalLoader}
+                      items={grants}
+                      className="flex flex-col items-stretch justify-start w-full space-y-1"
+                      renderItem={(grant) => (
                         <div
                           key={grant.id}
-                          className="p flex flex-wrap items-center justify-center lg:justify-start pl-2 lg:pl-4 pr-2 lg:pr-4 h-8"
+                          className="text-xs font-gintoRegular flex flex-wrap items-center justify-start"
                         >
-                          <span className="font-EBGaramondItalic mr-1  ">
+                          <span className="font-EBGaramondItalic mr-1">
                             {grant.acf.title}
                           </span>{" "}
                           ({grant.acf.year})
                         </div>
-                        <HDivider />
-                      </>
-                    )}
-                  />
-                </div>
-              </section>
-            )}
+                      )}
+                    />
+                  </section>
+                )}
 
-            {/* EDUCATION */}
-            {educations.length > 0 && (
-              <section className="flex flex-col items-start justify-start  w-full ">
-                <span className="flex items-center justify-center w-full relative">
-                  <Button
-                    variant="default"
-                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                  >
-                    Education
-                  </Button>
+                {/* EDUCATION */}
+                {educations.length > 0 && (
+                  <section className="flex flex-col items-start justify-start w-full">
+                    <h3 className="h3 font-gintoBlack mb-4">Education</h3>
+                    <Staggered
+                      loading={showGlobalLoader}
+                      items={educations}
+                      className="flex flex-col items-stretch justify-start w-full space-y-1"
+                      renderItem={(edu) => (
+                        <div
+                          key={edu.id}
+                          className="text-xs font-gintoRegular flex flex-wrap items-center justify-start"
+                        >
+                          <span className="font-EBGaramondItalic mr-2">
+                            {edu.acf.school}
+                          </span>
+                          {edu.acf.city} ({edu.acf.start_year}–{edu.acf.end_year}
+                          )
+                        </div>
+                      )}
+                    />
+                  </section>
+                )}
+              </div>
 
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                  >
-                    [+]
-                  </Button>
-                </span>
-                <HDivider />
-                <Staggered
-                  loading={showGlobalLoader}
-                  items={educations}
-                  className=" pl-0 pr-0 flex flex-col items-stretch justify-center lg:justify-start  space-y-0  w-full py-0 "
-                  renderItem={(edu) => (
-                    <>
-                      <div
-                        key={edu.id}
-                        className="p flex flex-wrap items-center justify-center lg:justify-start pl-2 lg:pl-4 pr-2 lg:pr-4 h-8"
-                      >
-                        <span className="font-EBGaramondItalic mr-2">
-                          {edu.acf.school}
-                        </span>
-                        {edu.acf.city} ({edu.acf.start_year}–{edu.acf.end_year})
-                      </div>
-                      <HDivider />
-                    </>
-                  )}
-                />
-              </section>
-            )}
-            <div className="   flex  items-start justify-start p   w-full  ">
-              <div className="flex flex-col items-start justify-start w-full ">
-                <span className="flex items-center justify-center w-full relative">
-                  <Button
-                    variant="default"
-                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                  >
-                    Press
-                  </Button>
-
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                  >
-                    [+]
-                  </Button>
-                </span>
-                <HDivider className="" />
-                <div className="flex flex-col items-stretch justify-center lg:justify-start  space-y-0  w-full pt-0  pr-0 pl-0 pb-0">
-                  <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 px-4 lg:pl-4  lg:pr-4 py-1  ">
-                    <Button
-                      size="sm"
-                      className="items-center font-EBGaramondItalic text-sm mr-1"
-                      variant="default"
-                    >
-                      Hjärtat
-                    </Button>
-                    <p className=" ">Lappalainen Hjertström, L-E</p>
-                    <p>(2022)</p>
+              {/* Press */}
+              <div className="w-full mt-12">
+                <h3 className="h3 font-gintoBlack mb-4">Press</h3>
+                <div className="flex flex-col items-stretch justify-start w-full space-y-4">
+                  <div className="flex flex-wrap items-center justify-start text-xs gap-x-1">
+                    <span className="font-EBGaramondItalic mr-1">Hjärtat</span>
+                    <p>Lappalainen Hjertström, L-E (2022)</p>
                     <p className="font-EBGaramondItalic">Kunstkritikk</p>
-                    <p className=" ">Availible at:</p>
                     <Link
-                      className="text-blue-600"
+                      className="text-blue-600 ml-1"
                       href="https://kunstkritikk.se/hjartats-energi/"
                     >
-                      https://kunstkritikk.se/hjartats-energi/
+                      Link
                     </Link>
                   </div>
-                  <HDivider />
-                  <div className="flex flex-wrap items-center justify-center lg:justify-start p gap-x-1 pl-2 lg:pl-4 pr-2 lg:pr-4 py-1 h-16 lg:h-8">
-                    <Button
-                      className="   font-EBGaramondItalic text-sm mr-1"
-                      variant="link"
-                      size="linkSize"
-                    >
-                      Gameplay
-                    </Button>
-                    <p className=" ">Slöör, S</p>
-                    <p>(2025)</p>
+                  <div className="flex flex-wrap items-center justify-start text-xs gap-x-1">
+                    <span className="font-EBGaramondItalic mr-1">Gameplay</span>
+                    <p>Slöör, S (2025)</p>
                     <p className="font-EBGaramondItalic">Omkonst</p>
-                    <p className=" ">Availible at:</p>
                     <Link
-                      className="text-blue-600"
+                      className="text-blue-600 ml-1"
                       href="https://omkonst.se/25-gameplay.shtml"
                     >
-                      https://omkonst.se/25-gameplay.shtml
+                      Link
                     </Link>
                   </div>
-                  <HDivider color="border-blue-600" />
+                </div>
+              </div>
+
+              {/* Colophon */}
+              <div className="w-full mt-12 pt-8 border-t border-foreground/10">
+                <h3 className="h3 font-gintoBlack mb-4">Colophon</h3>
+                <div className="text-xs space-y-2">
+                  <p>
+                    Design & code:{" "}
+                    <Link
+                      className="font-EBGaramondItalic text-blue-600"
+                      href="/"
+                    >
+                      Joel Järvi
+                    </Link>
+                  </p>
+                  <p>
+                    Fonts: <span className="font-EBGaramondItalic">Ginto</span>{" "}
+                    by Dinamo Typefaces and{" "}
+                    <span className="font-EBGaramondItalic">EB Garamond</span>{" "}
+                    (12)
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className=" w-full flex flex-col items-start justify-start   p">
-              <span className="flex items-center justify-center w-full relative">
-                <Button
-                  variant="default"
-                  className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                >
-                  Colophon
-                </Button>
-
-                <Button
-                  variant="default"
-                  size="sm"
-                  className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                >
-                  [+]
-                </Button>
-              </span>
-              <HDivider className="" />
-
-              <span className=" flex flex-wrap items-center justify-center lg:justify-start gap-x-1 mt-2 pl-2 lg:pl-4 pr-0 lg:pr-4 w-full text-sm">
-                Design & code:
-                <Link className="font-EBGaramondItalic text-blue-600" href="/">
-                  Joel Järvi
-                </Link>
-              </span>
-
-              <div className="  flex flex-wrap items-center justify-center lg:justify-start gap-x-1 mb-0 pl-2 pt-0 pr-0 lg:pr-4 lg:pl-4  h-8 w-full">
-                Fonts: <span className="font-EBGaramondItalic">Ginto</span> by
-                Dinamo Typefaces and
-                <span className="font-EBGaramondItalic">EB Garamond</span>
-                (12)
-              </div>
-            </div>
-            <HDivider className="  mt-2" />
-            <div className=" pl-2 pt-4 pr-0 lg:pr-4 lg:pl-4  lg:pt-4 pb-2 lg:pb-4  flex flex-col items-center justify-center lg:justify-start w-full  leading-snug ">
-              <p className=" border-1 p-2 border-foreground font-gintoRegular text-xs max-w-sm lg:max-w-full  text-center lg:text-left">
+            {/* Copyright Full Width Footer inside Info */}
+            <div className="col-span-full mt-12 pt-8 border-t border-foreground/10">
+              <p className="font-gintoRegular text-[10px] opacity-40 max-w-2xl text-center lg:text-left">
                 All content on this site, including images, text, and design, is
                 the intellectual property of{" "}
-                <span className=" font-gintoBlack">Elinor Silow</span> unless
+                <span className="font-gintoBlack">Elinor Silow</span> unless
                 otherwise stated. No part of this website may be copied,
                 reproduced, distributed, or used without explicit written
-                permission from the copyright holder. Unauthorized use,
-                including downloading, publishing, or sharing, may constitute
-                copyright infringement and is subject to legal action.
+                permission from the copyright holder.
               </p>
             </div>
           </div>

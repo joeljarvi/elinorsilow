@@ -6,13 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import HDivider from "./HDivider";
 import { useRouter } from "next/navigation";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "./ui/select";
 import { useNav } from "@/context/NavContext";
 import { useUI } from "@/context/UIContext";
 import { useWorks } from "@/context/WorksContext";
@@ -183,7 +176,7 @@ export default function NewNav() {
         {/* LEFT MENU (MAIN) */}
         <div className="flex flex-col items-start justify-start  w-full gap-x-8 ">
           <div className="flex justify-start items-center w-full gap-x-8 ">
-            <h1 className="whitespace-nowrap">
+            <h1 className="whitespace-nowrap nav-toggle">
               <Link href="/">Elinor Silow</Link>
             </h1>
 
@@ -420,9 +413,10 @@ export default function NewNav() {
           <Button
             variant="link"
             size="sm"
+            className="nav-toggle"
             onClick={() => setShowInfo(!showInfo)}
           >
-            Show Text
+            {showInfo ? "Hide Text" : "Show Text"}
           </Button>
 
           <DarkModeToggle />

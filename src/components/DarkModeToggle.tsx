@@ -23,7 +23,7 @@ export function DarkModeToggle() {
           size="sm"
           variant="link"
           onClick={() => setTheme("dark")}
-          className=" justify-center lg:justify-start items-center w-full font-gintoRegular  "
+          className="nav-toggle justify-center lg:justify-start items-center w-full font-gintoRegular  "
         >
           Dark
         </Button>
@@ -32,7 +32,7 @@ export function DarkModeToggle() {
           variant="link"
           size="sm"
           onClick={() => setTheme("light")}
-          className=" justify-center lg:justify-start items-center w-full font-gintoRegular    "
+          className="nav-toggle justify-center lg:justify-start items-center w-full font-gintoRegular    "
         >
           Light
         </Button>

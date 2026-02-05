@@ -6,16 +6,8 @@ import { useUI } from "@/context/UIContext";
 import { Button } from "./ui/button";
 import { useState } from "react";
 
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "./ui/select";
-
 export default function WorksFilter() {
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [isDesktop] = useState(false);
   const {
     stagedWorkSort,
     setStagedWorkSort,
@@ -27,105 +19,122 @@ export default function WorksFilter() {
     applyFilters: applyWorksFilters,
     clearFilters: clearWorksFilters,
     isApplyingFilters: isApplyingWorksFilters,
-    workSort,
   } = useWorks();
 
   const { setOpen } = useUI();
 
+  const categories: { label: string; value: CategoryFilter }[] = [
+    { label: "All", value: "all" },
+    { label: "Painting", value: "painting" },
+    { label: "Sculpture", value: "sculpture" },
+    { label: "Textile", value: "textile" },
+  ];
+
+  const sorts: { label: string; value: WorkSort }[] = [
+    { label: "Latest", value: "year-latest" },
+    { label: "Oldest", value: "year-oldest" },
+    { label: "A–Ö", value: "title" },
+    { label: "Year", value: "year" },
+  ];
+
   return (
-    <div className="   w-full ">
+    <div className="w-full">
       <HDivider />
-      <div className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full ">
+      <div className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full">
         {isApplyingWorksFilters ? (
-          <div className=" pl-0  my-2  font-gintoRegularItalic text-sm animate-pulse flex items-center">
+          <div className="pl-0 my-2 font-gintoRegularItalic text-sm animate-pulse flex items-center">
             Applying filters…
           </div>
         ) : (
-          <div className=" w-full flex flex-col items-start justify-start lg:items-start lg:justify-start pt-2">
-            <Select
-              value={stagedWorkSort}
-              onValueChange={(v) => {
-                setStagedWorkSort(v as WorkSort);
-                if (v !== "year") setStagedSelectedYear(null);
-              }}
-            >
-              <SelectTrigger size="default" className="w-full   ">
-                <SelectValue placeholder="Sort works" />
-              </SelectTrigger>
+          <div className="w-full flex flex-col items-start justify-start pt-2 space-y-4">
+            {/* Category Filter */}
+            <div className="flex flex-col items-start justify-start w-full">
+              <span className="text-[10px] opacity-40 font-gintoRegular uppercase tracking-widest mb-1 px-3">Category</span>
+              <div className="flex flex-wrap items-center justify-start gap-x-1">
+                {categories.map((cat) => (
+                  <Button
+                    key={cat.value}
+                    variant="link"
+                    size="sm"
+                    onClick={() => setStagedCategoryFilter(cat.value)}
+                    className={`text-sm ${
+                      stagedCategoryFilter === cat.value
+                        ? "font-gintoRegularItalic text-blue-600"
+                        : "font-gintoRegular"
+                    }`}
+                  >
+                    {cat.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
 
-              <SelectContent className="">
-                <SelectItem value="year-latest">
-                  Sort by year (latest)
-                </SelectItem>
-                <SelectItem value="year-oldest">
-                  Sort by year (oldest)
-                </SelectItem>
-                <SelectItem value="year">Sort by year (specific)</SelectItem>
-                <SelectItem value="title">Sort by title (a–ö)</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Sort Filter */}
+            <div className="flex flex-col items-start justify-start w-full">
+               <span className="text-[10px] opacity-40 font-gintoRegular uppercase tracking-widest mb-1 px-3">Sort by</span>
+              <div className="flex flex-wrap items-center justify-start gap-x-1">
+                {sorts.map((sort) => (
+                  <Button
+                    key={sort.value}
+                    variant="link"
+                    size="sm"
+                    onClick={() => {
+                      setStagedWorkSort(sort.value);
+                      if (sort.value !== "year") setStagedSelectedYear(null);
+                    }}
+                    className={`text-sm ${
+                      stagedWorkSort === sort.value
+                        ? "font-gintoRegularItalic text-blue-600"
+                        : "font-gintoRegular"
+                    }`}
+                  >
+                    {sort.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
 
+            {/* Year Selection (only if Sort by Year is active) */}
             {stagedWorkSort === "year" && (
-              <>
-                <Select
-                  value={stagedSelectedYear?.toString()}
-                  onValueChange={(v) => setStagedSelectedYear(Number(v))}
-                >
-                  <SelectTrigger size="default" className="   ">
-                    <SelectValue placeholder="2024" />
-                  </SelectTrigger>
-
-                  <SelectContent position="popper">
-                    {uniqueYears.map((year) => (
-                      <SelectItem
-                        key={`work-year-${year}`}
-                        value={year.toString()}
-                      >
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
+              <div className="flex flex-col items-start justify-start w-full bg-foreground/5 p-2 rounded-sm">
+                 <span className="text-[10px] opacity-40 font-gintoRegular uppercase tracking-widest mb-1 px-1">Select Year</span>
+                <div className="flex flex-wrap items-center justify-start gap-1">
+                  {uniqueYears.map((year) => (
+                    <Button
+                      key={year}
+                      variant="link"
+                      size="sm"
+                      onClick={() => setStagedSelectedYear(year)}
+                      className={`text-xs ${
+                        stagedSelectedYear === year
+                          ? "font-gintoRegularItalic text-blue-600 underline"
+                          : "font-gintoRegular"
+                      }`}
+                    >
+                      {year}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             )}
 
-            <Select
-              value={stagedCategoryFilter}
-              onValueChange={(v) =>
-                setStagedCategoryFilter(v as CategoryFilter)
-              }
-            >
-              <SelectTrigger size="default" className=" w-full  ">
-                <SelectValue placeholder="All works" />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectItem value="all">All works</SelectItem>
-                <SelectItem value="painting">Paintings</SelectItem>
-                <SelectItem value="drawing">Drawings (coming soon)</SelectItem>
-                <SelectItem value="sculpture">Sculpture</SelectItem>
-                <SelectItem value="textile">Textile</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <HDivider className="mt-2" />
-            <div className="flex justify-start gap-x-8   items-center   w-full py-2  ">
+            <div className="flex justify-start gap-x-4 items-center w-full py-2 border-t border-foreground/10">
               <Button
-                variant="link"
+                variant="default"
                 size="sm"
-                className="font-gintoRegular hover:font-gintoRegularItalic text-sm justify-start text-left  "
+                className="font-gintoRegular text-xs px-4"
                 onClick={async () => {
                   await applyWorksFilters();
                   if (!isDesktop) setOpen(false);
                 }}
               >
-                Apply filters
+                Apply
               </Button>
 
               <Button
                 variant="link"
                 size="sm"
-                className="font-gintoRegular hover:font-gintoRegularItalic text-sm text-left  lg:w-min  "
+                className="font-gintoRegular text-xs opacity-50 hover:opacity-100"
                 onClick={async () => {
                   await clearWorksFilters();
                   if (!isDesktop) setOpen(false);
