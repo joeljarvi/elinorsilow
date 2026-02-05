@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useNav } from "@/context/NavContext";
+import { useUI } from "@/context/UIContext";
 import { useInfo } from "@/context/InfoContext";
 import { useWorks, WorkSort, CategoryFilter } from "@/context/WorksContext";
 import { useExhibitions, ExhibitionSort } from "@/context/ExhibitionsContext";
@@ -22,6 +23,10 @@ import Link from "next/link";
 import { PlusIcon, MinusIcon } from "@radix-ui/react-icons";
 import { DarkModeToggle } from "./DarkModeToggle";
 import Nav from "./Nav";
+import WorksFilter from "./WorksFilter";
+import StaggeredList from "./StaggeredList";
+import ExFilter from "./ExFilter";
+import { sortAZ } from "@/lib/sort-az";
 
 type ExhibitionItem = {
   id: number;
@@ -58,7 +63,64 @@ const item: Variants = {
 };
 
 function MobileNavOverlay() {
-  const { open, handleOpen } = useNav();
+  const router = useRouter();
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  const { allWorks, workLoading, openWork, setActiveWorkSlug } = useWorks();
+  const {
+    setActiveExhibitionSlug,
+    openExhibition,
+    exhibitionList,
+    filteredExhibitions,
+  } = useExhibitions();
+  const { viewLoading, goToView, view } = useNav();
+  const {
+    open,
+    setOpen,
+    handleOpen,
+    showWorksMenu,
+    showAllWorksList,
+    showWorksFilter,
+    handleOpenWorksMenu,
+    handleOpenContact,
+    handleOpenAllExhibitionsList,
+    handleOpenAllWorksList,
+    handleOpenWorksFilter,
+    handleOpenExhibitionsFilter,
+    handleOpenExhibitionsMenu,
+    showExhibitionsMenu,
+    showContact,
+    showAllExhibitionsList,
+    showExhibitionsFilter,
+  } = useUI();
+
+  const allExhibitionsMap = new Map<
+    string,
+    ExhibitionItem | ExhibitionListItem
+  >();
+
+  const exhibitionIndex: (ExhibitionItem | ExhibitionListItem)[] = sortAZ(
+    Array.from(allExhibitionsMap.values())
+  );
+
+  const findExhibitionSlug = (title: string) => {
+    const match = filteredExhibitions.find((ex) => ex.title.rendered === title);
+    return match?.slug;
+  };
+
+  const openWorksFilters = () => {
+    if (!showWorksFilter) handleOpenWorksFilter();
+    if (showAllWorksList) handleOpenAllWorksList();
+  };
+  const openExIndex = () => {
+    handleOpenAllExhibitionsList();
+    if (showExhibitionsFilter) handleOpenExhibitionsFilter();
+  };
+
+  const openExFilters = () => {
+    handleOpenExhibitionsFilter();
+    if (showAllExhibitionsList) handleOpenAllExhibitionsList();
+  };
 
   return (
     <AnimatePresence>
@@ -71,14 +133,220 @@ function MobileNavOverlay() {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className="fixed lg:hidden inset-0 z-30 h-screen w-full bg-background flex flex-col items-center justify-center pointer-events-auto"
         >
-          <Button
-            className="  absolute top-4 left-1/2 -translate-x-1/2 font-EBGaramondAC flex z-50 transition-all tracking-wide justify-start items-baseline rounded text-base gap-x-1 uppercase"
-            size="listSize"
+          {/* <Button
+            className="  absolute top-4 left-1/2 -translate-x-1/2 z-40"
+            size="sm"
             variant="link"
             onClick={handleOpen}
           >
             Back
-          </Button>
+          </Button> */}
+
+          {/* TOP: MENU NAV */}
+          <div className="flex flex-col items-center justify-center w-full h-[50vh] p-2">
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                router.push("/?view=works", { scroll: false });
+                goToView("works");
+                setActiveWorkSlug(null);
+                setActiveExhibitionSlug(null);
+                handleOpenWorksMenu();
+              }}
+            >
+              Works
+            </Button>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                router.push("/?view=exhibitions", { scroll: false });
+                goToView("exhibitions");
+                setActiveWorkSlug(null);
+                setActiveExhibitionSlug(null);
+              }}
+            >
+              Exhibitions
+            </Button>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                router.push("/?view=information", { scroll: false });
+                goToView("info");
+                setActiveWorkSlug(null);
+                setActiveExhibitionSlug(null);
+              }}
+            >
+              Information
+            </Button>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={handleOpenContact}
+              className="font-gintoRegular ml-1"
+            >
+              Contact
+            </Button>
+          </div>
+
+          {/* BOTTOM DROPDOWN FILTERS */}
+          <div className="flex flex-col items-center justify-start w-full h-[50vh] p-2">
+            {showWorksMenu && (
+              <AnimatePresence>
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="flex mb-2 w-full  flex-col items-center justify-start gap-x-8 bg-green-700"
+                >
+                  <div className="flex justify-center items-center gap-x-8 w-full ">
+                    <Button
+                      size="sm"
+                      variant="link"
+                      onClick={handleOpenAllWorksList}
+                      className={`text-sm ${
+                        showAllWorksList
+                          ? "font-gintoRegularItalic"
+                          : "font-gintoRegular"
+                      }`}
+                    >
+                      Index
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="link"
+                      onClick={openWorksFilters}
+                      className={`text-sm ${
+                        showWorksFilter
+                          ? "font-gintoRegularItalic"
+                          : "font-gintoRegular"
+                      }`}
+                    >
+                      Filters
+                    </Button>
+                  </div>
+
+                  {showAllWorksList && (
+                    <StaggeredList
+                      items={allWorks}
+                      loading={workLoading}
+                      isDesktop={isDesktop}
+                      setOpen={setOpen}
+                      onSelect={(work) => openWork(work.slug)}
+                      getKey={(w) => w.slug}
+                    />
+                  )}
+                  {showWorksFilter && <WorksFilter />}
+                </motion.div>
+              </AnimatePresence>
+            )}
+            {showExhibitionsMenu && (
+              <AnimatePresence>
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="mb-2 w-full flex flex-col items-center justify-start gap-x-8"
+                >
+                  <div className="flex justify-center items-center gap-x-8 w-full">
+                    {/* Index button */}
+
+                    <Button
+                      size="sm"
+                      variant="link"
+                      onClick={openExIndex}
+                      className={`text-sm ${
+                        showAllExhibitionsList
+                          ? "font-gintoRegularItalic"
+                          : "font-gintoRegular"
+                      }`}
+                    >
+                      Index
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="link"
+                      onClick={openExFilters}
+                      className={`text-sm ${
+                        showExhibitionsFilter
+                          ? "font-gintoRegularItalic"
+                          : "font-gintoRegular"
+                      }`}
+                    >
+                      Filters
+                    </Button>
+                  </div>
+
+                  {showAllExhibitionsList && (
+                    <StaggeredList
+                      items={exhibitionIndex}
+                      isDesktop={isDesktop}
+                      setOpen={setOpen}
+                      getKey={(e) => e.id}
+                      onSelect={(item) => {
+                        if (item.__type === "exhibition") {
+                          openExhibition(item.slug);
+                        } else {
+                          const slug = findExhibitionSlug(item.title.rendered);
+                          if (slug) openExhibition(slug);
+                        }
+                      }}
+                    />
+                  )}
+
+                  {/* Filter / Sort */}
+
+                  {showExhibitionsFilter && <ExFilter />}
+                </motion.div>
+              </AnimatePresence>
+            )}
+            {showContact && (
+              <AnimatePresence>
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="mb-2 w-full flex flex-col items-start justify-start gap-x-8"
+                >
+                  <div className="flex justify-start items-center gap-x-8 w-full">
+                    <Button
+                      size="sm"
+                      variant="link"
+                      asChild
+                      className={`text-sm 
+             text-blue-600
+              font-gintoRegular
+
+           `}
+                    >
+                      <Link href="mailto:elinor.silow@gmail.com">Email</Link>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="link"
+                      asChild
+                      className={`text-sm 
+             
+              font-gintoRegular text-blue-600
+
+           `}
+                    >
+                      <Link href="https://www.instagram.com/elinorsilow/">
+                        Instagram
+                      </Link>
+                    </Button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -87,7 +355,8 @@ function MobileNavOverlay() {
 
 export default function NavButton() {
   const { infoLoading } = useInfo();
-  const { viewLoading, open, handleOpen } = useNav();
+  const { viewLoading } = useNav();
+  const { open, handleOpen } = useUI();
 
   const { workLoading } = useWorks();
   const { exLoading } = useExhibitions();

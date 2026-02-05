@@ -213,7 +213,7 @@ export default function Nav() {
       exit={{ opacity: 0 }}
       className="fixed w-full lg:w-[calc(25%+0.05rem)] z-40 lg:z-30  lg:flex   flex-row   h-screen  bg-transparent pointer-events-none     "
     >
-      <button className="hidden lg:absolute z-40 top-0 left-0 lg:flex  items-center justify-center w-24 h-24 mt-4 pointer-events-auto ">
+      {/* <button className="hidden lg:absolute z-40 top-0 left-0 lg:flex  items-center justify-center w-24 h-24 mt-4 pointer-events-auto ">
         {showNavLoader ? (
           <motion.div
             key="loader"
@@ -256,7 +256,7 @@ export default function Nav() {
             />
           </motion.div>
         )}
-      </button>
+      </button> */}
 
       <AnimatePresence>
         {open && (
@@ -369,237 +369,209 @@ export default function Nav() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden px-4 mb-2 "
+                      className="  mb-2 w-full flex flex-col  items-start justify-start gap-x-8  "
                     >
-                      <HDivider />
-                      <div className=" pt-2  flex flex-col  gap-0 border-x-foreground border-x  ">
-                        <span className="flex justify-between items-center w-full relative ">
-                          <Button
-                            size="sm"
-                            variant="default"
-                            onClick={() => {
-                              handleOpenAllWorksList();
-                            }}
-                            className={` text-base justify-start items-center w-full pl-4   ${
-                              showAllWorksList
-                                ? "font-EBGaramondItalic"
-                                : "font-EBGaramond"
-                            }`}
-                          >
-                            Index
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={handleOpenAllWorksList}
-                            className={`w-min absolute top-0 right-0 font-EBGaramond  text-sm justify-center lg:justify-start items-center pr-4  `}
-                          >
-                            {showAllWorksList ? "[close]" : "[+]"}
-                          </Button>
-                        </span>
-                        {/* <HDivider /> */}
-                        {showAllWorksList && (
-                          <div
-                            className={`relative overflow-hidden transition-[max-height] duration-300 ease-in-out     ${
-                              showAllWorksList ? "max-h-[200vh]" : "hidden"
-                            }`}
-                          >
-                            <HDivider color="border-blue-600" />
-                            <Staggered
-                              items={sortAZ(allWorks)}
-                              loading={workLoading}
-                              className="flex flex-col items-stretch justify-center lg:justify-start   space-y-0 mb-1  "
-                              renderItem={(work) => (
-                                <>
+                      <div className="flex justify-start items-center gap-x-8 w-full ">
+                        <Button
+                          size="sm"
+                          variant="link"
+                          onClick={openWorksIndex}
+                          className={`text-sm ${
+                            showAllWorksList
+                              ? "font-gintoRegularItalic"
+                              : "font-gintoRegular"
+                          }`}
+                        >
+                          Index
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="link"
+                          onClick={openWorksFilters}
+                          className={`text-sm ${
+                            showWorksFilter
+                              ? "font-gintoRegularItalic"
+                              : "font-gintoRegular"
+                          }`}
+                        >
+                          Filters
+                        </Button>
+
+                        <Button
+                          variant="link"
+                          size="sm"
+                          onClick={() => {
+                            setShowInfo(!showInfo);
+                          }}
+                          className={` text-sm    ${
+                            showInfo
+                              ? "font-gintoRegularItalic"
+                              : "font-gintoRegular"
+                          }`}
+                        >
+                          {showInfo ? "Hide info" : "Show info"}
+                        </Button>
+                      </div>
+
+                      {showAllWorksList && (
+                        <div className={`relative w-full  `}>
+                          <Staggered
+                            items={sortAZ(allWorks)}
+                            loading={workLoading}
+                            className="flex flex-col  gap-x-4 items-start justify-start   space-y-0 mb-1 w-full   "
+                            renderItem={(work) => (
+                              <>
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  key={work.slug}
+                                  onClick={() => {
+                                    openWork(work.slug);
+                                    if (!isDesktop) setOpen(false);
+                                  }}
+                                  className="transition-all   font-gintoRegularItalic hover:font-gintoRegular w-full justify-center lg:justify-start    text-sm text-blue-600 hover:text-blue-600 "
+                                >
+                                  {work.title.rendered}
+                                </Button>
+                              </>
+                            )}
+                          />
+                        </div>
+                      )}
+                      {showWorksFilter && (
+                        <div className="   w-full ">
+                          <HDivider />
+                          <div className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full ">
+                            {isApplyingWorksFilters ? (
+                              <div className=" pl-0  my-2  font-gintoRegularItalic text-sm animate-pulse flex items-center">
+                                Applying filters…
+                              </div>
+                            ) : (
+                              <div className=" w-full flex flex-col items-start justify-start lg:items-start lg:justify-start pt-2">
+                                <Select
+                                  value={stagedWorkSort}
+                                  onValueChange={(v) => {
+                                    setStagedWorkSort(v as WorkSort);
+                                    if (v !== "year")
+                                      setStagedSelectedYear(null);
+                                  }}
+                                >
+                                  <SelectTrigger
+                                    size="default"
+                                    className="w-full   "
+                                  >
+                                    <SelectValue placeholder="Sort works" />
+                                  </SelectTrigger>
+
+                                  <SelectContent className="">
+                                    <SelectItem value="year-latest">
+                                      Sort by year (latest)
+                                    </SelectItem>
+                                    <SelectItem value="year-oldest">
+                                      Sort by year (oldest)
+                                    </SelectItem>
+                                    <SelectItem value="year">
+                                      Sort by year (specific)
+                                    </SelectItem>
+                                    <SelectItem value="title">
+                                      Sort by title (a–ö)
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                {stagedWorkSort === "year" && (
+                                  <>
+                                    <Select
+                                      value={stagedSelectedYear?.toString()}
+                                      onValueChange={(v) =>
+                                        setStagedSelectedYear(Number(v))
+                                      }
+                                    >
+                                      <SelectTrigger
+                                        size="default"
+                                        className="   "
+                                      >
+                                        <SelectValue placeholder="2024" />
+                                      </SelectTrigger>
+
+                                      <SelectContent position="popper">
+                                        {uniqueYears.map((year) => (
+                                          <SelectItem
+                                            key={`work-year-${year}`}
+                                            value={year.toString()}
+                                          >
+                                            {year}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </>
+                                )}
+
+                                <Select
+                                  value={stagedCategoryFilter}
+                                  onValueChange={(v) =>
+                                    setStagedCategoryFilter(v as CategoryFilter)
+                                  }
+                                >
+                                  <SelectTrigger
+                                    size="default"
+                                    className=" w-full  "
+                                  >
+                                    <SelectValue placeholder="All works" />
+                                  </SelectTrigger>
+
+                                  <SelectContent>
+                                    <SelectItem value="all">
+                                      All works
+                                    </SelectItem>
+                                    <SelectItem value="painting">
+                                      Paintings
+                                    </SelectItem>
+                                    <SelectItem value="drawing">
+                                      Drawings (coming soon)
+                                    </SelectItem>
+                                    <SelectItem value="sculpture">
+                                      Sculpture
+                                    </SelectItem>
+                                    <SelectItem value="textile">
+                                      Textile
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                <HDivider className="mt-2" />
+                                <div className="flex justify-start gap-x-8   items-center   w-full py-2  ">
                                   <Button
-                                    variant="default"
+                                    variant="link"
                                     size="sm"
-                                    key={work.slug}
-                                    onClick={() => {
-                                      openWork(work.slug);
+                                    className="font-gintoRegular hover:font-gintoRegularItalic text-sm justify-start text-left  "
+                                    onClick={async () => {
+                                      await applyWorksFilters();
                                       if (!isDesktop) setOpen(false);
                                     }}
-                                    className="transition-all   font-EBGaramondItalic hover:font-EBGaramond w-full justify-center lg:justify-start text-center  px-8  text-base text-blue-600 hover:text-blue-600 border-b border-b-blue-600"
                                   >
-                                    {work.title.rendered}
+                                    Apply filters
                                   </Button>
-                                </>
-                              )}
-                            />
-                          </div>
-                        )}
-                        <span className="flex justify-between items-center w-full relative ">
-                          <Button
-                            size="sm"
-                            variant="default"
-                            onClick={handleOpenWorksFilter}
-                            className={` text-base  w-full justify-start  items-center  pl-4 ${
-                              showWorksFilter
-                                ? "font-EBGaramondItalic"
-                                : "font-EBGaramond"
-                            }`}
-                          >
-                            Filters
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={handleOpenWorksFilter}
-                            className={`w-min font-EBGaramond  text-sm justify-center lg:justify-start items-center  pr-4 `}
-                          >
-                            {showWorksFilter ? "[close]" : "[+]"}
-                          </Button>
-                        </span>
-                        {showWorksFilter && (
-                          <div className=" pt-2 mb-2 ">
-                            <HDivider />
-                            <div className="flex flex-col items-center justify-center lg:items-start lg:justify-start ">
-                              {isApplyingWorksFilters ? (
-                                <div className=" pl-0 lg:pl-6 my-2  font-EBGaramondItalic text-base animate-pulse flex items-center">
-                                  Applying filters…
-                                </div>
-                              ) : (
-                                <div className=" w-full flex flex-col items-center justify-center lg:items-start lg:justify-start pt-2">
-                                  <Select
-                                    value={stagedWorkSort}
-                                    onValueChange={(v) => {
-                                      setStagedWorkSort(v as WorkSort);
-                                      if (v !== "year")
-                                        setStagedSelectedYear(null);
+
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="font-gintoRegular hover:font-gintoRegularItalic text-sm text-left  lg:w-min  "
+                                    onClick={async () => {
+                                      await clearWorksFilters();
+                                      if (!isDesktop) setOpen(false);
                                     }}
                                   >
-                                    <SelectTrigger
-                                      size="default"
-                                      className=" w-full pl-4 "
-                                    >
-                                      <SelectValue placeholder="Sort works" />
-                                    </SelectTrigger>
-
-                                    <SelectContent className="w-full">
-                                      <SelectItem value="year-latest">
-                                        Sort by year (latest)
-                                      </SelectItem>
-                                      <SelectItem value="year-oldest">
-                                        Sort by year (oldest)
-                                      </SelectItem>
-                                      <SelectItem value="year">
-                                        Sort by year (specific)
-                                      </SelectItem>
-                                      <SelectItem value="title">
-                                        Sort by title (a–ö)
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-
-                                  {stagedWorkSort === "year" && (
-                                    <>
-                                      <Select
-                                        value={stagedSelectedYear?.toString()}
-                                        onValueChange={(v) =>
-                                          setStagedSelectedYear(Number(v))
-                                        }
-                                      >
-                                        <SelectTrigger
-                                          size="default"
-                                          className="font-EBGaramond    w-full pl-4  "
-                                        >
-                                          <SelectValue placeholder="2024" />
-                                        </SelectTrigger>
-
-                                        <SelectContent position="popper">
-                                          {uniqueYears.map((year) => (
-                                            <SelectItem
-                                              key={`work-year-${year}`}
-                                              value={year.toString()}
-                                            >
-                                              {year}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                    </>
-                                  )}
-
-                                  <Select
-                                    value={stagedCategoryFilter}
-                                    onValueChange={(v) =>
-                                      setStagedCategoryFilter(
-                                        v as CategoryFilter
-                                      )
-                                    }
-                                  >
-                                    <SelectTrigger
-                                      size="default"
-                                      className=" font-EBGaramond    pl-4 w-full  "
-                                    >
-                                      <SelectValue placeholder="All works" />
-                                    </SelectTrigger>
-
-                                    <SelectContent position="popper">
-                                      <SelectItem value="all">
-                                        All works
-                                      </SelectItem>
-                                      <SelectItem value="painting">
-                                        Paintings
-                                      </SelectItem>
-                                      <SelectItem value="drawing">
-                                        Drawings (Coming soon)
-                                      </SelectItem>
-                                      <SelectItem value="sculpture">
-                                        Sculpture
-                                      </SelectItem>
-                                      <SelectItem value="textile">
-                                        Textile
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-
-                                  <HDivider className="mt-2" />
-                                  <div className="flex justify-between  px-4 items-center   w-full py-2  ">
-                                    <Button
-                                      variant="default"
-                                      size="sm"
-                                      className="font-EBGaramond hover:font-EBGaramondItalic text-sm justify-start text-center lg:text-left w-full  "
-                                      onClick={async () => {
-                                        await applyWorksFilters();
-                                        if (!isDesktop) setOpen(false);
-                                      }}
-                                    >
-                                      [apply filters]
-                                    </Button>
-
-                                    <Button
-                                      variant="default"
-                                      size="sm"
-                                      className="font-EBGaramond hover:font-EBGaramondItalic text-sm justify-end text-center lg:text-left w-full lg:w-min  "
-                                      onClick={async () => {
-                                        await clearWorksFilters();
-                                        if (!isDesktop) setOpen(false);
-                                      }}
-                                    >
-                                      [clear filters]
-                                    </Button>
-                                  </div>
+                                    Clear
+                                  </Button>
                                 </div>
-                              )}
-                            </div>
-                            <HDivider />
+                              </div>
+                            )}
                           </div>
-                        )}
-                        <span className="flex items-baseline justify-center lg:justify-start w-full pb-2  ">
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => {
-                              setShowInfo(!showInfo);
-                            }}
-                            className={` text-sm justify-center lg:justify-end font-EBGaramond hover:font-EBGaramondItalic w-full pl-4 pr-4`}
-                          >
-                            [
-                            {showInfo ? "hide description" : "show description"}
-                            ]
-                          </Button>
-                        </span>
-                      </div>
-                      <HDivider />
+                        </div>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>

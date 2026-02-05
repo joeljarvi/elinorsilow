@@ -48,8 +48,6 @@ type WorksContextType = {
   currentWorkIndex: number | null;
   setCurrentWorkIndex: React.Dispatch<React.SetStateAction<number | null>>;
   normalizeSlug: (title: string) => string;
-  showInfo: boolean;
-  setShowInfo: React.Dispatch<React.SetStateAction<boolean>>;
   showAllWorksList: boolean;
   setShowAllWorksList: React.Dispatch<React.SetStateAction<boolean>>;
   activeWorkSlug: string | null;
@@ -72,7 +70,6 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   const [allWorks, setAllWorks] = useState<Work[]>([]);
   const [workLoading, setWorkLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [showInfo, setShowInfo] = useState(true);
   const [workSort, setWorkSort] = useState<WorkSort>("year-latest");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
@@ -190,8 +187,6 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         allWorks,
         filteredWorks,
         availibleYears,
-        showInfo,
-        setShowInfo,
         workLoading,
         error,
         workSort,

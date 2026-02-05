@@ -7,9 +7,12 @@ import { ExhibitionsProvider } from "@/context/ExhibitionsContext";
 import { ThemeProvider } from "@/context/theme-provider";
 import { InfoProvider } from "@/context/InfoContext";
 import { NavProvider } from "@/context/NavContext";
-import Nav from "@/components/Nav";
+import { UIProvider } from "@/context/UIContext";
+
 import MobileNavButton from "@/components/MobileNavButton";
 import SmoothScroll from "@/components/SmoothScroll";
+import NewNav from "@/components/NewNav";
+import BodyClassManager from "@/components/BodyClassManager";
 
 const gintoNordBlack = localFont({
   src: "assets/fonts/Ginto Nord Black.ttf",
@@ -123,13 +126,16 @@ export default function RootLayout({
             <ExhibitionsProvider>
               <InfoProvider>
                 <NavProvider>
-                  <AnimationProvider>
-                    <Nav />
-                    <MobileNavButton />
-                    <SmoothScroll>
-                      {children} {modal}
-                    </SmoothScroll>
-                  </AnimationProvider>
+                  <UIProvider>
+                    <AnimationProvider>
+                      <BodyClassManager />
+                      <NewNav />
+                      <MobileNavButton />
+                      <SmoothScroll>
+                        {children} {modal}
+                      </SmoothScroll>
+                    </AnimationProvider>
+                  </UIProvider>
                 </NavProvider>
               </InfoProvider>
             </ExhibitionsProvider>

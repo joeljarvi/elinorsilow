@@ -20,17 +20,19 @@ export function DarkModeToggle() {
     <div>
       {theme === "light" ? (
         <Button
-          variant="default"
+          size="sm"
+          variant="link"
           onClick={() => setTheme("dark")}
-          className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack  "
+          className=" justify-center lg:justify-start items-center w-full font-gintoRegular  "
         >
           Dark
         </Button>
       ) : (
         <Button
-          variant="default"
+          variant="link"
+          size="sm"
           onClick={() => setTheme("light")}
-          className=" text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack   "
+          className=" justify-center lg:justify-start items-center w-full font-gintoRegular    "
         >
           Light
         </Button>

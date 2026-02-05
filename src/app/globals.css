@@ -144,9 +144,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Global Text Visibility System */
+[data-hide-text="true"] .h1, 
+[data-hide-text="true"] .h2, 
+[data-hide-text="true"] .h3, 
+[data-hide-text="true"] .p, 
+[data-hide-text="true"] .small,
+[data-hide-text="true"] button:not(.nav-toggle),
+[data-hide-text="true"] span,
+[data-hide-text="true"] p,
+[data-hide-text="true"] h1,
+[data-hide-text="true"] h2,
+[data-hide-text="true"] h3,
+[data-hide-text="true"] h4,
+[data-hide-text="true"] a {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.h1, .h2, .h3, .p, .small, button, span, p, h1, h2, h3, h4, a {
+  transition: opacity 0.4s ease-in-out;
+}
+
 @layer components {
   .h1 {
-    @apply font-EBGaramondItalic text-xl lg:text-sm leading-tight;
+    @apply font-gintoBlack text-xl lg:text-sm leading-tight;
   }
   .h2 {
     @apply font-gintoBlack text-xl lg:text-lg leading-relaxed;
@@ -155,10 +178,10 @@
     @apply font-gintoBlack text-base leading-relaxed;
   }
   .p {
-    @apply font-EBGaramond text-sm leading-normal;
+    @apply font-gintoRegular text-sm leading-normal;
   }
   .small {
-    @apply font-EBGaramond text-sm leading-normal;
+    @apply font-gintoRegular text-sm leading-normal;
   }
 }
 .text-trim {

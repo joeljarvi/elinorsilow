@@ -192,7 +192,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 gap-4
  grid grid-cols-3
   pt-4 px-2 pb-2  lg:px-4 lg:pt-4 text-sm lg:text-sm
-  z-40  w-full bg-background  scroll-bar-hide
+  z-40  w-full bg-background  scroll-bar-hide text-foreground/30
 "
     >
       <div className=" col-span-3  ">
@@ -213,34 +213,30 @@ gap-4
               />
             </button> */}
 
-            <div className="flex flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full p text-sm lg:text-sm lg:max-w-full  lg:mt-0 px-2   ">
-              <h1 className="text-sm font-EBGaramondItalic tracking-normal mr-2">
-                {exhibition.title.rendered}
+            <div className="flex flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full  text-xs lg:max-w-full  lg:mt-0 px-2 font-gintoRegular tracking-wide ">
+              <h1 className="font-gintoRegularItalic ">
+                {exhibition.title.rendered},
               </h1>
+              {exhibition.acf.year && (
+                <span className="font-gintoRegular ml-1  ">
+                  {exhibition.acf.year},
+                </span>
+              )}
               {exhibition.acf.exhibition_type && (
-                <span className="font-EBGaramond   ">
+                <span className="ml-1   ">
                   {exhibition.acf.exhibition_type}
                 </span>
               )}
               {exhibition.acf.location && (
-                <span className="font-EBGaramond   ">
-                  , {exhibition.acf.location}
-                </span>
+                <span className="  ">, {exhibition.acf.location}</span>
               )}
               {exhibition.acf.city && (
-                <span className="font-EBGaramond   ">
-                  , {exhibition.acf.city}
-                </span>
+                <span className="  ">, {exhibition.acf.city}</span>
               )}
 
-              {exhibition.acf.year && (
-                <span className="font-EBGaramond ml-1  ">
-                  ({exhibition.acf.year})
-                </span>
-              )}
               <Button
-                className="  font-EBGaramondAC      transition-all  tracking-wide justify-start items-baseline  rounded  text-base gap-x-1  ml-2 uppercase"
-                size="listSize"
+                className="  font-gintoBlack     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2  uppercase text-foreground/80"
+                size="sm"
                 variant="link"
                 onClick={onClose}
               >
@@ -249,7 +245,7 @@ gap-4
             </div>
           </span>
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2 px-2 max-w-92  lg:max-w-lg p mx-auto text-center lg:text-left text-sm lg:text-sm mb-2 lg:mb-2">
+        <div className="mt-24 col-span-3 lg:col-span-2 px-4 max-w-92  lg:max-w-lg font-gintoRegular mx-0 text-left text-xs tracking-wide  mb-2 lg:mb-2">
           <h3>{exhibition.acf.description}</h3>
         </div>
 
@@ -279,22 +275,22 @@ gap-4
           ))}
         </div>
         <div className=" col-span-3 lg:col-span-3 p pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-sm mx-auto w-full  ">
-          <h3 className="max-w-sm lg:max-w-lg mx-auto text-center lg:text-left lg:mx-0">
+          <h3 className=" col-span-3 lg:col-span-2 px-4 max-w-92  lg:max-w-lg font-gintoRegular mx-0 text-left text-xs tracking-wide  mb-2 lg:mb-2">
             {exhibition.acf.credits}
           </h3>
           <HDivider />
           <span className="flex items-center justify-center lg:items-center lg:justify-start w-full gap-x-4">
             <Button
-              className="hidden lg:flex font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base"
-              size="listSize"
+              className="hidden lg:flex font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase "
+              size="sm"
               variant="link"
               onClick={onClose}
             >
               Back
             </Button>
             <Button
-              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base disabled:opacity-50"
-              size="listSize"
+              className=" font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase"
+              size="sm"
               variant="link"
               onClick={goPrev}
               disabled={currentIndex <= 0}
@@ -302,8 +298,8 @@ gap-4
               Prev
             </Button>
             <Button
-              className=" font-EBGaramond hover:font-EBGaramondItalic     transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase lg:text-base disabled:opacity-50"
-              size="listSize"
+              className=" font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase"
+              size="sm"
               variant="link"
               onClick={goNext}
               disabled={
@@ -412,8 +408,8 @@ gap-4
 
               {/* Back button */}
               <Button
-                className="absolute top-4 left-1/2 -translate-x-1/2  font-EBGaramondAC flex z-50     transition-all  tracking-wide justify-start items-baseline  rounded  text-base gap-x-1   uppercase"
-                size="listSize"
+                className="absolute top-2 left-1/2 -translate-x-1/2  flex z-50   font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase"
+                size="sm"
                 variant="link"
                 onClick={() => setIsCarouselOpen(false)}
               >

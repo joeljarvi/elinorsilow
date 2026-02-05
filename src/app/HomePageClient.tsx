@@ -7,6 +7,7 @@ import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useInfo } from "@/context/InfoContext";
 import { useNav } from "@/context/NavContext";
+import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import Footer from "@/components/Footer";
 import VDivider from "@/components/VDivider";
 import { AnimatePresence, motion } from "framer-motion";
 import Loader from "@/components/Loader";
+import NewNav from "@/components/NewNav";
 
 import type {
   Work,
@@ -74,10 +76,10 @@ function MainContent({}: Props) {
 
   const lenis = useLenis();
 
-  const { view, setOpen } = useNav();
+  const { view } = useNav();
+  const { setOpen, showInfo } = useUI();
   const {
     filteredWorks,
-    showInfo,
     setActiveWorkSlug,
     activeWorkSlug,
     workLoading,
@@ -229,20 +231,19 @@ function MainContent({}: Props) {
         initial={{ opacity: 0 }}
         animate={{ opacity: showGlobalLoader ? 0 : 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-7xl mx-auto
-      col-start-1 col-span-12
-      lg:col-start-2 lg:col-span-9 flex flex-col items-start justify-start w-full pb-2 lg:pb-0   "
+        className="max-w-7xl mx-0
+      flex flex-col items-start justify-start w-full pt-24   "
       >
         {view !== "info" && (
           <Staggered
             loading={showGlobalLoader}
             items={items}
             getKey={(item) => item.id} // proper type
-            className={` w-full p-2 lg:p-4 flex flex-col  items-center justify-center lg:grid lg:grid-cols-3 gap-x-4 lg:justify-start lg:items-start  
+            className={`  w-full px-2 pb-2 pt-24 lg:p-4 flex flex-col  items-center justify-center lg:grid lg:grid-cols-2 gap-x-4 lg:justify-start lg:items-start  
     gap-y-16 `}
             renderItem={(item: GridItem, index: number) => (
               <div
-                className="  flex flex-col  cursor-pointer pointer-events-auto "
+                className="  flex flex-col  cursor-pointer pointer-events-auto gap-y-1 "
                 onClick={() => {
                   if (item.type === "work") {
                     setActiveWorkSlug(item.slug);
@@ -257,26 +258,25 @@ function MainContent({}: Props) {
               >
                 {" "}
                 {showInfo && (
-                  <div className="flex  p-2 text-sm text-center lg:text-left  font-EBGaramond flex-wrap items-center   lg:items-baseline justify-center lg:justify-start ">
-                    <span className="font-EBGaramondItalic mr-2 text-center lg:text-left ">
+                  <div className="flex   text-xs  text-center lg:text-left  font-gintoRegular flex-wrap items-center   lg:items-baseline justify-center lg:justify-start leading-loose  tracking-wide  px-1 text-foreground/30 ">
+                    <span className="font-gintoRegularItalic  text-center lg:text-left  ">
                       {item.title}
                     </span>
-
+                    ,
                     {item.type === "work" && (
                       <>
+                        {item.meta.acf.year && (
+                          <span className="ml-1">{item.meta.acf.year}, </span>
+                        )}
                         {item.meta.acf.materials && (
-                          <span className="mr-1 ">
+                          <span className="ml-1 ">
                             {item.meta.acf.materials},
                           </span>
                         )}
                         {item.meta.acf.dimensions && (
-                          <span className="mr-1 ">
+                          <span className="ml-1 ">
                             {item.meta.acf.dimensions}
                           </span>
-                        )}
-
-                        {item.meta.acf.year && (
-                          <span className="">({item.meta.acf.year})</span>
                         )}
                       </>
                     )}
@@ -316,63 +316,33 @@ function MainContent({}: Props) {
         )}
         {view === "info" && (
           <div className="   w-full flex flex-col items-start justify-start   ">
-            <div className=" w-full flex flex-col  items-center lg:items-start justify-start  ">
-              <span className="flex items-center justify-center w-full relative">
-                <Button
-                  variant="default"
-                  className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                >
-                  About
-                </Button>
+            <div className=" w-full flex flex-col items-start justify-start  ">
+              <h2 className=" h3 flex items-center justify-start w-full relative font-gintoBlack px-4">
+                About
+              </h2>
 
-                <Button
-                  variant="default"
-                  size="sm"
-                  className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                >
-                  [+]
-                </Button>
-              </span>
-              <HDivider />
-
-              {/* <p className="p mt-2 max-w-sm mx-auto lg:mx-0 text-center lg:text-left  pl-2 pr-0 pt-0 lg:pl-4  lg:pr-4 ">
+              <p className="p mt-2 max-w-xs  mx-0 text-left   pt-0 px-4 ">
                 Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
                 artist who explores raw emotion through painting, sculpture and
                 textile.
               </p>
-              <div className="flex flex-col items-center text-center lg:text-left  lg:items-start justify-center mt-2 p pl-2 lg:pl-4 pr-0 lg:pr-4 ">
+              <div className="p mt-2 max-w-xs  mx-0 text-left   pt-0 px-4  ">
                 <p className=" ">
                   Gösta Ekmans väg 10 <br />
                   129 35 Hägersten
                 </p>
                 <Link
                   href="mailto:elinor.silow@gmail.com"
-                  className=" mb-8 lg:mb-2  text-blue-600"
+                  className=" mb-16 lg:mb-8  text-blue-600"
                 >
                   elinor.silow@gmail.com
                 </Link>
-              </div> */}
+              </div>
             </div>
 
             {soloExhibitions.length > 0 && (
-              <section className="flex flex-col  items-center lg:items-start justify-start w-full">
-                <span className="flex items-center w-full relative">
-                  <Button
-                    variant="default"
-                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                  >
-                    Solo Exhibitions
-                  </Button>
-
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                  >
-                    [+]
-                  </Button>
-                </span>
-                <HDivider />
+              <section className="flex flex-col  items-start justify-start w-full">
+                <h3 className="h3 px-4 mt-8">Solo Exhibitions</h3>
 
                 <Staggered
                   loading={showGlobalLoader}
@@ -385,7 +355,7 @@ function MainContent({}: Props) {
                       <>
                         <div
                           key={ex.id}
-                          className="p flex flex-wrap items-center justify-center lg:justify-start pl-2 lg:pl-4 pr-0 lg:pr-4  h-8"
+                          className="text-xs font-gintoRegular leading-loose flex flex-wrap items-center justify-start px-4 lg:pl-4 pr-0 lg:pr-4  "
                         >
                           {slug ? (
                             <Button
@@ -393,22 +363,19 @@ function MainContent({}: Props) {
                                 setActiveExhibitionSlug(slug);
                                 setOpen(false);
                               }}
-                              className="font-EBGaramondItalic  text-blue-600 mr-2 text-base"
-                              variant="default"
-                              size="sm"
+                              className="font-gintoRegularItalic  text-blue-600  text-xs tracking-wide mr-1"
+                              variant="link"
+                              size="listSize"
                             >
-                              {ex.title.rendered}
+                              {ex.title.rendered},
                             </Button>
                           ) : (
-                            <span className="font-EBGaramondItalic mr-2">
-                              {ex.title.rendered}
+                            <span className="font-gintoRegular  text-xs tracking-wide mr-1">
+                              {ex.title.rendered},
                             </span>
                           )}
-                          {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
+                          {ex.acf.year}, {ex.acf.venue}, {ex.acf.city}
                         </div>
-                        <HDivider
-                          color={slug ? "border-blue-600" : "border-foreground"}
-                        />
                       </>
                     );
                   }}
@@ -418,28 +385,12 @@ function MainContent({}: Props) {
 
             {groupExhibitions.length > 0 && (
               <section className="flex flex-col  items-start justify-start w-full ">
-                <span className="flex items-center w-full relative">
-                  <Button
-                    variant="default"
-                    className="text-xl lg:text-lg justify-center lg:justify-start items-center w-full font-gintoBlack hover:font-gintoBlackItalic "
-                  >
-                    All Exhibitions
-                  </Button>
-
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className=" w-min absolute top-0 right-0 font-EBGaramond   text-sm justify-center lg:justify-start items-center   pr-4 "
-                  >
-                    [+]
-                  </Button>
-                </span>
-                <HDivider />
+                <h3 className="h3 px-4 mt-8">All exhibitions</h3>
 
                 <Staggered
                   loading={showGlobalLoader}
                   items={groupExhibitions}
-                  className="w-full flex flex-col items-stretch justify-center lg:justify-start space-y-0 py-0 pr-0 pl-0"
+                  className="w-full flex flex-col items-stretch justify-start space-y-0 py-0 px-4"
                   renderItem={(ex) => {
                     const slug = findExhibitionSlug(ex.title.rendered);
 
@@ -447,13 +398,13 @@ function MainContent({}: Props) {
                       <>
                         <div
                           key={ex.id}
-                          className="p flex flex-wrap justify-center lg:justify-start items-center pl-2 lg:pl-4 pr-2 lg:pr-4  h-8"
+                          className=" flex flex-wrap justify-start items-center  text-xs leading-loose font-gintoRegular  "
                         >
                           {slug ? (
                             <Button
-                              variant="default"
-                              size="sm"
-                              className="font-EBGaramondItalic  text-blue-600 mr-2 text-base"
+                              variant="link"
+                              size="listSize"
+                              className=" font-gintoRegularItalic text-blue-600 mr-2 text-xs tracking-wide leading-loose"
                               onClick={() => {
                                 setActiveExhibitionSlug(slug);
                                 setOpen(false);
@@ -462,15 +413,12 @@ function MainContent({}: Props) {
                               {ex.title.rendered}
                             </Button>
                           ) : (
-                            <span className="font-EBGaramondItalic mr-2">
+                            <span className=" mr-2 text-xs tracking-wide leading-loose">
                               {ex.title.rendered}
                             </span>
                           )}
                           {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
                         </div>
-                        <HDivider
-                          color={slug ? "border-blue-600" : "border-foreground"}
-                        />
                       </>
                     );
                   }}
@@ -705,7 +653,7 @@ function MainContent({}: Props) {
 
 export default function HomePageClient() {
   return (
-    <div className="min-h-full w-full grid grid-cols-12 lg:grid-cols-4   ">
+    <div className="min-h-full w-full   ">
       <MainContent />
       <Footer />
     </div>

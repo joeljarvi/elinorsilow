@@ -134,14 +134,18 @@ export default function WorkSlugModalClient({
     relative flex flex-col   min-h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
     >
       <div className="flex flex-row justify-center lg:justify-between w-full items-baseline bg-transparent mt-0 pt-4 px-4 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
-        <div className="flex flex-wrap items-baseline text-left p text-sm lg:text-sm gap-x-2">
-          <span className="font-EBGaramondItalic">{work.title.rendered}</span>
-          {work.acf.materials && <span>{work.acf.materials},</span>}
-          {work.acf.dimensions && <span>{work.acf.dimensions}</span>}
-          {work.acf.year && <span>({work.acf.year})</span>}
+        <div className="flex flex-wrap items-baseline text-left font-gintoRegular text-xs  text-foreground/30 ">
+          <span className="font-gintoRegularItalic">{work.title.rendered}</span>
+          , {work.acf.year && <span className="ml-1">{work.acf.year},</span>}
+          {work.acf.materials && (
+            <span className="ml-1">{work.acf.materials},</span>
+          )}
+          {work.acf.dimensions && (
+            <span className="ml-1">{work.acf.dimensions}</span>
+          )}
           <Button
-            className="font-EBGaramondAC transition-all tracking-wide uppercase text-base"
-            size="listSize"
+            className="font-gintoBlack transition-all tracking-wide uppercase text-xs ml-1 text-foreground/30"
+            size="sm"
             variant="link"
             onClick={onClose || (() => router.push("/"))}
           >
