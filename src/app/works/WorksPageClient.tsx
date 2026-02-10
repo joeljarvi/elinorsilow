@@ -26,14 +26,14 @@ export default function WorksPageClient() {
 
   return (
     <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-30 ">
-      <div className="fixed top-14 lg:top-16 z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4 px-2 lg:px-0 gap-y-2 lg:gap-y-0  ">
+      <div className="fixed top-14  z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4   gap-y-2 lg:gap-y-0  ">
         <h1 className="h1 lg:col-span-1 px-4">Verk ({filteredWorks.length})</h1>
 
         <Button
           variant="link"
           size="sm"
           onClick={() => handleOpenWorksFilter()}
-          className="col-start-3 justify-end lg:justify-start  "
+          className="col-start-2 justify-end lg:justify-start  "
         >
           Filter
         </Button>
@@ -69,7 +69,7 @@ export default function WorksPageClient() {
               )}
             </div>
 
-            <div className="flex flex-col items-baseline pt-6 px-6 pb-6 lg:px-4 lg:pb-4 text-sm font-directorMono">
+            <div className="flex flex-col items-baseline px-4 pb-4 l text-sm font-directorMono">
               <span>{item.title.rendered}</span>
               {item.acf.year && <span>{item.acf.year}</span>}
               {item.acf.materials && <span>{item.acf.materials}</span>}

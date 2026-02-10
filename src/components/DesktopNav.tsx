@@ -165,10 +165,10 @@ export default function DesktopNav() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full  z-50     lg:flex flex-col items-baseline justify-start   gap-x-4  overflow-y-scroll  bg-background  ">
+      <div className="fixed top-0 left-0 w-full  z-50     lg:flex flex-col items-baseline justify-start   gap-x-4  overflow-y-scroll   ">
         {/* LEFT MENU (MAIN) */}
 
-        <h1 className="h1 flex items-baseline justify-start p-2 lg:p-0 ">
+        <h1 className="h1 flex items-baseline justify-start pt-2 lg:pt-0 ">
           <Button
             asChild
             variant="link"
@@ -198,7 +198,7 @@ export default function DesktopNav() {
     gap-x-4
     w-full
     overflow-hidden
-    bg-background  mb-1 "
+  mb-1 "
         >
           <Button
             variant="link"
@@ -313,14 +313,6 @@ export default function DesktopNav() {
                 >
                   Lista
                 </Button>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="no-hide-text"
-                  onClick={handleOpenAllWorksList}
-                >
-                  Rutnät
-                </Button>
 
                 {showAllWorksList && (
                   <StaggeredList
@@ -332,17 +324,6 @@ export default function DesktopNav() {
                     getKey={(w) => w.slug}
                   />
                 )}
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="no-hide-text"
-                  onClick={() => {
-                    handleOpenWorksFilter();
-                    setShowExhibitionsFilter(false);
-                  }}
-                >
-                  Filter
-                </Button>
               </motion.div>
             </AnimatePresence>
           )}
@@ -391,25 +372,6 @@ export default function DesktopNav() {
                   onClick={openExIndex}
                 >
                   Lista
-                </Button>
-                <Button
-                  className="no-hide-text"
-                  variant="link"
-                  size="sm"
-                  onClick={openExIndex}
-                >
-                  Rutnät
-                </Button>
-
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => {
-                    handleOpenExhibitionsFilter();
-                    setShowWorksFilter(false);
-                  }}
-                >
-                  Filter
                 </Button>
 
                 {showAllExhibitionsList && (
@@ -481,9 +443,9 @@ export default function DesktopNav() {
             </AnimatePresence>
           )}
         </nav>
-        <div className="px-6 lg:px-4 w-full ">
+        {/* <div className="px-6 lg:px-4 w-full ">
           <HDivider className="" />
-        </div>
+        </div> */}
       </div>
     </>
   );

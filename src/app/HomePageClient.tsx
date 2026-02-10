@@ -74,7 +74,7 @@ function MainContent({}: Props) {
         className=" mx-0
       flex flex-col items-start justify-start w-full pt-13 lg:pt-30   "
       >
-        <div className="sticky top-13 lg:top-14 z-20 flex items-center justify-between w-full lg:justify-start gap-4 px-6 lg:px-4 mb-1 lg:mb-0 ">
+        <div className="sticky top-13 lg:top-14 z-20 flex items-center justify-between w-full lg:justify-start gap-4  px-4 mb-1 lg:mb-0 ">
           <h2 className="h2">Verk i urval</h2>
           <Button variant="link" asChild>
             <Link href="/works">•Se alla verk</Link>
@@ -110,7 +110,7 @@ function MainContent({}: Props) {
                 )}
               </div>
 
-              <div className="flex flex-col items-baseline p-6 lg:p-2 text-sm font-directorMono">
+              <div className="flex flex-col items-baseline p-4 lg:p-0 text-sm font-directorMono">
                 <span>{item.title.rendered}</span>
                 {item.acf.year && <span>{item.acf.year}</span>}
                 {item.acf.materials && <span>{item.acf.materials}</span>}
@@ -120,7 +120,7 @@ function MainContent({}: Props) {
           )}
         />
 
-        <div className="sticky top-21 z-30 flex items-center justify-between w-full lg:justify-start gap-4 px-6 lg:px-4 ">
+        <div className="sticky top-21 z-30 flex items-center justify-between w-full lg:justify-start gap-4 px-4 ">
           <h2 className="h2">Utställningar i urval</h2>
           <Button variant="link" asChild>
             <Link href="/exhibitions">•Se alla utställningar</Link>
@@ -129,10 +129,10 @@ function MainContent({}: Props) {
         <Staggered
           items={featuredExhibitions}
           getKey={(item) => item.id}
-          className="flex flex-col items-center justify-center w-full lg:flex-row lg:items-start lg:justify-start px-4 gap-x-4"
+          className="flex flex-col items-center justify-center w-full lg:flex-row lg:items-start lg:justify-start  gap-x-4"
           renderItem={(item: Exhibition, index: number) => (
             <div
-              className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-6 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "
+              className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "
               onClick={() => {
                 setActiveExhibitionSlug(item.slug);
                 setOpen(false);
@@ -148,11 +148,11 @@ function MainContent({}: Props) {
                     alt={item.title.rendered}
                     fill
                     priority={index < 3}
-                    className="object-cover object-top lg:object-center px-6 lg:px-0"
+                    className="object-cover object-top lg:object-center px-4 lg:px-0"
                   />
                 )}{" "}
               </div>{" "}
-              <div className="flex flex-col  justify-start items-baseline gap-x-8 h3 lg:h4 px-6 lg:px-0 pb-6">
+              <div className="flex flex-col  justify-start items-baseline gap-x-8 h3  px-4  pb-4 ">
                 {" "}
                 <span>{item.title.rendered}</span>{" "}
                 <span className="">{item.acf.exhibition_type}</span>{" "}
