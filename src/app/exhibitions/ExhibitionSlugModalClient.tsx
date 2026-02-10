@@ -190,98 +190,103 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     col-span-6 lg:col-span-4
     relative
 gap-4
- grid grid-cols-3
-  pt-4 px-2 pb-2  lg:px-4 lg:pt-4 text-sm lg:text-sm
-  z-40  w-full bg-background  scroll-bar-hide text-foreground/30
+ grid grid-cols-6
+  pt-4 px-2 pb-2  lg:px-0 lg:pt-4 
+  z-30  w-full bg-background  scroll-bar-hide 
 "
     >
-      <div className=" col-span-3  ">
-        <div className="col-span-3 flex flex-col lg:grid grid-cols-3     justify-center items-center w-full ">
-          <span className="w-full  col-span-3 lg:col-span-2 flex flex-col items-center justify-center lg:items-start lg:justify-start">
-            {/* <button
-              onClick={() => {
-                setCarouselIndex(0);
-                setIsCarouselOpen(true);
-              }}
-              className="relative w-full h-full aspect-video overflow-hidden max-w-3/4  "
-            >
-              <Image
-                src={images[0]?.url}
-                alt=""
-                fill
-                className="object-contain  object-left transition-transform hover:scale-105 "
-              />
-            </button> */}
-
-            <div className="flex flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full  text-xs lg:max-w-full  lg:mt-0 px-2 font-gintoRegular tracking-wide ">
-              <h1 className="font-gintoRegularItalic ">
-                {exhibition.title.rendered},
-              </h1>
-              {exhibition.acf.year && (
-                <span className="font-gintoRegular ml-1  ">
-                  {exhibition.acf.year},
-                </span>
-              )}
-              {exhibition.acf.exhibition_type && (
-                <span className="ml-1   ">
-                  {exhibition.acf.exhibition_type}
-                </span>
-              )}
-              {exhibition.acf.location && (
-                <span className="  ">, {exhibition.acf.location}</span>
-              )}
-              {exhibition.acf.city && (
-                <span className="  ">, {exhibition.acf.city}</span>
-              )}
-
-              <Button
-                className="  font-gintoBlack     transition-all  tracking-wide justify-start items-baseline  rounded  text-xs gap-x-1  ml-2  uppercase text-foreground/80"
-                size="sm"
-                variant="link"
-                onClick={onClose}
-              >
-                Back
-              </Button>
-            </div>
-          </span>
+      <span className=" mt-10 lg:mt-12 w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
+        <div className="col-span-3 flex lg:hidden flex-col     justify-start px-4 items-start w-full h3">
+          <h1 className=" ">{exhibition.title.rendered}</h1>
+          {exhibition.acf.year && (
+            <span className="">{exhibition.acf.year}</span>
+          )}
+          {exhibition.acf.exhibition_type && (
+            <span className=" ">{exhibition.acf.exhibition_type}</span>
+          )}
+          {exhibition.acf.location && (
+            <span className="  ">{exhibition.acf.location}</span>
+          )}
+          {exhibition.acf.city && (
+            <span className="  ">{exhibition.acf.city}</span>
+          )}
         </div>
-        <div className="mt-24 col-span-3 lg:col-span-2 px-4 max-w-92  lg:max-w-lg font-gintoRegular mx-0 text-left text-xs tracking-wide  mb-2 lg:mb-2">
-          <h3>{exhibition.acf.description}</h3>
+        <div className="hidden lg:flex col-span-3  flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full  lg:max-w-full   pl-4 h3  ">
+          <h1 className=" ">{exhibition.title.rendered},</h1>
+          {exhibition.acf.year && (
+            <span className="ml-1  ">{exhibition.acf.year},</span>
+          )}
+          {exhibition.acf.exhibition_type && (
+            <span className="ml-1   ">{exhibition.acf.exhibition_type}</span>
+          )}
+          {exhibition.acf.location && (
+            <span className="  ">, {exhibition.acf.location}</span>
+          )}
+          {exhibition.acf.city && (
+            <span className="  ">, {exhibition.acf.city}</span>
+          )}
         </div>
+        <Button
+          className="col-start-4 justify-end lg:justify-start "
+          variant="link"
+          size="sm"
+          onClick={() => {
+            const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
+            navigator.clipboard.writeText(url);
+          }}
+        >
+          Dela
+        </Button>
+        <Button
+          className="col-start-5 justify-end  lg:justify-start pr-4 lg:pr-0"
+          size="sm"
+          variant="link"
+          onClick={onClose || (() => router.push("/"))}
+        >
+          Tillbaka
+        </Button>
+      </span>
 
-        <div className="col-span-3  grid grid-cols-3 gap-2 lg:gap-4 w-full  ">
+      <div
+        className="mt-30 col-span-6 lg:col-span-5
+      flex flex-col items-start justify-start px-4  mx-0 text-left  mb-2 lg:mb-2 w-full"
+      >
+        <div className="grid grid-cols-5 gap-4 w-full">
+          <h3 className="col-span-4 lg:col-span-2 h3 whitespace-normal  mb-4 lg:mb-2">
+            {exhibition.acf.description}
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-2 w-full mb-4">
           {images.map((src, idx) => (
-            <div key={idx} className="col-span-3 lg:col-span-2 flex flex-col">
+            <div key={idx} className="col-span-1  flex flex-col  gap-4 w-full">
               <button
                 onClick={() => {
                   setCarouselIndex(idx);
                   setIsCarouselOpen(true);
                 }}
-                className="relative aspect-video overflow-hidden flex flex-col w-full h-full"
+                className="relative aspect-square lg:aspect-video  overflow-hidden lg:flex flex-col w-full  "
               >
                 <Image
                   src={src.url}
                   alt={src.desc || `Image ${idx + 1}`}
                   fill
-                  className="object-contain object-center lg:object-left transition-transform hover:scale-105 cursor-pointer"
+                  className="object-cover object-center  cursor-pointer"
                 />
               </button>
-              {src.desc && (
-                <div className="w-full p text-sm lg:text-sm px-2 mt-2 text-center lg:text-left">
-                  {src.desc}
-                </div>
-              )}
             </div>
           ))}
         </div>
-        <div className=" col-span-3 lg:col-span-3 p pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-8 lg:mt-4 text-sm lg:text-sm mx-auto w-full  ">
-          <h3 className=" col-span-3 lg:col-span-2 px-4 max-w-92  lg:max-w-lg font-gintoRegular mx-0 text-left text-xs tracking-wide  mb-2 lg:mb-2">
+        <div className="grid grid-cols-5 gap-4 w-full">
+          <h3 className=" col-start-1 col-span-5 lg:col-span-1 max-w-xs lg:max-w-full   mx-0 h3 mb-2 lg:mb-2">
             {exhibition.acf.credits}
           </h3>
+        </div>
+
+        <div className=" col-span-3 lg:col-span-3 p pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-2 text-sm lg:text-sm mx-auto w-full  ">
           <HDivider />
-          <span className="flex items-center justify-center lg:items-center lg:justify-start w-full gap-x-4">
+          <span className="flex items-center justify-between lg:items-center lg:justify-start w-full gap-x-4">
             <Button
-              className="hidden lg:flex font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase "
+              className="hidden lg:flex  "
               size="sm"
               variant="link"
               onClick={onClose}
@@ -289,7 +294,7 @@ gap-4
               Back
             </Button>
             <Button
-              className=" font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase"
+              className=" "
               size="sm"
               variant="link"
               onClick={goPrev}
@@ -298,7 +303,7 @@ gap-4
               Prev
             </Button>
             <Button
-              className=" font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase"
+              className=" "
               size="sm"
               variant="link"
               onClick={goNext}
@@ -311,77 +316,57 @@ gap-4
             </Button>
           </span>
         </div>
-        {/* <div className="col-span-3 flex justify-center py-8">
-          <Button
-            variant="link"
-            size="sm"
-            className="p text-foreground hover:text-foreground/70"
-            onClick={() => {
-              const el = document.querySelector(".overflow-auto");
-              if (el) el.scrollTo({ top: 0, behavior: "smooth" });
-              else window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            Back to Top
-          </Button>
-        </div> */}
-      </div>
 
-      <AnimatePresence>
-        {isCarouselOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 h-screen w-full grid grid-cols-4"
-          >
-            {/* backdrop only on content area */}
-            <div
-              className="col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0"
-              onClick={() => setIsCarouselOpen(false)}
-            />
-            <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 lg:relative  w-full h-full pointer-events-auto bg-background">
-              <Carousel
-                setApi={setApi}
-                opts={{ startIndex: carouselIndex }}
-                className="h-full w-full"
-              >
-                <CarouselContent className="h-full">
-                  {images.map((img, idx) => (
-                    <CarouselItem
-                      key={img.id}
-                      className="h-full flex flex-col items-center justify-center"
-                    >
-                      <motion.div className="relative h-full w-full flex flex-col items-start justify-start pointer-events-auto">
-                        {/* Image */}
-                        <div className="relative w-full h-screen aspect-video flex items-center justify-center">
-                          <Image
-                            src={img.url}
-                            alt={img.desc || `Image ${idx + 1}`}
-                            fill
-                            className={`object-center object-contain transition-transform duration-300 p-2 lg:p-4  ${
-                              isZoomed
-                                ? "scale-150 cursor-zoom-out"
-                                : "cursor-zoom-in"
-                            }`}
-                            onClick={() => setIsZoomed(!isZoomed)}
-                          />
-                        </div>
-
-                        {/* Description */}
-                        {img.desc && (
-                          <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
-                            {img.desc}
+        <AnimatePresence>
+          {isCarouselOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 h-screen w-full grid grid-cols-4"
+            >
+              {/* backdrop only on content area */}
+              <div
+                className="col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0"
+                onClick={() => setIsCarouselOpen(false)}
+              />
+              <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 lg:relative  w-full h-full pointer-events-auto bg-background pt-18">
+                <Carousel
+                  setApi={setApi}
+                  opts={{ startIndex: carouselIndex }}
+                  className="h-full w-full"
+                >
+                  <CarouselContent className="h-full">
+                    {images.map((img, idx) => (
+                      <CarouselItem
+                        key={img.id}
+                        className="h-full flex flex-col items-center justify-center"
+                      >
+                        <motion.div className="relative h-full w-full flex flex-col items-start justify-start pointer-events-auto">
+                          {/* Image */}
+                          <div className="relative  mx-auto lg:mx-0 h-full w-screen lg:w-auto  lg:h-[calc(100vh-10rem)] aspect-square lg:aspect-video">
+                            <Image
+                              src={img.url}
+                              alt={img.desc || `Image ${idx + 1}`}
+                              fill
+                              className="object-contain object-top lg:object-center px-6 lg:px-0"
+                            />
+                            {img.desc && (
+                              <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
+                                {img.desc}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </motion.div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
 
-              {/* Prev */}
-              {/* <button
+                          {/* Description */}
+                        </motion.div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                </Carousel>
+
+                {/* Prev */}
+                {/* <button
                 onClick={(e) => {
                   e.stopPropagation();
                   api?.scrollNext();
@@ -401,24 +386,25 @@ gap-4
                 <ArrowRightIcon className="w-3 h-3" />
               </button> */}
 
-              {/* Counter */}
-              {/* <div className="fixed z-40 top-4 left-4 mix-blend-difference text-background px-3 py-1 rounded font-EBGaramond select-none pointer-events-none text-sm">
+                {/* Counter */}
+                {/* <div className="fixed z-40 top-4 left-4 mix-blend-difference text-background px-3 py-1 rounded font-EBGaramond select-none pointer-events-none text-sm">
               {carouselIndex + 1} / {images.length}
             </div> */}
 
-              {/* Back button */}
-              <Button
-                className="absolute top-2 left-1/2 -translate-x-1/2  flex z-50   font-gintoRegular    transition-all  tracking-wide justify-start items-baseline  text-xs gap-x-1 uppercase"
-                size="sm"
-                variant="link"
-                onClick={() => setIsCarouselOpen(false)}
-              >
-                Back
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                {/* Back button */}
+                <Button
+                  className="absolute left-2 bottom-16  flex z-50   "
+                  size="sm"
+                  variant="link"
+                  onClick={() => setIsCarouselOpen(false)}
+                >
+                  Back
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

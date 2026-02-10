@@ -14,14 +14,14 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-10 h-screen w-full grid grid-cols-4 bg-background  "
+        className="fixed inset-0 z-30 h-screen w-full bg-transparent grid grid-cols-6   "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* BACKDROP only over content columns (col 2-4) */}
         <div
-          className="col-start-1 lg:col-start-2 col-span-3 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0  "
+          className="col-start-1  col-span-6 absolute inset-y-0 right-0 z-30 backdrop-blur-sm bg-black/30 "
           onClick={onClose}
         />
 
@@ -29,7 +29,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
         <motion.div
           key="modal"
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 col-span-4 lg:col-start-2  w-full h-screen  bg-background   flex flex-col overflow-hidden"
+          className="relative col-start-1 lg:col-span-4 col-span-6 lg:col-start-1  w-full h-screen  bg-background   flex flex-col overflow-hidden  shadow z-40"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}

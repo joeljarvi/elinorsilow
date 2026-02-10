@@ -22,6 +22,8 @@ interface InfoContextProps {
   exhibitionList: Exhibition_list[];
   infoLoading: boolean;
   refresh: () => void;
+  soloExhibitions: Exhibition_list[];
+  groupExhibitions: Exhibition_list[];
 }
 
 const InfoContext = createContext<InfoContextProps | undefined>(undefined);
@@ -55,12 +57,22 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, []);
 
+  const soloExhibitions = exhibitionList.filter(
+    (ex) => ex.acf.exhibition_type === "Solo Exhibition"
+  );
+
+  const groupExhibitions = exhibitionList.filter(
+    (ex) => ex.acf.exhibition_type === "Group Exhibition"
+  );
+
   return (
     <InfoContext.Provider
       value={{
         educations,
         grants,
         exhibitionList,
+        soloExhibitions,
+        groupExhibitions,
         infoLoading,
         refresh: fetchData,
       }}

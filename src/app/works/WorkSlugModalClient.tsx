@@ -129,54 +129,19 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className="col-start-1 lg:col-start-2
+      className=" col-start-1 lg:col-start-2
     col-span-6 lg:col-span-4
     relative flex flex-col   min-h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
     >
-      <div className="flex flex-row justify-center lg:justify-between w-full items-baseline bg-transparent mt-0 pt-4 px-4 pb-1.5 lg:pt-4 lg:px-6 lg:pb-4 ">
-        <div className="flex flex-wrap items-baseline text-left font-gintoRegular text-xs  text-foreground/30 ">
-          <span className="font-gintoRegularItalic">{work.title.rendered}</span>
-          , {work.acf.year && <span className="ml-1">{work.acf.year},</span>}
-          {work.acf.materials && (
-            <span className="ml-1">{work.acf.materials},</span>
-          )}
-          {work.acf.dimensions && (
-            <span className="ml-1">{work.acf.dimensions}</span>
-          )}
-          <Button
-            className="font-gintoBlack transition-all tracking-wide uppercase text-xs ml-1 text-foreground/30"
-            size="sm"
-            variant="link"
-            onClick={onClose || (() => router.push("/"))}
-          >
-            Back
-          </Button>
-        </div>
-
-        <div className=" items-baseline gap-2 hidden lg:flex">
-          <Button
-            className="p-1 h-auto"
-            variant="ghost"
-            size="linkIcon"
-            onClick={() => {
-              const url = `${window.location.origin}/works/${work.slug}`;
-              navigator.clipboard.writeText(url);
-            }}
-          >
-            <Share2 className="w-4 h-4" />
-            <span className="sr-only">Share</span>
-          </Button>
-        </div>
-      </div>
       {/* Carousel */}
-      <Carousel className="w-full h-full  ">
+      <Carousel className="mt-18 w-full h-full  ">
         <CarouselContent>
           {images.map((src, idx) => (
             <CarouselItem
               key={idx}
               className="w-full flex justify-center lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-10.5rem)] lg:h-[calc(100vh-6rem)] flex flex-col  lg:items-start justify-center items-center">
+              <div className="relative w-full h-[calc(100vh-12.5rem)] lg:h-[calc(100vh-7.5rem)] flex flex-col  lg:items-start justify-center items-center">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
@@ -190,6 +155,47 @@ export default function WorkSlugModalClient({
       </Carousel>
 
       {/* Work info */}
+      <div className="flex flex-row justify-start lg:justify-between w-full items-baseline bg-transparent mt-0   px-4 pb-1.5  pt-2 lg:pb-2 ">
+        <div className="hidden lg:flex flex-wrap justify-start items-baseline text-left h3 max-w-sm mx-auto">
+          <span className="">{work.title.rendered}</span>,{" "}
+          {work.acf.year && <span className="ml-1">{work.acf.year},</span>}
+          {work.acf.materials && (
+            <span className="ml-1">{work.acf.materials},</span>
+          )}
+          {work.acf.dimensions && (
+            <span className="ml-1">{work.acf.dimensions}</span>
+          )}
+        </div>
+
+        <div className="flex lg:hidden flex-col items-baseline  text-sm font-directorMono ">
+          <span>{work.title.rendered}</span>
+          {work.acf.year && <span>{work.acf.year}</span>}
+          {work.acf.materials && <span>{work.acf.materials}</span>}
+          {work.acf.dimensions && <span>{work.acf.dimensions}</span>}
+        </div>
+
+        <div className="absolute bottom-4 right-4 items-baseline  gap-2 flex">
+          <Button
+            className=""
+            variant="link"
+            size="sm"
+            onClick={() => {
+              const url = `${window.location.origin}/works/${work.slug}`;
+              navigator.clipboard.writeText(url);
+            }}
+          >
+            Dela
+          </Button>
+          <Button
+            className=""
+            size="sm"
+            variant="link"
+            onClick={onClose || (() => router.push("/"))}
+          >
+            Tillbaka
+          </Button>
+        </div>
+      </div>
 
       {/* Prev/Next buttons */}
       <div className="hidden lg:absolute top-1/2 left-0 transform -translate-y-1/2 px-2">

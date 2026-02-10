@@ -5,12 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center  gap-1 whitespace-nowrap font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center  gap-1 whitespace-nowrap font-normal h3 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-background text-foreground  hover:bg-background/90 font-gintoMedium justify-center",
+          "bg-primary text-primary-foreground   hover:bg-background/90 font-gintoMedium justify-center",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 justify-center",
         outline:
@@ -18,13 +18,13 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 justify-center",
         ghost: "hover:bg-accent hover:text-accent-foreground justify-center",
-        link: "text-primary    transition-all  justify-center hover:text-primary/80 ",
+        link: "text-primary   transition-all   hover:text-primary/80 ",
         nav: "text-primary       transition-all w-full  justify-between hover:text-primary/80 ",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 text-sm",
-        lg: "h-10  px-8 text-xl",
+        default: "h-9 px-4 py-2 h3",
+        sm: "h-6 px-4 py-1 h3",
+        lg: "   ",
         linkSize: "h-6  px-0 py-0 text-sm",
         linkSizeMd: "h-9    pt-0.5 text-lg",
         listSize: "h-auto px-0 py-0",

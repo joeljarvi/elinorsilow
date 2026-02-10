@@ -4,9 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  font-size: 14px;
+}
+
 @theme inline {
   --font-sans: var(--font-NewEdge666-Ultra-Bold-Rounded);
-
+  --font-directorMono: var(--font-directorMono);
   --font-haas: var(--font-neueHaas);
   --font-monument: var(--font-monument);
   --font-mono: var(--font-pressura);
@@ -145,43 +149,53 @@
   }
 }
 
-/* Global Text Visibility System */
-[data-hide-text="true"] .h1, 
-[data-hide-text="true"] .h2, 
-[data-hide-text="true"] .h3, 
-[data-hide-text="true"] .p, 
-[data-hide-text="true"] .small,
-[data-hide-text="true"] button:not(.nav-toggle),
-[data-hide-text="true"] span,
-[data-hide-text="true"] p,
-[data-hide-text="true"] h1,
-[data-hide-text="true"] h2,
-[data-hide-text="true"] h3,
-[data-hide-text="true"] h4,
-[data-hide-text="true"] a {
+/* Fade everything except whitelisted elements */
+[data-hide-text="true"]
+  :where(.h1, .h2, .h3, .p, .small, button, span, p, h1, h2, h3, h4, a):not(
+    .no-hide-text
+  ):not(.no-hide-text *) {
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-.h1, .h2, .h3, .p, .small, button, span, p, h1, h2, h3, h4, a {
+.h1,
+.h2,
+.h3,
+.p,
+.small,
+button,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+a {
   transition: opacity 0.4s ease-in-out;
+}
+
+/* Never fade these */
+.no-hide-text,
+.no-hide-text * {
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 @layer components {
   .h1 {
-    @apply font-gintoBlack text-xl lg:text-sm leading-tight;
+    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
   }
   .h2 {
-    @apply font-gintoBlack text-xl lg:text-lg leading-relaxed;
+    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-gintoBlack text-base leading-relaxed;
+    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
+  }
+  .h4 {
+    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
   }
   .p {
-    @apply font-gintoRegular text-sm leading-normal;
-  }
-  .small {
-    @apply font-gintoRegular text-sm leading-normal;
+    @apply font-directorMono text-base leading-normal whitespace-nowrap;
   }
 }
 .text-trim {

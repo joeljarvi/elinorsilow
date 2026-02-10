@@ -11,8 +11,14 @@ import { UIProvider } from "@/context/UIContext";
 
 import MobileNavButton from "@/components/MobileNavButton";
 import SmoothScroll from "@/components/SmoothScroll";
-import NewNav from "@/components/NewNav";
+import NewNav from "@/components/DesktopNav";
 import BodyClassManager from "@/components/BodyClassManager";
+import DesktopNav from "@/components/DesktopNav";
+
+const directorMono = localFont({
+  src: "assets/fonts/Director-Regular.ttf",
+  variable: "--font-directorMono",
+});
 
 const gintoNordBlack = localFont({
   src: "assets/fonts/Ginto Nord Black.ttf",
@@ -114,7 +120,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoBlackItalic.variable} ${gintoRegular.variable}  ${gintoRegularItalic.variable} ${gintoMedium.variable}   antialiased`}
+        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoBlackItalic.variable} ${gintoRegular.variable}  ${gintoRegularItalic.variable} ${gintoMedium.variable} ${directorMono.variable}    antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -129,7 +135,7 @@ export default function RootLayout({
                   <UIProvider>
                     <AnimationProvider>
                       <BodyClassManager />
-                      <NewNav />
+                      <DesktopNav />
                       <MobileNavButton />
                       <SmoothScroll>
                         {children} {modal}

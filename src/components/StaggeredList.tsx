@@ -3,6 +3,8 @@
 import { Button } from "./ui/button";
 import Staggered from "./Staggered";
 import { sortAZ } from "@/lib/sort-az";
+import { Badge } from "./ui/badge";
+import HDivider from "./HDivider";
 
 type BaseItem = {
   id?: number;
@@ -28,24 +30,23 @@ export default function StaggeredList<T extends BaseItem>({
   getKey,
 }: StaggeredListProps<T>) {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full line-clamp-6  mb-2">
       <Staggered
         items={sortAZ(items)}
         loading={loading}
-        className="flex flex-col gap-x-4 items-start justify-start space-y-0 mb-1 w-full"
+        className="flex flex-wrap   pt-2 gap-2 lg:gap-4 items-baseline justify-start space-y-0  mb-4 w-full   "
         getKey={getKey}
         renderItem={(item) => (
-          <Button
-            variant="link"
-            size="sm"
+          <Badge
+            variant="secondary"
             onClick={() => {
               onSelect?.(item);
               if (!isDesktop && setOpen) setOpen(false);
             }}
-            className="transition-all font-gintoRegularItalic hover:font-gintoRegular w-full justify-center lg:justify-start text-sm text-blue-600 hover:text-blue-600"
+            className="transition-all font-gintoRegular hover:font-gintoRegularItalic items-baseline w-full justify-center lg:justify-start cursor-pointer   "
           >
             {item.title.rendered}
-          </Button>
+          </Badge>
         )}
       />
     </div>

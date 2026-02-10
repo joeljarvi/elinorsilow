@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
   ReactNode,
+  useMemo,
 } from "react";
 import { Work, getAllWorks } from "../../lib/wordpress";
 import { useNav } from "./NavContext";
@@ -32,14 +33,14 @@ type WorksContextType = {
   setSelectedYear: React.Dispatch<React.SetStateAction<number | null>>;
   categoryFilter: CategoryFilter;
   setCategoryFilter: React.Dispatch<React.SetStateAction<CategoryFilter>>;
+  featuredWorks: Work[];
+  featuredWorksTitles: string[];
 
-  stagedWorkSort: WorkSort;
-  setStagedWorkSort: React.Dispatch<React.SetStateAction<WorkSort>>;
-  stagedSelectedYear: number | null;
-  setStagedSelectedYear: React.Dispatch<React.SetStateAction<number | null>>;
-  stagedCategoryFilter: CategoryFilter;
-  setStagedCategoryFilter: React.Dispatch<React.SetStateAction<CategoryFilter>>;
-  applyFilters: () => Promise<void>;
+  applyFilters: (
+    newSort: WorkSort,
+    newYear: number | null,
+    newCategory: CategoryFilter
+  ) => Promise<void>;
   clearFilters: () => Promise<void>;
   isApplyingFilters: boolean;
 
@@ -54,6 +55,7 @@ type WorksContextType = {
   setActiveWorkSlug: React.Dispatch<React.SetStateAction<string | null>>;
   openWork: (slug: string) => void;
   uniqueYears: number[];
+  getWorkSizeClass: (dimensions?: string) => string;
 };
 
 export function normalizeSlug(title: string) {
@@ -74,9 +76,6 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
 
-  const [stagedWorkSort, setStagedWorkSort] = useState<WorkSort>("year-latest");
-  const [stagedSelectedYear, setStagedSelectedYear] = useState<number | null>(null);
-  const [stagedCategoryFilter, setStagedCategoryFilter] = useState<CategoryFilter>("all");
   const [isApplyingFilters, setIsApplyingFilters] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -103,22 +102,22 @@ export function WorksProvider({ children }: { children: ReactNode }) {
       .finally(() => setWorkLoading(false));
   }, []);
 
-  const applyFilters = async () => {
+  const applyFilters = async (
+    newSort: WorkSort,
+    newYear: number | null,
+    newCategory: CategoryFilter
+  ) => {
     setIsApplyingFilters(true);
     // Simulate a small delay for the loader if it's too fast
     await new Promise((resolve) => setTimeout(resolve, 400));
-    setWorkSort(stagedWorkSort);
-    setSelectedYear(stagedSelectedYear);
-    setCategoryFilter(stagedCategoryFilter);
+    setWorkSort(newSort);
+    setSelectedYear(newYear);
+    setCategoryFilter(newCategory);
     setIsApplyingFilters(false);
   };
 
   const clearFilters = async () => {
     setIsApplyingFilters(true);
-    setStagedWorkSort("year-latest");
-    setStagedSelectedYear(null);
-    setStagedCategoryFilter("all");
-    
     setWorkSort("year-latest");
     setSelectedYear(null);
     setCategoryFilter("all");
@@ -179,6 +178,39 @@ export function WorksProvider({ children }: { children: ReactNode }) {
     setOpen(false);
   };
 
+  const getWorkSizeClass = (dimensions?: string) => {
+    if (!dimensions) return "w-full";
+
+    const nums = dimensions.match(/\d+/g);
+    if (!nums || nums.length < 2) return "w-1/4 ";
+
+    const [w] = nums.map(Number);
+    const area = w;
+
+    // tweak threshold to taste
+
+    if (area > 30 && area < 120) return "w-1/2";
+
+    if (area > 120) return "w-3/4 ";
+
+    return "w-1/2";
+  };
+
+  const featuredWorksTitles = [
+    "Runt omkring är allting blått",
+    "Hoppet",
+    "En ros till dig",
+    "Pärlband",
+    "Din röst är blå",
+    "Grisen",
+  ];
+
+  const featuredWorks: Work[] = useMemo(() => {
+    return filteredWorks.filter((w) =>
+      featuredWorksTitles.includes(w.title.rendered)
+    );
+  }, [filteredWorks]);
+
   return (
     <WorksContext.Provider
       value={{
@@ -195,13 +227,8 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         setSelectedYear,
         categoryFilter,
         setCategoryFilter,
-
-        stagedWorkSort,
-        setStagedWorkSort,
-        stagedSelectedYear,
-        setStagedSelectedYear,
-        stagedCategoryFilter,
-        setStagedCategoryFilter,
+        featuredWorks,
+        featuredWorksTitles,
         applyFilters,
         clearFilters,
         isApplyingFilters,
@@ -217,6 +244,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
         setActiveWorkSlug,
         openWork,
         uniqueYears,
+        getWorkSizeClass,
       }}
     >
       {children}

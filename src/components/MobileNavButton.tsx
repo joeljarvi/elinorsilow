@@ -20,9 +20,9 @@ import {
 import Staggered from "@/components/Staggered";
 import HDivider from "@/components/HDivider";
 import Link from "next/link";
-import { PlusIcon, MinusIcon } from "@radix-ui/react-icons";
+import { PlusIcon, MinusIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { DarkModeToggle } from "./DarkModeToggle";
-import Nav from "./Nav";
+
 import WorksFilter from "./WorksFilter";
 import StaggeredList from "./StaggeredList";
 import ExFilter from "./ExFilter";
@@ -73,14 +73,17 @@ function MobileNavOverlay() {
     exhibitionList,
     filteredExhibitions,
   } = useExhibitions();
-  const { viewLoading, goToView, view } = useNav();
+
   const {
     open,
     setOpen,
     handleOpen,
     showWorksMenu,
-    showAllWorksList,
+    setShowWorksMenu,
     showWorksFilter,
+    setShowWorksFilter,
+    showAllWorksList,
+
     handleOpenWorksMenu,
     handleOpenContact,
     handleOpenAllExhibitionsList,
@@ -89,9 +92,17 @@ function MobileNavOverlay() {
     handleOpenExhibitionsFilter,
     handleOpenExhibitionsMenu,
     showExhibitionsMenu,
+    setShowExhibitionsMenu,
     showContact,
+    setShowContact,
     showAllExhibitionsList,
     showExhibitionsFilter,
+    setShowExhibitionsFilter,
+    showInfo,
+    setShowInfo,
+    showSettings,
+    setShowSettings,
+    handleShowSettings,
   } = useUI();
 
   const allExhibitionsMap = new Map<
@@ -108,20 +119,6 @@ function MobileNavOverlay() {
     return match?.slug;
   };
 
-  const openWorksFilters = () => {
-    if (!showWorksFilter) handleOpenWorksFilter();
-    if (showAllWorksList) handleOpenAllWorksList();
-  };
-  const openExIndex = () => {
-    handleOpenAllExhibitionsList();
-    if (showExhibitionsFilter) handleOpenExhibitionsFilter();
-  };
-
-  const openExFilters = () => {
-    handleOpenExhibitionsFilter();
-    if (showAllExhibitionsList) handleOpenAllExhibitionsList();
-  };
-
   return (
     <AnimatePresence>
       {open && (
@@ -131,68 +128,53 @@ function MobileNavOverlay() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden inset-0 z-30 h-screen w-full bg-background flex flex-col items-center justify-center pointer-events-auto"
+          className="fixed lg:hidden inset-0 z-30 h-screen w-full bg-background flex flex-col items-center justify-start pointer-events-auto"
         >
-          {/* <Button
-            className="  absolute top-4 left-1/2 -translate-x-1/2 z-40"
-            size="sm"
-            variant="link"
-            onClick={handleOpen}
-          >
-            Back
-          </Button> */}
-
-          {/* TOP: MENU NAV */}
-          <div className="flex flex-col items-center justify-center w-full h-[50vh] p-2">
+          <div className="flex flex-col items-start justify-center w-full   px-2 pb-2 pt-16 ">
             <Button
               variant="link"
-              size="sm"
+              asChild
               onClick={() => {
-                router.push("/?view=works", { scroll: false });
-                goToView("works");
+                setActiveWorkSlug(null);
+                setActiveExhibitionSlug(null);
+                setShowWorksFilter(false);
+                setShowExhibitionsFilter(false);
+                setShowContact(false);
+                setShowExhibitionsMenu(false);
+                setShowWorksMenu(false);
+                setShowSettings(false);
+
+                if (!isDesktop) setOpen(false);
+              }}
+              className="col-start-1 col-span-1 w-min"
+            >
+              <Link href="/information">Info / CV</Link>
+            </Button>
+            <Button
+              variant="link"
+              asChild
+              onClick={() => {
                 setActiveWorkSlug(null);
                 setActiveExhibitionSlug(null);
                 handleOpenWorksMenu();
+                setShowWorksFilter(false);
+                setShowExhibitionsFilter(false);
+                setShowContact(false);
+                setShowExhibitionsMenu(false);
+                setShowSettings(false);
               }}
+              className="justify-between w-full"
             >
-              Works
+              <Link href="/works">
+                Verk{" "}
+                <span
+                  className={showWorksMenu ? "rotate-90 transition-all" : ""}
+                >
+                  ▶
+                </span>
+              </Link>
             </Button>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={() => {
-                router.push("/?view=exhibitions", { scroll: false });
-                goToView("exhibitions");
-                setActiveWorkSlug(null);
-                setActiveExhibitionSlug(null);
-              }}
-            >
-              Exhibitions
-            </Button>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={() => {
-                router.push("/?view=information", { scroll: false });
-                goToView("info");
-                setActiveWorkSlug(null);
-                setActiveExhibitionSlug(null);
-              }}
-            >
-              Information
-            </Button>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={handleOpenContact}
-              className="font-gintoRegular ml-1"
-            >
-              Contact
-            </Button>
-          </div>
 
-          {/* BOTTOM DROPDOWN FILTERS */}
-          <div className="flex flex-col items-center justify-start w-full h-[50vh] p-2">
             {showWorksMenu && (
               <AnimatePresence>
                 <motion.div
@@ -200,35 +182,14 @@ function MobileNavOverlay() {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="flex mb-2 w-full  flex-col items-center justify-start gap-x-8 bg-green-700"
+                  className="pl-8 w-full flex flex-col items-start justify-start  "
                 >
-                  <div className="flex justify-center items-center gap-x-8 w-full ">
-                    <Button
-                      size="sm"
-                      variant="link"
-                      onClick={handleOpenAllWorksList}
-                      className={`text-sm ${
-                        showAllWorksList
-                          ? "font-gintoRegularItalic"
-                          : "font-gintoRegular"
-                      }`}
-                    >
-                      Index
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      variant="link"
-                      onClick={openWorksFilters}
-                      className={`text-sm ${
-                        showWorksFilter
-                          ? "font-gintoRegularItalic"
-                          : "font-gintoRegular"
-                      }`}
-                    >
-                      Filters
-                    </Button>
-                  </div>
+                  <Button variant="link" onClick={handleOpenAllWorksList}>
+                    Lista
+                  </Button>
+                  <Button variant="link" onClick={handleOpenAllWorksList}>
+                    Rutnät
+                  </Button>
 
                   {showAllWorksList && (
                     <StaggeredList
@@ -240,10 +201,48 @@ function MobileNavOverlay() {
                       getKey={(w) => w.slug}
                     />
                   )}
-                  {showWorksFilter && <WorksFilter />}
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      handleOpenWorksFilter();
+                      setShowExhibitionsFilter(false);
+                    }}
+                  >
+                    Filter
+                  </Button>
                 </motion.div>
               </AnimatePresence>
             )}
+
+            {showWorksFilter && <WorksFilter />}
+
+            <Button
+              variant="link"
+              asChild
+              onClick={() => {
+                setActiveWorkSlug(null);
+                setActiveExhibitionSlug(null);
+                setShowWorksFilter(false);
+                setShowExhibitionsFilter(false);
+                setShowContact(false);
+                setShowWorksMenu(false);
+                handleOpenExhibitionsMenu();
+                setShowSettings(false);
+              }}
+              className=" justify-between w-full"
+            >
+              <Link href="/exhibitions">
+                Utställningar{" "}
+                <span
+                  className={
+                    showExhibitionsMenu ? "rotate-90 transition-all" : ""
+                  }
+                >
+                  ▶
+                </span>
+              </Link>
+            </Button>
+
             {showExhibitionsMenu && (
               <AnimatePresence>
                 <motion.div
@@ -251,37 +250,20 @@ function MobileNavOverlay() {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="mb-2 w-full flex flex-col items-center justify-start gap-x-8"
+                  className="pl-8 w-full flex flex-col items-start justify-start "
                 >
-                  <div className="flex justify-center items-center gap-x-8 w-full">
-                    {/* Index button */}
+                  <Button variant="link">Lista</Button>
+                  <Button variant="link">Rutnät</Button>
 
-                    <Button
-                      size="sm"
-                      variant="link"
-                      onClick={openExIndex}
-                      className={`text-sm ${
-                        showAllExhibitionsList
-                          ? "font-gintoRegularItalic"
-                          : "font-gintoRegular"
-                      }`}
-                    >
-                      Index
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      variant="link"
-                      onClick={openExFilters}
-                      className={`text-sm ${
-                        showExhibitionsFilter
-                          ? "font-gintoRegularItalic"
-                          : "font-gintoRegular"
-                      }`}
-                    >
-                      Filters
-                    </Button>
-                  </div>
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      handleOpenExhibitionsFilter();
+                      setShowWorksFilter(false);
+                    }}
+                  >
+                    Filter
+                  </Button>
 
                   {showAllExhibitionsList && (
                     <StaggeredList
@@ -301,11 +283,29 @@ function MobileNavOverlay() {
                   )}
 
                   {/* Filter / Sort */}
-
-                  {showExhibitionsFilter && <ExFilter />}
                 </motion.div>
               </AnimatePresence>
             )}
+            {showExhibitionsFilter && <ExFilter />}
+
+            <Button
+              variant="link"
+              onClick={() => {
+                handleOpenContact();
+                setShowExhibitionsFilter(false);
+                setShowWorksFilter(false);
+                setShowWorksMenu(false);
+                setShowExhibitionsMenu(false);
+                setShowSettings(false);
+              }}
+              className="w-full justify-between"
+            >
+              Kontakt{" "}
+              <span className={showContact ? "rotate-90 transition-all" : ""}>
+                ▶
+              </span>
+            </Button>
+
             {showContact && (
               <AnimatePresence>
                 <motion.div
@@ -313,39 +313,27 @@ function MobileNavOverlay() {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="mb-2 w-full flex flex-col items-start justify-start gap-x-8"
+                  className="pl-8 w-full flex flex-col items-start justify-start "
                 >
-                  <div className="flex justify-start items-center gap-x-8 w-full">
-                    <Button
-                      size="sm"
-                      variant="link"
-                      asChild
-                      className={`text-sm 
-             text-blue-600
-              font-gintoRegular
-
-           `}
-                    >
-                      <Link href="mailto:elinor.silow@gmail.com">Email</Link>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="link"
-                      asChild
-                      className={`text-sm 
-             
-              font-gintoRegular text-blue-600
-
-           `}
-                    >
-                      <Link href="https://www.instagram.com/elinorsilow/">
-                        Instagram
-                      </Link>
-                    </Button>
-                  </div>
+                  <Button variant="link" asChild>
+                    <Link href="mailto:elinor.silow@gmail.com">Email</Link>
+                  </Button>
+                  <Button variant="link" asChild>
+                    <Link href="instagram.com/elinor.silow">Instagram</Link>
+                  </Button>
                 </motion.div>
               </AnimatePresence>
             )}
+
+            <DarkModeToggle />
+
+            <Button
+              variant="link"
+              className="nav-toggle no-hide-text"
+              onClick={() => setShowInfo(!showInfo)}
+            >
+              {showInfo ? "Göm text" : "Visa text"}
+            </Button>
           </div>
         </motion.div>
       )}
@@ -377,7 +365,7 @@ export default function NavButton() {
   return (
     <>
       <button
-        className="fixed lg:hidden bottom-8 left-1/2 -translate-x-1/2 top-auto z-50  flex items-center justify-center w-24 h-24 "
+        className="fixed lg:hidden bottom-8 right-4 top-auto z-50  flex items-center justify-center w-24 h-24 no-hide-text "
         onClick={handleOpen}
       >
         {showNavLoader ? (
@@ -390,14 +378,14 @@ export default function NavButton() {
               rotate: { repeat: Infinity, duration: 2, ease: "linear" },
               opacity: { duration: 0.4, ease: "easeOut" },
             }}
-            className="relative w-24 h-24 mr-4"
+            className="relative w-24 h-24 mr-4 no-hide-text"
           >
             <Image
               src="/ogubbe_frilagd_new.png"
               alt={"loading"}
               fill
               sizes="96px"
-              className="h-full w-auto object-contain cursor-pointer dark:invert"
+              className="h-full w-auto object-contain cursor-pointer dark:invert no-hide-text"
               priority
             />
           </motion.div>
@@ -411,14 +399,14 @@ export default function NavButton() {
               duration: 0.6,
               ease: "linear",
             }}
-            className="relative w-24 h-24 mr-2 "
+            className="relative w-24 h-24 mr-2 no-hide-text "
           >
             <Image
               src="/elli_trumpetgubbe_new_frilagd.png"
               alt="Elinor Silow"
               fill
               sizes="96px"
-              className="h-full w-auto object-contain cursor-pointer dark:invert"
+              className="h-full w-auto object-contain cursor-pointer dark:invert no-hide-text "
               priority
             />
           </motion.div>

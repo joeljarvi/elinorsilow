@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   ReactNode,
+  useTransition,
 } from "react";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
@@ -21,6 +22,7 @@ interface NavContextValue {
   viewLoading: boolean;
   setViewLoading: (v: boolean) => void;
   goToView: (v: ViewMode) => void;
+  isPending: boolean;
 }
 
 const NavContext = createContext<NavContextValue | undefined>(undefined);
@@ -29,6 +31,7 @@ export function NavProvider({ children }: { children: ReactNode }) {
   const [view, setView] = useState<ViewMode>("works");
   const [viewLoading, setViewLoading] = useState(false);
   const [nextView, setNextView] = useState<ViewMode | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const { workLoading } = useWorks();
   const { exLoading } = useExhibitions();
@@ -36,16 +39,19 @@ export function NavProvider({ children }: { children: ReactNode }) {
 
   const goToView = (v: ViewMode) => {
     setNextView(v);
-    setView(v);
     setViewLoading(true);
+    
+    startTransition(() => {
+      setView(v);
+    });
   };
 
   useEffect(() => {
-    if (!workLoading && !exLoading && !infoLoading && viewLoading) {
+    if (!workLoading && !exLoading && !infoLoading && viewLoading && !isPending) {
       setViewLoading(false);
       setNextView(null);
     }
-  }, [workLoading, exLoading, infoLoading, viewLoading]);
+  }, [workLoading, exLoading, infoLoading, viewLoading, isPending]);
 
   return (
     <NavContext.Provider
@@ -57,6 +63,7 @@ export function NavProvider({ children }: { children: ReactNode }) {
         viewLoading,
         setViewLoading,
         goToView,
+        isPending,
       }}
     >
       {children}

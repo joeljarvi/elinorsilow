@@ -23,6 +23,12 @@ export default function SmoothScroll({
     return () => cancelFrame(update);
   }, []);
 
+  useEffect(() => {
+    if (!lenisRef.current?.lenis) return;
+    // expose to framer motion
+    (window as any).__lenis = lenisRef.current.lenis;
+  }, []);
+
   return (
     <ReactLenis
       root

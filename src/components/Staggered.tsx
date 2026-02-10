@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import React, { memo } from "react";
 
 interface StaggeredProps<T> {
   items?: T[];
@@ -8,6 +9,26 @@ interface StaggeredProps<T> {
   delay?: number;
   loading?: boolean;
 }
+
+const MemoizedItem = memo(
+  ({
+    children,
+    variants,
+  }: {
+    children: React.ReactNode;
+    variants: any;
+  }) => (
+    <motion.li
+      variants={variants}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+    >
+      {children}
+    </motion.li>
+  )
+);
+
+MemoizedItem.displayName = "MemoizedItem";
 
 export default function Staggered<T>({
   items,
@@ -38,14 +59,12 @@ export default function Staggered<T>({
     >
       <AnimatePresence>
         {items.map((data, i) => (
-          <motion.li
+          <MemoizedItem
             key={getKey ? getKey(data) : i}
             variants={item}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
           >
             {renderItem(data, i)}
-          </motion.li>
+          </MemoizedItem>
         ))}
       </AnimatePresence>
     </motion.ul>

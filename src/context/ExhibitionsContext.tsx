@@ -33,6 +33,8 @@ type ExhibitionsContextType = {
   setOpen: (v: boolean) => void;
   exLoading: boolean;
   error: Error | null;
+  featuredExhibitions: Exhibition[];
+  featuredExTitles: string[];
 
   exhibitionSort: ExhibitionSort;
   setExhibitionSort: React.Dispatch<React.SetStateAction<ExhibitionSort>>;
@@ -42,13 +44,11 @@ type ExhibitionsContextType = {
   selectedType: string;
   setSelectedType: React.Dispatch<React.SetStateAction<string>>;
 
-  stagedExhibitionSort: ExhibitionSort;
-  setStagedExhibitionSort: React.Dispatch<React.SetStateAction<ExhibitionSort>>;
-  stagedExSelectedYear: string;
-  setStagedExSelectedYear: React.Dispatch<React.SetStateAction<string>>;
-  stagedSelectedType: string;
-  setStagedSelectedType: React.Dispatch<React.SetStateAction<string>>;
-  applyFilters: () => Promise<void>;
+  applyFilters: (
+    newSort: ExhibitionSort,
+    newYear: string,
+    newType: string
+  ) => Promise<void>;
   clearFilters: () => Promise<void>;
   isApplyingFilters: boolean;
 
@@ -60,6 +60,7 @@ type ExhibitionsContextType = {
   activeExhibitionSlug: string | null;
   setActiveExhibitionSlug: (slug: string | null) => void;
   openExhibition: (slug: string) => void;
+  findExhibitionSlug: (title: string) => string | undefined;
 };
 
 const ExhibitionsContext = createContext<ExhibitionsContextType | undefined>(
@@ -76,9 +77,6 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [exSelectedYear, exSetSelectedYear] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
 
-  const [stagedExhibitionSort, setStagedExhibitionSort] = useState<ExhibitionSort>("title");
-  const [stagedExSelectedYear, setStagedExSelectedYear] = useState("all");
-  const [stagedSelectedType, setStagedSelectedType] = useState("all");
   const [isApplyingFilters, setIsApplyingFilters] = useState(false);
 
   const [showDescription, setShowDescription] = useState(true);
@@ -90,21 +88,21 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
   const [debouncedSelectedType] = useDebounce(selectedType, 200);
   const [open, setOpen] = useState(false);
 
-  const applyFilters = async () => {
+  const applyFilters = async (
+    newSort: ExhibitionSort,
+    newYear: string,
+    newType: string
+  ) => {
     setIsApplyingFilters(true);
     await new Promise((resolve) => setTimeout(resolve, 400));
-    setExhibitionSort(stagedExhibitionSort);
-    exSetSelectedYear(stagedExSelectedYear);
-    setSelectedType(stagedSelectedType);
+    setExhibitionSort(newSort);
+    exSetSelectedYear(newYear);
+    setSelectedType(newType);
     setIsApplyingFilters(false);
   };
 
   const clearFilters = async () => {
     setIsApplyingFilters(true);
-    setStagedExhibitionSort("title");
-    setStagedExSelectedYear("all");
-    setStagedSelectedType("all");
-
     setExhibitionSort("title");
     exSetSelectedYear("all");
     setSelectedType("all");
@@ -213,12 +211,33 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
     setOpen(false);
   };
 
+  const findExhibitionSlug = (title: string) => {
+    const match = filteredExhibitions.find((ex) => ex.title.rendered === title);
+    return match?.slug;
+  };
+
+  const featuredExTitles = [
+    "Brinn Älskling Brinn",
+    "Hjärtat",
+    "Ett hölje som kan vara svårt att få syn på",
+  ];
+
+  const featuredExhibitions: Exhibition[] = useMemo(() => {
+    return filteredExhibitions.filter((ex) =>
+      featuredExTitles.includes(ex.title.rendered)
+    );
+  }, [filteredExhibitions]);
+
   return (
     <ExhibitionsContext.Provider
       value={{
         open,
         setOpen,
         getExhibitionBySlug,
+        findExhibitionSlug,
+        featuredExhibitions,
+        featuredExTitles,
+
         exhibitions,
         exhibitionList,
         filteredExhibitions,
@@ -234,12 +253,6 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
         selectedType,
         setSelectedType,
 
-        stagedExhibitionSort,
-        setStagedExhibitionSort,
-        stagedExSelectedYear,
-        setStagedExSelectedYear,
-        stagedSelectedType,
-        setStagedSelectedType,
         applyFilters,
         clearFilters,
         isApplyingFilters,

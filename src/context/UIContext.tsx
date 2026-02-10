@@ -30,9 +30,10 @@ interface UIContextValue {
   setShowExhibitionsFilter: Dispatch<boolean>;
   showInfo: boolean;
   setShowInfo: Dispatch<boolean>;
-
+  showSettings: boolean;
+  setShowSettings: Dispatch<boolean>;
+  handleShowSettings: () => void;
   handleOpen: () => void;
-  handleDesktopOpen: () => void;
   handleOpenWorksMenu: () => void;
   handleOpenAllWorksList: () => void;
   handleOpenWorksFilter: () => void;
@@ -46,8 +47,9 @@ const UIContext = createContext<UIContextValue | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true);
-  const [openDesktopNav, setOpenDesktopNav] = useState(true);
-  const [showWorksMenu, setShowWorksMenu] = useState(true);
+  const [openDesktopNav, setOpenDesktopNav] = useState(false);
+
+  const [showWorksMenu, setShowWorksMenu] = useState(false);
   const [showExhibitionsMenu, setShowExhibitionsMenu] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [showAllWorksList, setShowAllWorksList] = useState(false);
@@ -55,6 +57,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showWorksFilter, setShowWorksFilter] = useState(false);
   const [showExhibitionsFilter, setShowExhibitionsFilter] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 1024) {
@@ -65,9 +68,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   function handleOpen() {
     setOpen((prev) => !prev);
   }
-  function handleDesktopOpen() {
-    setOpenDesktopNav((prev) => !prev);
-  }
+
   function handleOpenWorksMenu() {
     setShowWorksMenu((prev) => !prev);
   }
@@ -88,6 +89,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
   }
   function handleOpenContact() {
     setShowContact((prev) => !prev);
+  }
+
+  function handleShowSettings() {
+    setShowSettings((prev) => !prev);
   }
 
   return (
@@ -113,8 +118,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setShowExhibitionsFilter,
         showInfo,
         setShowInfo,
+        showSettings,
+        setShowSettings,
         handleOpen,
-        handleDesktopOpen,
         handleOpenWorksMenu,
         handleOpenAllWorksList,
         handleOpenWorksFilter,
@@ -122,6 +128,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
         handleOpenExhibitionsMenu,
         handleOpenExhibitionsFilter,
         handleOpenContact,
+        handleShowSettings,
       }}
     >
       {children}
