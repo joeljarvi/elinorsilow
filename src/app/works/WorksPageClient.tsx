@@ -33,7 +33,7 @@ export default function WorksPageClient() {
           variant="link"
           size="sm"
           onClick={() => handleOpenWorksFilter()}
-          className="col-start-2 justify-end lg:justify-start  "
+          className="hidden lg:flex col-start-2 justify-end lg:justify-start  "
         >
           Filter
         </Button>

@@ -28,8 +28,8 @@ export default function ExhibitionsPageClient() {
 
   return (
     <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-30 ">
-      <div className="fixed top-14 lg:top-16 z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4 px-2 lg:px-0 gap-y-2 lg:gap-y-0  ">
-        <h1 className="h1 lg:col-span-1 px-4">
+      <div className="fixed top-14 lg:top-16 z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4 px-2  gap-y-2 lg:gap-y-0  ">
+        <h1 className="h1 lg:col-span-1 px-2   ">
           Utställningar ({filteredExhibitions.length})
         </h1>
 
@@ -37,7 +37,7 @@ export default function ExhibitionsPageClient() {
           variant="link"
           size="sm"
           onClick={() => handleOpenExhibitionsFilter()}
-          className="col-start-3 justify-end lg:justify-start  "
+          className="hidden lg:flex col-start-3 justify-end lg:justify-start  "
         >
           Filter
         </Button>
@@ -46,10 +46,10 @@ export default function ExhibitionsPageClient() {
       <Staggered
         items={filteredExhibitions}
         getKey={(item) => item.id}
-        className="flex flex-col items-center justify-center w-full lg:flex-row lg:items-start lg:justify-start px-4 gap-x-4"
+        className="flex flex-col items-center justify-center w-full lg:flex-row lg:items-start lg:justify-start  gap-x-4"
         renderItem={(item: Exhibition, index: number) => (
           <div
-            className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-6 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "
+            className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "
             onClick={() => {
               setActiveExhibitionSlug(item.slug);
               setOpen(false);
@@ -65,11 +65,11 @@ export default function ExhibitionsPageClient() {
                   alt={item.title.rendered}
                   fill
                   priority={index < 3}
-                  className="object-cover object-top lg:object-center px-6 lg:px-0"
+                  className="object-cover object-top lg:object-center px-4 lg:px-0"
                 />
               )}{" "}
             </div>{" "}
-            <div className="flex flex-col  justify-start items-baseline gap-x-8 h3 lg:h4 px-6 lg:px-0 pb-6">
+            <div className="flex flex-col  justify-start items-baseline gap-x-8 h3 lg:h4 px-4 lg:px-0 pb-6">
               {" "}
               <span>{item.title.rendered}</span>{" "}
               <span className="">{item.acf.exhibition_type}</span>{" "}
