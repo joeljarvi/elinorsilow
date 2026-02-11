@@ -130,7 +130,7 @@ function MobileNavOverlay() {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-center pointer-events-auto p-4 backdrop-blur-sm bg-background/80"
         >
-          <div className="flex flex-col items-start justify-center w-full    pb-8 pt-4  bg-gray-200 ">
+          <div className="flex flex-col items-start justify-center w-full    pb-8 pt-4  bg-background ">
             <Button
               variant="link"
               asChild
