@@ -42,7 +42,7 @@ export default function ExFilter() {
   }, [exhibitionSort, exSelectedYear, selectedType]);
 
   return (
-    <div className="lg:col-start-6 col-span-3 lg:col-span-3 lg:row-start-2 w-full grid grid-rows-3  pointer-events-auto ">
+    <div className="lg:col-start-6 col-span-3 lg:col-span-3 lg:row-start-2 w-full grid grid-rows-3  pointer-events-auto px-8 lg:px-0 pb-2 lg:pb-0  ">
       {isApplyingExhibitionsFilters ? (
         <h3 className="h3 animate-pulse">Applying filters…</h3>
       ) : (

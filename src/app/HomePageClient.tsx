@@ -77,7 +77,7 @@ function MainContent({}: Props) {
         <div className="sticky top-13 lg:top-14 z-20 flex items-center justify-between w-full lg:justify-start gap-4  px-4 mb-1 lg:mb-0 ">
           <h2 className="h2">Verk i urval</h2>
           <Button variant="link" asChild>
-            <Link href="/works">•Se alla verk</Link>
+            <Link href="/works">•Se alla</Link>
           </Button>
         </div>
         <Staggered
@@ -86,7 +86,7 @@ function MainContent({}: Props) {
           className="flex flex-col items-center justify-center w-full lg:flex-row lg:justify-start lg:items-start px-4 mb-30"
           renderItem={(item: Work) => (
             <div
-              className="aspect-square flex flex-col justify-start lg:justify-between cursor-pointer gap-y-2  w-[100vw] lg:w-[476px] bg-background hover:bg-foreground/10 transition-all"
+              className="aspect-square flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-[100vw] lg:w-[476px] bg-background hover:bg-foreground/10 transition-all"
               onClick={() => {
                 setActiveWorkSlug(item.slug);
                 setOpen(false);
@@ -110,7 +110,7 @@ function MainContent({}: Props) {
                 )}
               </div>
 
-              <div className="flex flex-col items-baseline p-4 lg:p-0 text-sm font-directorMono">
+              <div className="flex flex-col items-baseline pt-4 px-4 pb-16 lg:p-0 text-sm font-directorMono">
                 <span>{item.title.rendered}</span>
                 {item.acf.year && <span>{item.acf.year}</span>}
                 {item.acf.materials && <span>{item.acf.materials}</span>}
@@ -123,7 +123,7 @@ function MainContent({}: Props) {
         <div className="sticky top-21 z-30 flex items-center justify-between w-full lg:justify-start gap-4 px-4 ">
           <h2 className="h2">Utställningar i urval</h2>
           <Button variant="link" asChild>
-            <Link href="/exhibitions">•Se alla utställningar</Link>
+            <Link href="/exhibitions">•Se alla</Link>
           </Button>
         </div>
         <Staggered

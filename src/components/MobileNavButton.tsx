@@ -128,9 +128,9 @@ function MobileNavOverlay() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden inset-0 z-30 h-screen w-full bg-background flex flex-col items-center justify-start pointer-events-auto"
+          className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-center pointer-events-auto p-4 backdrop-blur-sm bg-background/80"
         >
-          <div className="flex flex-col items-start justify-center w-full    pb-2 pt-16 ">
+          <div className="flex flex-col items-start justify-center w-full    pb-8 pt-4  bg-gray-200 ">
             <Button
               variant="link"
               asChild
@@ -182,13 +182,10 @@ function MobileNavOverlay() {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="pl-4 w-full flex flex-col items-start justify-start  "
+                  className="pl-4 w-full flex flex-col items-start justify-start pb-1  "
                 >
                   <Button variant="link" onClick={handleOpenAllWorksList}>
-                    Lista
-                  </Button>
-                  <Button variant="link" onClick={handleOpenAllWorksList}>
-                    Rutnät
+                    Index
                   </Button>
 
                   {showAllWorksList && (
@@ -250,10 +247,9 @@ function MobileNavOverlay() {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="pl-4 w-full flex flex-col items-start justify-start "
+                  className="pl-4 w-full flex flex-col items-start justify-start pb-1 "
                 >
-                  <Button variant="link">Lista</Button>
-                  <Button variant="link">Rutnät</Button>
+                  <Button variant="link">Index</Button>
 
                   <Button
                     variant="link"
@@ -313,7 +309,7 @@ function MobileNavOverlay() {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="pl-4 w-full flex flex-col items-start justify-start "
+                  className="pl-4 w-full flex flex-col items-start justify-start pb-1 "
                 >
                   <Button variant="link" asChild>
                     <Link href="mailto:elinor.silow@gmail.com">Email</Link>
