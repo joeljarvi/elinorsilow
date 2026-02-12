@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 justify-center",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground justify-center",
+          "border border-input bg-background  hover:bg-accent hover:text-accent-foreground justify-center",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 justify-center",
         ghost: "hover:bg-accent hover:text-accent-foreground justify-center",
@@ -24,7 +24,7 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 h3",
         sm: "h-6 px-4 py-1 h3",
-        lg: "   ",
+
         linkSize: "h-6  px-0 py-0 text-sm",
         linkSizeMd: "h-9    pt-0.5 text-lg",
         listSize: "h-auto px-0 py-0",

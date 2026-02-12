@@ -14,6 +14,8 @@ import SmoothScroll from "@/components/SmoothScroll";
 import NewNav from "@/components/DesktopNav";
 import BodyClassManager from "@/components/BodyClassManager";
 import DesktopNav from "@/components/DesktopNav";
+import { Carousel } from "@/components/ui/carousel";
+import { CarouselProvider } from "@/context/CarouselContext";
 
 const directorMono = localFont({
   src: "assets/fonts/Director-Regular.ttf",
@@ -138,7 +140,9 @@ export default function RootLayout({
                       <DesktopNav />
                       <MobileNavButton />
                       <SmoothScroll>
-                        {children} {modal}
+                        <CarouselProvider>
+                          {children} {modal}
+                        </CarouselProvider>
                       </SmoothScroll>
                     </AnimationProvider>
                   </UIProvider>

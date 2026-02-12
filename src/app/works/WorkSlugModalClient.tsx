@@ -130,23 +130,23 @@ export default function WorkSlugModalClient({
     <div
       {...swipeHandlers}
       className=" col-start-1 lg:col-start-2
-    col-span-6 lg:col-span-4
-    relative flex flex-col   min-h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
+    col-span-6 lg:col-span-5
+    relative flex flex-col lg:flex-col-reverse   min-h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
     >
       {/* Carousel */}
-      <Carousel className="mt-18 w-full h-full  ">
+      <Carousel className=" w-full h-full  ">
         <CarouselContent>
           {images.map((src, idx) => (
             <CarouselItem
               key={idx}
               className="w-full flex justify-center lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-12.5rem)] lg:h-[calc(100vh-7.5rem)] flex flex-col  lg:items-start justify-center items-center">
+              <div className="relative w-full h-[calc(100vh-12.5rem)] lg:h-[calc(100vh-3.5rem)] flex flex-col  lg:items-start justify-center items-center">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
-                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain object-top mx-auto lg:object-top-left lg:mx-0 px-2 lg:px-4  "
+                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain object-top mx-auto lg:object-top-left lg:mx-0 px-2 lg:px-4 lg:pb-4  "
                 />
               </div>
             </CarouselItem>
@@ -156,7 +156,7 @@ export default function WorkSlugModalClient({
 
       {/* Work info */}
       <div className="flex flex-row justify-start lg:justify-between w-full items-baseline bg-transparent mt-0   px-4 pb-1.5  pt-2 lg:pb-2 ">
-        <div className="hidden lg:flex flex-wrap justify-start items-baseline text-left h3 max-w-sm mx-auto">
+        <div className="hidden lg:flex flex-wrap justify-start items-baseline text-left h3 max-w-sm lg:max-w-full  lg:pb-1 mx-auto lg:mx-0">
           <span className="">{work.title.rendered}</span>,{" "}
           {work.acf.year && <span className="ml-1">{work.acf.year},</span>}
           {work.acf.materials && (
@@ -174,7 +174,7 @@ export default function WorkSlugModalClient({
           {work.acf.dimensions && <span>{work.acf.dimensions}</span>}
         </div>
 
-        <div className="absolute bottom-4 right-4 items-baseline  gap-2 flex">
+        <div className="absolute bottom-4 right-4 lg:top-4  lg:bottom-auto items-baseline  gap-2 flex">
           <Button
             className=""
             variant="link"

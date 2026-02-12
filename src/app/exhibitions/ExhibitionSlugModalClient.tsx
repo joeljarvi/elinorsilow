@@ -8,8 +8,11 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
+import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 
 import { Exhibition, getExhibitionBySlug } from "../../../lib/wordpress";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,17 +30,20 @@ type Props = {
 
 export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const router = useRouter();
-  const lenis = useLenis();
+
   const { filteredExhibitions, getExhibitionBySlug: getFromContext } =
     useExhibitions();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
-  const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [api, setApi] = useState<CarouselApi | null>(null);
-  const [isZoomed, setIsZoomed] = useState(false);
+
+  const modalGallery = useGalleryCarousel({
+    delay: 3000,
+    enableKeyboard: true,
+    id: "modal-gallery", // unique id
+  });
 
   const loadExhibitionByIndex = useCallback(
     async (index: number) => {
@@ -94,64 +100,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     onSwipedRight: goPrev,
   });
 
-  useEffect(() => {
-    // Only handle global keys if carousel is CLOSED
-    if (isCarouselOpen) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && onClose) onClose();
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isCarouselOpen, goPrev, goNext, onClose]);
-
-  // Carousel specific keys
-  useEffect(() => {
-    if (!isCarouselOpen || !api) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsCarouselOpen(false);
-      if (e.key === "ArrowLeft") api.scrollPrev();
-      if (e.key === "ArrowRight") api.scrollNext();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isCarouselOpen, api]);
-
-  useEffect(() => {
-    if (!isCarouselOpen) return;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isCarouselOpen]);
-
-  useEffect(() => {
-    if (!api) return;
-
-    const onSelect = () => {
-      setCarouselIndex(api.selectedScrollSnap());
-      setIsZoomed(false);
-    };
-
-    api.on("select", onSelect);
-    onSelect();
-
-    return () => {
-      api.off("select", onSelect);
-    };
-  }, [api]);
-
-  useEffect(() => {
-    if (isCarouselOpen && api) {
-      api.scrollTo(carouselIndex, true);
-    }
-  }, [isCarouselOpen, carouselIndex, api]);
-
   if (loading || !exhibition || !exhibition.acf) {
     return <div></div>;
   }
@@ -192,10 +140,10 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 gap-4
  grid grid-cols-6
   pt-4 px-2 pb-2  lg:px-0 lg:pt-4 
-  z-30  w-full bg-red-500  scroll-bar-hide 
+  z-30  w-full   scroll-bar-hide 
 "
     >
-      <span className=" mt-8 lg:mt-12 w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
+      <span className=" mt-8 lg:mt-10 w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
         <div className="col-span-3 flex lg:hidden flex-col     justify-start px-2 lg:px-0 items-start w-full h3">
           <h1 className=" ">{exhibition.title.rendered}</h1>
           {exhibition.acf.year && (
@@ -227,7 +175,7 @@ gap-4
           )}
         </div>
         <Button
-          className="col-start-4 justify-end lg:justify-start "
+          className="col-start-4 lg:col-start-1 justify-end lg:justify-start "
           variant="link"
           size="sm"
           onClick={() => {
@@ -238,7 +186,7 @@ gap-4
           Dela
         </Button>
         <Button
-          className="col-start-5 justify-end  lg:justify-start pr-4 lg:pr-0"
+          className="col-start-5 lg:col-start-2 justify-end  lg:justify-start pr-4 lg:pr-0"
           size="sm"
           variant="link"
           onClick={onClose || (() => router.push("/"))}
@@ -256,85 +204,78 @@ gap-4
             {exhibition.acf.description}
           </h3>
         </div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="relative w-full grid grid-cols-5"
-        >
-          {/* backdrop only on content area */}
 
-          <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-1 lg:col-span-5 lg:relative  w-full h-full pointer-events-auto bg-background pt-18">
-            <Carousel
-              setApi={setApi}
-              opts={{ startIndex: carouselIndex }}
-              className="h-full w-full"
-            >
-              <CarouselContent className="h-full">
-                {images.map((img, idx) => (
-                  <CarouselItem
-                    key={img.id}
-                    className="h-full flex flex-col items-center justify-center"
-                  >
-                    <motion.div className="relative h-full w-full flex flex-col items-start justify-start pointer-events-auto">
-                      {/* Image */}
-                      <div className="relative  mx-auto lg:mx-0 h-full w-screen lg:w-auto  lg:h-[calc(100vh-10rem)] aspect-square lg:aspect-video">
-                        <Image
-                          src={img.url}
-                          alt={img.desc || `Image ${idx + 1}`}
-                          fill
-                          className="object-contain object-top lg:object-center px-6 lg:px-0"
-                        />
-                        {img.desc && (
-                          <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
-                            {img.desc}
-                          </div>
-                        )}
-                      </div>
+        {/* backdrop only on content area */}
 
-                      {/* Description */}
-                    </motion.div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+        <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-1 lg:col-span-5 lg:relative  w-full h-full pointer-events-auto bg-background ">
+          <Carousel
+            setApi={modalGallery.setApi}
+            opts={{ startIndex: carouselIndex, align: "start" }}
+            plugins={[modalGallery.autoplay.current]}
+            className="h-full w-full"
+          >
+            <CarouselContent className="h-full">
+              {images.map((img, idx) => (
+                <CarouselItem
+                  key={img.id}
+                  className="h-full flex flex-col items-center justify-center"
+                >
+                  <motion.div className="relative h-full w-full flex flex-col items-start justify-start pointer-events-auto">
+                    {/* Image */}
+                    <div className="relative  mx-auto lg:mx-0 h-full w-screen lg:w-auto  lg:h-[calc(100vh-10rem)] aspect-square lg:aspect-video">
+                      <Image
+                        src={img.url}
+                        alt={img.desc || `Image ${idx + 1}`}
+                        fill
+                        className="object-contain object-top lg:object-left px-6 lg:px-0"
+                      />
+                      {img.desc && (
+                        <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
+                          {img.desc}
+                        </div>
+                      )}
+                    </div>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                api?.scrollNext();
-              }}
-              className="absolute z-30 left-4 top-1/2 -translate-y-1/2 pointer-events-auto  leading-none"
-            >
-              <ArrowLeftIcon className="w-3 h-3" />
-            </button>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                api?.scrollNext();
-              }}
-              className="absolute z-30 right-4 top-1/2 -translate-y-1/2 pointer-events-auto  leading-none"
-            >
-              <ArrowRightIcon className="w-3 h-3" />
-            </button>
-            {/* 
-            {/* Counter */}
-            <div className="absolute z-40 top-4 left-4 mix-blend-difference text-background px-3 py-1 rounded font-EBGaramond select-none pointer-events-none text-sm">
-              {carouselIndex + 1} / {images.length}
+                    {/* Description */}
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-end gap-4  pr-4">
+              <CarouselPrevious className="static translate-y-0" />
+              <CarouselNext className="static translate-y-0" />
             </div>
+          </Carousel>
 
-            {/* Back button */}
-            <Button
-              className="absolute left-2 bottom-16  flex z-50   "
-              size="sm"
-              variant="link"
-              onClick={() => setIsCarouselOpen(false)}
-            >
-              Back
-            </Button>
+          {/* 
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              modalGallery.api?.scrollPrev();
+            }}
+            className="absolute z-30 left-4 top-1/2 -translate-y-1/2 pointer-events-auto  leading-none"
+          >
+            <ArrowLeftIcon className="w-3 h-3" />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              modalGallery.api?.scrollNext();
+            }}
+            className="absolute z-30 right-4 top-1/2 -translate-y-1/2 pointer-events-auto  leading-none"
+          >
+            <ArrowRightIcon className="w-3 h-3" />
+          </button> */}
+          {/* 
+            {/* Counter */}
+          <div className="absolute z-40 top-4 left-4 mix-blend-difference text-background px-3 py-1 rounded font-EBGaramond select-none pointer-events-none text-sm">
+            {modalGallery.index + 1} / {images.length}
           </div>
-        </motion.div>
+
+          {/* Back button */}
+        </div>
+
         {/* <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-2 w-full mb-4">
           {images.map((src, idx) => (
             <div key={idx} className="col-span-1  flex flex-col  gap-4 w-full">
@@ -370,7 +311,7 @@ gap-4
               variant="link"
               onClick={onClose}
             >
-              Back
+              Se alla
             </Button>
             <Button
               className=" "
@@ -379,7 +320,7 @@ gap-4
               onClick={goPrev}
               disabled={currentIndex <= 0}
             >
-              Prev
+              Föregående
             </Button>
             <Button
               className=" "
@@ -391,7 +332,7 @@ gap-4
                 currentIndex >= filteredExhibitions.length - 1
               }
             >
-              Next
+              Nästa
             </Button>
           </span>
         </div>

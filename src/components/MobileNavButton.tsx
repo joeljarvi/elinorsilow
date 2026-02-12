@@ -22,6 +22,7 @@ import HDivider from "@/components/HDivider";
 import Link from "next/link";
 import { PlusIcon, MinusIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { DarkModeToggle } from "./DarkModeToggle";
+import NavSearch from "./NavSearch";
 
 import WorksFilter from "./WorksFilter";
 import StaggeredList from "./StaggeredList";
@@ -131,6 +132,7 @@ function MobileNavOverlay() {
           className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-center pointer-events-auto p-4 backdrop-blur-sm bg-background/80 "
         >
           <div className=" flex flex-col items-start justify-center w-full    pb-6 lg:pb-0 pt-4  bg-background invert ">
+            <NavSearch />
             <Button
               variant="link"
               asChild

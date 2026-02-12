@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import HDivider from "./HDivider";
@@ -19,6 +19,7 @@ import { DarkModeToggle } from "./DarkModeToggle";
 import WorksFilter from "./WorksFilter";
 import StaggeredList from "./StaggeredList";
 import ExFilter from "./ExFilter";
+import NavSearch from "./NavSearch";
 type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
 
 type CategoryFilter = "all" | "painting" | "drawing" | "sculpture" | "textile";
@@ -36,9 +37,11 @@ type ExhibitionListItem = {
 };
 
 export default function DesktopNav() {
-  const [initialLoaded, setInitialLoaded] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [openSearch, setOpenSearch] = useState(false);
+  const [scrollDir, setScrollDir] = useState<"up" | "down">("up");
+  const lastScroll = useRef(0);
+  const [navOffset, setNavOffset] = useState(0);
+  const navHeight = 145; // height of your nav in px
 
   const {
     allWorks,
@@ -66,33 +69,25 @@ export default function DesktopNav() {
   const { infoLoading, exhibitionList } = useInfo();
 
   const {
-    showWorksMenu,
     setShowWorksMenu,
-    showExhibitionsMenu,
+
     setShowExhibitionsMenu,
-    showContact,
+
     setShowContact,
-    showAllWorksList,
-    showAllExhibitionsList,
-    showWorksFilter,
+
     setShowWorksFilter,
-    showExhibitionsFilter,
+
     setShowExhibitionsFilter,
     showInfo,
     setShowInfo,
-    showSettings,
+
     setShowSettings,
-    handleShowSettings,
   } = useUI();
 
   const {
     handleOpenWorksMenu,
-    handleOpenAllWorksList,
-    handleOpenWorksFilter,
-    handleOpenAllExhibitionsList,
+
     handleOpenExhibitionsMenu,
-    handleOpenExhibitionsFilter,
-    handleOpenContact,
   } = useUI();
 
   const router = useRouter();
@@ -112,63 +107,33 @@ export default function DesktopNav() {
     }
   });
 
-  const exhibitionIndex: (ExhibitionItem | ExhibitionListItem)[] = sortAZ(
-    Array.from(allExhibitionsMap.values())
-  );
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+      const delta = currentScroll - lastScroll.current;
 
-  const findExhibitionSlug = (title: string) => {
-    const match = filteredExhibitions.find((ex) => ex.title.rendered === title);
-    return match?.slug;
-  };
+      if (delta > 0 && currentScroll > 50) setScrollDir("down");
+      else if (delta < 0) setScrollDir("up");
 
-  const openWorksOnly = () => {
-    if (!showWorksMenu) handleOpenWorksMenu();
-    if (showExhibitionsMenu) handleOpenExhibitionsMenu();
-    if (showContact) handleOpenContact();
-  };
+      // Gradual offset
+      if (scrollDir === "down" && !openSearch) {
+        setNavOffset((prev) => Math.min(prev + delta, navHeight));
+      } else if (scrollDir === "up" || openSearch) {
+        setNavOffset((prev) => Math.max(prev - Math.abs(delta), 0));
+      }
 
-  const openExhibitionsOnly = () => {
-    if (!showExhibitionsMenu) handleOpenExhibitionsMenu();
-    if (showWorksMenu) handleOpenWorksMenu();
-    if (showContact) handleOpenContact();
-  };
+      lastScroll.current = currentScroll;
+    };
 
-  const openContactOnly = () => {
-    if (!showContact) handleOpenContact();
-    if (showWorksMenu) handleOpenWorksMenu();
-    if (showExhibitionsMenu) handleOpenExhibitionsMenu();
-  };
-
-  const openWorksIndex = () => {
-    if (!showAllWorksList) handleOpenAllWorksList();
-    if (showWorksFilter) handleOpenWorksFilter();
-  };
-
-  const openWorksFilters = () => {
-    if (!showWorksFilter) handleOpenWorksFilter();
-    if (showAllWorksList) handleOpenAllWorksList();
-  };
-
-  const openExIndex = () => {
-    handleOpenAllExhibitionsList();
-    if (showExhibitionsFilter) handleOpenExhibitionsFilter();
-  };
-
-  const openExFilters = () => {
-    handleOpenExhibitionsFilter();
-    if (showAllExhibitionsList) handleOpenAllExhibitionsList();
-  };
-
-  const handleOpenMenu = () => {
-    setOpen(!open);
-  };
-
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [scrollDir, openSearch]);
   return (
     <>
-      <div className="fixed top-0 left-0 w-full  z-50     lg:flex flex-col items-baseline justify-start   gap-x-4  overflow-y-scroll   ">
+      <div className="fixed top-0 left-0 w-full  z-40     lg:flex flex-col items-baseline justify-start   gap-x-4 no-hide-text     ">
         {/* LEFT MENU (MAIN) */}
 
-        <h1 className="h1 flex items-baseline justify-start pt-2 lg:pt-0 ">
+        <h1 className="h1 flex items-baseline justify-start pt-2 lg:pt-4 bg-background w-full pb-2 z-50 no-hide-text">
           <Button
             asChild
             variant="link"
@@ -189,86 +154,18 @@ export default function DesktopNav() {
           </Button>
         </h1>
 
-        {/* NAV */}
-        <nav
-          className=" hidden lg:grid
+        {/* Nav slides in/out */}
+
+        <motion.nav
+          style={{ y: -navOffset }}
+          className={` hidden lg:grid
    
     grid-cols-6
     grid-rows-[1.5rem_minmax(0,1fr)]
     gap-x-4
-    w-full
-    overflow-hidden
-  mb-1 "
+    w-full pt-4 
+    overflow-hidden  bg-background ${openSearch ? "pb-4" : "pb-4"}`}
         >
-          <Button
-            variant="link"
-            size="sm"
-            asChild
-            onClick={() => {
-              setActiveWorkSlug(null);
-              setActiveExhibitionSlug(null);
-              setShowWorksFilter(false);
-              setShowExhibitionsFilter(false);
-              setShowContact(false);
-              setShowExhibitionsMenu(false);
-              setShowWorksMenu(false);
-            }}
-            className="col-start-1 col-span-1 justify-start no-hide-text"
-          >
-            <Link href="/info">Info</Link>
-          </Button>
-
-          <Button
-            variant="link"
-            size="sm"
-            onClick={() => {
-              handleOpenContact();
-              setShowExhibitionsFilter(false);
-              setShowWorksFilter(false);
-              setShowWorksMenu(false);
-              setShowExhibitionsMenu(false);
-            }}
-            className="col-start-2 col-span-1 w-min justify-start gap-x-4 no-hide-text"
-          >
-            Kontakt{" "}
-            <span
-              className={`text-xs ${
-                showContact ? "rotate-90 transition-all" : ""
-              } `}
-            >
-              ▶
-            </span>
-          </Button>
-
-          {showContact && (
-            <AnimatePresence>
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className=" col-start-2 col-span-1 row-start-2 w-full flex flex-col items-start justify-start "
-              >
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="no-hide-text"
-                  asChild
-                >
-                  <Link href="mailto:elinor.silow@gmail.com">Email</Link>
-                </Button>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="no-hide-text"
-                  asChild
-                >
-                  <Link href="instagram.com/elinor.silow">Instagram</Link>
-                </Button>
-              </motion.div>
-            </AnimatePresence>
-          )}
-
           <Button
             variant="link"
             size="sm"
@@ -282,54 +179,10 @@ export default function DesktopNav() {
               setShowContact(false);
               setShowExhibitionsMenu(false);
             }}
-            className=" col-start-3 col-span-1 justify-start gap-x-4 no-hide-text "
+            className=" row-start-1 col-start-1 col-span-1 justify-start gap-x-4 no-hide-text "
           >
-            <Link href="/works">
-              Verk{" "}
-              <span
-                className={`text-xs ${
-                  showWorksMenu ? "rotate-90 transition-all" : ""
-                } `}
-              >
-                ▶
-              </span>
-            </Link>
+            <Link href="/works">Verk </Link>
           </Button>
-
-          {showWorksMenu && (
-            <AnimatePresence>
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="col-start-3 row-start-2 col-span-2 w-full flex flex-col items-start justify-start  "
-              >
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="no-hide-text"
-                  onClick={handleOpenAllWorksList}
-                >
-                  Lista
-                </Button>
-
-                {showAllWorksList && (
-                  <StaggeredList
-                    items={allWorks}
-                    loading={workLoading}
-                    isDesktop={isDesktop}
-                    setOpen={setOpen}
-                    onSelect={(work) => openWork(work.slug)}
-                    getKey={(w) => w.slug}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
-          )}
-
-          {showWorksFilter && <WorksFilter />}
-
           <Button
             variant="link"
             size="sm"
@@ -343,109 +196,84 @@ export default function DesktopNav() {
               setShowWorksMenu(false);
               handleOpenExhibitionsMenu();
             }}
-            className="col-start-4 col-span-1 justify-start gap-x-4 no-hide-text"
+            className="col-start-1 row-start-2 col-span-1 justify-start gap-x-4 no-hide-text"
           >
-            <Link href="/exhibitions">
-              Utställningar{" "}
-              <span
-                className={`text-xs ${
-                  showExhibitionsMenu ? "rotate-90 transition-all" : ""
-                } `}
-              >
-                ▶
-              </span>
-            </Link>
+            <Link href="/exhibitions">Utställningar </Link>
           </Button>
-          {showExhibitionsMenu && (
-            <AnimatePresence>
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className=" col-start-4 col-span-2 row-start-2 w-full flex flex-col items-start justify-start "
-              >
-                <Button
-                  className="no-hide-text"
-                  variant="link"
-                  size="sm"
-                  onClick={openExIndex}
-                >
-                  Lista
-                </Button>
-
-                {showAllExhibitionsList && (
-                  <StaggeredList
-                    items={exhibitionIndex}
-                    isDesktop={isDesktop}
-                    setOpen={setOpen}
-                    getKey={(e) => e.id}
-                    onSelect={(item) => {
-                      if (item.__type === "exhibition") {
-                        openExhibition(item.slug);
-                      } else {
-                        const slug = findExhibitionSlug(item.title.rendered);
-                        if (slug) openExhibition(slug);
-                      }
-                    }}
-                  />
-                )}
-
-                {/* Filter / Sort */}
-              </motion.div>
-            </AnimatePresence>
-          )}
-          {showExhibitionsFilter && <ExFilter />}
-
           <Button
-            onClick={() => {
-              handleShowSettings();
-              setShowWorksMenu(false);
-              setShowExhibitionsMenu(false);
-              setShowContact(false);
-              setShowWorksFilter(false);
-              setShowExhibitionsFilter(false);
-            }}
-            className="col-start-5 col-span-1 justify-start w-min gap-x-4 no-hide-text"
             variant="link"
             size="sm"
+            asChild
+            onClick={() => {
+              setActiveWorkSlug(null);
+              setActiveExhibitionSlug(null);
+              setShowWorksFilter(false);
+              setShowExhibitionsFilter(false);
+              setShowContact(false);
+              setShowExhibitionsMenu(false);
+              setShowWorksMenu(false);
+            }}
+            className="col-start-1 row-start-3 col-span-1 justify-start no-hide-text"
           >
-            Inställningar
-            <span
-              className={`text-xs ${
-                showSettings ? "rotate-90 transition-all" : ""
-              } `}
-            >
-              ▶
-            </span>
+            <Link href="/info">Information</Link>
           </Button>
 
-          {showSettings && (
-            <AnimatePresence>
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className=" col-start-5 col-span-2 row-start-2 w-full flex flex-col items-start justify-start "
-              >
-                <DarkModeToggle />
+          <Button
+            variant="link"
+            size="sm"
+            className="col-start-2 col-span-1 row-start-1 justify-start no-hide-text "
+            asChild
+          >
+            <Link href="mailto:elinor.silow@gmail.com">Kontakt</Link>
+          </Button>
+          <Button
+            variant="link"
+            size="sm"
+            className="col-start-2 col-span-1 row-start-2 justify-start no-hide-text"
+            asChild
+          >
+            <Link href="instagram.com/elinor.silow">Instagram</Link>
+          </Button>
+          <div className="col-start-2 col-span-1 row-start-3 h-min no-hide-text">
+            <DarkModeToggle />
+          </div>
+          <Button
+            variant="link"
+            size="sm"
+            className="justify-start col-start-3 col-span-1 row-start-1 nav-toggle no-hide-text"
+            onClick={() => setShowInfo(!showInfo)}
+          >
+            {showInfo ? "Göm text" : "Visa text"}
+          </Button>
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => {
+              setActiveWorkSlug(null);
+              setActiveExhibitionSlug(null);
+              setOpenSearch((prev) => !prev);
+            }}
+            className="justify-start col-start-3 col-span-1 row-start-2 no-hide-text"
+          >
+            Sök
+          </Button>
+        </motion.nav>
 
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="nav-toggle no-hide-text"
-                  onClick={() => setShowInfo(!showInfo)}
-                >
-                  {showInfo ? "Göm text" : "Visa text"}
-                </Button>
-              </motion.div>
-            </AnimatePresence>
+        {/* Search nav with layout animation */}
+        <AnimatePresence>
+          {openSearch && (
+            <motion.div
+              layout
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="w-full  bg-background px-0 pt-4 z-50"
+            >
+              <NavSearch />
+            </motion.div>
           )}
-        </nav>
-        {/* <div className="px-6 lg:px-4 w-full ">
-          <HDivider className="" />
-        </div> */}
+        </AnimatePresence>
       </div>
     </>
   );

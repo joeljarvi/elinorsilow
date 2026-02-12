@@ -21,6 +21,7 @@ export function DarkModeToggle() {
       {theme === "light" ? (
         <Button
           variant="link"
+          size="sm"
           onClick={() => setTheme("dark")}
           className="nav-toggle no-hide-text   "
         >
@@ -29,6 +30,7 @@ export function DarkModeToggle() {
       ) : (
         <Button
           variant="link"
+          size="sm"
           onClick={() => setTheme("light")}
           className="nav-toggle no-hide-text "
         >

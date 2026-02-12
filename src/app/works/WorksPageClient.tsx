@@ -26,7 +26,7 @@ export default function WorksPageClient() {
 
   return (
     <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-30 ">
-      <div className="fixed top-14  z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4   gap-y-2 lg:gap-y-0  ">
+      <div className="fixed top-14 lg:top-30  z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4   gap-y-2 lg:gap-y-0  ">
         <h1 className="h1 lg:col-span-1 px-4">Verk ({filteredWorks.length})</h1>
 
         <Button

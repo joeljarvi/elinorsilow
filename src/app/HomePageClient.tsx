@@ -18,6 +18,8 @@ import type { Work, Exhibition } from "../../lib/wordpress";
 import Staggered from "@/components/Staggered";
 import Link from "next/link";
 import { useLenis } from "lenis/react";
+import { FeaturedWorksCarousel } from "@/components/FeaturedWorksCarousel";
+import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
 
 type Props = {
   showInfo?: boolean;
@@ -72,7 +74,7 @@ function MainContent({}: Props) {
     <>
       <section
         className=" mx-0
-      flex flex-col items-start justify-start w-full pt-13 lg:pt-30   "
+      flex flex-col items-start justify-start w-full pt-13 lg:pt-[25vh]   "
       >
         <div className="sticky top-13 lg:top-14 z-20 flex items-center justify-between w-full lg:justify-start gap-4  px-4 mb-1 lg:mb-0 ">
           <h2 className="h2">Verk i urval</h2>
@@ -80,45 +82,8 @@ function MainContent({}: Props) {
             <Link href="/works">•Se alla</Link>
           </Button>
         </div>
-        <Staggered
-          items={featuredWorks}
-          getKey={(item) => item.id}
-          className="flex flex-col items-center justify-center w-full lg:flex-row lg:justify-start lg:items-start px-4 mb-30"
-          renderItem={(item: Work) => (
-            <div
-              className="aspect-square flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-[100vw] lg:w-[476px] bg-background hover:bg-foreground/10 transition-all"
-              onClick={() => {
-                setActiveWorkSlug(item.slug);
-                setOpen(false);
-                router.push(`/?work=${item.slug}`);
-              }}
-            >
-              <div
-                className={`relative aspect-square   mx-auto lg:mx-0 ${getWorkSizeClass(
-                  item.acf.dimensions
-                )} flex`}
-              >
-                {item.image_url && (
-                  <Image
-                    src={item.image_url}
-                    alt={item.title.rendered}
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-contain object-top lg:object-top-left"
-                  />
-                )}
-              </div>
 
-              <div className="flex flex-col items-baseline pt-4 px-4 pb-16 lg:p-0 text-sm font-directorMono">
-                <span>{item.title.rendered}</span>
-                {item.acf.year && <span>{item.acf.year}</span>}
-                {item.acf.materials && <span>{item.acf.materials}</span>}
-                {item.acf.dimensions && <span>{item.acf.dimensions}</span>}
-              </div>
-            </div>
-          )}
-        />
+        <FeaturedWorksCarousel />
 
         <div className="sticky top-21 z-30 flex items-center justify-between w-full lg:justify-start gap-4 px-4 ">
           <h2 className="h2">Utställningar i urval</h2>
@@ -126,10 +91,12 @@ function MainContent({}: Props) {
             <Link href="/exhibitions">•Se alla</Link>
           </Button>
         </div>
+        <ExhibitionsCarousel items={featuredExhibitions} />
+        <div className="h-screen"></div>
         <Staggered
           items={featuredExhibitions}
           getKey={(item) => item.id}
-          className="flex flex-col items-center justify-center w-full lg:flex-row lg:items-start lg:justify-start  gap-x-4"
+          className="flex lg:hidden flex-col items-center justify-center w-full   gap-x-4"
           renderItem={(item: Exhibition, index: number) => (
             <div
               className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "

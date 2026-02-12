@@ -61,8 +61,6 @@ export default function ExhibitionModal({
             </Button>
 
             <ExhibitionSlugModalClient slug={slug} onClose={onClose} />
-
-            <BackToTop />
           </ReactLenis>
         </motion.div>
       </motion.div>
