@@ -183,7 +183,7 @@ a {
 
 @layer components {
   .h1 {
-    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
+    @apply font-directorMono text-sm leading-normal;
   }
   .h2 {
     @apply font-directorMono text-sm leading-normal whitespace-nowrap;
@@ -195,7 +195,7 @@ a {
     @apply font-directorMono text-sm leading-normal whitespace-nowrap;
   }
   .p {
-    @apply font-directorMono text-base leading-normal whitespace-nowrap;
+    @apply font-directorMono text-sm leading-normal;
   }
 }
 .text-trim {

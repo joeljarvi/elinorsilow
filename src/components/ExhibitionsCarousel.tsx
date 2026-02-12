@@ -72,7 +72,7 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
       >
         <CarouselContent className="-ml-6">
           {items.map((item) => (
-            <CarouselItem key={item.id} className="pl-6 basis-1/2">
+            <CarouselItem key={item.id} className="pl-6 basis-full">
               <ExhibitionCard
                 item={item}
                 setActiveExhibitionSlug={setActiveExhibitionSlug}

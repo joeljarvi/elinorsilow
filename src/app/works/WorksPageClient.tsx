@@ -25,9 +25,11 @@ export default function WorksPageClient() {
     useUI();
 
   return (
-    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-30 ">
-      <div className="fixed top-14 lg:top-30  z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4   gap-y-2 lg:gap-y-0  ">
-        <h1 className="h1 lg:col-span-1 px-4">Verk ({filteredWorks.length})</h1>
+    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-[calc(25vh+2rem)] ">
+      <div className="fixed top-[25vh]  z-20 grid grid-cols-6  w-full lg:justify-start gap-4   mb-1 lg:mb-0 ">
+        <h1 className="h1 col-span-6 lg:col-span-1 px-4 ">
+          Verk ({filteredWorks.length})
+        </h1>
 
         <Button
           variant="link"
@@ -69,7 +71,7 @@ export default function WorksPageClient() {
               )}
             </div>
 
-            <div className="flex flex-col items-baseline px-4 pb-4 l text-sm font-directorMono">
+            <div className="flex flex-col items-baseline px-4 pb-8 l text-sm font-directorMono">
               <span>{item.title.rendered}</span>
               {item.acf.year && <span>{item.acf.year}</span>}
               {item.acf.materials && <span>{item.acf.materials}</span>}

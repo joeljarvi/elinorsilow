@@ -42,7 +42,7 @@ export default function WorksFilter() {
   }, [workSort, selectedYear, categoryFilter]);
 
   return (
-    <div className="col-span-3 lg:col-start-4 lg:col-span-3 lg:row-start-2 w-full grid  grid-rows-3 pointer-events-auto px-8 lg:px-0 pb-2 lg:pb-0  ">
+    <div className="col-span-3 lg:col-start-1 lg:col-span-2 lg:row-start-2 w-full grid  grid-rows-3 pointer-events-auto px-8 lg:px-0 pb-2 lg:pb-0  lg:bg-background ">
       {isApplyingWorksFilters ? (
         <h3 className=" animate-pulse h3">Applying filters…</h3>
       ) : (

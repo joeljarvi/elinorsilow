@@ -131,7 +131,7 @@ function MobileNavOverlay() {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-center pointer-events-auto p-4 backdrop-blur-sm bg-background/80 "
         >
-          <div className=" flex flex-col items-start justify-center w-full    pb-6 lg:pb-0 pt-4  bg-background invert ">
+          <div className=" flex flex-col items-start justify-center w-full    pb-6 lg:pb-0 pt-4  bg-background  ">
             <NavSearch />
             <Button
               variant="link"
@@ -148,7 +148,7 @@ function MobileNavOverlay() {
 
                 if (!isDesktop) setOpen(false);
               }}
-              className="col-start-1 col-span-1 w-min"
+              className="col-start-1 col-span-1 w-min mt-8"
             >
               <Link href="/information">Info / CV</Link>
             </Button>

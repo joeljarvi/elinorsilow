@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useLenis } from "lenis/react";
 import { FeaturedWorksCarousel } from "@/components/FeaturedWorksCarousel";
 import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
+import InfoPageClient from "@/components/InfoPageClient";
 
 type Props = {
   showInfo?: boolean;
@@ -76,7 +77,7 @@ function MainContent({}: Props) {
         className=" mx-0
       flex flex-col items-start justify-start w-full pt-13 lg:pt-[25vh]   "
       >
-        <div className="sticky top-13 lg:top-14 z-20 flex items-center justify-between w-full lg:justify-start gap-4  px-4 mb-1 lg:mb-0 ">
+        <div className="relative flex items-center justify-between w-full lg:justify-start gap-4  px-4 mb-1 lg:mb-0 ">
           <h2 className="h2">Verk i urval</h2>
           <Button variant="link" asChild>
             <Link href="/works">•Se alla</Link>
@@ -85,18 +86,18 @@ function MainContent({}: Props) {
 
         <FeaturedWorksCarousel />
 
-        <div className="sticky top-21 z-30 flex items-center justify-between w-full lg:justify-start gap-4 px-4 ">
+        <div className="relative  flex items-center justify-between w-full lg:justify-start gap-4 px-4 ">
           <h2 className="h2">Utställningar i urval</h2>
           <Button variant="link" asChild>
             <Link href="/exhibitions">•Se alla</Link>
           </Button>
         </div>
         <ExhibitionsCarousel items={featuredExhibitions} />
-        <div className="h-screen"></div>
+
         <Staggered
           items={featuredExhibitions}
           getKey={(item) => item.id}
-          className="flex lg:hidden flex-col items-center justify-center w-full   gap-x-4"
+          className="flex lg:hidden flex-col items-center justify-center w-full   gap-x-4 mb-30"
           renderItem={(item: Exhibition, index: number) => (
             <div
               className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "
@@ -130,7 +131,13 @@ function MainContent({}: Props) {
             </div>
           )}
         />
-
+        <div className="sticky top-21 lg:relative lg:top-0  z-30 flex items-center justify-between w-full lg:justify-start gap-4 px-4 ">
+          <h2 className="h2">Information</h2>
+          <Button variant="link" asChild>
+            <Link href="/exhibitions">•Läs mer</Link>
+          </Button>
+        </div>
+        <InfoPageClient />
         <div className="w-full flex justify-center py-8">
           <Button
             variant="link"

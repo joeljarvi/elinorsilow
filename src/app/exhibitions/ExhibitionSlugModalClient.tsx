@@ -134,18 +134,20 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   return (
     <div
       {...swipeHandlers}
-      className="col-start-1 lg:col-start-2
-    col-span-6 lg:col-span-4
+      className="col-start-1 lg:col-start-1
+    col-span-6 lg:col-span-5
     relative
 gap-4
  grid grid-cols-6
   pt-4 px-2 pb-2  lg:px-0 lg:pt-4 
-  z-30  w-full   scroll-bar-hide 
+  z-30  w-full   scroll-bar-hide bg-background 
 "
     >
-      <span className=" mt-8 lg:mt-10 w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
-        <div className="col-span-3 flex lg:hidden flex-col     justify-start px-2 lg:px-0 items-start w-full h3">
-          <h1 className=" ">{exhibition.title.rendered}</h1>
+      <span className="   w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
+        <div className="col-span- flex lg:hidden flex-col     justify-start px-2 lg:px-0 items-start w-full h3">
+          <h1 className=" whitespace-normal max-w-xs">
+            {exhibition.title.rendered}
+          </h1>
           {exhibition.acf.year && (
             <span className="">{exhibition.acf.year}</span>
           )}
@@ -159,40 +161,65 @@ gap-4
             <span className="  ">{exhibition.acf.city}</span>
           )}
         </div>
-        <div className="hidden lg:flex col-span-3  flex-wrap items-baseline justify-center lg:justify-start max-w-full w-full  lg:max-w-full   pl-4 h3  ">
-          <h1 className=" ">{exhibition.title.rendered},</h1>
-          {exhibition.acf.year && (
-            <span className="ml-1  ">{exhibition.acf.year},</span>
-          )}
-          {exhibition.acf.exhibition_type && (
-            <span className="ml-1   ">{exhibition.acf.exhibition_type}</span>
-          )}
-          {exhibition.acf.location && (
-            <span className="  ">, {exhibition.acf.location}</span>
-          )}
-          {exhibition.acf.city && (
-            <span className="  ">, {exhibition.acf.city}</span>
-          )}
+        <div className="hidden lg:flex col-span-6  justify-between  pl-4 h3  ">
+          <div className="flex-wrap items-baseline justify-center lg:justify-start">
+            <h1 className="whitespace-nowrap ">{exhibition.title.rendered},</h1>
+            {exhibition.acf.year && (
+              <span className="ml-1  ">{exhibition.acf.year},</span>
+            )}
+            {exhibition.acf.exhibition_type && (
+              <span className="ml-1   ">{exhibition.acf.exhibition_type}</span>
+            )}
+            {exhibition.acf.location && (
+              <span className="  ">, {exhibition.acf.location}</span>
+            )}
+            {exhibition.acf.city && (
+              <span className="  ">, {exhibition.acf.city}</span>
+            )}
+          </div>
+          <span className="flex justify-start gap-x-4">
+            <Button
+              className=" "
+              variant="link"
+              size="sm"
+              onClick={() => {
+                const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
+                navigator.clipboard.writeText(url);
+              }}
+            >
+              Dela
+            </Button>
+            <Button
+              className=""
+              size="sm"
+              variant="link"
+              onClick={onClose || (() => router.push("/"))}
+            >
+              Stäng
+            </Button>
+          </span>
         </div>
-        <Button
-          className="col-start-4 lg:col-start-1 justify-end lg:justify-start "
-          variant="link"
-          size="sm"
-          onClick={() => {
-            const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
-            navigator.clipboard.writeText(url);
-          }}
-        >
-          Dela
-        </Button>
-        <Button
-          className="col-start-5 lg:col-start-2 justify-end  lg:justify-start pr-4 lg:pr-0"
-          size="sm"
-          variant="link"
-          onClick={onClose || (() => router.push("/"))}
-        >
-          Tillbaka
-        </Button>
+        <div className="flex flex-col lg:hidden col-start-4  justify-start items-end gap-4">
+          <Button
+            className="flex lg:hidden col-start-5 lg:col-start-2 justify-end  lg:justify-start pr-4 lg:pr-0"
+            size="sm"
+            variant="link"
+            onClick={onClose || (() => router.push("/"))}
+          >
+            Stäng (x)
+          </Button>
+          <Button
+            className=" justify-start "
+            variant="link"
+            size="sm"
+            onClick={() => {
+              const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
+              navigator.clipboard.writeText(url);
+            }}
+          >
+            Dela
+          </Button>
+        </div>
       </span>
 
       <div
@@ -200,7 +227,7 @@ gap-4
       flex flex-col items-start justify-start px-2 lg:px-4  mx-0 text-left  mb-2 lg:mb-2 w-full"
       >
         <div className="grid grid-cols-5 gap-4 w-full">
-          <h3 className="col-span-4 lg:col-span-2 h3 whitespace-normal  mb-4 lg:mb-2">
+          <h3 className="col-span-4 lg:col-span-3 h3 whitespace-normal  mb-4 lg:mb-2">
             {exhibition.acf.description}
           </h3>
         </div>
@@ -218,25 +245,25 @@ gap-4
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="h-full flex flex-col items-center justify-center"
+                  className="h-full flex flex-col items-start justify-start  basis-full"
                 >
                   <motion.div className="relative h-full w-full flex flex-col items-start justify-start pointer-events-auto">
                     {/* Image */}
-                    <div className="relative  mx-auto lg:mx-0 h-full w-screen lg:w-auto  lg:h-[calc(100vh-10rem)] aspect-square lg:aspect-video">
+                    <div className="relative  mx-0 h-full w-screen lg:w-auto  lg:h-[calc(100vh-10rem)] aspect-square lg:aspect-video">
                       <Image
                         src={img.url}
                         alt={img.desc || `Image ${idx + 1}`}
                         fill
-                        className="object-contain object-top lg:object-left px-6 lg:px-0"
+                        className="object-contain object-left-top lg:object-left "
                       />
-                      {img.desc && (
-                        <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2  px-1 font-EBGaramond flex flex-wrap items-baseline text-center justify-center max-w-sm lg:max-w-5xl mx-auto  bg-background pt-0  leading-tight ">
-                          {img.desc}
-                        </div>
-                      )}
                     </div>
 
                     {/* Description */}
+                    {img.desc && (
+                      <div className="relative  px-1 h3 flex flex-wrap items-baseline text-left justify-start max-w-sm lg:max-w-5xl   bg-background pt-0  leading-tight ">
+                        {img.desc}
+                      </div>
+                    )}
                   </motion.div>
                 </CarouselItem>
               ))}
@@ -297,7 +324,7 @@ gap-4
           ))}
         </div> */}
         <div className="grid grid-cols-5 gap-4 w-full">
-          <h3 className=" col-start-1 col-span-5 lg:col-span-1 max-w-xs lg:max-w-full   mx-0 h3 mb-2 lg:mb-2">
+          <h3 className=" col-start-1 col-span-5 lg:col-span-5 max-w-xs lg:max-w-full whitespace-normal   mx-0 h3 mb-2 lg:mb-2">
             {exhibition.acf.credits}
           </h3>
         </div>

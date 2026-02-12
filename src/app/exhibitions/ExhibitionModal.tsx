@@ -21,23 +21,19 @@ export default function ExhibitionModal({
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-40   grid grid-cols-4 min-h-screen scrollbar-hide overflow-hidden bg-background   "
+        className="fixed inset-0 z-40   grid grid-cols-6 min-h-screen scrollbar-hide overflow-hidden bg-transparent  "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* BACKDROP only over content columns (col 2-4) */}
-        <div
-          className="col-start-1 col-span-6 lg:bg-black/30 bg-black/50 absolute inset-y-0 right-0  pb-8lg:px-8 lg:pt-4 "
-          onClick={onClose}
-        />
 
         {/* MODAL only in content area (col 2-4) */}
         <motion.div
           key="modal"
           ref={containerRef}
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 lg:col-span-4 col-span-6 lg:col-start-1  w-full h-screen  bg-background   flex flex-col overflow-hidden  shadow z-40 scrollbar-hide  "
+          className="relative col-start-1 lg:col-span-4 col-span-6  w-full h-screen    flex flex-col overflow-hidden  shadow z-40 scrollbar-hide  "
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}

@@ -21,40 +21,42 @@ export default function InfoPageClient() {
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   return (
-    <div className="w-full flex flex-col items-start justify-start px-4 pt-36">
+    <div className="w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 px-4  ">
       {/* LEFT COLUMN */}
 
       {/* About Section */}
-      <div className="w-full flex flex-col items-start justify-start ">
-        <h2 className="h3 mb-2">About</h2>
+      <div className="mt-4 col-start-1 col-span-2 w-full flex flex-col items-start justify-start mb-16">
         <p className="p text-left mb-4">
           Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based artist
           who explores raw emotion through painting, sculpture and textile.
         </p>
         <div className="p text-left">
           <p>
-            Gösta Ekmans väg 10 <br />
-            129 35 Hägersten
+            Please contact
+            <Link
+              href="mailto:elinor.silow@gmail.com"
+              className="text-blue-600 mx-2"
+            >
+              hej@elinorsilow.com
+            </Link>
+            for collaborations and inquires.
           </p>
-          <Link href="mailto:elinor.silow@gmail.com" className="text-blue-600">
-            elinor.silow@gmail.com
-          </Link>
         </div>
       </div>
 
       {/* Solo Exhibitions */}
       {soloExhibitions.length > 0 && (
-        <section className="flex flex-col items-start justify-start w-full mb-12">
-          <h3 className="h3 ">Solo Exhibitions</h3>
+        <section className="col-start-1 col-span-5  flex flex-col items-start justify-start w-full mb-16">
+          <h3 className="h3 mb-4">Solo Exhibitions</h3>
           <Staggered
             items={soloExhibitions}
-            className="w-full flex flex-col items-stretch justify-start space-y-1"
+            className="w-full flex flex-col items-stretch justify-start space-y-2"
             renderItem={(ex) => {
               const slug = findExhibitionSlug(ex.title.rendered);
               return (
                 <div
                   key={ex.id}
-                  className="flex flex-wrap items-center justify-start"
+                  className="flex flex-wrap items-baseline justify-start h3"
                 >
                   {slug ? (
                     <Button
@@ -64,6 +66,7 @@ export default function InfoPageClient() {
                       }}
                       className=" text-blue-600  mr-1"
                       variant="link"
+                      size="linkSize"
                     >
                       {ex.title.rendered},
                     </Button>
@@ -77,33 +80,33 @@ export default function InfoPageClient() {
           />
         </section>
       )}
-
       {groupExhibitions.length > 0 && (
-        <section className="flex flex-col items-start justify-start w-full ">
+        <section className="col-start-1  col-span-3 flex flex-col items-start justify-start w-full mb-16 ">
           <h3 className="h3 mb-4">All exhibitions</h3>
           <Staggered
             items={groupExhibitions}
-            className="w-full flex flex-col items-stretch justify-start space-y-1"
+            className="w-full flex flex-col items-stretch justify-start space-y-2"
             renderItem={(ex) => {
               const slug = findExhibitionSlug(ex.title.rendered);
               return (
                 <div
                   key={ex.id}
-                  className="flex flex-wrap justify-start items-center "
+                  className="flex flex-wrap justify-start items-center h3 "
                 >
                   {slug ? (
                     <Button
                       variant="link"
-                      className=""
+                      size="linkSize"
+                      className=" text-blue-600  mr-1"
                       onClick={() => {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
                       }}
                     >
-                      {ex.title.rendered}
+                      {ex.title.rendered},
                     </Button>
                   ) : (
-                    <span className="">{ex.title.rendered}</span>
+                    <span className="mr-3 ">{ex.title.rendered}</span>
                   )}
                   {ex.acf.venue}, {ex.acf.city} ({ex.acf.year})
                 </div>
@@ -114,17 +117,18 @@ export default function InfoPageClient() {
       )}
 
       {grants.length > 0 && (
-        <section className="flex flex-col items-start justify-start w-full">
-          <h3 className="h3  ">Grants</h3>
+        <section className="col-start-1 col-span-6 flex flex-col items-start justify-start w-full mb-16">
+          <h3 className="h3 mb-4 ">Grants</h3>
           <Staggered
             items={grants}
-            className="flex flex-col items-stretch justify-start w-full space-y-1"
+            className="flex flex-col items-stretch justify-start w-full space-y-2 h3"
             renderItem={(grant) => (
               <div
                 key={grant.id}
                 className="flex flex-wrap items-center justify-start"
               >
-                <span className="">{grant.acf.title}</span> ({grant.acf.year})
+                <span className="mr-1">{grant.acf.title}, </span>
+                {grant.acf.year}
               </div>
             )}
           />
@@ -132,15 +136,15 @@ export default function InfoPageClient() {
       )}
 
       {educations.length > 0 && (
-        <section className="flex flex-col items-start justify-start w-full">
-          <h3 className="h3 f">Education</h3>
+        <section className="col-start-1 col-span-6 flex flex-col items-start justify-start w-full mb-16">
+          <h3 className="h3 mb-4">Education</h3>
           <Staggered
             items={educations}
-            className="flex flex-col items-stretch justify-start w-full "
+            className="flex flex-col items-stretch justify-start w-full gap-y-2 "
             renderItem={(edu) => (
               <div
                 key={edu.id}
-                className=" flex flex-wrap items-center justify-start"
+                className=" flex flex-wrap items-center justify-start h3"
               >
                 <span className="">{edu.acf.school}</span>
                 {edu.acf.city} ({edu.acf.start_year}–{edu.acf.end_year})
@@ -150,52 +154,50 @@ export default function InfoPageClient() {
         </section>
       )}
 
-      <div className="flex flex-col items-stretch justify-start w-full">
-        <h3 className="h3 ">Press</h3>
-        <div className="flex flex-wrap items-center justify-start ">
-          <span className="1">Hjärtat</span>
-          <p>Lappalainen Hjertström, L-E (2022)</p>
-          <p className="f">Kunstkritikk</p>
+      <div className="col-start-1 col-span-5 flex flex-col items-stretch justify-start w-full gap-y-2 mb-16">
+        <h3 className="h3 mb-2">Press</h3>
+        <div className="flex flex-wrap items-center justify-start h3 ">
+          <span className="mr-1">Hjärtat,</span>
+          <p className="mr-1">Lappalainen Hjertström, L-E (2022),</p>
           <Link
-            className="text-blue-600 ml-1"
+            className="text-blue-600 "
             href="https://kunstkritikk.se/hjartats-energi/"
           >
-            Link
+            "https://kunstkritikk.se/hjartats-energi/"
           </Link>
         </div>
-        <div className="flex flex-wrap items-center justify-start  gap-x-1">
-          <span className="">Gameplay</span>
-          <p>Slöör, S (2025)</p>
-          <p className="">Omkonst</p>
+        <div className="flex flex-wrap items-center justify-start  h3">
+          <span className="mr-1">Gameplay, </span>
+          <p className="mr-1">Slöör, S (2025)</p>
+          <p className="mr-1">Omkonst, </p>
           <Link
             className="text-blue-600 "
             href="https://omkonst.se/25-gameplay.shtml"
           >
-            Link
+            "https://omkonst.se/25-gameplay.shtml"
           </Link>
         </div>
       </div>
 
       {/* Colophon */}
-      <div className="w-full  ">
-        <h3 className="h3 ">Colophon</h3>
-        <div className="">
+      <div className="w-full col-start-1 col-span-5  flex flex-col gap-y-2 ">
+        <h3 className="h3 mb-2">Colophon</h3>
+        <div className="h3 ">
           <p>
             Design & code:{" "}
-            <Link className="font-EBGaramondItalic text-blue-600" href="/">
+            <Link className="text-blue-600" href="/">
               Joel Järvi
             </Link>
           </p>
           <p>
-            Fonts: <span className="">Ginto</span> by Dinamo Typefaces and{" "}
-            <span className="">EB Garamond</span> (12)
+            Font: <span className="">Director</span> from Velvetyne Type Foundry
           </p>
         </div>
       </div>
 
       {/* Copyright Full Width Footer inside Info */}
-      <div className="">
-        <p className="">
+      <div className="mt-8 col-start-1 col-span-2">
+        <p className="p">
           All content on this site, including images, text, and design, is the
           intellectual property of <span className="">Elinor Silow</span> unless
           otherwise stated. No part of this website may be copied, reproduced,

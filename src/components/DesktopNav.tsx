@@ -148,7 +148,7 @@ export default function DesktopNav() {
               setShowWorksMenu(false);
               setShowSettings(false);
             }}
-            className="h-full no-hide-text"
+            className="h-full no-hide-text whitespace-nowrap"
           >
             <Link href="/">Elinor Silow</Link>
           </Button>
@@ -255,7 +255,7 @@ export default function DesktopNav() {
             }}
             className="justify-start col-start-3 col-span-1 row-start-2 no-hide-text"
           >
-            Sök
+            {openSearch ? "Stäng (x)" : "Sök"}
           </Button>
         </motion.nav>
 
