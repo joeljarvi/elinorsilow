@@ -129,29 +129,28 @@ function MobileNavOverlay() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-center pointer-events-auto p-4 backdrop-blur-sm bg-background/80 "
+          className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-start pointer-events-auto  backdrop-blur-sm pt-16 bg-background  "
         >
-          <div className=" flex flex-col items-start justify-center w-full    pb-6 lg:pb-0 pt-4  bg-background  ">
+          <div className=" flex flex-col items-start justify-center w-full   pb-6 lg:pb-0 pt-4  bg-background  ">
+            <p className="p text-left mb-4 pl-4 pr-8">
+              Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
+              artist who explores raw emotion through painting, sculpture and
+              textile.
+            </p>
+            <div className="p text-left pl-4 pr-16 mb-8">
+              <p>
+                Please contact
+                <Link
+                  href="mailto:elinor.silow@gmail.com"
+                  className="text-blue-600 mx-2"
+                >
+                  hej@elinorsilow.com
+                </Link>
+                for collaborations and inquires.
+              </p>
+            </div>
             <NavSearch />
-            <Button
-              variant="link"
-              asChild
-              onClick={() => {
-                setActiveWorkSlug(null);
-                setActiveExhibitionSlug(null);
-                setShowWorksFilter(false);
-                setShowExhibitionsFilter(false);
-                setShowContact(false);
-                setShowExhibitionsMenu(false);
-                setShowWorksMenu(false);
-                setShowSettings(false);
 
-                if (!isDesktop) setOpen(false);
-              }}
-              className="col-start-1 col-span-1 w-min mt-8"
-            >
-              <Link href="/information">Info / CV</Link>
-            </Button>
             <Button
               variant="link"
               asChild
@@ -165,7 +164,7 @@ function MobileNavOverlay() {
                 setShowExhibitionsMenu(false);
                 setShowSettings(false);
               }}
-              className="justify-between w-full"
+              className="mt-8 justify-between w-full"
             >
               <Link href="/works">
                 Verk{" "}
@@ -285,7 +284,6 @@ function MobileNavOverlay() {
               </AnimatePresence>
             )}
             {showExhibitionsFilter && <ExFilter />}
-
             <Button
               variant="link"
               onClick={() => {
@@ -323,6 +321,26 @@ function MobileNavOverlay() {
               </AnimatePresence>
             )}
 
+            <Button
+              variant="link"
+              asChild
+              onClick={() => {
+                setActiveWorkSlug(null);
+                setActiveExhibitionSlug(null);
+                setShowWorksFilter(false);
+                setShowExhibitionsFilter(false);
+                setShowContact(false);
+                setShowExhibitionsMenu(false);
+                setShowWorksMenu(false);
+                setShowSettings(false);
+
+                if (!isDesktop) setOpen(false);
+              }}
+              className="col-start-1 col-span-1 w-min "
+            >
+              <Link href="/info">Info / CV</Link>
+            </Button>
+
             <DarkModeToggle />
 
             <Button
@@ -336,6 +354,53 @@ function MobileNavOverlay() {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+function NavIcon({ state }: { state: "loading" | "idle" | "open" }) {
+  const src =
+    state === "loading"
+      ? "/nav_loading.svg"
+      : state === "open"
+      ? "/trumpet_3_NAV.svg"
+      : "/trumpet_1_NAV.svg";
+
+  const isLoading = state === "loading";
+
+  return (
+    <motion.div
+      key={state}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        rotate: isLoading ? 360 : 0,
+      }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={
+        isLoading
+          ? {
+              rotate: {
+                repeat: Infinity,
+                duration: 1.6,
+                ease: "linear",
+              },
+              opacity: { duration: 0.2 },
+              scale: { duration: 0.2 },
+            }
+          : { duration: 0.25, ease: "easeOut" }
+      }
+      className="relative w-24 h-24 no-hide-text"
+    >
+      <Image
+        src={src}
+        alt={state}
+        fill
+        sizes="96px"
+        className="object-contain dark:invert no-hide-text"
+        priority
+      />
+    </motion.div>
   );
 }
 
@@ -360,56 +425,25 @@ export default function NavButton() {
   const initialAppLoading = !initialLoaded;
   const showNavLoader = initialAppLoading || viewLoading;
 
+  type NavVisualState = "loading" | "idle" | "open";
+
+  const navState: NavVisualState = showNavLoader
+    ? "loading"
+    : open
+    ? "open"
+    : "idle";
+
   return (
     <>
       <button
-        className="fixed lg:hidden bottom-8 right-4 top-auto z-50  flex items-center justify-center w-24 h-24 no-hide-text "
+        className="fixed lg:hidden bottom-8 right-6  z-50 left-auto top-auto flex items-center justify-center w-24 h-24 no-hide-text"
         onClick={handleOpen}
       >
-        {showNavLoader ? (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 0.6, rotate: 0 }}
-            animate={{ opacity: 1, rotate: 360 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              rotate: { repeat: Infinity, duration: 2, ease: "linear" },
-              opacity: { duration: 0.4, ease: "easeOut" },
-            }}
-            className="relative w-24 h-24 mr-4 no-hide-text"
-          >
-            <Image
-              src="/ogubbe_frilagd_new.png"
-              alt={"loading"}
-              fill
-              sizes="96px"
-              className="h-full w-auto object-contain cursor-pointer dark:invert no-hide-text"
-              priority
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="static"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: "linear",
-            }}
-            className="relative w-24 h-24 mr-2 no-hide-text "
-          >
-            <Image
-              src="/elli_trumpetgubbe_new_frilagd.png"
-              alt="Elinor Silow"
-              fill
-              sizes="96px"
-              className="h-full w-auto object-contain cursor-pointer dark:invert no-hide-text "
-              priority
-            />
-          </motion.div>
-        )}
+        <AnimatePresence mode="wait">
+          <NavIcon state={navState} />
+        </AnimatePresence>
       </button>
+
       {open && <MobileNavOverlay />}
     </>
   );

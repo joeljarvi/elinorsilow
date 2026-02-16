@@ -15,13 +15,15 @@ import { useWorks } from "@/context/WorksContext";
 import { useUI } from "@/context/UIContext";
 import { useState } from "react";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
-function WorkCard({ item, setActiveWorkSlug, setOpen, router }) {
+export function WorkCard({ item, setActiveWorkSlug, setOpen, router }) {
   const { getWorkSizeClass } = useWorks();
 
   return (
     <div
-      className="aspect-square flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2 w-[100vw] lg:w-full bg-background hover:bg-foreground/10 transition-all"
+      className="aspect-square flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2 w-[100vw] lg:w-full bg-background hover:bg-foreground/10 transition-all "
       onClick={() => {
         setActiveWorkSlug(item.slug);
         setOpen(false);
@@ -61,16 +63,14 @@ export function FeaturedWorksCarousel({}: {}) {
   const { featuredWorks, setActiveWorkSlug, setOpen } = useWorks();
 
   const worksGallery = useGalleryCarousel({
-    pause: isNavOpen || isModalOpen,
-    delay: 5000,
     enableKeyboard: true,
     id: "featured-works",
   });
 
   return (
-    <section className="w-full">
+    <section className="w-full grid grid-cols-6 mb-8">
       {/* mobile */}
-      <div className="flex flex-col lg:hidden">
+      <div className="flex flex-col lg:hidden col-span-6">
         {featuredWorks.map((item) => (
           <WorkCard
             key={item.id}
@@ -83,12 +83,8 @@ export function FeaturedWorksCarousel({}: {}) {
       </div>
 
       {/* desktop */}
-      <div className="hidden lg:block px-4">
-        <Carousel
-          setApi={worksGallery.setApi}
-          plugins={[worksGallery.autoplay.current]}
-          opts={{ align: "start" }}
-        >
+      <div className="hidden lg:block  px-4 col-span-6 ">
+        <Carousel setApi={worksGallery.setApi} opts={{ align: "start" }}>
           <CarouselContent className="-ml-6">
             {featuredWorks.map((item) => (
               <CarouselItem key={item.id} className="pl-6 basis-1/3">
@@ -102,9 +98,14 @@ export function FeaturedWorksCarousel({}: {}) {
             ))}
           </CarouselContent>
 
-          <div className="flex justify-end gap-4  pr-4">
-            <CarouselPrevious className="static translate-y-0" />
-            <CarouselNext className="static translate-y-0" />
+          <div className="flex justify-between gap-4  pt-4 mb-8">
+            <Button variant="default" asChild>
+              <Link href="/works">Se alla Verk</Link>
+            </Button>
+            <span className="flex justify-end gap-4">
+              <CarouselPrevious className="static translate-y-0" />
+              <CarouselNext className="static translate-y-0" />
+            </span>
           </div>
         </Carousel>
       </div>

@@ -130,10 +130,10 @@ export default function DesktopNav() {
   }, [scrollDir, openSearch]);
   return (
     <>
-      <div className="fixed top-0 left-0 w-full  z-40     lg:flex flex-col items-baseline justify-start   gap-x-4 no-hide-text     ">
+      <div className="fixed top-0 left-0 w-full  z-40     lg:flex flex-col items-baseline justify-start   gap-x-4 no-hide-text    ">
         {/* LEFT MENU (MAIN) */}
 
-        <h1 className="h1 flex items-baseline justify-start pt-2 lg:pt-4 bg-background w-full pb-2 z-50 no-hide-text">
+        <h1 className="h1 flex items-baseline justify-start  pt-2 lg:pt-4 bg-background w-full pb-2 z-50 no-hide-text ">
           <Button
             asChild
             variant="link"
@@ -256,6 +256,14 @@ export default function DesktopNav() {
             className="justify-start col-start-3 col-span-1 row-start-2 no-hide-text"
           >
             {openSearch ? "Stäng (x)" : "Sök"}
+          </Button>
+          <Button
+            onClick={() => setShowWorksFilter(true)}
+            variant="link"
+            size="sm"
+            className="justify-start col-start-3 col-span-1 row-start-3 no-hide-text"
+          >
+            Filter
           </Button>
         </motion.nav>
 

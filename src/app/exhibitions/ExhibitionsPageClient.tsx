@@ -28,25 +28,10 @@ export default function ExhibitionsPageClient() {
 
   return (
     <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-30 ">
-      <div className="fixed top-14 lg:top-16 z-20 n w-full grid grid-cols-2 lg:grid-cols-6     grid-rows-[1.5rem_minmax(0,1fr)]   mb-1 lg:mb-0 lg:gap-x-4 px-2  gap-y-2 lg:gap-y-0  ">
-        <h1 className="h1 lg:col-span-1 px-2   ">
-          Utställningar ({filteredExhibitions.length})
-        </h1>
-
-        <Button
-          variant="link"
-          size="sm"
-          onClick={() => handleOpenExhibitionsFilter()}
-          className="hidden lg:flex col-start-3 justify-end lg:justify-start  "
-        >
-          Filter
-        </Button>
-        {showExhibitionsFilter && <ExFilter />}
-      </div>
       <Staggered
         items={filteredExhibitions}
         getKey={(item) => item.id}
-        className="flex flex-col items-center justify-center w-full lg:flex-row lg:items-start lg:justify-start  gap-x-4"
+        className="flex flex-col items-center justify-center w-full lg:items-start lg:justify-start  gap-x-4 p-4"
         renderItem={(item: Exhibition, index: number) => (
           <div
             className="flex flex-col justify-start lg:justify-between cursor-pointer gap-y-4 lg:gap-y-2  w-full h-full bg-background hover:bg-foreground/10 transition-all  "

@@ -202,7 +202,6 @@ export function WorksProvider({ children }: { children: ReactNode }) {
     "En ros till dig",
     "Pärlband",
     "Din röst är blå",
-    "Grisen",
   ];
 
   const featuredWorks: Work[] = useMemo(() => {

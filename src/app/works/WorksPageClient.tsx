@@ -1,85 +1,109 @@
 "use client";
 
-import Staggered from "@/components/Staggered";
 import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Work } from "../../../lib/wordpress";
 import { useUI } from "@/context/UIContext";
+import { motion, useAnimation, useInView } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { Work } from "../../../lib/wordpress";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import WorksFilter from "@/components/WorksFilter";
 
 export default function WorksPageClient() {
-  const {
-    filteredWorks,
-    setActiveWorkSlug,
-    activeWorkSlug,
-    getWorkSizeClass,
-    workSort,
-  } = useWorks();
-
+  const { filteredWorks, setActiveWorkSlug, getWorkSizeClass } = useWorks();
   const router = useRouter();
-  const { showInfo, open, setOpen, showWorksFilter, handleOpenWorksFilter } =
-    useUI();
+  const { setOpen } = useUI();
+
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
-    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-[calc(25vh+2rem)] ">
-      <div className="fixed top-[25vh]  z-20 grid grid-cols-6  w-full lg:justify-start gap-4   mb-1 lg:mb-0 ">
-        <h1 className="h1 col-span-6 lg:col-span-1 px-4 ">
-          Verk ({filteredWorks.length})
-        </h1>
+    <section className="relative flex flex-col items-center lg:items-start w-full mt-10 lg:mt-[25vh] ">
+      <div className="snap-mandatory flex flex-col items-center lg:items-start lg:grid grid-cols-6 w-full px-4 gap-x-8 gap-y-60 mb-36">
+        {filteredWorks.map((work: Work, idx: number) => {
+          const ref = useRef<HTMLDivElement>(null);
+          const inView = useInView(ref, { amount: 0.25 });
 
-        <Button
-          variant="link"
-          size="sm"
-          onClick={() => handleOpenWorksFilter()}
-          className="hidden lg:flex col-start-2 justify-end lg:justify-start  "
-        >
-          Filter
-        </Button>
-        {showWorksFilter && <WorksFilter />}
-      </div>
-      <Staggered
-        items={filteredWorks}
-        getKey={(item) => item.id}
-        className="flex flex-col items-center justify-center w-full lg:grid lg:grid-cols-3 lg:justify-start lg:items-start px-4 lg:px-0 mb-36"
-        renderItem={(item: Work) => (
-          <div
-            className="lg:col-span-1 lg:w-full aspect-square flex flex-col justify-between lg:justify-between cursor-pointer gap-y-2 lg:gap-y-4 bg-background hover:bg-neutral-100 w-[100vw] "
-            onClick={() => {
-              setActiveWorkSlug(item.slug);
-              setOpen(false);
-              router.push(`/?work=${item.slug}`);
-            }}
-          >
-            <div
-              className={`relative aspect-square   mx-auto lg:mx-0 ${getWorkSizeClass(
-                item.acf.dimensions
-              )} flex`}
+          // Update activeIndex when this work is more than 50% in view
+          useEffect(() => {
+            if (inView) setActiveIndex(idx);
+          }, [inView, idx]);
+
+          return (
+            <motion.div
+              key={work.id}
+              ref={ref}
+              className={`snap-start relative w-full h-screen lg:w-full lg:aspect-square lg:h-auto cursor-pointer overflow-hidden mx-auto lg:mx-0 lg:bg-background lg:bg-gradient-none lg:hover:bg-foreground/10 transition-all  `}
+              onClick={() => {
+                setActiveWorkSlug(work.slug);
+                setOpen(false);
+                router.push(`/?work=${work.slug}`);
+              }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {item.image_url && (
-                <Image
-                  src={item.image_url}
-                  alt={item.title.rendered}
-                  fill
-                  loading="lazy"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-contain object-top lg:object-top-left p-0 lg:px-4"
-                />
-              )}
-            </div>
+              {/* Work Image */}
+              <div
+                className={`relative  lg:mx-0  h-full ${getWorkSizeClass(
+                  work.acf.dimensions
+                )} flex `}
+              >
+                {work.image_url && (
+                  <Image
+                    src={work.image_url}
+                    alt={work.title.rendered}
+                    fill
+                    className="object-contain object-top  lg:object-top-left "
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    loading="lazy"
+                  />
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
 
-            <div className="flex flex-col items-baseline px-4 pb-8 l text-sm font-directorMono">
-              <span>{item.title.rendered}</span>
-              {item.acf.year && <span>{item.acf.year}</span>}
-              {item.acf.materials && <span>{item.acf.materials}</span>}
-              {item.acf.dimensions && <span>{item.acf.dimensions}</span>}
-            </div>
-          </div>
+      {/* Fixed Caption Bottom Left */}
+      <div className="fixed lg:hidden bottom-0 left-0  z-0 pointer-events-none w-full px-4 pb-4 grid grid-cols-4 gap-4 ">
+        {activeIndex !== null && filteredWorks[activeIndex] && (
+          <motion.div
+            key={filteredWorks[activeIndex].id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className=" bg-[rgb(0,255,0)]   font-directorMono text-sm flex flex-col w-full p-4 col-span-4 relative h3"
+          >
+            <span className=" h3">
+              {filteredWorks[activeIndex].title.rendered}
+            </span>
+            {/* 
+            {filteredWorks[activeIndex].acf.year && (
+              <span>{filteredWorks[activeIndex].acf.year}</span>
+            )}
+            {filteredWorks[activeIndex].acf.materials && (
+              <span className="max-w-sm">
+                {filteredWorks[activeIndex].acf.materials}
+              </span>
+            )}
+            {filteredWorks[activeIndex].acf.dimensions && (
+              <span>{filteredWorks[activeIndex].acf.dimensions}</span>
+            )}
+            <Button
+              variant="link"
+              className="absolute bottom-0 right-0"
+              onClick={() => {
+                setActiveWorkSlug(filteredWorks[activeIndex].slug);
+                setOpen(false);
+                router.push(`/?work=${filteredWorks[activeIndex].slug}`);
+              }}
+            >
+              Se verk
+            </Button> */}
+          </motion.div>
         )}
-      />
+      </div>
     </section>
   );
 }

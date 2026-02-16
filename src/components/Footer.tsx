@@ -27,7 +27,7 @@ export default function Footer() {
     return null;
   }
   return (
-    <div className="col-start-1 col-span-12 lg:col-start-2 lg:col-span-3  flex flex-col   h4 justify-center items-start gap-y-0 gap-x-4  w-full p-4   lg:p-4   ">
+    <div className="col-start-1 col-span-12 lg:col-start-2 lg:col-span-3  flex flex-col   h4 justify-center items-start gap-y-0 gap-x-4  w-full p-4   lg:p-4 bg-transparent   ">
       {/* <svg
           width="250"
           height="100"

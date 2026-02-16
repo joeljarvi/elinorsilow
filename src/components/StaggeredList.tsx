@@ -34,16 +34,15 @@ export default function StaggeredList<T extends BaseItem>({
       <Staggered
         items={sortAZ(items)}
         loading={loading}
-        className="flex flex-wrap   pt-2 gap-2 lg:gap-4 items-baseline justify-start space-y-0  mb-4 w-full   "
+        className="flex flex-wrap   pt-2 gap-2 px-8 lg:gap-4 items-baseline justify-start space-y-0  mb-4 w-full overflow-y-scroll  "
         getKey={getKey}
         renderItem={(item) => (
           <Badge
-            variant="secondary"
+            variant="default"
             onClick={() => {
               onSelect?.(item);
-              if (!isDesktop && setOpen) setOpen(false);
             }}
-            className="transition-all font-gintoRegular hover:font-gintoRegularItalic items-baseline w-full justify-center lg:justify-start cursor-pointer   "
+            className=""
           >
             {item.title.rendered}
           </Badge>

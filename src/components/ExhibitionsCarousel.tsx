@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { Button } from "./ui/button";
+import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
@@ -27,7 +28,7 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
         router.push(`/?exhibition=${item.slug}`);
       }}
     >
-      <div className="relative w-full aspect-video">
+      <div className="relative w-full aspect-square">
         {image && (
           <Image
             src={image}
@@ -39,11 +40,10 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
         )}
       </div>
 
-      <div className="flex flex-col pt-4 px-4 pb-16 lg:p-0 text-sm font-directorMono">
+      <div className="flex flex-col pt-0 pb-4 lg:p-0 text-sm font-directorMono">
         <span>{item.title.rendered}</span>
         {item.acf.year && <span>{item.acf.year}</span>}
         {item.acf.exhibition_type && <span>{item.acf.exhibition_type}</span>}
-        {item.acf.city && <span>{item.acf.city}</span>}
       </div>
     </div>
   );
@@ -57,16 +57,13 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
   const { setActiveExhibitionSlug, setOpen } = useExhibitions();
 
   const gallery = useGalleryCarousel({
-    pause: isNavOpen || isModalOpen,
-    delay: 5000,
     enableKeyboard: true,
     id: "featured-exhibitions", // unique id
   });
   return (
-    <div className="hidden lg:flex w-full px-4">
+    <div className="flex w-full px-4">
       <Carousel
         setApi={gallery.setApi}
-        plugins={[gallery.autoplay.current]}
         opts={{ align: "start" }}
         className="w-full h-full"
       >
@@ -82,10 +79,14 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
             </CarouselItem>
           ))}
         </CarouselContent>
-
-        <div className="flex justify-end gap-4  pr-4">
-          <CarouselPrevious className="static translate-y-0" />
-          <CarouselNext className="static translate-y-0" />
+        <div className="flex justify-between gap-4  pt-0 mb-8 pr-4 ">
+          <Button variant="default" asChild>
+            <Link href="/works">Se alla Utställningar</Link>
+          </Button>
+          <span className="flex justify-end gap-4">
+            <CarouselPrevious className="static translate-y-0" />
+            <CarouselNext className="static translate-y-0" />
+          </span>
         </div>
       </Carousel>
     </div>

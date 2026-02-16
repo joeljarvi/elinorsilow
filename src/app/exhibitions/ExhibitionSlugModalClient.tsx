@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon } from "lucide-react";
+
 import {
   Carousel,
   CarouselContent,
@@ -14,14 +14,13 @@ import {
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 
-import { Exhibition, getExhibitionBySlug } from "../../../lib/wordpress";
-import { AnimatePresence, motion } from "framer-motion";
-import type { CarouselApi } from "@/components/ui/carousel";
+import { Exhibition } from "../../../lib/wordpress";
+import { motion } from "framer-motion";
+
 import HDivider from "@/components/HDivider";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
+
 import useSwipe from "@/hooks/use-swipe";
 import { useRouter } from "next/navigation";
-import { useLenis } from "lenis/react";
 
 type Props = {
   slug: string;
@@ -40,7 +39,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const [carouselIndex, setCarouselIndex] = useState(0);
 
   const modalGallery = useGalleryCarousel({
-    delay: 3000,
     enableKeyboard: true,
     id: "modal-gallery", // unique id
   });
@@ -238,7 +236,6 @@ gap-4
           <Carousel
             setApi={modalGallery.setApi}
             opts={{ startIndex: carouselIndex, align: "start" }}
-            plugins={[modalGallery.autoplay.current]}
             className="h-full w-full"
           >
             <CarouselContent className="h-full">

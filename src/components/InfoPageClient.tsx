@@ -21,7 +21,7 @@ export default function InfoPageClient() {
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   return (
-    <div className="w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 px-4  ">
+    <div className="mt-10 lg:mt-[25vh ]w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 px-4 pb-8  ">
       {/* LEFT COLUMN */}
 
       {/* About Section */}
@@ -46,11 +46,11 @@ export default function InfoPageClient() {
 
       {/* Solo Exhibitions */}
       {soloExhibitions.length > 0 && (
-        <section className="col-start-1 col-span-5  flex flex-col items-start justify-start w-full mb-16">
+        <section className="col-start-1 col-span-5  flex flex-col items-start justify-start w-full mb-8">
           <h3 className="h3 mb-4">Solo Exhibitions</h3>
           <Staggered
             items={soloExhibitions}
-            className="w-full flex flex-col items-stretch justify-start space-y-2"
+            className="w-full flex flex-col items-stretch justify-start space-y-0"
             renderItem={(ex) => {
               const slug = findExhibitionSlug(ex.title.rendered);
               return (
@@ -81,17 +81,17 @@ export default function InfoPageClient() {
         </section>
       )}
       {groupExhibitions.length > 0 && (
-        <section className="col-start-1  col-span-3 flex flex-col items-start justify-start w-full mb-16 ">
+        <section className="col-start-1  col-span-3 flex flex-col items-start justify-start w-full mb-8 ">
           <h3 className="h3 mb-4">All exhibitions</h3>
           <Staggered
             items={groupExhibitions}
-            className="w-full flex flex-col items-stretch justify-start space-y-2"
+            className="w-full flex flex-col items-stretch justify-start space-y-0"
             renderItem={(ex) => {
               const slug = findExhibitionSlug(ex.title.rendered);
               return (
                 <div
                   key={ex.id}
-                  className="flex flex-wrap justify-start items-center h3 "
+                  className="flex flex-wrap justify-start items-baseline h3 "
                 >
                   {slug ? (
                     <Button
@@ -117,11 +117,11 @@ export default function InfoPageClient() {
       )}
 
       {grants.length > 0 && (
-        <section className="col-start-1 col-span-6 flex flex-col items-start justify-start w-full mb-16">
+        <section className="col-start-1 col-span-6 flex flex-col items-start justify-start w-full mb-8">
           <h3 className="h3 mb-4 ">Grants</h3>
           <Staggered
             items={grants}
-            className="flex flex-col items-stretch justify-start w-full space-y-2 h3"
+            className="flex flex-col items-stretch justify-start w-full space-y-0 h3"
             renderItem={(grant) => (
               <div
                 key={grant.id}
@@ -136,11 +136,11 @@ export default function InfoPageClient() {
       )}
 
       {educations.length > 0 && (
-        <section className="col-start-1 col-span-6 flex flex-col items-start justify-start w-full mb-16">
+        <section className="col-start-1 col-span-6 flex flex-col items-start justify-start w-full mb-8">
           <h3 className="h3 mb-4">Education</h3>
           <Staggered
             items={educations}
-            className="flex flex-col items-stretch justify-start w-full gap-y-2 "
+            className="flex flex-col items-stretch justify-start w-full gap-y-0 "
             renderItem={(edu) => (
               <div
                 key={edu.id}
@@ -154,8 +154,8 @@ export default function InfoPageClient() {
         </section>
       )}
 
-      <div className="col-start-1 col-span-5 flex flex-col items-stretch justify-start w-full gap-y-2 mb-16">
-        <h3 className="h3 mb-2">Press</h3>
+      <div className="col-start-1 col-span-5 flex flex-col items-stretch justify-start w-full gap-y-0 mb-8">
+        <h3 className="h3 mb-4">Press</h3>
         <div className="flex flex-wrap items-center justify-start h3 ">
           <span className="mr-1">Hjärtat,</span>
           <p className="mr-1">Lappalainen Hjertström, L-E (2022),</p>
@@ -180,8 +180,8 @@ export default function InfoPageClient() {
       </div>
 
       {/* Colophon */}
-      <div className="w-full col-start-1 col-span-5  flex flex-col gap-y-2 ">
-        <h3 className="h3 mb-2">Colophon</h3>
+      <div className="w-full col-start-1 col-span-5  flex flex-col gap-y-0 mb-8 ">
+        <h3 className="h3 mb-4">Colophon</h3>
         <div className="h3 ">
           <p>
             Design & code:{" "}
@@ -196,7 +196,7 @@ export default function InfoPageClient() {
       </div>
 
       {/* Copyright Full Width Footer inside Info */}
-      <div className="mt-8 col-start-1 col-span-2">
+      <div className="col-start-1 col-span-2">
         <p className="p">
           All content on this site, including images, text, and design, is the
           intellectual property of <span className="">Elinor Silow</span> unless

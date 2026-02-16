@@ -189,7 +189,7 @@ a {
     @apply font-directorMono text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
+    @apply font-directorMono text-sm leading-relaxed whitespace-nowrap;
   }
   .h4 {
     @apply font-directorMono text-sm leading-normal whitespace-nowrap;
