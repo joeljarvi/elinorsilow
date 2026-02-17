@@ -440,7 +440,7 @@ function NavTop() {
   });
 
   return (
-    <div className="fixed top-0 z-40 flex lg:hidden justify-between items-center font-director-mono  gap-x-4  bg-background w-full shadow py-1 ">
+    <div className="hidden top-0 z-40  lg:hidden justify-between items-center font-director-mono  gap-x-4  bg-background w-full shadow py-1 ">
       <Button className="uppercase font-directorBold " variant="link" asChild>
         <Link href="/">Elinor Silow</Link>
       </Button>

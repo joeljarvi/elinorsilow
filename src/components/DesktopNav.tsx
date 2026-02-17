@@ -132,11 +132,11 @@ export default function DesktopNav() {
     <>
       <motion.div
         style={{ y: 0 }}
-        className="hidden lg:fixed top-0 left-0 w-full  z-40     lg:grid grid-cols-12  items-center justify-start   gap-x-4 no-hide-text bg-background shadow "
+        className="absolute top-0 left-0 w-full  z-40 flex flex-col    lg:grid grid-cols-12  items-center justify-start pt-8 px-8 gap-y-4 lg:gap-y-0  gap-x-4 no-hide-text bg-orange-400 lg:bg-background shadow "
       >
         {/* LEFT MENU (MAIN) */}
 
-        <div className="p  p-4 col-span-4 whitespace-normal flex flex-wrap items-baseline gap-x-1 h-24 ">
+        <div className="p   col-span-4 whitespace-normal flex flex-wrap items-baseline gap-x-1  ">
           <Link
             onClick={() => {
               setActiveWorkSlug(null);
@@ -163,13 +163,14 @@ export default function DesktopNav() {
         {/* Nav slides in/out */}
 
         <nav
-          className={` hidden lg:grid
+          className={` flex flex-col lg:grid
    col-span-8
+
     grid-cols-4
     grid-rows-[1.5rem_minmax(0,1fr)]
     gap-x-4
-    w-full items-center   px-4
-    overflow-hidden   ${openSearch ? "" : ""}`}
+    w-full items-start lg:items-center  
+    overflow-hidden   ${openSearch ? "pb-0" : "pb-8"}`}
         >
           <Button
             variant="link"

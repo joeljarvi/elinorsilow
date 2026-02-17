@@ -24,14 +24,14 @@ export function WorkCard({ item, setActiveWorkSlug, setOpen, router }) {
 
   return (
     <div
-      className="aspect-square flex flex-col justify-start lg:justify-start cursor-pointer gap-y-0 lg:gap-y-0 w-[100vw] lg:w-full bg-background  hover:bg-foreground/10 transition-all   "
+      className="aspect-square flex flex-col justify-start lg:justify-start cursor-pointer gap-y-0 lg:gap-y-0 w-[100vw] lg:w-full  transition-all   "
       onClick={() => {
         setActiveWorkSlug(item.slug);
         setOpen(false);
         router.push(`/?work=${item.slug}`);
       }}
     >
-      <div className=" flex flex-wrap items-baseline  py-4  justify-start text-sm font-directorLight h3  ">
+      <div className=" flex lg:hidden flex-wrap items-baseline  py-4  justify-start text-sm font-directorLight h3  ">
         <span className="font-directorBold uppercase mr-2">
           {item.title.rendered},
         </span>
@@ -42,7 +42,7 @@ export function WorkCard({ item, setActiveWorkSlug, setOpen, router }) {
         {item.acf.dimensions && <span>{item.acf.dimensions}</span>}
       </div>
       <div
-        className={`relative h-screen lg:h-[75vh] mx-auto lg:mx-0 ${getWorkSizeClass(
+        className={`relative h-[80vh] lg:h-[75vh] mx-auto lg:mx-0 ${getWorkSizeClass(
           item.acf.dimensions
         )} flex`}
       >
@@ -72,9 +72,9 @@ export function FeaturedWorksCarousel({}: {}) {
   });
 
   return (
-    <section className="w-full grid grid-cols-6 px-4  ">
+    <section className="w-full mt-[50vh] lg:mt-0 grid grid-cols-6 px-4  ">
       {/* mobile */}
-      <div className="flex flex-col lg:hidden col-span-6 w-full">
+      <div className="flex flex-col lg:hidden col-span-6 pt-4 gap-y-4 w-full">
         {featuredWorks.map((item) => (
           <WorkCard
             key={item.id}

@@ -85,7 +85,7 @@ function MainContent({}: Props) {
           className=" mx-0
       flex flex-col items-start justify-start w-full pt-11 lg:pt-24   "
         >
-          <span className="sticky top-11 lg:top-24 z-30 flex justify-between lg:justify-start gap-x-4  py-1 w-full shadow bg-background ">
+          <span className="sticky top-0 lg:top-24 z-30 flex justify-between lg:justify-start gap-x-4  py-1 w-full shadow bg-background ">
             <Button
               variant="link"
               className="col-span-2 text-sm font-directorBold uppercase    justify-start    "
