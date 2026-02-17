@@ -99,7 +99,7 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
       <Carousel
         setApi={gallery.setApi}
         opts={{ align: "start" }}
-        className="w-full h-full hidden lg:block col-span-6 "
+        className="w-full h-full lg:px-8 lg:pt-0 hidden lg:block col-span-6 "
       >
         <CarouselContent className="-ml-6">
           {items.map((item) => (

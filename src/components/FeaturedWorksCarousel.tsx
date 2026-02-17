@@ -72,7 +72,7 @@ export function FeaturedWorksCarousel({}: {}) {
   });
 
   return (
-    <section className="w-full mt-[50vh] lg:mt-0 grid grid-cols-6 px-4  ">
+    <section className="w-full mt-[50vh] lg:mt-0 grid grid-cols-6 px-4 lg:px-8 lg:pt-8  ">
       {/* mobile */}
       <div className="flex flex-col lg:hidden col-span-6 pt-4 gap-y-4 w-full">
         {featuredWorks.map((item) => (
