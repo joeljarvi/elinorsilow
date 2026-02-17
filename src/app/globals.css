@@ -11,6 +11,8 @@ html {
 @theme inline {
   --font-sans: var(--font-NewEdge666-Ultra-Bold-Rounded);
   --font-directorMono: var(--font-directorMono);
+  --font-directorBold: var(--font-directorBold);
+  --font-directorLight: var(--font-directorLight);
   --font-haas: var(--font-neueHaas);
   --font-monument: var(--font-monument);
   --font-mono: var(--font-pressura);
@@ -183,19 +185,19 @@ a {
 
 @layer components {
   .h1 {
-    @apply font-directorMono text-sm leading-normal;
+    @apply font-directorBold text-sm leading-normal;
   }
   .h2 {
-    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
+    @apply font-directorLight text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-directorMono text-sm leading-relaxed whitespace-nowrap;
+    @apply font-directorLight text-sm leading-relaxed whitespace-nowrap;
   }
   .h4 {
-    @apply font-directorMono text-sm leading-normal whitespace-nowrap;
+    @apply font-directorLight text-sm leading-normal whitespace-nowrap;
   }
   .p {
-    @apply font-directorMono text-sm leading-normal;
+    @apply font-directorLight text-sm leading-normal;
   }
 }
 .text-trim {

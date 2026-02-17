@@ -129,49 +129,48 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className=" col-start-1 lg:col-start-2
-    col-span-6 lg:col-span-5
-    relative flex flex-col  min-h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
+      className=" col-start-1 lg:col-start-1
+    col-span-6 lg:col-span-4
+    relative flex flex-col  h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
     >
-      <div className="flex flex-row justify-start lg:justify-between w-full items-baseline bg-transparent mt-0   px-4 pb-1.5  pt-2 lg:pb-2 ">
-        <div className="hidden lg:flex flex-wrap justify-start items-baseline text-left h3 max-w-sm lg:max-w-full  lg:pb-1 mx-auto lg:mx-0">
-          <span className="">{work.title.rendered}</span>,{" "}
-          {work.acf.year && <span className="ml-1">{work.acf.year},</span>}
-          {work.acf.materials && (
-            <span className="ml-1">{work.acf.materials},</span>
-          )}
-          {work.acf.dimensions && (
-            <span className="ml-1">{work.acf.dimensions}</span>
-          )}
-        </div>
-
-        <div className="flex pt-2 mb-2 lg:hidden flex-col items-baseline  text-sm font-directorMono ">
-          <span>{work.title.rendered}</span>
-          {work.acf.year && <span>{work.acf.year}</span>}
-          {work.acf.materials && <span>{work.acf.materials}</span>}
-          {work.acf.dimensions && <span>{work.acf.dimensions}</span>}
-        </div>
-
-        <div className="absolute bottom-4 right-0 lg:top-4  lg:bottom-auto items-baseline  gap-2 flex justify-between lg:justify-end w-full px-0 pb-0">
-          <Button
-            className=""
-            variant="link"
-            size="sm"
-            onClick={() => {
-              const url = `${window.location.origin}/works/${work.slug}`;
-              navigator.clipboard.writeText(url);
-            }}
-          >
-            Dela
-          </Button>
-          <Button
-            className=""
-            size="sm"
-            variant="link"
-            onClick={onClose || (() => router.push("/"))}
-          >
-            Stäng (x)
-          </Button>
+      <div
+        className="flex flex-row justify-start lg:justify-between w-full items-baseline bg-transparent   
+     "
+      >
+        <div className="fixed lg:absolute top-0 left-0 w-full  z-40 ">
+          <div className="  flex justify-between items-center  w-full px-0 pb-0 z-40">
+            <div className="flex flex-wrap items-baseline text-sm font-directorLight  p-4 ">
+              <span className="h1 font-directorBold uppercase mr-4">
+                {work.title.rendered}
+              </span>
+              {work.acf.year && <span className="mr-2">{work.acf.year},</span>}
+              {work.acf.materials && (
+                <span className="mr-2">{work.acf.materials},</span>
+              )}
+              {work.acf.dimensions && <span>{work.acf.dimensions}</span>}
+            </div>
+            <div className="hidden lg:flex justify-start gap-x-4 items-baseline">
+              <Button
+                className=""
+                variant="link"
+                size="sm"
+                onClick={() => {
+                  const url = `${window.location.origin}/works/${work.slug}`;
+                  navigator.clipboard.writeText(url);
+                }}
+              >
+                Dela
+              </Button>
+              <Button
+                className=""
+                size="sm"
+                variant="link"
+                onClick={onClose || (() => router.push("/"))}
+              >
+                Stäng (x)
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       {/* Carousel */}
@@ -182,12 +181,13 @@ export default function WorkSlugModalClient({
               key={idx}
               className="w-full flex justify-center lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-12.5rem)] lg:h-[calc(100vh-3.5rem)] flex flex-col  lg:items-start justify-center items-center">
+              <div className="relative w-full h-[calc(100vh-0em)] lg:h-[calc(100vh-6rem)] flex flex-col  lg:items-start justify-center items-center ">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
-                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain object-center mx-auto lg:object-top-left lg:mx-0 px-4 lg:px-4 lg:pb-4  "
+                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain object-center mx-auto lg:object-left-top 
+                   lg:mx-0 px-4 lg:px-4 lg:pb-4  py-30"
                 />
               </div>
             </CarouselItem>
@@ -196,27 +196,25 @@ export default function WorkSlugModalClient({
       </Carousel>
 
       {/* Work info */}
-
-      {/* Prev/Next buttons */}
-      <div className="hidden lg:absolute top-1/2 left-0 transform -translate-y-1/2 px-2">
+      <div className="absolute bottom-0 left-0 z-40 flex lg:hidden justify-between w-full gap-x-4 items-baseline px-4 pb-4">
         <Button
-          size="icon"
-          variant="ghost"
-          disabled={currentIndex <= 0}
-          onClick={goPrev}
+          className=""
+          variant="link"
+          size="sm"
+          onClick={() => {
+            const url = `${window.location.origin}/works/${work.slug}`;
+            navigator.clipboard.writeText(url);
+          }}
         >
-          <ChevronLeftIcon className="w-5 h-5" />
+          Dela
         </Button>
-      </div>
-
-      <div className="hidden lg:absolute top-1/2 right-0 transform -translate-y-1/2 px-2">
         <Button
-          size="icon"
-          variant="ghost"
-          disabled={!filteredWorks || currentIndex >= filteredWorks.length - 1}
-          onClick={goNext}
+          className=""
+          size="sm"
+          variant="link"
+          onClick={onClose || (() => router.push("/"))}
         >
-          <ChevronRightIcon className="w-5 h-5" />
+          Stäng (x)
         </Button>
       </div>
     </div>

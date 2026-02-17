@@ -130,14 +130,14 @@ export default function DesktopNav() {
   }, [scrollDir, openSearch]);
   return (
     <>
-      <div className="fixed top-0 left-0 w-full  z-40     lg:flex flex-col items-baseline justify-start   gap-x-4 no-hide-text    ">
+      <motion.div
+        style={{ y: 0 }}
+        className="hidden lg:fixed top-0 left-0 w-full  z-40     lg:grid grid-cols-12  items-center justify-start   gap-x-4 no-hide-text bg-background shadow "
+      >
         {/* LEFT MENU (MAIN) */}
 
-        <h1 className="h1 flex items-baseline justify-start  pt-2 lg:pt-4 bg-background w-full pb-2 z-50 no-hide-text ">
-          <Button
-            asChild
-            variant="link"
-            size="sm"
+        <div className="p  p-4 col-span-4 whitespace-normal flex flex-wrap items-baseline gap-x-1 h-24 ">
+          <Link
             onClick={() => {
               setActiveWorkSlug(null);
               setActiveExhibitionSlug(null);
@@ -148,23 +148,28 @@ export default function DesktopNav() {
               setShowWorksMenu(false);
               setShowSettings(false);
             }}
-            className="h-full no-hide-text whitespace-nowrap"
+            className="items-baseline font-directorLight no-hide-text
+   px-0 py
+"
+            href="/"
           >
-            <Link href="/">Elinor Silow</Link>
-          </Button>
-        </h1>
-
+            <strong className="whitespace-nowrap uppercase font-normal font-directorBold mr-2">
+              Elinor Silow,
+            </strong>
+            (b. 1993) in Malmö, Sweden, is a Stockholm based artist who explores
+            raw emotion through painting, sculpture and textile.
+          </Link>
+        </div>
         {/* Nav slides in/out */}
 
-        <motion.nav
-          style={{ y: -navOffset }}
+        <nav
           className={` hidden lg:grid
-   
-    grid-cols-6
+   col-span-8
+    grid-cols-4
     grid-rows-[1.5rem_minmax(0,1fr)]
     gap-x-4
-    w-full pt-4 
-    overflow-hidden  bg-background ${openSearch ? "pb-4" : "pb-4"}`}
+    w-full items-center   px-4
+    overflow-hidden   ${openSearch ? "" : ""}`}
         >
           <Button
             variant="link"
@@ -265,7 +270,7 @@ export default function DesktopNav() {
           >
             Filter
           </Button>
-        </motion.nav>
+        </nav>
 
         {/* Search nav with layout animation */}
         <AnimatePresence>
@@ -276,13 +281,13 @@ export default function DesktopNav() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="w-full  bg-background px-0 pt-4 z-50"
+              className="w-full col-span-12  bg-background z-50"
             >
               <NavSearch />
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </>
   );
 }

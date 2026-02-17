@@ -137,31 +137,37 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     relative
 gap-4
  grid grid-cols-6
-  pt-4 px-2 pb-2  lg:px-0 lg:pt-4 
+  pt-4  pb-2  lg:px-0 lg:pt-4 
   z-30  w-full   scroll-bar-hide bg-background 
 "
     >
       <span className="   w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
-        <div className="col-span- flex lg:hidden flex-col     justify-start px-2 lg:px-0 items-start w-full h3">
-          <h1 className=" whitespace-normal max-w-xs">
+        <div className=" flex lg:hidden flex-wrap  gap-x-2  justify-start px-4 lg:px-0 items-start w-full h3">
+          <h1 className=" whitespace-normal max-w-xs uppercase font-directorBold ">
             {exhibition.title.rendered}
           </h1>
+          |
           {exhibition.acf.year && (
             <span className="">{exhibition.acf.year}</span>
           )}
+          |
           {exhibition.acf.exhibition_type && (
             <span className=" ">{exhibition.acf.exhibition_type}</span>
           )}
+          |
           {exhibition.acf.location && (
             <span className="  ">{exhibition.acf.location}</span>
           )}
+          |
           {exhibition.acf.city && (
             <span className="  ">{exhibition.acf.city}</span>
           )}
         </div>
         <div className="hidden lg:flex col-span-6  justify-between  pl-4 h3  ">
           <div className="flex-wrap items-baseline justify-center lg:justify-start">
-            <h1 className="whitespace-nowrap ">{exhibition.title.rendered},</h1>
+            <h1 className="whitespace-nowrap h1 ">
+              {exhibition.title.rendered},
+            </h1>
             {exhibition.acf.year && (
               <span className="ml-1  ">{exhibition.acf.year},</span>
             )}
@@ -179,7 +185,6 @@ gap-4
             <Button
               className=" "
               variant="link"
-              size="sm"
               onClick={() => {
                 const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
                 navigator.clipboard.writeText(url);
@@ -189,7 +194,6 @@ gap-4
             </Button>
             <Button
               className=""
-              size="sm"
               variant="link"
               onClick={onClose || (() => router.push("/"))}
             >
@@ -199,14 +203,14 @@ gap-4
         </div>
         <div className="flex flex-col lg:hidden col-start-4  justify-start items-end gap-4">
           <Button
-            className="flex lg:hidden col-start-5 lg:col-start-2 justify-end  lg:justify-start pr-4 lg:pr-0"
+            className="flex lg:hidden col-start-5 lg:col-start-2 justify-end  lg:justify-start pr-4 lg:pr-0 items-baseline"
             size="sm"
             variant="link"
             onClick={onClose || (() => router.push("/"))}
           >
             Stäng (x)
           </Button>
-          <Button
+          {/* <Button
             className=" justify-start "
             variant="link"
             size="sm"
@@ -216,13 +220,13 @@ gap-4
             }}
           >
             Dela
-          </Button>
+          </Button> */}
         </div>
       </span>
 
       <div
         className="mt-30 col-span-6 lg:col-span-5
-      flex flex-col items-start justify-start px-2 lg:px-4  mx-0 text-left  mb-2 lg:mb-2 w-full"
+      flex flex-col items-start justify-start px-4 lg:px-4  mx-0 text-left  mb-2 lg:mb-2 w-full"
       >
         <div className="grid grid-cols-5 gap-4 w-full">
           <h3 className="col-span-4 lg:col-span-3 h3 whitespace-normal  mb-4 lg:mb-2">
@@ -232,7 +236,7 @@ gap-4
 
         {/* backdrop only on content area */}
 
-        <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-1 lg:col-span-5 lg:relative  w-full h-full pointer-events-auto bg-background ">
+        <div className="relative inset-y-0 right-0 col-start-1 col-span-4 lg:col-start-1 lg:col-span-5 lg:relative  w-full h-full pointer-events-auto bg-background mb-4 ">
           <Carousel
             setApi={modalGallery.setApi}
             opts={{ startIndex: carouselIndex, align: "start" }}
@@ -265,10 +269,6 @@ gap-4
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-end gap-4  pr-4">
-              <CarouselPrevious className="static translate-y-0" />
-              <CarouselNext className="static translate-y-0" />
-            </div>
           </Carousel>
 
           {/* 
@@ -321,14 +321,14 @@ gap-4
           ))}
         </div> */}
         <div className="grid grid-cols-5 gap-4 w-full">
-          <h3 className=" col-start-1 col-span-5 lg:col-span-5 max-w-xs lg:max-w-full whitespace-normal   mx-0 h3 mb-2 lg:mb-2">
+          <h3 className=" col-start-1 col-span-5 lg:col-span-5 max-w-xs lg:max-w-full whitespace-normal   mx-0 h3 mb-4 lg:mb-2">
             {exhibition.acf.credits}
           </h3>
         </div>
 
-        <div className=" col-span-3 lg:col-span-3 p pb-0 flex flex-col items-center lg:items-start justify-center gap-y-2 mt-2 text-sm lg:text-sm mx-auto w-full  ">
+        <div className=" col-span-3 lg:col-span-3 p pb-0 flex flex-col items-center lg:items-start justify-center gap-y-4 mt-4 text-sm lg:text-sm mx-auto w-full  ">
           <HDivider />
-          <span className="flex items-center justify-between lg:items-center lg:justify-start w-full gap-x-4">
+          <span className="flex items-center justify-center lg:items-center lg:justify-start w-full gap-x-4">
             <Button
               className="hidden lg:flex  "
               size="sm"

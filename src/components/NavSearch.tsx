@@ -31,23 +31,23 @@ export default function NavSearch({}: {}) {
     setQuery(""); // clear search
   };
   return (
-    <div className="relative w-full px-4">
+    <div className="relative w-full px-4 py-1">
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Sök..."
-        className="w-full border-b border-b-foreground  outline-none py-2 font-directorMono text-sm bg-transparent"
+        className="w-full border-b border-b-foreground lg:border-b-background  outline-none py-2 font-directorMono text-sm bg-transparent h-9"
       />
 
       {query && results.length > 0 && (
-        <div className="absolute top-full font-directorMono left-0 w-full bg-background shadow z-50">
+        <div className="absolute top-full font-directorMono left-0 w-full bg-background shadow z-50 ">
           {" "}
           {results.slice(0, 8).map((item) => (
             <Button
               variant="link"
               key={item.id}
               asChild
-              className="w-full text-left justify-start px-4 hover:bg-foreground/10"
+              className="w-full text-left justify-start  px-4 hover:bg-foreground/10"
               onClick={() => handleResultClick(item)}
             >
               <div>

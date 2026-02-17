@@ -20,9 +20,15 @@ import {
 import Staggered from "@/components/Staggered";
 import HDivider from "@/components/HDivider";
 import Link from "next/link";
-import { PlusIcon, MinusIcon, Cross1Icon } from "@radix-ui/react-icons";
+import {
+  PlusIcon,
+  MinusIcon,
+  Cross1Icon,
+  ChevronRightIcon,
+} from "@radix-ui/react-icons";
 import { DarkModeToggle } from "./DarkModeToggle";
 import NavSearch from "./NavSearch";
+import { usePathname } from "next/navigation";
 
 import WorksFilter from "./WorksFilter";
 import StaggeredList from "./StaggeredList";
@@ -97,6 +103,7 @@ function MobileNavOverlay() {
     showContact,
     setShowContact,
     showAllExhibitionsList,
+
     showExhibitionsFilter,
     setShowExhibitionsFilter,
     showInfo,
@@ -129,13 +136,15 @@ function MobileNavOverlay() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden inset-0 h-auto z-30  w-full  flex flex-col items-center justify-start pointer-events-auto  backdrop-blur-sm pt-16 bg-background  "
+          className="fixed lg:hidden inset-0 h-auto z-40  w-full  flex flex-col items-center justify-start pointer-events-auto  backdrop-blur-sm  bg-background px-4 pt-16  "
         >
           <div className=" flex flex-col items-start justify-center w-full   pb-6 lg:pb-0 pt-4  bg-background  ">
+            <h1 className=" text-sm font-directorLight px-4 mb-4">
+              Elinor Silow
+            </h1>
             <p className="p text-left mb-4 pl-4 pr-8">
-              Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
-              artist who explores raw emotion through painting, sculpture and
-              textile.
+              (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
+              explores raw emotion through painting, sculpture and textile.
             </p>
             <div className="p text-left pl-4 pr-16 mb-8">
               <p>
@@ -163,15 +172,16 @@ function MobileNavOverlay() {
                 setShowContact(false);
                 setShowExhibitionsMenu(false);
                 setShowSettings(false);
+                handleOpen();
               }}
-              className="mt-8 justify-between w-full"
+              className="mt-8 justify-between w-full "
             >
               <Link href="/works">
                 Verk{" "}
                 <span
                   className={showWorksMenu ? "rotate-90 transition-all" : ""}
                 >
-                  ▶
+                  <ChevronRightIcon />
                 </span>
               </Link>
             </Button>
@@ -226,6 +236,7 @@ function MobileNavOverlay() {
                 setShowWorksMenu(false);
                 handleOpenExhibitionsMenu();
                 setShowSettings(false);
+                handleOpen();
               }}
               className=" justify-between w-full"
             >
@@ -236,7 +247,7 @@ function MobileNavOverlay() {
                     showExhibitionsMenu ? "rotate-90 transition-all" : ""
                   }
                 >
-                  ▶
+                  <ChevronRightIcon />
                 </span>
               </Link>
             </Button>
@@ -250,7 +261,12 @@ function MobileNavOverlay() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="pl-4 w-full flex flex-col items-start justify-start pb-1 "
                 >
-                  <Button variant="link">Index</Button>
+                  <Button
+                    onClick={() => handleOpenAllExhibitionsList()}
+                    variant="link"
+                  >
+                    Index
+                  </Button>
 
                   <Button
                     variant="link"
@@ -298,7 +314,7 @@ function MobileNavOverlay() {
             >
               Kontakt{" "}
               <span className={showContact ? "rotate-90 transition-all" : ""}>
-                ▶
+                <ChevronRightIcon />
               </span>
             </Button>
 
@@ -333,6 +349,7 @@ function MobileNavOverlay() {
                 setShowExhibitionsMenu(false);
                 setShowWorksMenu(false);
                 setShowSettings(false);
+                handleOpen();
 
                 if (!isDesktop) setOpen(false);
               }}
@@ -404,6 +421,37 @@ function NavIcon({ state }: { state: "loading" | "idle" | "open" }) {
   );
 }
 
+function NavTop() {
+  const pathname = usePathname();
+
+  const breadcrumbs = pathname.split("/").filter((p) => p !== "");
+
+  const sweBreadcrumbs = breadcrumbs.map((b) => {
+    switch (b) {
+      case "works":
+        return "Verk";
+      case "exhibitions":
+        return "Utställningar";
+      case "info":
+        return "Information";
+      default:
+        return b;
+    }
+  });
+
+  return (
+    <div className="fixed top-0 z-40 flex lg:hidden justify-between items-center font-director-mono  gap-x-4  bg-background w-full shadow py-1 ">
+      <Button className="uppercase font-directorBold " variant="link" asChild>
+        <Link href="/">Elinor Silow</Link>
+      </Button>
+
+      <Button variant="link" asChild className="   justify-start   ">
+        <Link href="/exhibitions">{sweBreadcrumbs[0]}</Link>
+      </Button>
+    </div>
+  );
+}
+
 export default function NavButton() {
   const { infoLoading } = useInfo();
   const { viewLoading } = useNav();
@@ -435,8 +483,9 @@ export default function NavButton() {
 
   return (
     <>
+      <NavTop />
       <button
-        className="fixed lg:hidden bottom-8 right-6  z-50 left-auto top-auto flex items-center justify-center w-24 h-24 no-hide-text"
+        className="fixed lg:hidden bottom-8 right-8 left-auto  z-50  top-auto flex items-center justify-center w-24 h-24 no-hide-text"
         onClick={handleOpen}
       >
         <AnimatePresence mode="wait">

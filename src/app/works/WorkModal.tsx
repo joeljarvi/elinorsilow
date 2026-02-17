@@ -29,7 +29,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
         <motion.div
           key="modal"
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 lg:col-span-5 col-span-6 lg:col-start-1  w-full h-screen  bg-background   flex flex-col overflow-hidden  shadow z-40"
+          className="relative col-start-1 lg:col-span-4 col-span-6 lg:col-start-1  w-full h-screen  bg-background   flex flex-col overflow-hidden  shadow z-40"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}

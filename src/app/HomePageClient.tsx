@@ -54,72 +54,114 @@ function MainContent({}: Props) {
 
   const router = useRouter();
 
-  // Start loader animation immediately
   useEffect(() => {
-    // Immediately mark animation done if data is ready
     if (!workLoading && !exLoading && !infoLoading) {
-      setInitialAnimDone(true);
       setDataLoaded(true);
     }
-
-    // Optional: fallback in case something hangs
-    const fallback = setTimeout(() => {
-      setInitialAnimDone(true);
-      setDataLoaded(true);
-    }, 1000); // 1s max wait for slow connections
-
-    return () => clearTimeout(fallback);
   }, [workLoading, exLoading, infoLoading]);
+
+  useEffect(() => {
+    if (dataLoaded) {
+      const t = setTimeout(() => {
+        setInitialAnimDone(true);
+      }, 600); // length of your intro animation
+
+      return () => clearTimeout(t);
+    }
+  }, [dataLoaded]);
+
+  const loading = !initialAnimDone || !dataLoaded;
 
   return (
     <>
-      <section
-        className=" mx-0
-      flex flex-col items-start justify-start w-full pt-10 lg:pt-40   "
-      >
-        <FeaturedWorksCarousel />
+      {loading && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-background">
+          <span className="h3 animate-pulse ">Loading elinorsilow.com...</span>
+        </div>
+      )}
 
-        <ExhibitionsCarousel items={featuredExhibitions} />
-
-        <div className="bg-red-600 pt-2 min-h-screen">
-          <div className="relative  flex items-center justify-between w-full lg:justify-start gap-4 px-4 mb-4 ">
-            <h2 className="h2">Information</h2>
-            <Button variant="link" asChild>
-              <Link href="/exhibitions">•Läs mer</Link>
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-6 w-full px-4   items-start justify-start mb-16 ">
-            <p className="p col-span-6 lg:col-span-2  text-left mb-4 ">
-              Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
-              artist who explores raw emotion through painting, sculpture and
-              textile.
-            </p>
-
-            <p className="col-start-1 p col-span-6 lg:col-span-2 text-left mb-4">
-              Please contact
-              <Link
-                href="mailto:elinor.silow@gmail.com"
-                className="text-blue-600 mx-2"
-              >
-                hej@elinorsilow.com
-              </Link>
-              for collaborations and inquires.
-            </p>
-          </div>
-          <div className="w-full flex justify-start py-8">
+      {!loading && (
+        <section
+          className=" mx-0
+      flex flex-col items-start justify-start w-full pt-11 lg:pt-24   "
+        >
+          <span className="sticky top-11 lg:top-24 z-30 flex justify-between lg:justify-start gap-x-4  py-1 w-full shadow bg-background ">
             <Button
               variant="link"
-              size="sm"
-              className="p text-foreground hover:text-foreground/70"
-              onClick={() => lenis?.scrollTo(0)}
+              className="col-span-2 text-sm font-directorBold uppercase    justify-start    "
             >
-              Back to Top
+              Verk i urval
             </Button>
-          </div>
-        </div>
-      </section>
+            <Button className="col-span-2 col-start-4  " variant="link" asChild>
+              <Link href="/works">• Se alla</Link>
+            </Button>
+          </span>
+          <FeaturedWorksCarousel />
+          <span className="sticky top-11 lg:top-24 z-30 flex py-1 justify-between bg-background w-full ">
+            <Button
+              variant="link"
+              className="col-span-2 text-sm font-directorBold uppercase  w-full  justify-start   "
+            >
+              Utställningar i urval
+            </Button>
+            <Button
+              className="col-span-2  justify-start "
+              variant="link"
+              asChild
+            >
+              <Link href="/exhibitions">• Se alla</Link>
+            </Button>
+          </span>
 
+          <ExhibitionsCarousel items={featuredExhibitions} />
+
+          <div className="bg-foreground text-background  min-h-screen">
+            <span className="sticky top-11 lg:top-24 z-30 py-1 flex justify-between bg-background w-full ">
+              <Button
+                variant="link"
+                className="col-span-2 text-sm font-directorBold uppercase  w-full  justify-start   "
+              >
+                Info / CV
+              </Button>
+              <Button
+                className="col-span-2  justify-start "
+                variant="link"
+                asChild
+              >
+                <Link href="/exhibitions">• Läs mer</Link>
+              </Button>
+            </span>
+            <div className="grid grid-cols-6 w-full px-4 pt-8   items-start justify-start mb-8 ">
+              <p className="p col-span-6 lg:col-span-2  text-left mb-4 ">
+                Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
+                artist who explores raw emotion through painting, sculpture and
+                textile.
+              </p>
+
+              <p className="col-start-1 p col-span-6 lg:col-span-2 text-left mb-0">
+                Please contact
+                <Link
+                  href="mailto:elinor.silow@gmail.com"
+                  className="text-blue-600 mx-2"
+                >
+                  hej@elinorsilow.com
+                </Link>
+                for collaborations and inquires.
+              </p>
+            </div>
+            <div className="relative  flex items-center justify-between w-full lg:justify-start gap-4 px-8 mb-0 "></div>
+            <div className="w-full flex justify-start  ">
+              <Button
+                variant="link"
+                className="invert text-foreground hover:text-foreground/70"
+                onClick={() => lenis?.scrollTo(0)}
+              >
+                • Tillbaka upp
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
       {activeWorkSlug && (
         <WorkModal
           slug={activeWorkSlug}
@@ -141,7 +183,6 @@ export default function HomePageClient() {
   return (
     <div className="min-h-full w-full   ">
       <MainContent />
-      <Footer />
     </div>
   );
 }
