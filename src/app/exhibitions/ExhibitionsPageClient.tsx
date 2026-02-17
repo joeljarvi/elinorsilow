@@ -28,7 +28,7 @@ export default function ExhibitionsPageClient() {
   } = useUI();
 
   return (
-    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full mt-0 lg:mt-30 ">
+    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full  mt-[25vh] lg:mt-30 ">
       <ExhibitionsCarousel items={filteredExhibitions} />
     </section>
   );

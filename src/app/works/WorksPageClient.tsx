@@ -15,16 +15,16 @@ export default function WorksPageClient() {
   const { setOpen } = useUI();
 
   return (
-    <section className="relative w-full mt-9 lg:mt-[25vh] ">
+    <section className="relative w-full mt-[50vh] lg:mt-[25vh] ">
       {/* Scroll container */}
-      <motion.div className="min-h-screen flex flex-col gap-y-4 lg:grid lg:grid-cols-6 p-0 lg:p-0">
+      <motion.div className="min-h-screen flex flex-col gap-y-4 lg:grid lg:grid-cols-6 p-0  lg:p-0">
         {filteredWorks.map((work: Work, idx: number) => (
           <motion.div
             key={work.id}
             className="h-screen lg:h-[75vh] flex flex-col bg-background   "
           >
             <div className="flex lg:hidden relative w-full  pointer-events-none">
-              <div className="flex bg-gray-300  p-4  pointer-events-auto w-full  ">
+              <div className="flex   p-4  pointer-events-auto w-full  ">
                 <div className="flex flex-wrap items-baseline text-sm font-directorLight gap-x-2 ">
                   <span className="h1 font-directorBold uppercase w-full ">
                     {work.title.rendered}
