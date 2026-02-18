@@ -132,22 +132,27 @@ function MobileNavOverlay() {
       {open && (
         <motion.div
           key="mobile-nav"
-          initial={{ x: "-100%", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: "-100%", opacity: 0 }}
+          initial={{ y: "-100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden inset-0 h-auto z-40  w-full  flex flex-col items-center justify-start pointer-events-auto  backdrop-blur-sm  bg-background px-4 pt-16  "
+          className="fixed  inset-0 z-40  w-full  flex flex-col items-center justify-start pointer-events-auto h-min       lg:grid grid-cols-3 gap-x-4 "
         >
-          <div className=" flex flex-col items-start justify-center w-full   pb-6 lg:pb-0 pt-4  bg-background  ">
-            <h1 className=" text-sm font-directorLight px-4 mb-4">
-              Elinor Silow
-            </h1>
-            <p className="p text-left mb-4 pl-4 pr-8">
-              (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
-              explores raw emotion through painting, sculpture and textile.
-            </p>
-            <div className="p text-left pl-4 pr-16 mb-8">
-              <p>
+          <div className="col-start-1 col-span-1 flex flex-col items-start justify-center w-full   p-8 bg-orange-500  ">
+            <div className="flex flex-col items-start justify-start w-full p-4">
+              <Link
+                onClick={() => {}}
+                className="items-baseline font-directorLight no-hide-text h3 whitespace-normal
+   px-0 py
+"
+                href="/"
+              >
+                <strong className="font-normal h1 mr-2">Elinor Silow</strong>
+                (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
+                explores raw emotion through painting, sculpture and textile.
+              </Link>
+
+              <p className="p mt-4">
                 Please contact
                 <Link
                   href="mailto:elinor.silow@gmail.com"
@@ -158,6 +163,7 @@ function MobileNavOverlay() {
                 for collaborations and inquires.
               </p>
             </div>
+
             <NavSearch />
 
             <Button
@@ -281,7 +287,6 @@ function MobileNavOverlay() {
                   {showAllExhibitionsList && (
                     <StaggeredList
                       items={exhibitionIndex}
-                      isDesktop={isDesktop}
                       setOpen={setOpen}
                       getKey={(e) => e.id}
                       onSelect={(item) => {
@@ -485,7 +490,7 @@ export default function NavButton() {
     <>
       <NavTop />
       <button
-        className="fixed lg:hidden bottom-8 right-8 left-auto  z-50  top-auto flex items-center justify-center w-24 h-24 no-hide-text"
+        className="fixed  bottom-8 right-8 left-auto  z-50  top-auto flex items-center justify-center w-24 h-24 no-hide-text"
         onClick={handleOpen}
       >
         <AnimatePresence mode="wait">

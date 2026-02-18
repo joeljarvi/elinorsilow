@@ -132,7 +132,7 @@ export default function DesktopNav() {
     <>
       <motion.div
         style={{ y: 0 }}
-        className="absolute top-0 left-0 w-full  z-40 flex flex-col    lg:grid grid-cols-12  items-center justify-start   gap-y-4 lg:gap-y-0  gap-x-4 no-hide-text bg-orange-400 lg:bg-background shadow "
+        className="hidden  lg:grid grid-cols-12  items-center justify-start   gap-y-4 lg:gap-y-0  gap-x-4 no-hide-text bg-background w-full"
       >
         {/* LEFT MENU (MAIN) */}
 

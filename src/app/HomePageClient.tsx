@@ -83,9 +83,9 @@ function MainContent({}: Props) {
       {!loading && (
         <section
           className=" mx-0
-      flex flex-col items-start justify-start w-full pt-11 lg:pt-34   "
+      flex flex-col items-start justify-start w-full   "
         >
-          <span className="sticky top-11 lg:top-0 z-30 flex justify-between lg:px-4 lg:justify-start gap-x-4  py-1 w-full shadow bg-background ">
+          <span className="sticky top-0 z-30 flex justify-between lg:px-4 lg:justify-start gap-x-4  py-1 w-full bg-background ">
             <Button
               variant="link"
               className="col-span-2 text-sm font-directorBold uppercase    justify-start    "
@@ -116,15 +116,15 @@ function MainContent({}: Props) {
           <ExhibitionsCarousel items={featuredExhibitions} />
 
           <div className="bg-foreground text-background  min-h-screen">
-            <span className="sticky top-11 lg:top-0 z-30 py-1 lg:px-4 flex justify-between bg-background w-full ">
+            <span className="sticky top-11 lg:top-0 z-30 py-1 lg:px-4 flex justify-between bg-foreground text-background   w-full ">
               <Button
                 variant="link"
-                className="col-span-2 text-sm font-directorBold uppercase  w-full  justify-start   "
+                className="col-span-2 text-sm font-directorBold uppercase  w-full  justify-start bg-foreground text-background   "
               >
                 Info / CV
               </Button>
               <Button
-                className="col-span-2  justify-start "
+                className="col-span-2  justify-start bg-foreground text-background   "
                 variant="link"
                 asChild
               >

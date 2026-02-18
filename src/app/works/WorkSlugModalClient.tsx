@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon, Share2 } from "lucide-react";
 import useSwipe from "@/hooks/use-swipe";
+import HDivider from "@/components/HDivider";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -131,27 +132,17 @@ export default function WorkSlugModalClient({
       {...swipeHandlers}
       className=" col-start-1 lg:col-start-1
     col-span-6 lg:col-span-4
-    relative flex flex-col  h-screen items-center justify-start lg:items-start lg:justify-start w-full    "
+    relative flex flex-col  h-screen items-center justify-start lg:items-start lg:justify-start w-full p-4   "
     >
-      <div
-        className="flex flex-row justify-start lg:justify-between w-full items-baseline bg-transparent   
-     "
-      >
-        <div className="fixed lg:absolute top-0 left-0 w-full  z-40 ">
-          <div className="  flex justify-between items-center  w-full px-0 pb-0 z-40">
-            <div className="flex flex-wrap items-baseline text-sm font-directorLight  p-4 ">
-              <span className="h1 font-directorBold uppercase mr-4">
-                {work.title.rendered}
-              </span>
-              {work.acf.year && <span className="mr-2">{work.acf.year},</span>}
-              {work.acf.materials && (
-                <span className="mr-2">{work.acf.materials},</span>
-              )}
-              {work.acf.dimensions && <span>{work.acf.dimensions}</span>}
-            </div>
-            <div className="hidden lg:flex justify-start gap-x-4 items-baseline">
+      <div className="flex w-full   ">
+        <div className="flex flex-col items-baseline text-sm font-directorLight  w-full ">
+          <div className="flex justify-between items-center w-full mb-2">
+            <span className="h1 font-directorBold uppercase mr-4">
+              {work.title.rendered}
+            </span>
+            <div className=" flex gap-x-4  ">
               <Button
-                className=""
+                className="hidden lg:flex"
                 variant="link"
                 size="sm"
                 onClick={() => {
@@ -171,23 +162,34 @@ export default function WorkSlugModalClient({
               </Button>
             </div>
           </div>
+          {work.acf.year && <span className="mr-2">Year: {work.acf.year}</span>}
+          {work.acf.materials && (
+            <span className="mr-2">Materials: {work.acf.materials}</span>
+          )}
+          {work.acf.dimensions && (
+            <span>Dimensions: {work.acf.dimensions}</span>
+          )}
+          {work.acf.exhibition && (
+            <span>Part of exhibition: {work.acf.exhibition}</span>
+          )}
         </div>
       </div>
+
       {/* Carousel */}
       <Carousel className=" w-full h-full  ">
         <CarouselContent>
           {images.map((src, idx) => (
             <CarouselItem
               key={idx}
-              className="w-full flex justify-center lg:justify-start items-center"
+              className="w-full flex justify-start lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-0em)] lg:h-[calc(100vh-6rem)] flex flex-col  lg:items-start justify-center items-center ">
+              <div className="relative w-full h-[calc(100vh-9rem)] lg:h-[calc(100vh-10rem)] flex flex-col  lg:items-start justify-center items-center ">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
-                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain object-center mx-auto lg:object-left-top 
-                   lg:mx-0 px-4 lg:px-4 lg:pb-4  py-30"
+                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-left-top 
+                   lg:mx-0 px-0 lg:px-0 lg:pb-4 pt-4 lg:py-0 "
                 />
               </div>
             </CarouselItem>
@@ -196,27 +198,6 @@ export default function WorkSlugModalClient({
       </Carousel>
 
       {/* Work info */}
-      <div className="absolute bottom-0 left-0 z-40 flex lg:hidden justify-between w-full gap-x-4 items-baseline px-4 pb-4">
-        <Button
-          className=""
-          variant="link"
-          size="sm"
-          onClick={() => {
-            const url = `${window.location.origin}/works/${work.slug}`;
-            navigator.clipboard.writeText(url);
-          }}
-        >
-          Dela
-        </Button>
-        <Button
-          className=""
-          size="sm"
-          variant="link"
-          onClick={onClose || (() => router.push("/"))}
-        >
-          Stäng (x)
-        </Button>
-      </div>
     </div>
   );
 }
