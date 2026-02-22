@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-none  gap-1 whitespace-nowrap font-normal h3 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center rounded-none  gap-1 whitespace-nowrap font-normal h3 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto  disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -17,16 +17,16 @@ const buttonVariants = cva(
           "border border-foreground bg-background  hover:bg-accent hover:text-accent-foreground justify-center",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 justify-center",
-        ghost: "hover:bg-accent hover:text-accent-foreground justify-center",
-        link: "text-primary   transition-all   hover:text-primary/80 ",
+        ghost: "  bg-background hover:bg-foreground/20 justify-center",
+        link: "text-primary   transition-all   hover:underline active:underline underline-offset-8 decoration-[1px]   ",
         nav: "text-primary       transition-all w-full  justify-between hover:text-primary/80 ",
       },
       size: {
         default: "h-9 px-4 py-2 h3",
         sm: "h-6 px-4 py-1 h3",
-        lg: "h-16 px-4 py-2 text-lg",
+        lg: " px-4 py-2 text-xl font-directorMono",
         linkSize: "h-6  px-0 py-0 text-sm",
-        linkSizeMd: "h-9    pt-0.5 text-lg",
+        linkSizeLg: "text-4xl lg:text-5xl leading-tight ",
         listSize: "h-auto px-0 py-0",
         linkIcon: "h-6 w-6 px-0 py-0",
         icon: "h-9 w-9",

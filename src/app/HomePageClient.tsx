@@ -84,7 +84,7 @@ function MainContent({}: Props) {
       {!loading && (
         <section
           className=" mx-auto
-      flex flex-col items-center justify-start w-full   "
+      flex flex-col items-center justify-start w-full mt-[50vh] lg:mt-[50vh]  "
         >
           <div
             className="
@@ -94,177 +94,233 @@ function MainContent({}: Props) {
 "
           >
             {/* Works */}
-            {/* <span className="sticky top-0 z-30 flex   lg:px-4 justify-start gap-x-4   w-full  items-baseline bg-background">
-              <Button
-                variant="link"
-                className="col-span-1 text-base font-gintoBlack uppercase    justify-start    "
-              >
-                Verk i urval
-              </Button>
-              <Button
-                className="col-start-2 lg:col-start-3 justify-start "
-                variant="link"
-                asChild
-              >
-                <Link href="/works">• Se alla</Link>
-              </Button>
-            </span> */}
-            <motion.div className="min-h-screen flex flex-col gap-y-4 lg:flex-row pt-0 gap-x-4  lg:px-8">
-              {featuredWorks.map((work: Work, idx: number) => (
-                <motion.div
-                  key={work.id}
-                  className="w-full h-[80vh] lg:h-[75vh] flex flex-col bg-background justify-start items-start   "
+            <div
+              className="
+              flex flex-col
+                relative w-full
+    lg:grid  grid-cols-5 
+ 
+    gap-x-4
+ 
+  "
+            >
+              <span className="px-8 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
+                {/* Left title */}
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="hidden lg:flex lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground bg-transparent"
                 >
-                  <div
-                    onClick={() => {
-                      setActiveWorkSlug(work.slug);
-                      setOpen(false);
-                      router.push(`/?work=${work.slug}`);
-                    }}
-                    className="relative cursor-pointer w-full flex justify-center"
+                  Selected works
+                </Button>
+
+                {/* Right link */}
+                <Button
+                  className=" hidden lg:flex  lg:col-span-1 w-full uppercase justify-between border-b-1 border-foreground"
+                  variant="ghost"
+                  size="lg"
+                  asChild
+                >
+                  <Link href="/works">
+                    See all works <span>&gt;</span>
+                  </Link>
+                </Button>
+              </span>
+
+              {/* Divider left */}
+
+              <Staggered
+                items={featuredWorks}
+                getKey={(w) => w.id}
+                loading={loading}
+                className="
+    min-h-screen
+    flex flex-col gap-y-4
+    lg:grid lg:grid-cols-5
+    gap-x-8 
+    
+    col-span-5
+  "
+                renderItem={(work: Work) => (
+                  <motion.div
+                    key={work.id}
+                    className="h-screen lg:h-[75vh] flex flex-col   "
                   >
-                    {/* Image box */}
                     <div
-                      className={`relative w-full mx-auto h-[50vh] lg:h-[50vh] `}
+                      onClick={() => {
+                        setActiveWorkSlug(work.slug);
+                        setOpen(false);
+                        router.push(`/?work=${work.slug}`);
+                      }}
+                      className="relative cursor-pointer w-full flex justify-center"
                     >
-                      {work.image_url && (
-                        <Image
-                          src={work.image_url}
-                          alt={work.title.rendered}
-                          fill
-                          className="object-contain object-center lg:object-top-left"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex lg:hidden relative w-full  pointer-events-none">
-                    <div className="flex flex-col items-start justify-center  p-4  pointer-events-auto w-full  ">
-                      <span className="h1  ">{work.title.rendered}</span>
-                      <div className="flex flex-col justify-center items-start  h3 whitespace-normal gap-x-2 ">
-                        {work.acf.materials && (
-                          <span className="max-w-md">
-                            {work.acf.materials}{" "}
-                          </span>
-                        )}
-                        {work.acf.dimensions && (
-                          <span>{work.acf.dimensions}</span>
-                        )}
-                        {work.acf.year && (
-                          <span className="">{work.acf.year}</span>
+                      {/* Image box */}
+                      <div
+                        className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}
+                      >
+                        {work.image_url && (
+                          <Image
+                            src={work.image_url}
+                            alt={work.title.rendered}
+                            fill
+                            className="object-contain object-left lg:object-top-left p-4 lg:pt-4 lg:px-8 lg:pb-4"
+                          />
                         )}
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <span className="sticky top-0 z-30 flex lg:px-4 justify-start gap-x-4   w-full  items-baseline bg-background ">
-              <Button
-                variant="link"
-                className="col-span-1 text-base font-gintoBlack uppercase    justify-start    "
-              >
-                Utställningar i urval
-              </Button>
-              <Button
-                className="col-start-2 lg:col-start-3 justify-start "
-                variant="link"
-                asChild
-              >
-                <Link href="/exhibitions">• Se alla</Link>
-              </Button>
-            </span>
-            {/* Exhibitions */}
-            <motion.div className="min-h-screen w-full flex flex-col gap-y-4 lg:grid lg:grid-cols-3 pt-0 gap-x-8  lg:px-8">
-              {featuredExhibitions.map((ex: Exhibition, idx: number) => (
-                <motion.div
-                  key={ex.id}
-                  className="col-span-1 h-[80vh] lg:h-[75vh] flex flex-col bg-background justify-start items-start   "
+                  </motion.div>
+                )}
+              />
+              <div className="sticky bottom-0  lg:hidden z-20   ">
+                <Button
+                  className="w-full uppercase justify-start gap-x-4   items-baseline bg-background shadow.lg"
+                  variant="ghost"
+                  size="lg"
+                  asChild
                 >
-                  <div
-                    onClick={() => {
-                      setActiveExhibitionSlug(ex.slug);
-                      setOpen(false);
-                      router.push(`/?exhibition=${ex.slug}`);
-                    }}
-                    className="relative cursor-pointer w-full flex justify-center"
-                  >
-                    {/* Image box */}
-                    <div
-                      className={`relative  aspect-video mx-auto h-full w-full `}
-                    >
-                      {ex.acf.image_1 && (
-                        <Image
-                          src={ex.acf.image_1.url}
-                          alt={ex.title.rendered}
-                          fill
-                          className="object-cover object-center lg:object-center"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex lg:hidden relative w-full  pointer-events-none">
-                    <div className="flex flex-col items-start justify-center  p-4  pointer-events-auto w-full  ">
-                      <span className="h1  ">{ex.title.rendered}</span>
-                      <div className="flex flex-col justify-center items-start  h3 whitespace-normal gap-x-2 ">
-                        {ex.acf.exhibition_type && (
-                          <span className="max-w-md">
-                            {ex.acf.exhibition_type}{" "}
-                          </span>
-                        )}
-                        {ex.acf.location && <span>{ex.acf.location}</span>}
-                        {ex.acf.city && <span>{ex.acf.city}</span>}
-                        {ex.acf.year && <span className="">{ex.acf.year}</span>}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-
-          <div className="bg-foreground text-background  min-h-screen">
-            <span className="sticky top-11 lg:top-0 z-30 py-1 lg:px-4 flex justify-start items-baseline bg-foreground text-background   w-full ">
-              <Button
-                variant="link"
-                className="col-span-2 text-base font-gintoBlack uppercase   justify-start bg-foreground text-background   "
-              >
-                Info / CV
-              </Button>
-              <Button
-                className="col-span-2  justify-start bg-foreground text-background   "
-                variant="link"
-                asChild
-              >
-                <Link href="/info">• Läs mer</Link>
-              </Button>
-            </span>
-            <div className="grid grid-cols-6 w-full px-4 mt-2 lg:px-8   items-start justify-start mb-8 ">
-              <p className="p col-span-6 lg:col-span-2  text-left mb-4 ">
-                Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
-                artist who explores raw emotion through painting, sculpture and
-                textile.
-              </p>
-
-              <p className="col-start-1 p col-span-6 lg:col-span-2 text-left mb-0">
-                Please contact
-                <Link
-                  href="mailto:elinor.silow@gmail.com"
-                  className="text-blue-600 mx-2"
-                >
-                  hej@elinorsilow.com
-                </Link>
-                for collaborations and inquires.
-              </p>
+                  <Link href="/works">
+                    See all works <span className=" ">&gt;</span>
+                  </Link>
+                </Button>
+              </div>
             </div>
 
-            <div className="w-full flex justify-start lg:px-4  ">
+            {/* Exhibitions */}
+            <div
+              className="
+              flex flex-col
+                relative w-full
+    lg:grid  grid-cols-5 
+ 
+    gap-x-4
+ 
+  "
+            >
+              {/* Left title */}
               <Button
-                variant="link"
-                className="invert text-foreground hover:text-foreground/70"
-                onClick={() => lenis?.scrollTo(0)}
+                variant="ghost"
+                size="lg"
+                className="hidden lg:blocklg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground"
               >
-                • Tillbaka upp
+                Selected Exhibitions
+              </Button>
+
+              {/* Right link */}
+              <Button
+                className=" hidden lg:block lg:z-auto lg:col-span-1 w-full uppercase justify-between border-b-1 border-foreground"
+                variant="ghost"
+                size="lg"
+                asChild
+              >
+                <Link href="/exhibitions">
+                  See all Exhibitions <span>&gt;</span>
+                </Link>
+              </Button>
+
+              {/* Divider left */}
+
+              <Staggered
+                items={featuredExhibitions}
+                getKey={(ex) => ex.id}
+                loading={loading}
+                className="
+    min-h-screen
+    flex flex-col gap-y-4
+    lg:grid lg:grid-cols-5
+    gap-x-8 
+    lg:px-0 lg:py-8
+    col-span-5
+  "
+                renderItem={(ex: Exhibition) => (
+                  <motion.div
+                    key={ex.id}
+                    className="h-screen lg:h-[75vh] flex flex-col bg-background   "
+                  >
+                    <div
+                      onClick={() => {
+                        setActiveExhibitionSlug(ex.slug);
+                        setOpen(false);
+                        router.push(`/?exhibition=${ex.slug}`);
+                      }}
+                      className="relative cursor-pointer w-full flex justify-center"
+                    >
+                      {/* Image box */}
+                      <div
+                        className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}
+                      >
+                        {ex.acf.image_1 && (
+                          <Image
+                            src={ex.acf.image_1.url}
+                            alt={ex.title.rendered}
+                            fill
+                            className="object-contain object-left lg:object-top-left p-4"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              />
+              <div className="sticky bottom-0 lg:hidden z-20 bg-background">
+                <Button
+                  className="w-full uppercase justify-start gap-x-4  shadow items-baseline "
+                  variant="ghost"
+                  size="lg"
+                  asChild
+                >
+                  <Link href="/exhibitions">
+                    See all Exhibitions <span className=" ">&gt;</span>
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Exhibitions */}
+            </div>
+            <div className="bg-foreground text-background  min-h-screen relative ">
+              <Button
+                className="w-full uppercase justify-start gap-x-4  shadow items-baseline bg-foreground text-background font-directorLight hover:text-background/80 "
+                variant="ghost"
+                size="lg"
+                asChild
+              >
+                <Link href="/exhibitions">
+                  About Elinor <span className=" ">&gt;</span>
+                </Link>
+              </Button>
+
+              <div className="pl-4 pt-4 pr-16">
+                <Link
+                  onClick={() => {}}
+                  className="items-baseline  no-hide-text h3 font-directorLight whitespace-normal col-span-2
+   px-0 py
+"
+                  href="/"
+                >
+                  <strong className="font-normal   mr-2">Elinor Silow</strong>
+                  (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
+                  explores raw emotion through painting, sculpture and textile.
+                </Link>
+
+                <p className="p mt-4  font-directorLight col-start-1 col-span-2 mb-8">
+                  Please contact
+                  <Link
+                    href="mailto:elinor.silow@gmail.com"
+                    className="text-blue-700 mx-2 font-directorBold"
+                  >
+                    hej@elinorsilow.com
+                  </Link>
+                  for collaborations and inquires.
+                </p>
+              </div>
+              <Button
+                className="w-full uppercase justify-start gap-x-4  shadow items-baseline bg-foreground text-background font-directorLight hover:text-background/80 "
+                variant="ghost"
+                size="lg"
+                asChild
+              >
+                <Link href="/exhibitions">
+                  Read more <span className=" ">&gt;</span>
+                </Link>
               </Button>
             </div>
           </div>

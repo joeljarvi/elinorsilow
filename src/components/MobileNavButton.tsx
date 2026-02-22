@@ -136,7 +136,7 @@ function MobileNavOverlay() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "-100%", opacity: 1 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed lg:hidden  inset-0 z-40  w-full  flex flex-col items-center justify-start pointer-events-auto h-min        grid-cols-3 gap-x-0 bg-orange-500 lg:bg-transparent "
+          className="hidden  inset-0 z-40  w-full  flex flex-col items-center justify-start pointer-events-auto h-min        grid-cols-3 gap-x-0 bg-orange-500 lg:bg-transparent "
         >
           <div className="bg-orange-500 col-start-1 col-span-1 flex flex-col items-start justify-center w-full   p-8  ">
             <div className="flex flex-col items-start justify-start w-full p-4">
@@ -428,37 +428,6 @@ function NavIcon({ state }: { state: "loading" | "idle" | "open" }) {
   );
 }
 
-function NavTop() {
-  const pathname = usePathname();
-
-  const breadcrumbs = pathname.split("/").filter((p) => p !== "");
-
-  const sweBreadcrumbs = breadcrumbs.map((b) => {
-    switch (b) {
-      case "works":
-        return "Verk";
-      case "exhibitions":
-        return "Utställningar";
-      case "info":
-        return "Information";
-      default:
-        return b;
-    }
-  });
-
-  return (
-    <div className="hidden top-0 z-40  lg:hidden justify-between items-center font-director-mono  gap-x-4  bg-background w-full shadow py-1 ">
-      <Button className="uppercase font-directorBold " variant="link" asChild>
-        <Link href="/">Elinor Silow</Link>
-      </Button>
-
-      <Button variant="link" asChild className="   justify-start   ">
-        <Link href="/exhibitions">{sweBreadcrumbs[0]}</Link>
-      </Button>
-    </div>
-  );
-}
-
 export default function NavButton() {
   const { infoLoading } = useInfo();
   const { viewLoading } = useNav();
@@ -490,9 +459,8 @@ export default function NavButton() {
 
   return (
     <>
-      <NavTop />
       <button
-        className="fixed  bottom-8 right-8 left-auto  z-50  top-auto flex items-center justify-center w-24 h-24 no-hide-text"
+        className="fixed  bottom-8 right-8  left-auto  z-50 lg:z-0  top-auto lg:top-8 lg:left-8  flex items-center justify-center w-24 h-24 no-hide-text"
         onClick={handleOpen}
       >
         <AnimatePresence mode="wait">

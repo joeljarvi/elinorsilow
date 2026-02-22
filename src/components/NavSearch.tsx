@@ -31,28 +31,29 @@ export default function NavSearch({}: {}) {
     setQuery(""); // clear search
   };
   return (
-    <div className="relative w-full px-4 py-1">
+    <div className="relative bg-background w-full">
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Sök..."
-        className="w-full border-b border-b-foreground lg:border-b-background  outline-none py-2 font-directorMono text-sm bg-transparent h-9"
+        placeholder="Search..."
+        className="w-full border-b border-b-foreground   outline-none  py-0 font-directorLight text-4xl lg:text-5xl lg:max-w-md bg-transparent h-16 px-4"
       />
 
       {query && results.length > 0 && (
-        <div className="absolute top-full font-directorMono left-0 w-full bg-background shadow z-50 ">
+        <div className="absolute top-full font-directorMono left-0 w-full bg-background z-50 lg:shadow-none flex flex-col items-start justify-start gap-y-0 ">
           {" "}
           {results.slice(0, 8).map((item) => (
             <Button
-              variant="link"
+              variant="ghost"
+              size="lg"
               key={item.id}
               asChild
-              className="w-full text-left justify-start  px-4 hover:bg-foreground/10"
+              className="w-full text-left justify-start h-16  px-4  hover:bg-foreground/10 hover:underline-none "
               onClick={() => handleResultClick(item)}
             >
               <div>
-                <span className="opacity-50 mr-2 text-xs">
-                  {item.type === "work" ? "Verk" : "Utställning"}
+                <span className="opacity-50 mr-4 text-xs">
+                  {item.type === "work" ? "Work" : "Exhibition"}
                 </span>
                 {item.title}
               </div>

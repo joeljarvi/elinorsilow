@@ -59,12 +59,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showInfo, setShowInfo] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      setOpen(false);
-    }
-  }, []);
-
   function handleOpen() {
     setOpen((prev) => !prev);
   }
