@@ -21,7 +21,7 @@ export default function ExhibitionModal({
     <AnimatePresence>
       <motion.div
         key="overlay"
-        className="fixed inset-0 z-40   grid grid-cols-6 min-h-screen scrollbar-hide overflow-hidden bg-transparent  "
+        className="fixed inset-0 z-30   h-screen scrollbar-hide overflow-hidden bg-background/30 backdrop-blur-sm  "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -33,31 +33,12 @@ export default function ExhibitionModal({
           key="modal"
           ref={containerRef}
           onClick={(e) => e.stopPropagation()}
-          className="relative col-start-1 lg:col-span-4 col-span-6  w-full h-screen    flex flex-col overflow-hidden  shadow z-40 scrollbar-hide  "
+          className="relative   w-full    flex flex-col overflow-hidden  z-40 scrollbar-hide p-8  "
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
         >
-          <ReactLenis
-            root={false}
-            className="h-full overflow-y-auto scrollbar-hide"
-            options={{
-              smoothWheel: true,
-              duration: 1.15,
-              easing: (t) => 1 - Math.pow(1 - t, 4),
-            }}
-          >
-            <Button
-              className="hidden lg:absolute top-0 right-0   z-50 "
-              size="sm"
-              variant="link"
-              onClick={onClose}
-            >
-              Back
-            </Button>
-
-            <ExhibitionSlugModalClient slug={slug} onClose={onClose} />
-          </ReactLenis>
+          <ExhibitionSlugModalClient slug={slug} onClose={onClose} />
         </motion.div>
       </motion.div>
     </AnimatePresence>

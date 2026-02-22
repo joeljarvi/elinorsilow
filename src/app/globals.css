@@ -185,13 +185,13 @@ a {
 
 @layer components {
   .h1 {
-    @apply font-directorBold text-sm leading-normal;
+    @apply font-directorLight text-sm leading-normal;
   }
   .h2 {
     @apply font-directorLight text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-directorLight text-sm leading-relaxed whitespace-nowrap;
+    @apply font-directorLight text-sm leading-normal whitespace-nowrap;
   }
   .h4 {
     @apply font-directorLight text-sm leading-normal whitespace-nowrap;

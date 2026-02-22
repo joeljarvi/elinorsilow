@@ -145,13 +145,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   return (
     <div
       {...swipeHandlers}
-      className="col-start-1 lg:col-start-1
-    col-span-6 lg:col-span-6
+      className="
     relative
 gap-4
  grid grid-cols-6
 p-4
-  z-30  w-full   scroll-bar-hide bg-background 
+overflow-y-scroll
+  z-30  w-full   scroll-bar-hide bg-background shadow 
 "
     >
       <span className="   w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
@@ -204,7 +204,7 @@ p-4
 
       {/* backdrop only on content area */}
 
-      <div className=" flex flex-col inset-y-0 right-0 col-start-1 col-span-6   w-full h-full pointer-events-auto bg-background mb-8 ">
+      <div className=" flex flex-col inset-y-0 right-0 col-start-1 col-span-6 relative  w-full h-full pointer-events-auto bg-background mb-8 ">
         <Carousel
           setApi={modalGallery.setApi}
           opts={{ startIndex: carouselIndex, align: "start" }}

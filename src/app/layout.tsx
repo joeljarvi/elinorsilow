@@ -149,11 +149,10 @@ export default function RootLayout({
                       <BodyClassManager />
                       <DesktopNav />
                       <MobileNavButton />
-                      <SmoothScroll>
-                        <CarouselProvider>
-                          {children} {modal}
-                        </CarouselProvider>
-                      </SmoothScroll>
+
+                      <CarouselProvider>
+                        {children} {modal}
+                      </CarouselProvider>
                     </AnimationProvider>
                   </UIProvider>
                 </NavProvider>

@@ -130,13 +130,12 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className=" col-start-1 lg:col-start-1
-    col-span-6 lg:col-span-4
-    relative flex flex-col  h-screen items-center justify-start lg:items-start lg:justify-start w-full p-4   "
+      className=" 
+    relative flex flex-col  h-screen items-start justify-start lg:items-start lg:justify-start w-full p-4   "
     >
       <div className="flex w-full   ">
-        <div className="flex flex-col items-baseline text-sm font-directorLight  w-full ">
-          <div className="flex justify-between items-center w-full mb-2">
+        <div className="flex flex-col items-baseline text-sm font-directorLight  w-full mb-4 ">
+          <div className="flex justify-between items-center w-full ">
             <span className="h1 font-directorBold uppercase mr-4">
               {work.title.rendered}
             </span>
@@ -162,16 +161,12 @@ export default function WorkSlugModalClient({
               </Button>
             </div>
           </div>
-          {work.acf.year && <span className="mr-2">Year: {work.acf.year}</span>}
+
           {work.acf.materials && (
-            <span className="mr-2">Materials: {work.acf.materials}</span>
+            <span className="mr-2"> {work.acf.materials}</span>
           )}
-          {work.acf.dimensions && (
-            <span>Dimensions: {work.acf.dimensions}</span>
-          )}
-          {work.acf.exhibition && (
-            <span>Part of exhibition: {work.acf.exhibition}</span>
-          )}
+          {work.acf.dimensions && <span> {work.acf.dimensions}</span>}
+          {work.acf.year && <span className="mr-2"> {work.acf.year}</span>}
         </div>
       </div>
 
@@ -183,7 +178,7 @@ export default function WorkSlugModalClient({
               key={idx}
               className="w-full flex justify-start lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-9rem)] lg:h-[calc(100vh-10rem)] flex flex-col  lg:items-start justify-center items-center ">
+              <div className="relative w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-10rem)] flex flex-col  lg:items-start justify-center items-center ">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
@@ -196,6 +191,11 @@ export default function WorkSlugModalClient({
           ))}
         </CarouselContent>
       </Carousel>
+      {work.acf.exhibition && (
+        <span className="h3 pt-4">
+          Part of exhibition: {work.acf.exhibition}
+        </span>
+      )}
 
       {/* Work info */}
     </div>

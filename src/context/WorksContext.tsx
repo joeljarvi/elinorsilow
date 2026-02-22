@@ -197,9 +197,8 @@ export function WorksProvider({ children }: { children: ReactNode }) {
   };
 
   const featuredWorksTitles = [
-    "Runt omkring är allting blått",
+    "Under navelsträngen",
     "Hoppet",
-    "En ros till dig",
     "Pärlband",
     "Din röst är blå",
   ];

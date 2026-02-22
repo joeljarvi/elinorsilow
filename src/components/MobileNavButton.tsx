@@ -132,31 +132,33 @@ function MobileNavOverlay() {
       {open && (
         <motion.div
           key="mobile-nav"
-          initial={{ y: "-100%", opacity: 0 }}
+          initial={{ y: "-100%", opacity: 1 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: "-100%", opacity: 0 }}
+          exit={{ y: "-100%", opacity: 1 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed  inset-0 z-40  w-full  flex flex-col items-center justify-start pointer-events-auto h-min       lg:grid grid-cols-3 gap-x-4 "
+          className="fixed lg:hidden  inset-0 z-40  w-full  flex flex-col items-center justify-start pointer-events-auto h-min        grid-cols-3 gap-x-0 bg-orange-500 lg:bg-transparent "
         >
-          <div className="col-start-1 col-span-1 flex flex-col items-start justify-center w-full   p-8 bg-orange-500  ">
+          <div className="bg-orange-500 col-start-1 col-span-1 flex flex-col items-start justify-center w-full   p-8  ">
             <div className="flex flex-col items-start justify-start w-full p-4">
               <Link
                 onClick={() => {}}
-                className="items-baseline font-directorLight no-hide-text h3 whitespace-normal
+                className="items-baseline  no-hide-text h3 font-directorLight whitespace-normal
    px-0 py
 "
                 href="/"
               >
-                <strong className="font-normal h1 mr-2">Elinor Silow</strong>
+                <strong className="font-normal uppercase font-gintoBlack text-base h1 mr-2">
+                  Elinor Silow
+                </strong>
                 (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
                 explores raw emotion through painting, sculpture and textile.
               </Link>
 
-              <p className="p mt-4">
+              <p className="p mt-4 font-directorLight">
                 Please contact
                 <Link
                   href="mailto:elinor.silow@gmail.com"
-                  className="text-blue-600 mx-2"
+                  className="text-blue-700 mx-2 font-directorBold"
                 >
                   hej@elinorsilow.com
                 </Link>
@@ -244,7 +246,7 @@ function MobileNavOverlay() {
                 setShowSettings(false);
                 handleOpen();
               }}
-              className=" justify-between w-full"
+              className=" justify-between w-full mt-2"
             >
               <Link href="/exhibitions">
                 Utställningar{" "}

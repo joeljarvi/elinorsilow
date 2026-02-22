@@ -174,7 +174,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function CarouselPrevious({
   className,
-  variant = "link",
+  variant = "default",
   size = "default",
   ...props
 }: React.ComponentProps<typeof Button>) {

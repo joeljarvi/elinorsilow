@@ -16,6 +16,8 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 import { Exhibition } from "../../lib/wordpress";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
   const image = item.acf.image_1?.url;
@@ -29,7 +31,7 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
         router.push(`/?exhibition=${item.slug}`);
       }}
     >
-      <div className="relative w-full aspect-square lg:aspect-video">
+      <div className="relative w-full aspect-video lg:aspect-video">
         {image && (
           <Image
             src={image}
@@ -39,33 +41,27 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
             className="object-cover object-center"
           />
         )}
-        <div className="hidden absolute inset-0  flex-col items-center justify-center text-2xl lg:text-lg font-directorLight gap-y-4  ">
-          <h3 className=" text-sm bg-background  font-directorLight   ">
-            {item.acf.exhibition_type}
-          </h3>
-          <h2 className="bg-background  text-4xl text-center  mx-16  ">
-            {item.title.rendered}
-          </h2>
-          <span className="bg-background flex flex-wrap justify-center ">
-            <h3 className="bg-background ">{item.acf.location}, </h3>
-            <h3 className="bg-background   ml-2">{item.acf.city}</h3>
-          </span>
-
-          {item.acf.year && (
-            <h3 className=" text-sm bg-background  ">{item.acf.year}</h3>
-          )}
-        </div>
       </div>
 
-      <div className=" flex-col  text-sm font-directorLight px-4 pb-8 ">
-        <span className="font-directorBold uppercase mr-2">
-          {item.title.rendered},
-        </span>
-        {item.acf.year && <span className="mr-2">{item.acf.year},</span>}
-        {item.acf.location && <span>{item.acf.location}, </span>}
-        {item.acf.city && <span>{item.acf.city}, </span>}
+      <div
+        className="flex flex-col 
+       text-sm font-directorLight text-left px-0 pb-4 lg:p-8   "
+      >
+        <div className="flex flex-col w-full lg:w-[400px] p-4 bg-background">
+          <span className="font-directorBold uppercase mr-2 mb-0 lg:mb-2">
+            {item.title.rendered}
+          </span>
 
-        {item.acf.exhibition_type && <span>{item.acf.exhibition_type}</span>}
+          {item.acf.location && (
+            <span className="hidden lg:flex">{item.acf.location} </span>
+          )}
+          {item.acf.city && (
+            <span className="hidden lg:flex">{item.acf.city} </span>
+          )}
+
+          {item.acf.exhibition_type && <span>{item.acf.exhibition_type}</span>}
+          {item.acf.year && <span className="mr-2">{item.acf.year}</span>}
+        </div>
       </div>
     </div>
   );
@@ -73,50 +69,136 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
 
 export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
   const router = useRouter();
-  const { open: isNavOpen } = useUI();
-  const { open: isModalOpen } = useExhibitions();
-
   const { setActiveExhibitionSlug, setOpen } = useExhibitions();
-  const pathname = usePathname();
+
+  const [api, setApi] = useState<any>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   const gallery = useGalleryCarousel({
     enableKeyboard: true,
-    id: "featured-exhibitions", // unique id
+    id: "featured-exhibitions",
   });
+
+  // Sync active index
+  useEffect(() => {
+    if (!api) return;
+
+    const onSelect = () => {
+      setActiveIndex(api.selectedScrollSnap());
+    };
+
+    api.on("select", onSelect);
+    onSelect();
+
+    return () => api.off("select", onSelect);
+  }, [api]);
+
+  // Vertical scroll → horizontal snap
+  useEffect(() => {
+    if (!api) return;
+
+    const section = document.getElementById("exhibitions-scroll");
+    if (!section) return;
+
+    const handleScroll = () => {
+      const rect = section.getBoundingClientRect();
+
+      const scrollProgress = Math.min(
+        Math.max(-rect.top / (rect.height - window.innerHeight), 0),
+        1
+      );
+
+      setProgress(scrollProgress);
+
+      const snaps = api.scrollSnapList();
+      const maxIndex = snaps.length - 1;
+      const index = Math.round(scrollProgress * maxIndex);
+
+      api.scrollTo(index);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [api]);
+
   return (
-    <div className="w-full grid grid-cols-6 mb-4">
-      <div className="flex flex-col lg:hidden col-span-6 px-0 gap-y-0">
-        {items.map((item) => (
-          <ExhibitionCard
-            key={item.id}
-            item={item}
-            setActiveExhibitionSlug={setActiveExhibitionSlug}
-            setOpen={setOpen}
-            router={router}
-          />
-        ))}
-      </div>
-      <Carousel
-        setApi={gallery.setApi}
-        opts={{ align: "start" }}
-        className="w-full h-full lg:px-8 lg:pt-0 hidden lg:block col-span-6 "
-      >
-        <CarouselContent className="-ml-6">
-          {items.map((item) => (
-            <CarouselItem
+    <section id="exhibitions-scroll" className="relative h-[300vh]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden ">
+        {/* CAROUSEL */}
+        <Carousel
+          setApi={(embla) => {
+            gallery.setApi(embla);
+            setApi(embla);
+          }}
+          opts={{
+            align: "center", // important for snapping
+            dragFree: false,
+            containScroll: "trimSnaps",
+          }}
+          className="h-full"
+        >
+          <CarouselContent className="h-full">
+            {items.map((item) => (
+              <CarouselItem
+                key={item.id}
+                className="basis-full flex items-center justify-center"
+              >
+                <div
+                  className="relative w-[70vw] h-[80vh] cursor-pointer"
+                  onClick={() => {
+                    setActiveExhibitionSlug(item.slug);
+                    setOpen(false);
+                    router.push(`/?exhibition=${item.slug}`);
+                  }}
+                >
+                  {item.acf.image_1?.url && (
+                    <Image
+                      src={item.acf.image_1.url}
+                      alt={item.title.rendered}
+                      fill
+                      className="object-contain object-left-top"
+                      priority
+                    />
+                  )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+
+        {/* CAPTIONS */}
+        <div className="absolute bottom-16 left-16 z-50 pointer-events-none">
+          {items.map((item, index) => (
+            <motion.div
               key={item.id}
-              className="pl-6 basis-full lg:basis-2/3"
+              animate={{ opacity: activeIndex === index ? 1 : 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute"
             >
-              <ExhibitionCard
-                item={item}
-                setActiveExhibitionSlug={setActiveExhibitionSlug}
-                setOpen={setOpen}
-                router={router}
-              />
-            </CarouselItem>
+              <h2 className="font-directorBold h2">{item.title.rendered}</h2>
+
+              <div className="mt-2 h3 text-sm font-directorLight">
+                {item.acf.location && <div>{item.acf.location}</div>}
+                {item.acf.city && <div>{item.acf.city}</div>}
+                {item.acf.exhibition_type && (
+                  <div>{item.acf.exhibition_type}</div>
+                )}
+                {item.acf.year && <div>{item.acf.year}</div>}
+              </div>
+            </motion.div>
           ))}
-        </CarouselContent>
-      </Carousel>
-    </div>
+        </div>
+
+        {/* PROGRESS BAR */}
+        <div className="absolute bottom-16 right-16 w-40 h-[2px] bg-white/20 z-50">
+          <motion.div
+            className="h-full bg-white"
+            animate={{ width: `${progress * 100}%` }}
+            transition={{ ease: "easeOut", duration: 0.2 }}
+          />
+        </div>
+      </div>
+    </section>
   );
 }

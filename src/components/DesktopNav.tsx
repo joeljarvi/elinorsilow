@@ -129,14 +129,11 @@ export default function DesktopNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrollDir, openSearch]);
   return (
-    <>
-      <motion.div
-        style={{ y: 0 }}
-        className="hidden  lg:grid grid-cols-12  items-center justify-start   gap-y-4 lg:gap-y-0  gap-x-4 no-hide-text bg-background w-full"
-      >
+    <div className="flex justify-center w-full ">
+      <div className="hidden  lg:grid grid-cols-12  items-center justify-start   gap-y-4 lg:gap-y-0  gap-x-4 no-hide-text bg-background">
         {/* LEFT MENU (MAIN) */}
 
-        <div className="p pt-8 px-8 lg:pt-0 lg:px-8 col-span-4 whitespace-normal flex flex-wrap items-baseline gap-x-1  ">
+        <div className="p p-8 col-span-4 whitespace-normal flex flex-wrap items-baseline gap-x-1  ">
           <Link
             onClick={() => {
               setActiveWorkSlug(null);
@@ -153,8 +150,8 @@ export default function DesktopNav() {
 "
             href="/"
           >
-            <strong className="whitespace-nowrap uppercase font-normal font-directorBold mr-2">
-              Elinor Silow,
+            <strong className="p whitespace-nowrap  font-normal  mr-3">
+              Elinor Silow
             </strong>
             (b. 1993) in Malmö, Sweden, is a Stockholm based artist who explores
             raw emotion through painting, sculpture and textile.
@@ -164,11 +161,11 @@ export default function DesktopNav() {
 
         <nav
           className={` flex flex-col lg:grid
-   col-span-8 p-4 lg:p-8
-
+   col-span-8 
+pt-8
     grid-cols-4
     grid-rows-[1.5rem_minmax(0,1fr)]
-    gap-x-4
+    gap-x-4 px-4
     w-full items-start lg:items-baseline 
     overflow-hidden   ${openSearch ? "pb-0" : "pb-8"}`}
         >
@@ -288,7 +285,7 @@ export default function DesktopNav() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-    </>
+      </div>
+    </div>
   );
 }

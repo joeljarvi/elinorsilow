@@ -42,13 +42,13 @@ export default function WorksFilter() {
   }, [workSort, selectedYear, categoryFilter]);
 
   return (
-    <div className="col-span-3 lg:col-start-1 lg:col-span-2 lg:row-start-2 w-full grid  grid-rows-3 pointer-events-auto px-8 lg:px-0 lg:pl-8 pb-2 lg:pb-2   ">
+    <div className=" w-full grid  grid-rows-3 lg:grid-cols-3 lg:grid-rows-1 pointer-events-auto px-8 lg:px-0 lg:pl-8 gap-y-2  pt-2  ">
       {isApplyingWorksFilters ? (
         <h3 className=" animate-pulse h3">Applying filters…</h3>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-4 w-full items-center">
-            <h3 className=" pl-4 h3">Sort by</h3>
+          <div className=" grid grid-cols-3 gap-4 w-full items-center">
+            <h3 className="  h3">Sort by</h3>
             <Select
               value={stagedWorkSort}
               onValueChange={(v) => {
@@ -69,7 +69,7 @@ export default function WorksFilter() {
           </div>
           {/* Category */}
           <div className="grid grid-cols-3 items-center  w-full gap-4">
-            <h3 className="pl-4 h3">Category</h3>
+            <h3 className="h3">Category</h3>
             <Select
               value={stagedCategoryFilter}
               onValueChange={(v) =>
@@ -93,7 +93,7 @@ export default function WorksFilter() {
           {/* Year */}
           {stagedWorkSort === "year" && (
             <div className="grid grid-cols-3 items-center  w-full gap-4">
-              <h3 className="pl-4 h3">Year</h3>
+              <h3 className="h3">Year</h3>
               <Select
                 value={stagedSelectedYear?.toString() ?? ""}
                 onValueChange={(v) => setStagedSelectedYear(Number(v))}
@@ -112,10 +112,10 @@ export default function WorksFilter() {
             </div>
           )}
           {/* Actions */}
-          <div className="grid grid-cols-3 gap-4 w-full items-center ">
+          <div className="grid grid-cols-3  w-full items-center ">
             <Button
               variant="link"
-              className="col-span-1 justify-start w-min"
+              className="col-span-1 justify-start pl-0 w-min"
               onClick={async () => {
                 await applyWorksFilters(
                   stagedWorkSort,
@@ -125,17 +125,17 @@ export default function WorksFilter() {
                 setOpen(false);
               }}
             >
-              •Apply
+              • Apply
             </Button>
 
             <Button
               variant="link"
-              className="col-span-1 justify-start w-min"
+              className="col-span-1 justify-start pl-0 w-min"
               onClick={async () => {
                 await clearWorksFilters();
               }}
             >
-              •Clear
+              • Clear
             </Button>
           </div>
         </>
