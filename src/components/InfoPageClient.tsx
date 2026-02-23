@@ -21,7 +21,7 @@ export default function InfoPageClient() {
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   return (
-    <div className="mt-10 lg:mt-[25vh ]w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 px-4 pb-8  ">
+    <div className="mt-10 lg:mt-[25vh] w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 px-4 pb-8  ">
       {/* LEFT COLUMN */}
 
       {/* About Section */}

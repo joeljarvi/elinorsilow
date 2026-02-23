@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon, Share2 } from "lucide-react";
 import useSwipe from "@/hooks/use-swipe";
 import HDivider from "@/components/HDivider";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -131,42 +132,33 @@ export default function WorkSlugModalClient({
     <div
       {...swipeHandlers}
       className=" 
-    relative flex flex-col  h-screen items-start justify-start lg:items-start lg:justify-start w-full p-4   "
+    relative flex flex-col lg:grid grid-cols-3  h-screen items-start justify-start lg:items-start lg:justify-start w-full   "
     >
       <div className="flex w-full   ">
-        <div className="flex flex-col items-baseline text-sm font-directorLight  w-full mb-4 ">
+        <div className="flex flex-col items-baseline text-sm font-directorLight  w-full mb-4 p-4 lg:p-8 ">
           <div className="flex justify-between items-center w-full ">
             <span className="h1 font-directorBold uppercase mr-4">
               {work.title.rendered}
             </span>
-            <div className=" flex gap-x-4  ">
-              <Button
-                className="hidden lg:flex"
-                variant="link"
-                size="sm"
-                onClick={() => {
-                  const url = `${window.location.origin}/works/${work.slug}`;
-                  navigator.clipboard.writeText(url);
-                }}
-              >
-                Dela
-              </Button>
-              <Button
-                className=""
-                size="sm"
-                variant="link"
-                onClick={onClose || (() => router.push("/"))}
-              >
-                Stäng (x)
-              </Button>
-            </div>
+
+            <Button
+              className="absolute top-0 right-0 aspect-square h-auto"
+              size="sm"
+              variant="ghost"
+              onClick={onClose || (() => router.push("/"))}
+            >
+              <Cross1Icon />
+            </Button>
           </div>
 
           {work.acf.materials && (
-            <span className="mr-2"> {work.acf.materials}</span>
+            <span className="mr-2 max-w-sm"> {work.acf.materials}</span>
           )}
           {work.acf.dimensions && <span> {work.acf.dimensions}</span>}
           {work.acf.year && <span className="mr-2"> {work.acf.year}</span>}
+          {work.acf.exhibition && (
+            <span className="h3 ">Part of {work.acf.exhibition}</span>
+          )}
         </div>
       </div>
 
@@ -178,24 +170,19 @@ export default function WorkSlugModalClient({
               key={idx}
               className="w-full flex justify-start lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-10rem)] flex flex-col  lg:items-start justify-center items-center ">
+              <div className="relative w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-0rem)] flex flex-col  lg:items-start justify-center items-center mx-auto">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
-                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-left-top 
-                   lg:mx-0 px-0 lg:px-0 lg:pb-4 pt-4 lg:py-0 "
+                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-center
+                   lg:mx-0 px-4 lg:px-0 lg:pb-4 pt-4 lg:py-0 "
                 />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
-      {work.acf.exhibition && (
-        <span className="h3 pt-4">
-          Part of exhibition: {work.acf.exhibition}
-        </span>
-      )}
 
       {/* Work info */}
     </div>

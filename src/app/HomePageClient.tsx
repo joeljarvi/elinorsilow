@@ -84,7 +84,7 @@ function MainContent({}: Props) {
       {!loading && (
         <section
           className=" mx-auto
-      flex flex-col items-center justify-start w-full mt-[50vh] lg:mt-[50vh]  "
+      flex flex-col items-center justify-start w-full mt-0   "
         >
           <div
             className="
@@ -104,12 +104,12 @@ function MainContent({}: Props) {
  
   "
             >
-              <span className="px-8 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
+              <span className="mt-[25vh] px-8 w-full col-span-5 lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
                 {/* Left title */}
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="hidden lg:flex lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground bg-transparent"
+                  className="flex  col-span-5 lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground bg-transparent"
                 >
                   Selected works
                 </Button>
@@ -173,10 +173,10 @@ function MainContent({}: Props) {
               />
               <div className="sticky bottom-0  lg:hidden z-20   ">
                 <Button
-                  className="w-full uppercase justify-start gap-x-4   items-baseline bg-background shadow.lg"
+                  className="w-full uppercase justify-start gap-x-4   items-baseline bg-background hover:bg-background shadow-lg"
                   variant="ghost"
-                  size="lg"
                   asChild
+                  size="lg"
                 >
                   <Link href="/works">
                     See all works <span className=" ">&gt;</span>
@@ -196,45 +196,47 @@ function MainContent({}: Props) {
  
   "
             >
-              {/* Left title */}
-              <Button
-                variant="ghost"
-                size="lg"
-                className="hidden lg:blocklg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground"
-              >
-                Selected Exhibitions
-              </Button>
+              {" "}
+              <span className="px-8 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
+                {/* Left title */}
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="hidden lg:flex lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground"
+                >
+                  Selected Exhibitions
+                </Button>
 
-              {/* Right link */}
-              <Button
-                className=" hidden lg:block lg:z-auto lg:col-span-1 w-full uppercase justify-between border-b-1 border-foreground"
-                variant="ghost"
-                size="lg"
-                asChild
-              >
-                <Link href="/exhibitions">
-                  See all Exhibitions <span>&gt;</span>
-                </Link>
-              </Button>
-
+                {/* Right link */}
+                <Button
+                  className=" hidden lg:flex lg:z-auto lg:col-span-1 w-full uppercase justify-between border-b-1 border-foreground"
+                  variant="ghost"
+                  size="lg"
+                  asChild
+                >
+                  <Link href="/exhibitions">
+                    See all Exhibitions <span>&gt;</span>
+                  </Link>
+                </Button>
+              </span>
               {/* Divider left */}
-
               <Staggered
                 items={featuredExhibitions}
                 getKey={(ex) => ex.id}
                 loading={loading}
                 className="
     min-h-screen
+       col-span-5
     flex flex-col gap-y-4
     lg:grid lg:grid-cols-5
     gap-x-8 
-    lg:px-0 lg:py-8
-    col-span-5
+    
+ 
   "
                 renderItem={(ex: Exhibition) => (
                   <motion.div
                     key={ex.id}
-                    className="h-screen lg:h-[75vh] flex flex-col bg-background   "
+                    className="lg:col-span-2 h-[50vh] flex flex-col bg-transparent w-full  "
                   >
                     <div
                       onClick={() => {
@@ -253,7 +255,7 @@ function MainContent({}: Props) {
                             src={ex.acf.image_1.url}
                             alt={ex.title.rendered}
                             fill
-                            className="object-contain object-left lg:object-top-left p-4"
+                            className="object-contain object-left lg:object-top-left p-4 lg:px-8"
                           />
                         )}
                       </div>
@@ -273,7 +275,6 @@ function MainContent({}: Props) {
                   </Link>
                 </Button>
               </div>
-
               {/* Exhibitions */}
             </div>
             <div className="bg-foreground text-background  min-h-screen relative ">

@@ -42,13 +42,12 @@ export default function WorksFilter() {
   }, [workSort, selectedYear, categoryFilter]);
 
   return (
-    <div className=" w-full grid  grid-rows-3 lg:grid-cols-3 lg:grid-rows-1 pointer-events-auto px-8 lg:px-0 lg:pl-8 gap-y-2  pt-2  ">
+    <div className=" w-full  flex flex-col pointer-events-auto px-0 lg:px-0 lg:pl-0  gap-y-4  pt-4  ">
       {isApplyingWorksFilters ? (
         <h3 className=" animate-pulse h3">Applying filters…</h3>
       ) : (
         <>
           <div className=" grid grid-cols-3 gap-4 w-full items-center">
-            <h3 className="  h3">Sort by</h3>
             <Select
               value={stagedWorkSort}
               onValueChange={(v) => {
@@ -56,31 +55,30 @@ export default function WorksFilter() {
                 if (v !== "year") setStagedSelectedYear(null);
               }}
             >
-              <SelectTrigger className=" col-span-2  w-full">
-                <SelectValue placeholder="Sort by" />
+              <SelectTrigger className=" col-span-3  w-full">
+                <SelectValue placeholder="Sort by Latest" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="year-latest">Latest</SelectItem>
-                <SelectItem value="year-oldest">Oldest</SelectItem>
-                <SelectItem value="title">A–Ö</SelectItem>
-                <SelectItem value="year">Year</SelectItem>
+                <SelectItem value="year-latest">Sort by latest</SelectItem>
+                <SelectItem value="year-oldest">oldest</SelectItem>
+                <SelectItem value="title">title</SelectItem>
+                <SelectItem value="year">year</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {/* Category */}
           <div className="grid grid-cols-3 items-center  w-full gap-4">
-            <h3 className="h3">Category</h3>
             <Select
               value={stagedCategoryFilter}
               onValueChange={(v) =>
                 setStagedCategoryFilter(v as CategoryFilter)
               }
             >
-              <SelectTrigger className="col-span-2 w-full">
+              <SelectTrigger className="col-span-3 w-full">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="all">All categories</SelectItem>
                 <SelectItem value="painting">Painting</SelectItem>
                 <SelectItem value="sculpture">Sculpture</SelectItem>
                 <SelectItem value="textile">Textile</SelectItem>
@@ -93,12 +91,11 @@ export default function WorksFilter() {
           {/* Year */}
           {stagedWorkSort === "year" && (
             <div className="grid grid-cols-3 items-center  w-full gap-4">
-              <h3 className="h3">Year</h3>
               <Select
                 value={stagedSelectedYear?.toString() ?? ""}
                 onValueChange={(v) => setStagedSelectedYear(Number(v))}
               >
-                <SelectTrigger className="w-full col-span-2">
+                <SelectTrigger className="w-full col-span-3">
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
                 <SelectContent>

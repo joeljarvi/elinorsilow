@@ -42,22 +42,21 @@ export default function ExFilter() {
   }, [exhibitionSort, exSelectedYear, selectedType]);
 
   return (
-    <div className="lg:col-start-6 col-span-3 lg:col-span-3 lg:row-start-2 w-full grid grid-rows-3  pointer-events-auto px-8 lg:px-0 pb-2 lg:pb-0  ">
+    <div className="flex flex-col w-full gap-y-2  pointer-events-auto  bg-transparent ">
       {isApplyingExhibitionsFilters ? (
         <h3 className="h3 animate-pulse">Applying filters…</h3>
       ) : (
         <>
           {/* Sort */}
           <div className="grid grid-cols-3 items-center  w-full gap-4 ">
-            <h3 className="pl-4 h3">Sort by</h3>
             <Select
               value={stagedExhibitionSort}
               onValueChange={(v) =>
                 setStagedExhibitionSort(v as ExhibitionSort)
               }
             >
-              <SelectTrigger className="col-span-2 w-full">
-                <SelectValue placeholder="Sort" />
+              <SelectTrigger className="col-span-3 w-full">
+                <SelectValue placeholder="Sort by latest" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="year">Year</SelectItem>
@@ -70,12 +69,11 @@ export default function ExFilter() {
           {/* Year */}
           {stagedExhibitionSort === "year" && (
             <div className="grid grid-cols-3 items-center  w-full gap-4 ">
-              <h3 className="pl-4 h3">Year</h3>
               <Select
                 value={stagedExSelectedYear}
                 onValueChange={setStagedExSelectedYear}
               >
-                <SelectTrigger className="col-span-2 w-full">
+                <SelectTrigger className="col-span-3 w-full">
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
                 <SelectContent>
@@ -92,12 +90,11 @@ export default function ExFilter() {
 
           {/* Type */}
           <div className="grid grid-cols-3 gap-4 w-full items-center ">
-            <h3 className="h3 pl-4">Type</h3>
             <Select
               value={stagedSelectedType}
               onValueChange={setStagedSelectedType}
             >
-              <SelectTrigger className="col-span-2 w-full">
+              <SelectTrigger className="col-span-3 w-full">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
