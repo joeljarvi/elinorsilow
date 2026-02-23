@@ -10,11 +10,10 @@ import { NavProvider } from "@/context/NavContext";
 import { UIProvider } from "@/context/UIContext";
 
 import MobileNavButton from "@/components/MobileNavButton";
-import SmoothScroll from "@/components/SmoothScroll";
-import NewNav from "@/components/DesktopNav";
+
 import BodyClassManager from "@/components/BodyClassManager";
 import DesktopNav from "@/components/DesktopNav";
-import { Carousel } from "@/components/ui/carousel";
+
 import { CarouselProvider } from "@/context/CarouselContext";
 
 const directorMono = localFont({
