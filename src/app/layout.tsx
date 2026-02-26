@@ -22,7 +22,7 @@ const directorMono = localFont({
 });
 
 const directorBold = localFont({
-  src: "assets/fonts/Director-Bold.ttf",
+  src: "assets/fonts/Director-Bold.woff",
   variable: "--font-directorBold",
 });
 
