@@ -122,9 +122,9 @@ function MainContent({}: Props) {
             <div className="sticky bottom-0 lg:hidden z-20">
               <Button
                 className="
-    w-full uppercase justify-between
+    w-full uppercase justify-start
  lg:shadow-none
-    bg-background
+    bg-background gap-x-8
 hover:bg-background
    border-transparent lg:border-foreground lg:border-b-[0.5px] px-8 pb-4 lg:px-4  
     "
@@ -137,7 +137,6 @@ hover:bg-background
                   className="flex items-baseline gap-4 w-full"
                 >
                   See all works
-                  <span>&gt;</span>
                 </Link>
               </Button>
             </div>
@@ -236,7 +235,6 @@ hover:bg-background
                   className="flex items-center gap-4 w-full"
                 >
                   See all Exhibitions
-                  <span>&gt;</span>
                 </Link>
               </Button>
             </div>
@@ -248,9 +246,7 @@ hover:bg-background
               size="lg"
               asChild
             >
-              <Link href="/info">
-                About Elinor <span className=" ">&gt;</span>
-              </Link>
+              <Link href="/info">About Elinor</Link>
             </Button>
 
             <div className="col-start-1 col-span-2 pl-8 lg:pl-8  pt-8 lg:pt-4 pr-16 lg:pr-8 ">

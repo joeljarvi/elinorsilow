@@ -124,7 +124,7 @@ export default function DesktopNav() {
               variants={navContainer}
               initial="hidden"
               animate="visible"
-              className=" pt-8 pl-8 pr-8 pb-8 lg:pt-8 lg:pl-40  lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-3xl lg:text-3xl font-directorLight items-baseline  max-w-132 lg:max-w-6xl"
+              className=" pt-8 pl-8 pr-8 pb-8 lg:pt-8 lg:pl-40  lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-3xl lg:text-3xl font-directorLight items-baseline  max-w-full lg:max-w-6xl"
             >
               <motion.span variants={navItemVariant}>
                 <NavItem href="/" active={pathname === "/"}>
@@ -135,7 +135,7 @@ export default function DesktopNav() {
               <motion.span variants={navItemVariant}>
                 <NavItem
                   href="/works"
-                  className="ml-2"
+                  className="ml-2 lg:ml-2"
                   active={pathname.startsWith("/works")}
                 >
                   Works
@@ -145,7 +145,7 @@ export default function DesktopNav() {
               <motion.span variants={navItemVariant}>
                 <NavItem
                   href="/exhibitions"
-                  className="ml-0 lg:ml-2"
+                  className="ml-2 lg:ml-2"
                   active={pathname.startsWith("/exhibitions")}
                 >
                   Exhibitions
