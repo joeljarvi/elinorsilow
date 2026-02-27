@@ -224,7 +224,7 @@ hover:bg-background
  lg:shadow-none
     bg-background
 hover:bg-background
-   border-transparent lg:border-foreground lg:border-b-[0.5px]px-8 lg:px-4 pb-4
+   border-transparent lg:border-foreground lg:border-b-[0.5px] px-8 lg:px-4 pb-4
     "
                 variant="ghost"
                 size="lg"
