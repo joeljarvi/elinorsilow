@@ -53,20 +53,6 @@ export default function WorksPageClient() {
  
   "
       >
-        <span className=" px-4 lg:px-8 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent items-start ">
-          {/* Left title */}
-          <Button
-            variant="ghost"
-            size="lg"
-            className="flex col-span-5 lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full border-b-1 border-foreground bg-transparent"
-          >
-            All works
-          </Button>
-        </span>
-        {/* Right link */}
-
-        {/* Divider left */}
-
         <Staggered
           items={filteredWorks}
           getKey={(w) => w.id}
@@ -124,11 +110,10 @@ export default function WorksPageClient() {
           <Button
             className="
     w-full uppercase justify-between
-    border-t border-foreground
+ lg:shadow-none
     bg-background
 hover:bg-background
-    lg:border-t-0
-    lg:border-b 
+  border-foreground  border-t-[0.5px] lg:border-b-[0.5px] lg:border-t-transparent px-8 lg:px-4 
     "
             variant="ghost"
             size="lg"
@@ -136,12 +121,15 @@ hover:bg-background
               handleOpenWorksFilter();
             }}
           >
-            Filter <span>&gt;</span>
+            Filter{" "}
+            <span className={showWorksFilter ? "rotate-90 transition-all" : ""}>
+              &gt;
+            </span>
           </Button>
 
           {/* Panel */}
           {showWorksFilter && (
-            <div className="bg-background border-t border-foreground py-4 px-4 lg:px-8">
+            <div className="bg-background    ">
               <WorksFilter />
             </div>
           )}

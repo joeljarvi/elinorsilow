@@ -15,7 +15,7 @@ export default function HDivider({
       animate={{ scaleX: loading ? 0 : 1 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
       style={{ transformOrigin: "left" }}
-      className={`border-inset ${color} w-full my-0 ${className}`}
+      className={`border-inset border-[0.5px] ${color} w-full my-0 ${className}`}
     />
   );
 }

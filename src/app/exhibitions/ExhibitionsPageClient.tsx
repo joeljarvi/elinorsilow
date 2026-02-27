@@ -71,9 +71,9 @@ export default function ExhibitionsPageClient() {
           <Button
             variant="ghost"
             size="lg"
-            className="hidden lg:flex lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-1 lg:border-foreground"
+            className="hidden x lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-[0.5px] lg:border-foreground"
           >
-            Selected Exhibitions
+            Exhibitions
           </Button>
         </span>
         {/* Divider left */}
@@ -122,7 +122,7 @@ export default function ExhibitionsPageClient() {
           className="
   fixed z-40
 
-  bottom-0 left-0 w-full
+  bottom-0 left-0 w-full 
 
   lg:bottom-auto
   lg:left-auto
@@ -134,12 +134,11 @@ export default function ExhibitionsPageClient() {
           {/* Button */}
           <Button
             className="
-    w-full uppercase justify-between
-    border-t border-foreground
+w-full uppercase justify-between
+
     bg-background
 hover:bg-background
-    lg:border-t-0
-    lg:border-b 
+   border-b-transparent border-t-foreground border-t-[0.5px] lg:border-foreground lg:border-b-[0.5px] px-8 lg:px-4
     "
             variant="ghost"
             size="lg"
@@ -147,12 +146,19 @@ hover:bg-background
               handleOpenExhibitionsFilter();
             }}
           >
-            Filter <span>&gt;</span>
+            Filter{" "}
+            <span
+              className={
+                showExhibitionsFilter ? "rotate-90 transition-all" : ""
+              }
+            >
+              &gt;
+            </span>
           </Button>
 
           {/* Panel */}
           {showExhibitionsFilter && (
-            <div className="bg-background py-4 px-4 lg:px-8">
+            <div className="bg-background ">
               <ExFilter />
             </div>
           )}

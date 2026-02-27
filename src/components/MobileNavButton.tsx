@@ -119,7 +119,7 @@ function MobileNavOverlay() {
   >();
 
   const exhibitionIndex: (ExhibitionItem | ExhibitionListItem)[] = sortAZ(
-    Array.from(allExhibitionsMap.values())
+    Array.from(allExhibitionsMap.values()),
   );
 
   const findExhibitionSlug = (title: string) => {
@@ -386,8 +386,8 @@ function NavIcon({ state }: { state: "loading" | "idle" | "open" }) {
     state === "loading"
       ? "/nav_loading.svg"
       : state === "open"
-      ? "/trumpet_3_NAV.svg"
-      : "/trumpet_1_NAV.svg";
+        ? "/trumpet_3_NAV.svg"
+        : "/trumpet_1_NAV.svg";
 
   const isLoading = state === "loading";
 
@@ -454,13 +454,13 @@ export default function NavButton() {
   const navState: NavVisualState = showNavLoader
     ? "loading"
     : open
-    ? "open"
-    : "idle";
+      ? "open"
+      : "idle";
 
   return (
     <>
       <button
-        className="fixed  bottom-8 right-8  left-auto  z-50 lg:z-50  top-auto lg:top-8 lg:left-8  flex items-center justify-center w-24 h-24 no-hide-text"
+        className="fixed  bottom-8 right-8  left-auto  z-50 lg:z-50  top-auto lg:top-8 lg:left-8  flex items-center justify-center w-20 h-20 no-hide-text"
         onClick={handleOpen}
       >
         <AnimatePresence mode="wait">

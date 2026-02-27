@@ -7,8 +7,9 @@ import { buildSearchIndex } from "@/lib/searchIndex";
 import { useSiteSearch } from "@/lib/useSiteSearch";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
-export default function NavSearch({}: {}) {
+export default function NavSearch({ onClose }: { onClose?: () => void }) {
   const router = useRouter();
   const { allWorks, setActiveWorkSlug, setOpen: setWorkModalOpen } = useWorks();
   const {
@@ -31,16 +32,24 @@ export default function NavSearch({}: {}) {
     setQuery(""); // clear search
   };
   return (
-    <div className="relative bg-background w-full">
+    <div className="relative  w-full">
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search..."
-        className="w-full border-b border-b-foreground   outline-none  py-0 font-directorLight text-4xl lg:text-5xl lg:max-w-md bg-transparent h-16 px-4"
+        className="w-full  border-b-[0.5px] border-foreground  outline-none  py-0 pb-1  font-directorLight text-3xl  max-w-70 lg:max-w-96 bg-transparent h pl-2 pr-8 lg:pb-1"
       />
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground"
+        >
+          <Cross1Icon className="size-4" />
+        </button>
+      )}
 
       {query && results.length > 0 && (
-        <div className="absolute top-full font-directorMono left-0 w-full bg-background z-50 lg:shadow-none flex flex-col items-start justify-start gap-y-0 ">
+        <div className="absolute top-full font-directorMono left-0 w-full bg-transparent  z-50 lg:shadow-none flex flex-col items-start justify-start gap-y-0 ">
           {" "}
           {results.slice(0, 8).map((item) => (
             <Button

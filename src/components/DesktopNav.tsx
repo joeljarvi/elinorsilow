@@ -7,8 +7,10 @@ import {
   AnimatePresence,
   useScroll,
   useMotionValueEvent,
+  type Variants,
 } from "framer-motion";
 import { Button } from "./ui/button";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 import { useRouter } from "next/navigation";
 
@@ -31,6 +33,19 @@ type ExhibitionListItem = {
   id: number;
   title: { rendered: string };
   __type: "list";
+};
+
+const navContainer: Variants = {
+  hidden: {
+    opacity: 0,
+    transition: { staggerChildren: 0.06, staggerDirection: -1 },
+  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+};
+
+const navItemVariant: Variants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0 },
 };
 
 function NavItem({
@@ -70,16 +85,6 @@ export default function DesktopNav() {
   const [hidden, setHidden] = useState(false);
   const [lastY, setLastY] = useState(0);
 
-  useMotionValueEvent(scrollY, "change", (y) => {
-    if (y > lastY && y > 100) {
-      setHidden(true); // scrolling down
-    } else {
-      setHidden(false); // scrolling up
-    }
-
-    setLastY(y);
-  });
-
   const { exhibitions } = useExhibitions();
 
   const { exhibitionList } = useInfo();
@@ -96,7 +101,7 @@ export default function DesktopNav() {
   >();
 
   exhibitions.forEach((ex) =>
-    allExhibitionsMap.set(ex.title.rendered, { ...ex, __type: "exhibition" })
+    allExhibitionsMap.set(ex.title.rendered, { ...ex, __type: "exhibition" }),
   );
 
   exhibitionList.forEach((ex) => {
@@ -106,82 +111,100 @@ export default function DesktopNav() {
   });
 
   return (
-    <div className="z-0 absolute lg:fixed top-0 left-0      w-full flex flex-col items-start justify-start gap-y-4   ">
-      {open && (
-        <motion.nav
-          initial={{ y: 0 }}
-          animate={{ y: hidden ? "-150%" : "0%" }}
-          transition={{
-            duration: 0.4,
-            ease: [0.25, 1, 0.5, 1],
-          }}
-          className=" pt-4 pl-4 pr-4 pb-4 lg:pt-8 lg:pl-40  lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-3xl lg:text-5xl font-directorLight items-baseline bg-background"
-        >
-          <NavItem href="/" active={pathname === "/"}>
-            Elinor Silow
-          </NavItem>
-          ,
-          <NavItem
-            href="/works"
-            className="ml-2"
-            active={pathname.startsWith("/works")}
+    <div className="z-30 fixed lg:absolute lg:z-auto  top-0 left-0      w-full flex flex-col items-start justify-start gap-y-4 bg-transparent  ">
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="desktop-nav"
+            animate={{ x: hidden ? "-150%" : "0%" }}
+            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+            transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
           >
-            Works
-          </NavItem>
-          ,
-          <NavItem
-            href="/exhibitions"
-            className="ml-0 lg:ml-2"
-            active={pathname.startsWith("/exhibitions")}
-          >
-            Exhibitions
-          </NavItem>
-          ,
-          <NavItem
-            href="/info"
-            className="ml-2"
-            active={pathname.startsWith("/info")}
-          >
-            Info
-          </NavItem>
-          ,
-          <Button
-            asChild
-            variant="link"
-            size="linkSizeLg"
-            className="ml-0 lg:ml-2"
-          >
-            <Link href="/">Contact</Link>
-          </Button>
-          ,
-          <AnimatePresence>
-            {openSearch ? (
-              <motion.div
-                layout
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className=""
-              >
-                <NavSearch />
-              </motion.div>
-            ) : (
-              <Button
-                variant="link"
-                size="linkSizeLg"
-                className="ml-2"
-                onClick={() => {
-                  setOpenSearch(true);
-                  setOpenBio(false);
-                }}
-              >
-                Search
-              </Button>
-            )}
-          </AnimatePresence>
-        </motion.nav>
-      )}
+            <motion.nav
+              variants={navContainer}
+              initial="hidden"
+              animate="visible"
+              className=" pt-8 pl-8 pr-8 pb-8 lg:pt-8 lg:pl-40  lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-3xl lg:text-3xl font-directorLight items-baseline  max-w-132 lg:max-w-6xl"
+            >
+              <motion.span variants={navItemVariant}>
+                <NavItem href="/" active={pathname === "/"}>
+                  Elinor Silow
+                </NavItem>
+              </motion.span>
+              ,
+              <motion.span variants={navItemVariant}>
+                <NavItem
+                  href="/works"
+                  className="ml-2"
+                  active={pathname.startsWith("/works")}
+                >
+                  Works
+                </NavItem>
+              </motion.span>
+              ,
+              <motion.span variants={navItemVariant}>
+                <NavItem
+                  href="/exhibitions"
+                  className="ml-0 lg:ml-2"
+                  active={pathname.startsWith("/exhibitions")}
+                >
+                  Exhibitions
+                </NavItem>
+              </motion.span>
+              ,
+              <motion.span variants={navItemVariant}>
+                <NavItem
+                  href="/info"
+                  className="ml-2 lg:ml-0"
+                  active={pathname.startsWith("/info")}
+                >
+                  Info
+                </NavItem>
+              </motion.span>
+              ,
+              <motion.span variants={navItemVariant}>
+                <Button
+                  asChild
+                  variant="link"
+                  size="linkSizeLg"
+                  className="ml-0 lg:ml-2"
+                >
+                  <Link href="/">Contact</Link>
+                </Button>
+              </motion.span>
+              ,
+              <motion.span variants={navItemVariant}>
+                <AnimatePresence>
+                  {openSearch ? (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="ml-2"
+                    >
+                      <NavSearch onClose={() => setOpenSearch(false)} />
+                    </motion.div>
+                  ) : (
+                    <Button
+                      variant="link"
+                      size="linkSizeLg"
+                      className="ml-2  "
+                      onClick={() => {
+                        setOpenSearch(true);
+                        setOpenBio(false);
+                      }}
+                    >
+                      Search...
+                    </Button>
+                  )}
+                </AnimatePresence>
+              </motion.span>
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

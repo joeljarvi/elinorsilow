@@ -10,13 +10,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground rounded-3xl   transition-all   hover:text-primary/80 ",
+          "bg-primary text-primary-foreground  shadow-none transition-all   hover:text-primary/80 ",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 justify-center",
         outline:
-          "border border-foreground bg-background  hover:bg-accent hover:text-accent-foreground justify-center",
+          "border-[0.5px] border-foreground bg-background  hover:bg-accent hover:text-accent-foreground justify-center",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 justify-center",
+          "bg-background text-background-foreground  hover:bg-secondary/80 justify-center",
         ghost: "  bg-background hover:bg-foreground/20 justify-center",
         link: "text-primary   transition-all   hover:underline active:underline underline-offset-8 decoration-[1px]   ",
         nav: "text-primary       transition-all w-full  justify-between hover:text-primary/80 ",
@@ -24,9 +24,9 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 h3",
         sm: "h-6 px-4 py-1 h3",
-        lg: " px-4 py-2 text-xl font-directorMono h-16 lg:h-auto",
+        lg: " px-4 py-2  text-xl lg:text-base font-directorLight h-16 lg:h-12 ",
         linkSize: "h-6  px-0 py-0 text-sm",
-        linkSizeLg: "text-4xl lg:text-5xl leading-tight ",
+        linkSizeLg: "text-3xl lg:text-3xl leading-tight ",
         listSize: "h-auto px-0 py-0",
         linkIcon: "h-6 w-6 px-0 py-0",
         icon: "h-9 w-9",
@@ -36,11 +36,12 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
@@ -55,7 +56,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";
 
