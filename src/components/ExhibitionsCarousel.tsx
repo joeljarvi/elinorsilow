@@ -23,13 +23,14 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
   const image = item.acf.image_1?.url;
 
   return (
-    <div
-      className=" flex flex-col cursor-pointer gap-y-4 bg-background   transition-all "
+    <button
+      className=" flex flex-col cursor-pointer gap-y-4 bg-background   transition-all text-left w-full"
       onClick={() => {
         setActiveExhibitionSlug(item.slug);
         setOpen(false);
         router.push(`/?exhibition=${item.slug}`);
       }}
+      aria-label={`Öppna utställning: ${item.title.rendered}`}
     >
       <div className="relative w-full aspect-video lg:aspect-video">
         {image && (
@@ -63,7 +64,7 @@ function ExhibitionCard({ item, setActiveExhibitionSlug, setOpen, router }) {
           {item.acf.year && <span className="mr-2">{item.acf.year}</span>}
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -136,6 +137,7 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
             dragFree: false,
             containScroll: "trimSnaps",
           }}
+          aria-label="Utvalda utställningar"
           className="h-full"
         >
           <CarouselContent className="h-full">
@@ -144,13 +146,14 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
                 key={item.id}
                 className="basis-full flex items-center justify-center"
               >
-                <div
+                <button
                   className="relative w-[70vw] h-[80vh] cursor-pointer"
                   onClick={() => {
                     setActiveExhibitionSlug(item.slug);
                     setOpen(false);
                     router.push(`/?exhibition=${item.slug}`);
                   }}
+                  aria-label={`Öppna utställning: ${item.title.rendered}`}
                 >
                   {item.acf.image_1?.url && (
                     <Image
@@ -161,7 +164,7 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
                       priority
                     />
                   )}
-                </div>
+                </button>
               </CarouselItem>
             ))}
           </CarouselContent>

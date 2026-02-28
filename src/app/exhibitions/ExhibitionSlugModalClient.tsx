@@ -98,6 +98,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     onSwipedRight: goPrev,
   });
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onClose) onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   if (loading || !exhibition || !exhibition.acf) {
     return <div></div>;
   }
@@ -157,7 +165,7 @@ overflow-y-scroll
       <span className="   w-full  col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6  gap-4">
         <div className=" col-span-6 flex flex-col   justify-start  items-start w-full h3">
           <div className="flex justify-between w-full">
-            <h1 className="  max-w-xs uppercase font-directorBold ">
+            <h1 id="exhibition-modal-title" className="  max-w-xs uppercase font-directorBold ">
               {exhibition.title.rendered}
             </h1>
             <div className=" flex gap-x-4  ">
@@ -165,6 +173,7 @@ overflow-y-scroll
                 className="hidden lg:flex"
                 variant="link"
                 size="sm"
+                aria-label="Dela länk till utställning"
                 onClick={() => {
                   const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
                   navigator.clipboard.writeText(url);

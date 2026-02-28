@@ -70,6 +70,7 @@ function NavItem({
       ${active ? "underline" : "no-underline"}
       `}
       asChild
+      aria-current={active ? "page" : undefined}
     >
       <Link href={href}>{children}</Link>
     </Button>
@@ -124,6 +125,7 @@ export default function DesktopNav() {
               variants={navContainer}
               initial="hidden"
               animate="visible"
+              aria-label="Site navigation"
               className=" pt-8 pl-8 pr-8 pb-8 lg:pt-8 lg:pl-40  lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-3xl lg:text-3xl font-directorLight items-baseline  max-w-full lg:max-w-6xl"
             >
               <motion.span variants={navItemVariant}>

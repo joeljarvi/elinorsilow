@@ -137,7 +137,7 @@ export default function WorkSlugModalClient({
       <div className="flex w-full   ">
         <div className="flex flex-col items-baseline text-sm font-directorLight  w-full mb-4 p-4 lg:p-8 ">
           <div className="flex justify-between items-center w-full ">
-            <span className="h1 font-directorBold uppercase mr-4">
+            <span id="work-modal-title" className="h1 font-directorBold uppercase mr-4">
               {work.title.rendered}
             </span>
 
@@ -146,8 +146,9 @@ export default function WorkSlugModalClient({
               size="sm"
               variant="ghost"
               onClick={onClose || (() => router.push("/"))}
+              aria-label="Stäng"
             >
-              <Cross1Icon />
+              <Cross1Icon aria-hidden="true" />
             </Button>
           </div>
 

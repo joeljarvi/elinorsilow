@@ -95,13 +95,14 @@ export default function ExhibitionsPageClient() {
               key={ex.id}
               className="lg:col-span-2 h-screen flex flex-col bg-background w-full  "
             >
-              <div
+              <button
                 onClick={() => {
                   setActiveExhibitionSlug(ex.slug);
                   setOpen(false);
                   router.push(`/?exhibition=${ex.slug}`);
                 }}
                 className="relative cursor-pointer w-full flex justify-center"
+                aria-label={`Visa utställning: ${ex.title.rendered}`}
               >
                 {/* Image box */}
                 <div className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}>
@@ -114,7 +115,7 @@ export default function ExhibitionsPageClient() {
                     />
                   )}
                 </div>
-              </div>
+              </button>
             </motion.div>
           )}
         />
@@ -142,12 +143,14 @@ hover:bg-background
     "
             variant="ghost"
             size="lg"
+            aria-expanded={showExhibitionsFilter}
             onClick={() => {
               handleOpenExhibitionsFilter();
             }}
           >
             Filter{" "}
             <span
+              aria-hidden="true"
               className={
                 showExhibitionsFilter ? "rotate-90 transition-all" : ""
               }

@@ -127,10 +127,19 @@ function MobileNavOverlay() {
     return match?.slug;
   };
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) handleOpen();
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [open, handleOpen]);
+
   return (
     <AnimatePresence>
       {open && (
         <motion.div
+          id="mobile-nav-overlay"
           key="mobile-nav"
           initial={{ y: "-100%", opacity: 1 }}
           animate={{ y: 0, opacity: 1 }}
@@ -182,11 +191,13 @@ function MobileNavOverlay() {
                 setShowSettings(false);
                 handleOpen();
               }}
+              aria-expanded={showWorksMenu}
               className="mt-8 justify-between w-full "
             >
               <Link href="/works">
                 Verk{" "}
                 <span
+                  aria-hidden="true"
                   className={showWorksMenu ? "rotate-90 transition-all" : ""}
                 >
                   <ChevronRightIcon />
@@ -246,11 +257,13 @@ function MobileNavOverlay() {
                 setShowSettings(false);
                 handleOpen();
               }}
+              aria-expanded={showExhibitionsMenu}
               className=" justify-between w-full mt-2"
             >
               <Link href="/exhibitions">
                 Utställningar{" "}
                 <span
+                  aria-hidden="true"
                   className={
                     showExhibitionsMenu ? "rotate-90 transition-all" : ""
                   }
@@ -317,10 +330,11 @@ function MobileNavOverlay() {
                 setShowExhibitionsMenu(false);
                 setShowSettings(false);
               }}
+              aria-expanded={showContact}
               className="w-full justify-between"
             >
               Kontakt{" "}
-              <span className={showContact ? "rotate-90 transition-all" : ""}>
+              <span aria-hidden="true" className={showContact ? "rotate-90 transition-all" : ""}>
                 <ChevronRightIcon />
               </span>
             </Button>
@@ -418,7 +432,7 @@ function NavIcon({ state }: { state: "loading" | "idle" | "open" }) {
     >
       <Image
         src={src}
-        alt={state}
+        alt=""
         fill
         sizes="96px"
         className="object-contain dark:invert no-hide-text"
@@ -462,6 +476,9 @@ export default function NavButton() {
       <button
         className="fixed  bottom-8 right-8  left-auto  z-50 lg:z-50  top-auto lg:top-8 lg:left-8  flex items-center justify-center w-20 h-20 no-hide-text"
         onClick={handleOpen}
+        aria-label={open ? "Stäng meny" : "Öppna meny"}
+        aria-expanded={open}
+        aria-controls="mobile-nav-overlay"
       >
         <AnimatePresence mode="wait">
           <NavIcon state={navState} />

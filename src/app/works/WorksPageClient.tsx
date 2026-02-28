@@ -70,13 +70,14 @@ export default function WorksPageClient() {
               key={work.id}
               className="h-screen lg:h-[75vh] flex flex-col   "
             >
-              <div
+              <button
                 onClick={() => {
                   setActiveWorkSlug(work.slug);
                   setOpen(false);
                   router.push(`/?work=${work.slug}`);
                 }}
                 className="relative cursor-pointer w-full flex justify-center"
+                aria-label={`Visa verk: ${work.title.rendered}`}
               >
                 {/* Image box */}
                 <div className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}>
@@ -89,7 +90,7 @@ export default function WorksPageClient() {
                     />
                   )}
                 </div>
-              </div>
+              </button>
             </motion.div>
           )}
         />
@@ -113,16 +114,17 @@ export default function WorksPageClient() {
  lg:shadow-none
     bg-background
 hover:bg-background
-  border-foreground  border-t-[0.5px] lg:border-b-[0.5px] lg:border-t-transparent px-8 lg:px-4 
+  border-foreground  border-t-[0.5px] lg:border-b-[0.5px] lg:border-t-transparent px-8 lg:px-4
     "
             variant="ghost"
             size="lg"
+            aria-expanded={showWorksFilter}
             onClick={() => {
               handleOpenWorksFilter();
             }}
           >
             Filter{" "}
-            <span className={showWorksFilter ? "rotate-90 transition-all" : ""}>
+            <span aria-hidden="true" className={showWorksFilter ? "rotate-90 transition-all" : ""}>
               &gt;
             </span>
           </Button>
