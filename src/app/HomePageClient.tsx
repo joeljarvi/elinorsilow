@@ -18,6 +18,8 @@ import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
 import InfoPageClient from "@/components/InfoPageClient";
 import HDivider from "@/components/HDivider";
 import { useState, useEffect } from "react";
+import UnderConstruction from "@/components/UnderConstruction";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
 type Props = {
   showInfo?: boolean;
@@ -147,6 +149,36 @@ function BottomLinkBar() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function UnderConstructionOverlay() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="under-construction"
+          className="fixed inset-0 z-50 bg-background flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <Button
+            className="absolute top-0 right-0 aspect-square h-auto"
+            size="sm"
+            variant="ghost"
+            onClick={() => setOpen(false)}
+            aria-label="Stäng"
+          >
+            <Cross1Icon aria-hidden="true" />
+          </Button>
+          <UnderConstruction />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -346,6 +378,8 @@ hover:bg-background
       </section>
 
       <BottomLinkBar />
+
+      <UnderConstructionOverlay />
 
       {activeWorkSlug && (
         <WorkModal
