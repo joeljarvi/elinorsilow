@@ -14,7 +14,7 @@ import {
   Education,
   Grant,
   Exhibition_list,
-} from "../../lib/wordpress";
+} from "../../lib/sanity";
 
 interface InfoContextProps {
   educations: Education[];

@@ -3,9 +3,8 @@
 import Staggered from "@/components/Staggered";
 import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Work, Exhibition } from "../../../lib/wordpress";
+import { Work, Exhibition } from "../../../lib/sanity";
 import { useUI } from "@/context/UIContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import WorksFilter from "@/components/WorksFilter";
 import ExFilter from "@/components/ExFilter";
 import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
 import { useEffect } from "react";
+import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import { motion } from "framer-motion";
 
 export default function ExhibitionsPageClient() {
@@ -26,7 +26,6 @@ export default function ExhibitionsPageClient() {
     exLoading,
   } = useExhibitions();
 
-  const router = useRouter();
   const {
     showInfo,
     open,
@@ -54,7 +53,7 @@ export default function ExhibitionsPageClient() {
   const loading = !initialAnimDone || !dataLoaded;
 
   return (
-    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full  mt-[50vh] ">
+    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full  mt-[50vh] lg:mt-0">
       <div
         className="
               flex flex-col
@@ -81,7 +80,7 @@ export default function ExhibitionsPageClient() {
           items={filteredExhibitions}
           getKey={(ex) => ex.id}
           loading={loading}
-          className="
+          className=" w-full
     min-h-screen
        col-span-5
     flex flex-col gap-y-4
@@ -93,19 +92,19 @@ export default function ExhibitionsPageClient() {
           renderItem={(ex: Exhibition) => (
             <motion.div
               key={ex.id}
-              className="lg:col-span-2 h-screen flex flex-col bg-background w-full  "
+              className="lg:col-span-3 h-screen flex flex-col bg-background w-full  "
             >
               <button
                 onClick={() => {
                   setActiveExhibitionSlug(ex.slug);
                   setOpen(false);
-                  router.push(`/?exhibition=${ex.slug}`);
+                  window.history.pushState(null, "", `/exhibitions?exhibition=${ex.slug}`);
                 }}
                 className="relative cursor-pointer w-full flex justify-center"
                 aria-label={`Visa utställning: ${ex.title.rendered}`}
               >
                 {/* Image box */}
-                <div className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}>
+                <div className={`relative mx-0 h-[80vh]  w-full `}>
                   {ex.acf.image_1 && (
                     <Image
                       src={ex.acf.image_1.url}
@@ -136,10 +135,10 @@ export default function ExhibitionsPageClient() {
           <Button
             className="
 w-full uppercase justify-between
-
+lg:shadow-none
     bg-background
 hover:bg-background
-   border-b-transparent border-t-foreground border-t-[0.5px] lg:border-foreground lg:border-b-[0.5px] px-8 lg:px-4
+  border-foreground border-t-[0.5px] lg:border-b-[0.5px] lg:border-t-transparent px-8 lg:px-4
     "
             variant="ghost"
             size="lg"
@@ -168,6 +167,13 @@ hover:bg-background
         </div>
         {/* Exhibitions */}
       </div>
+
+      {activeExhibitionSlug && (
+        <ExhibitionModal
+          slug={activeExhibitionSlug}
+          onClose={() => setActiveExhibitionSlug(null)}
+        />
+      )}
     </section>
   );
 }

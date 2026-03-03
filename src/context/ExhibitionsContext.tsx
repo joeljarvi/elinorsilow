@@ -14,7 +14,7 @@ import {
   getExhibitionList,
   Exhibition_list,
   getExhibitionBySlug as fetchExhibitionBySlug,
-} from "../../lib/wordpress";
+} from "../../lib/sanity";
 import { useNav } from "./NavContext";
 
 import { useDebounce } from "use-debounce";
@@ -216,17 +216,11 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
     return match?.slug;
   };
 
-  const featuredExTitles = [
-    "Brinn Älskling Brinn",
-    "Hjärtat",
-    "Ett hölje som kan vara svårt att få syn på",
-  ];
+  const featuredExTitles: string[] = [];
 
   const featuredExhibitions: Exhibition[] = useMemo(() => {
-    return filteredExhibitions.filter((ex) =>
-      featuredExTitles.includes(ex.title.rendered)
-    );
-  }, [filteredExhibitions]);
+    return exhibitions.filter((ex) => ex.featured);
+  }, [exhibitions]);
 
   return (
     <ExhibitionsContext.Provider

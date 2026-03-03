@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "www.elinorsilow.com",
+        hostname: "cdn.sanity.io",
         pathname: "/**",
       },
     ],
@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  serverExternalPackages: ["sanity", "@sanity/vision"],
 };
 
 export default nextConfig;

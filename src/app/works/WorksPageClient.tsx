@@ -2,24 +2,23 @@
 
 import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useUI } from "@/context/UIContext";
 import { useState, useRef, useEffect } from "react";
-import { Work } from "../../../lib/wordpress";
+import { Work } from "../../../lib/sanity";
 import { motion, useScroll, useTransform } from "framer-motion";
 import HDivider from "@/components/HDivider";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import WorksFilter from "@/components/WorksFilter";
 import Staggered from "@/components/Staggered";
+import WorkModal from "@/app/works/WorkModal";
 
 export default function WorksPageClient() {
-  const { filteredWorks, setActiveWorkSlug, getWorkSizeClass } = useWorks();
+  const { filteredWorks, setActiveWorkSlug, activeWorkSlug, getWorkSizeClass } = useWorks();
   const [initialAnimDone, setInitialAnimDone] = useState(false);
 
   const [dataLoaded, setDataLoaded] = useState(false);
   const { workLoading } = useWorks();
-  const router = useRouter();
   const { setOpen, handleOpenWorksFilter, showWorksFilter } = useUI();
   const { showInfo } = useUI();
   useEffect(() => {
@@ -41,7 +40,7 @@ export default function WorksPageClient() {
   const loading = !initialAnimDone || !dataLoaded;
 
   return (
-    <section className="relative w-full mt-[50vh] lg:mt-[50vh]   ">
+    <section className="relative w-full mt-[50vh] lg:mt-0  ">
       {/* Scroll container */}
       <div
         className="
@@ -74,7 +73,7 @@ export default function WorksPageClient() {
                 onClick={() => {
                   setActiveWorkSlug(work.slug);
                   setOpen(false);
-                  router.push(`/?work=${work.slug}`);
+                  window.history.pushState(null, "", `/works?work=${work.slug}`);
                 }}
                 className="relative cursor-pointer w-full flex justify-center"
                 aria-label={`Visa verk: ${work.title.rendered}`}
@@ -96,15 +95,15 @@ export default function WorksPageClient() {
         />
         <div
           className="
-  fixed z-40
+  fixed z-30
 
   bottom-0 left-0 w-full
 
   lg:bottom-auto
   lg:left-auto
   lg:right-8
-  lg:top-[50vh]
-  lg:w-[240px]
+  lg:top-[0vh]
+  lg:w-1/4
 "
         >
           {/* Button */}
@@ -124,7 +123,10 @@ hover:bg-background
             }}
           >
             Filter{" "}
-            <span aria-hidden="true" className={showWorksFilter ? "rotate-90 transition-all" : ""}>
+            <span
+              aria-hidden="true"
+              className={showWorksFilter ? "rotate-90 transition-all" : ""}
+            >
               &gt;
             </span>
           </Button>
@@ -137,6 +139,13 @@ hover:bg-background
           )}
         </div>
       </div>
+
+      {activeWorkSlug && (
+        <WorkModal
+          slug={activeWorkSlug}
+          onClose={() => setActiveWorkSlug(null)}
+        />
+      )}
     </section>
   );
 }

@@ -1,16 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { buildSearchIndex } from "@/lib/searchIndex";
 import { useSiteSearch } from "@/lib/useSiteSearch";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { AnimatePresence, motion } from "framer-motion";
 
-export default function NavSearch({ onClose }: { onClose?: () => void }) {
-  const router = useRouter();
+export default function NavSearch({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const { allWorks, setActiveWorkSlug, setOpen: setWorkModalOpen } = useWorks();
   const {
     exhibitions,
@@ -20,56 +25,84 @@ export default function NavSearch({ onClose }: { onClose?: () => void }) {
 
   const index = buildSearchIndex({ works: allWorks, exhibitions });
   const { query, setQuery, results } = useSiteSearch(index);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      inputRef.current?.focus();
+    } else {
+      setQuery("");
+    }
+  }, [open, setQuery]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
 
   const handleResultClick = (item: (typeof results)[0]) => {
     if (item.type === "work") {
       setActiveWorkSlug(item.slug);
-      setWorkModalOpen(false); // close nav if you want
+      setWorkModalOpen(false);
     } else {
       setActiveExhibitionSlug(item.slug);
       setExModalOpen(false);
     }
-    setQuery(""); // clear search
+    setQuery("");
+    onClose();
   };
-  return (
-    <div className="relative  w-full">
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search..."
-        className="w-full  border-b-[0.5px] border-foreground  outline-none  py-0 pb-1  font-directorLight text-3xl  max-w-70 lg:max-w-96 bg-transparent h pl-2 pr-8 lg:pb-1"
-      />
-      {onClose && (
-        <button
-          onClick={onClose}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground"
-        >
-          <Cross1Icon className="size-4" />
-        </button>
-      )}
 
-      {query && results.length > 0 && (
-        <div className="absolute top-full font-directorMono left-0 w-full bg-transparent  z-50 lg:shadow-none flex flex-col items-start justify-start gap-y-0 ">
-          {" "}
-          {results.slice(0, 8).map((item) => (
-            <Button
-              variant="ghost"
-              size="lg"
-              key={item.id}
-              asChild
-              className="w-full text-left justify-start h-16  px-4  hover:bg-foreground/10 hover:underline-none "
-              onClick={() => handleResultClick(item)}
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="search-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 bg-background flex flex-col p-8 lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
+        >
+          <div className="flex items-baseline border-b-[0.5px] border-foreground pb-2 gap-x-4">
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search..."
+              className="flex-1 outline-none bg-transparent text-lg lg:text-xl font-directorLight"
+            />
+            <button
+              onClick={onClose}
+              aria-label="Close search"
+              className="text-foreground"
             >
-              <div>
-                <span className="opacity-50 mr-4 text-xs">
-                  {item.type === "work" ? "Work" : "Exhibition"}
-                </span>
-                {item.title}
-              </div>
-            </Button>
-          ))}
-        </div>
+              <Cross1Icon className="size-4" />
+            </button>
+          </div>
+
+          {query && results.length > 0 && (
+            <div className="flex flex-col mt-2">
+              {results.slice(0, 8).map((item) => (
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  key={item.id}
+                  className="w-full text-left justify-start font-directorLight hover:bg-foreground/10"
+                  onClick={() => handleResultClick(item)}
+                >
+                  <span className="opacity-50 mr-4 text-xs font-directorMono">
+                    {item.type === "work" ? "Work" : "Exhibition"}
+                  </span>
+                  {item.title}
+                </Button>
+              ))}
+            </div>
+          )}
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 }

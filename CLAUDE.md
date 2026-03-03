@@ -24,9 +24,6 @@ The artist produces a very large volume of work, so the system must scale to hun
 
 ## Backend
 
-- WordPress (Headless CMS)
-- WordPress REST API
-
 Custom Post Types:
 
 - Works
@@ -116,7 +113,6 @@ Avoid:
 
 # Architecture Goals
 
-- WordPress is used only as a CMS and database
 - Next.js handles all rendering and UI
 - Clean separation between content and presentation
 - Maintainable long-term structure

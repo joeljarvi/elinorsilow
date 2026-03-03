@@ -14,7 +14,7 @@ import {
 import { useUI } from "@/context/UIContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
-import { Exhibition } from "../../lib/wordpress";
+import { Exhibition } from "../../lib/sanity";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";

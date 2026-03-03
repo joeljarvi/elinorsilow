@@ -8,16 +8,16 @@ import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Footer from "@/components/Footer";
 
-import type { Work, Exhibition } from "../../lib/wordpress";
-import { motion } from "framer-motion";
+import type { Work, Exhibition } from "../../lib/sanity";
+import { motion, AnimatePresence } from "framer-motion";
 import Staggered from "@/components/Staggered";
 import Link from "next/link";
 
 import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
 import InfoPageClient from "@/components/InfoPageClient";
 import HDivider from "@/components/HDivider";
+import { useState, useEffect } from "react";
 
 type Props = {
   showInfo?: boolean;
@@ -25,6 +25,130 @@ type Props = {
   view?: "works" | "exhibitions" | "info";
   setView?: (v: "works" | "exhibitions" | "info") => void;
 };
+
+type BottomSection = "works" | "exhibitions" | "info" | "bottom";
+
+function BottomLinkBar() {
+  const [activeSection, setActiveSection] = useState<BottomSection>("works");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const atBottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 100;
+
+      if (atBottom) {
+        setActiveSection("bottom");
+        return;
+      }
+
+      const exEl = document.getElementById("home-exhibitions");
+      const infoEl = document.getElementById("home-info");
+      const mid = window.scrollY + window.innerHeight / 2;
+
+      if (infoEl && mid >= infoEl.offsetTop) {
+        setActiveSection("info");
+      } else if (exEl && mid >= exEl.offsetTop) {
+        setActiveSection("exhibitions");
+      } else {
+        setActiveSection("works");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div className="fixed bottom-0 w-full lg:hidden z-20 shadow-[0px_0px_10px_0px_rgba(0,0,0,0.25)] bg-background p-4">
+      <AnimatePresence mode="wait">
+        {activeSection === "works" && (
+          <motion.div
+            key="works"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Button
+              className="w-full uppercase justify-start"
+              variant="ghost"
+              size="linkSizeLg"
+              asChild
+            >
+              <Link href="/works" className="flex items-baseline gap-4 w-full">
+                See all works
+              </Link>
+            </Button>
+          </motion.div>
+        )}
+
+        {activeSection === "exhibitions" && (
+          <motion.div
+            key="exhibitions"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Button
+              className="w-full uppercase justify-start"
+              variant="ghost"
+              size="linkSizeLg"
+              asChild
+            >
+              <Link
+                href="/exhibitions"
+                className="flex items-center gap-4 w-full"
+              >
+                See all Exhibitions
+              </Link>
+            </Button>
+          </motion.div>
+        )}
+
+        {activeSection === "info" && (
+          <motion.div
+            key="info"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Button
+              className="flex items-center justify-between gap-4 w-full"
+              variant="ghost"
+              size="linkSizeLg"
+              asChild
+            >
+              <Link href="/info">About Elinor</Link>
+            </Button>
+          </motion.div>
+        )}
+
+        {activeSection === "bottom" && (
+          <motion.div
+            key="bottom"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Button
+              className="w-full uppercase justify-start"
+              variant="ghost"
+              size="linkSizeLg"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              Back to top <span>↑</span>
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 function MainContent({}: Props) {
   const { setOpen, showInfo } = useUI();
@@ -45,37 +169,22 @@ function MainContent({}: Props) {
           className="
   flex flex-col
 
-  w-full 
+  w-full
 "
         >
           {/* Works */}
           <div
+            id="home-works"
             className="
               flex flex-col
                 relative w-full
-    lg:grid  grid-cols-5 
- 
+    lg:grid  grid-cols-5
+
     gap-x-4
- 
+
   "
           >
-            <span className="mt-[25vh] px-8 w-full col-span-5 lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
-              {/* Left title */}
-
-              {/* Right link */}
-              <Button
-                className=" hidden lg:flex  lg:col-span-2 w-full uppercase justify-between  border-b-[0.5px] border-foreground items-baseline"
-                variant="ghost"
-                size="lg"
-                asChild
-              >
-                <Link href="/works">
-                  See all works <span>&gt;</span>
-                </Link>
-              </Button>
-            </span>
-
-            {/* Divider left */}
+            <span className="mt-[25vh] lg:mt-0 px-8 w-full col-span-5 lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent"></span>
 
             <Staggered
               items={featuredWorks}
@@ -85,8 +194,8 @@ function MainContent({}: Props) {
     min-h-screen
     flex flex-col gap-y-4
     lg:grid lg:grid-cols-5
-    gap-x-8 
-    
+    gap-x-8
+
     col-span-5
   "
               renderItem={(work: Work) => (
@@ -119,51 +228,28 @@ function MainContent({}: Props) {
                 </motion.div>
               )}
             />
-            <div className="sticky bottom-0 lg:hidden z-20">
-              <Button
-                className="
-    w-full uppercase justify-start
- lg:shadow-none
-    bg-background gap-x-8
-hover:bg-background
-   border-transparent lg:border-foreground lg:border-b-[0.5px] px-8 pb-4 lg:px-4  
-    "
-                variant="ghost"
-                size="lg"
-                asChild
-              >
-                <Link
-                  href="/works"
-                  className="flex items-baseline gap-4 w-full"
-                >
-                  See all works
-                </Link>
-              </Button>
-            </div>
           </div>
 
           {/* Exhibitions */}
           <div
+            id="home-exhibitions"
             className="
               flex flex-col
                 relative w-full
-    lg:grid  grid-cols-5 
- 
+    lg:grid  grid-cols-5
+
     gap-x-4
- 
+
   "
           >
             {" "}
             <span className="px-0 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
-              {/* Left title */}
-
-              {/* Right link */}
               <Button
                 className="hidden lg:flex  col-span-5   w-full uppercase justify-between
  lg:shadow-none
     bg-background
 hover:bg-background
-   border-transparent lg:border-foreground lg:border-b-[0.5px]px-8 pb-4 lg:px-4 "
+   border-transparent lg:border-foreground lg:border-b-[0.5px] px-8 pb-4 lg:px-4 "
                 variant="ghost"
                 size="lg"
                 asChild
@@ -173,7 +259,6 @@ hover:bg-background
                 </Link>
               </Button>
             </span>
-            {/* Divider left */}
             <Staggered
               items={featuredExhibitions}
               getKey={(ex) => ex.id}
@@ -183,9 +268,9 @@ hover:bg-background
        col-span-5
     flex flex-col gap-y-4
     lg:grid lg:grid-cols-5
-    gap-x-8 
-    
- 
+    gap-x-8
+
+
   "
               renderItem={(ex: Exhibition) => (
                 <motion.div
@@ -217,42 +302,17 @@ hover:bg-background
                 </motion.div>
               )}
             />
-            <div className="sticky bottom-0 lg:hidden z-20 bg-background">
-              <Button
-                className="
-    w-full uppercase justify-between
- lg:shadow-none
-    bg-background
-hover:bg-background
-   border-transparent lg:border-foreground lg:border-b-[0.5px] px-8 lg:px-4 pb-4
-    "
-                variant="ghost"
-                size="lg"
-                asChild
-              >
-                <Link
-                  href="/exhibitions"
-                  className="flex items-center gap-4 w-full"
-                >
-                  See all Exhibitions
-                </Link>
-              </Button>
-            </div>
           </div>
-          <div className="bg-foreground text-background  min-h-screen relative flex flex-col justify-between lg:grid grid-cols-5  ">
-            <Button
-              className="col-span-1 w-full uppercase gap-x-4  shadow items-baseline bg-foreground text-background font-directorLight px-8 py-4 lg:px-8 lg:py-4 hover:text-background/80 justify-between "
-              variant="ghost"
-              size="lg"
-              asChild
-            >
-              <Link href="/info">About Elinor</Link>
-            </Button>
 
+          {/* Info / Bio */}
+          <div
+            id="home-info"
+            className="bg-background   min-h-screen relative flex flex-col justify-between lg:grid grid-cols-5  "
+          >
             <div className="col-start-1 col-span-2 pl-8 lg:pl-8  pt-8 lg:pt-4 pr-16 lg:pr-8 ">
               <Link
                 onClick={() => {}}
-                className="items-baseline  no-hide-text h3 font-directorLight  whitespace-normal 
+                className="items-baseline  no-hide-text h3 font-directorLight  whitespace-normal
    px-0 py
 "
                 href="/"
@@ -274,7 +334,7 @@ hover:bg-background
               </p>
             </div>
             <Button
-              className="col-start-1 w-full uppercase justify-start gap-x-4 shadow items-baseline bg-foreground text-background font-directorLight hover:text-background/80 px-8 lg:px-8 py-4 lg:py-4 pb-8"
+              className="col-start-1 w-full uppercase justify-start gap-x-4 shadow items-baseline bg-foreground text-background font-directorLight hover:text-background/80 px-8 lg:px-8 py-4 lg:py-4 pb-8 hidden lg:flex"
               variant="ghost"
               size="lg"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -284,6 +344,9 @@ hover:bg-background
           </div>
         </div>
       </section>
+
+      <BottomLinkBar />
+
       {activeWorkSlug && (
         <WorkModal
           slug={activeWorkSlug}

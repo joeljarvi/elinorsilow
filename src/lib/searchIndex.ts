@@ -1,4 +1,4 @@
-import { Exhibition, Work } from "../../lib/wordpress";
+import { Exhibition, Work } from "../../lib/sanity";
 
 // lib/searchIndex.ts
 export type SearchItem = {

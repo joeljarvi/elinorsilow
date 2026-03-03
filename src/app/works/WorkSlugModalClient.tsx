@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Work, getWorkBySlug } from "../../../lib/wordpress";
+import { Work, getWorkBySlug } from "../../../lib/sanity";
 import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

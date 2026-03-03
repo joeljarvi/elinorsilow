@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
 import { ReactLenis } from "lenis/react";
@@ -10,46 +11,57 @@ type WorkModalProps = {
 };
 
 export default function WorkModal({ slug, onClose }: WorkModalProps) {
-  return (
-    <AnimatePresence>
-      <motion.div
-        key="overlay"
-        className="fixed inset-0 z-50 h-screen w-full bg-transparent    "
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        {/* BACKDROP only over content columns (col 2-4) */}
-        <div
-          className="absolute inset-y-0 right-0 z-30 backdrop-blur-sm bg-black/30 "
-          onClick={onClose}
-        />
+  const [isOpen, setIsOpen] = useState(true);
 
-        {/* MODAL only in content area (col 2-4) */}
+  const handleClose = () => {
+    window.history.replaceState(null, "", window.location.pathname);
+    setIsOpen(false);
+  };
+
+  return (
+    <AnimatePresence onExitComplete={onClose}>
+      {isOpen && (
         <motion.div
-          key="modal"
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full h-screen  bg-background   flex flex-col overflow-hidden  shadow z-40"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="work-modal-title"
+          key="overlay"
+          className="fixed inset-0 z-50 h-screen w-full bg-transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
         >
-          <ReactLenis
-            root={false}
-            className="h-full overflow-y-auto scrollbar-hide"
-            options={{
-              smoothWheel: true,
-              duration: 1.15,
-              easing: (t) => 1 - Math.pow(1 - t, 4),
-            }}
+          {/* Backdrop */}
+          <div
+            className="absolute inset-y-0 right-0 z-30 backdrop-blur-sm bg-black/30"
+            onClick={handleClose}
+          />
+
+          {/* Modal panel */}
+          <motion.div
+            key="modal"
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full h-screen bg-background flex flex-col overflow-hidden shadow z-40"
+            initial={{ y: "4%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "4%", opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="work-modal-title"
           >
-            <WorkSlugModalClient onClose={onClose} slug={slug} />
-          </ReactLenis>
+            <ReactLenis
+              root={false}
+              className="h-full overflow-y-auto scrollbar-hide"
+              options={{
+                smoothWheel: true,
+                duration: 1.15,
+                easing: (t) => 1 - Math.pow(1 - t, 4),
+              }}
+            >
+              <WorkSlugModalClient onClose={handleClose} slug={slug} />
+            </ReactLenis>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </AnimatePresence>
   );
 }

@@ -9,10 +9,8 @@ import { InfoProvider } from "@/context/InfoContext";
 import { NavProvider } from "@/context/NavContext";
 import { UIProvider } from "@/context/UIContext";
 
-import MobileNavButton from "@/components/MobileNavButton";
-
 import BodyClassManager from "@/components/BodyClassManager";
-import DesktopNav from "@/components/DesktopNav";
+import NavWrapper from "@/components/NavWrapper";
 
 import { CarouselProvider } from "@/context/CarouselContext";
 
@@ -146,8 +144,7 @@ export default function RootLayout({
                   <UIProvider>
                     <AnimationProvider>
                       <BodyClassManager />
-                      <DesktopNav />
-                      <MobileNavButton />
+                      <NavWrapper />
 
                       <CarouselProvider>
                         {children} {modal}

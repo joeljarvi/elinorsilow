@@ -8,7 +8,7 @@ import React, {
   ReactNode,
   useMemo,
 } from "react";
-import { Work, getAllWorks } from "../../lib/wordpress";
+import { Work, getAllWorks } from "../../lib/sanity";
 import { useNav } from "./NavContext";
 
 export type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
@@ -94,7 +94,7 @@ export function WorksProvider({ children }: { children: ReactNode }) {
             year: Number(w.acf.year),
             category: w.acf.category?.toLowerCase() || "all",
           },
-          image_url: w._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "",
+          image_url: w.image_url || "",
         }));
         setAllWorks(normalized);
       })
@@ -196,18 +196,11 @@ export function WorksProvider({ children }: { children: ReactNode }) {
     return "w-1/2";
   };
 
-  const featuredWorksTitles = [
-    "Under navelsträngen",
-    "Hoppet",
-    "Pärlband",
-    "Din röst är blå",
-  ];
+  const featuredWorksTitles: string[] = [];
 
   const featuredWorks: Work[] = useMemo(() => {
-    return filteredWorks.filter((w) =>
-      featuredWorksTitles.includes(w.title.rendered)
-    );
-  }, [filteredWorks]);
+    return allWorks.filter((w) => w.featured);
+  }, [allWorks]);
 
   return (
     <WorksContext.Provider

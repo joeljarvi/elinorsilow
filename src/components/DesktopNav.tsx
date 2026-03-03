@@ -1,39 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   motion,
   AnimatePresence,
   useScroll,
-  useMotionValueEvent,
   type Variants,
 } from "framer-motion";
 import { Button } from "./ui/button";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-
-import { useRouter } from "next/navigation";
 
 import { useUI } from "@/context/UIContext";
-import { useWorks } from "@/context/WorksContext";
-import { useExhibitions } from "@/context/ExhibitionsContext";
-import { useInfo } from "@/context/InfoContext";
 import { usePathname } from "next/navigation";
 
 import NavSearch from "./NavSearch";
-
-type ExhibitionItem = {
-  id: number;
-  title: { rendered: string };
-  slug?: string;
-  __type: "exhibition";
-};
-
-type ExhibitionListItem = {
-  id: number;
-  title: { rendered: string };
-  __type: "list";
-};
 
 const navContainer: Variants = {
   hidden: {
@@ -65,9 +45,8 @@ function NavItem({
       size="linkSizeLg"
       className={`
    ${className}
-      underline-offset-8
-      decoration-[0.5px]
-      ${active ? "underline" : "no-underline"}
+
+      ${active ? "uppercase" : "uppercase-none"}
       `}
       asChild
       aria-current={active ? "page" : undefined}
@@ -79,40 +58,14 @@ function NavItem({
 
 export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
-
-  const { scrollY } = useScroll();
+  const [hidden] = useState(false);
   const pathname = usePathname();
-
-  const [hidden, setHidden] = useState(false);
-  const [lastY, setLastY] = useState(0);
-
-  const { exhibitions } = useExhibitions();
-
-  const { exhibitionList } = useInfo();
-  const [openBio, setOpenBio] = useState(false);
-  const { open, setOpen, handleOpen } = useUI();
-
-  const {} = useUI();
-
-  const router = useRouter();
-
-  const allExhibitionsMap = new Map<
-    string,
-    ExhibitionItem | ExhibitionListItem
-  >();
-
-  exhibitions.forEach((ex) =>
-    allExhibitionsMap.set(ex.title.rendered, { ...ex, __type: "exhibition" }),
-  );
-
-  exhibitionList.forEach((ex) => {
-    if (!allExhibitionsMap.has(ex.title.rendered)) {
-      allExhibitionsMap.set(ex.title.rendered, { ...ex, __type: "list" });
-    }
-  });
+  const { open } = useUI();
 
   return (
-    <div className="z-30 fixed lg:absolute lg:z-auto  top-0 left-0      w-full flex flex-col items-start justify-start gap-y-4 bg-transparent  ">
+    <div className="z-30 fixed top-0 lg:bottom-0 lg:top-auto left-0 w-full flex flex-col items-start justify-start gap-y-4 bg-background">
+      <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
+      <div className="absolute hidden lg:block top-0 left-0 w-full h-[10px] -translate-y-full pointer-events-none bg-gradient-to-b from-background/0 to-background" />
       <AnimatePresence>
         {open && (
           <motion.div
@@ -126,7 +79,7 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className=" pt-8 pl-8 pr-8 pb-8 lg:pt-8 lg:pl-40  lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-3xl lg:text-3xl font-directorLight items-baseline  max-w-full lg:max-w-6xl"
+              className=" pt-4 pl-4 pr-8 pb-4 lg:pl-8 lg:pt-8 lg:pb-8   lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-lg lg:text-xl font-directorLight items-baseline  max-w-full lg:max-w-6xl"
             >
               <motion.span variants={navItemVariant}>
                 <NavItem href="/" active={pathname === "/"}>
@@ -157,7 +110,7 @@ export default function DesktopNav() {
               <motion.span variants={navItemVariant}>
                 <NavItem
                   href="/info"
-                  className="ml-2 lg:ml-0"
+                  className="ml-0 lg:ml-0"
                   active={pathname.startsWith("/info")}
                 >
                   Info
@@ -169,44 +122,27 @@ export default function DesktopNav() {
                   asChild
                   variant="link"
                   size="linkSizeLg"
-                  className="ml-0 lg:ml-2"
+                  className="ml-2 lg:ml-2"
                 >
                   <Link href="/">Contact</Link>
                 </Button>
               </motion.span>
               ,
               <motion.span variants={navItemVariant}>
-                <AnimatePresence>
-                  {openSearch ? (
-                    <motion.div
-                      layout
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="ml-2"
-                    >
-                      <NavSearch onClose={() => setOpenSearch(false)} />
-                    </motion.div>
-                  ) : (
-                    <Button
-                      variant="link"
-                      size="linkSizeLg"
-                      className="ml-2  "
-                      onClick={() => {
-                        setOpenSearch(true);
-                        setOpenBio(false);
-                      }}
-                    >
-                      Search...
-                    </Button>
-                  )}
-                </AnimatePresence>
+                <Button
+                  variant="link"
+                  size="linkSizeLg"
+                  className="ml-2"
+                  onClick={() => setOpenSearch(true)}
+                >
+                  Search...
+                </Button>
               </motion.span>
             </motion.nav>
           </motion.div>
         )}
       </AnimatePresence>
+      <div className="absolute lg:hidden bottom-0 left-0 w-full h-[10px] translate-y-full pointer-events-none bg-gradient-to-b from-background to-background/0" />
     </div>
   );
 }
