@@ -204,6 +204,33 @@ function MainContent({}: Props) {
   w-full
 "
         >
+          <div
+            id="home-info"
+            className="bg-background  relative flex flex-col items-start justify-start lg:items-baseline  lg:grid grid-cols-5 pl-8 lg:pl-8  pt-8 lg:pt-4 pr-16 lg:pr-8  "
+          >
+            <Link
+              onClick={() => {}}
+              className="items-baseline  no-hide-text  text-2xl font-bookish  whitespace-normal col-start-1 col-span-2 
+   px-0 py
+"
+              href="/"
+            >
+              <strong className="font-normal   mr-2">Elinor Silow</strong>
+              (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
+              explores raw emotion through painting, sculpture and textile.
+            </Link>
+
+            <p className=" mt-4   col-start-3 col-span-2 mb-8 no-hide-text  text-2xl font-bookish">
+              Please contact
+              <Link
+                href="mailto:elinor.silow@gmail.com"
+                className="text-blue-700 mx-2 "
+              >
+                hej@elinorsilow.com
+              </Link>
+              for collaborations and inquires.
+            </p>
+          </div>
           {/* Works */}
           <div
             id="home-works"
@@ -216,24 +243,22 @@ function MainContent({}: Props) {
 
   "
           >
-            <span className="mt-[25vh] lg:mt-0 px-8 w-full col-span-5 lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent"></span>
-
             <Staggered
               items={featuredWorks}
               getKey={(w) => w.id}
               loading={false}
               className="
-    min-h-screen
+    h-[50vh]
     flex flex-col gap-y-4
     lg:grid lg:grid-cols-5
-    gap-x-8
+    gap-x-30
 
     col-span-5
   "
               renderItem={(work: Work) => (
                 <motion.div
                   key={work.id}
-                  className="h-screen lg:h-[75vh] flex flex-col   "
+                  className="h-screen lg:h-[25vh] flex flex-col   "
                 >
                   <div
                     onClick={() => {
@@ -244,15 +269,13 @@ function MainContent({}: Props) {
                     className="relative cursor-pointer w-full flex justify-center"
                   >
                     {/* Image box */}
-                    <div
-                      className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}
-                    >
+                    <div className={`relative mx-0 w-full h-[50vh] `}>
                       {work.image_url && (
                         <Image
                           src={work.image_url}
                           alt={work.title.rendered}
                           fill
-                          className="object-contain object-left lg:object-top-left p-4 lg:pt-4 lg:px-8 lg:pb-4"
+                          className="object-contain object-left lg:object-top-left p-4 lg:p-8"
                         />
                       )}
                     </div>
@@ -275,31 +298,15 @@ function MainContent({}: Props) {
   "
           >
             {" "}
-            <span className="px-0 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
-              <Button
-                className="hidden lg:flex  col-span-5   w-full uppercase justify-between
- lg:shadow-none
-    bg-background
-hover:bg-background
-   border-transparent lg:border-foreground lg:border-b-[0.5px] px-8 pb-4 lg:px-4 "
-                variant="ghost"
-                size="lg"
-                asChild
-              >
-                <Link href="/exhibitions">
-                  See all Exhibitions <span>&gt;</span>
-                </Link>
-              </Button>
-            </span>
             <Staggered
               items={featuredExhibitions}
               getKey={(ex) => ex.id}
               loading={false}
               className="
-    min-h-screen
+    h-[50vh]
        col-span-5
     flex flex-col gap-y-4
-    lg:grid lg:grid-cols-5
+lg:flex-row
     gap-x-8
 
 
@@ -307,7 +314,7 @@ hover:bg-background
               renderItem={(ex: Exhibition) => (
                 <motion.div
                   key={ex.id}
-                  className="lg:col-span-2 h-[50vh] flex flex-col bg-transparent w-full  "
+                  className="w-lg h-[50vh] flex flex-col bg-transparent  "
                 >
                   <div
                     onClick={() => {
@@ -337,43 +344,14 @@ hover:bg-background
           </div>
 
           {/* Info / Bio */}
-          <div
-            id="home-info"
-            className="bg-background   min-h-screen relative flex flex-col justify-between lg:grid grid-cols-5  "
+          <Button
+            className="col-start-1 w-min  "
+            variant="link"
+            size="lg"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <div className="col-start-1 col-span-2 pl-8 lg:pl-8  pt-8 lg:pt-4 pr-16 lg:pr-8 ">
-              <Link
-                onClick={() => {}}
-                className="items-baseline  no-hide-text h3 font-directorLight  whitespace-normal
-   px-0 py
-"
-                href="/"
-              >
-                <strong className="font-normal   mr-2">Elinor Silow</strong>
-                (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
-                explores raw emotion through painting, sculpture and textile.
-              </Link>
-
-              <p className="p mt-4  font-directorLight col-start-1 col-span-2 mb-8">
-                Please contact
-                <Link
-                  href="mailto:elinor.silow@gmail.com"
-                  className="text-blue-700 mx-2 font-directorBold"
-                >
-                  hej@elinorsilow.com
-                </Link>
-                for collaborations and inquires.
-              </p>
-            </div>
-            <Button
-              className="col-start-1 w-full uppercase justify-start gap-x-4 shadow items-baseline bg-foreground text-background font-directorLight hover:text-background/80 px-8 lg:px-8 py-4 lg:py-4 pb-8 hidden lg:flex"
-              variant="ghost"
-              size="lg"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              Back to top <span>↑</span>
-            </Button>
-          </div>
+            Back to top
+          </Button>
         </div>
       </section>
 

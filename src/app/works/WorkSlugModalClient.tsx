@@ -62,14 +62,14 @@ export default function WorkSlugModalClient({
       // Better: window.history.replaceState(null, "", `/?work=${w.slug}`);
       window.history.replaceState(null, "", `/?work=${w.slug}`);
     },
-    [filteredWorks]
+    [filteredWorks],
   );
 
   useEffect(() => {
     if (!slug || contextLoading || !filteredWorks) return;
 
     const index = filteredWorks.findIndex(
-      (w) => normalizeSlug(w.title.rendered) === slug
+      (w) => normalizeSlug(w.title.rendered) === slug,
     );
 
     if (index >= 0) {
@@ -124,46 +124,14 @@ export default function WorkSlugModalClient({
   if (loading) return <div></div>;
   if (!work) return <p>Work not found</p>;
 
-  const images: string[] = (
-    work._embedded?.["wp:featuredmedia"] as EmbeddedMedia[] | undefined
-  )?.map((m) => m.source_url) || [work.image_url || "/placeholder.jpg"];
+  const images: string[] = [work.image_url || "/placeholder.jpg"];
 
   return (
     <div
       {...swipeHandlers}
       className=" 
-    relative flex flex-col lg:grid grid-cols-3  h-screen items-start justify-start lg:items-start lg:justify-start w-full   "
+    relative flex flex-col lg:flex-row h-screen items-start justify-start lg:items-start lg:justify-start w-full   "
     >
-      <div className="flex w-full   ">
-        <div className="flex flex-col items-baseline text-sm font-directorLight  w-full mb-4 p-4 lg:p-8 ">
-          <div className="flex justify-between items-center w-full ">
-            <span id="work-modal-title" className="h1 font-directorBold uppercase mr-4">
-              {work.title.rendered}
-            </span>
-
-            <Button
-              className="absolute top-0 right-0 aspect-square h-auto"
-              size="sm"
-              variant="ghost"
-              onClick={onClose || (() => router.push("/"))}
-              aria-label="Stäng"
-            >
-              <Cross1Icon aria-hidden="true" />
-            </Button>
-          </div>
-
-          {work.acf.materials && (
-            <span className="mr-2 max-w-sm"> {work.acf.materials}</span>
-          )}
-          {work.acf.dimensions && <span> {work.acf.dimensions}</span>}
-          {work.acf.year && <span className="mr-2"> {work.acf.year}</span>}
-          {work.acf.exhibition && (
-            <span className="h3 ">Part of {work.acf.exhibition}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Carousel */}
       <Carousel className=" w-full h-full  ">
         <CarouselContent>
           {images.map((src, idx) => (
@@ -171,19 +139,59 @@ export default function WorkSlugModalClient({
               key={idx}
               className="w-full flex justify-start lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-0rem)] flex flex-col  lg:items-start justify-center items-center mx-auto">
+              <div className="relative w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-1rem)] flex flex-col  lg:items-start justify-center items-center mx-auto">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
-                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-center
-                   lg:mx-0 px-4 lg:px-0 lg:pb-4 pt-4 lg:py-0 "
+                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-center lg:object-left-top
+                   lg:mx-0 px-4 lg:pr-16 lg:pl-8 lg:pb-4 pt-4 lg:pt-8 "
                 />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
+
+      <div className=" flex w-full h-full   ">
+        <div className="flex flex-col justify-start gap-y-30 h-full items-baseline text-sm   w-full mb-4 p-4 lg:p-8 ">
+          <div className="flex flex-col justify-start">
+            <div className="flex justify-between items-center w-full font-bookish text-2xl">
+              <h1 id="work-modal-title" className="h1 text-2xl ">
+                {work.title.rendered}
+              </h1>
+
+              <Button
+                className="absolute top-0 right-0 aspect-square h-auto"
+                size="sm"
+                variant="ghost"
+                onClick={onClose || (() => router.push("/"))}
+                aria-label="Stäng"
+              >
+                <Cross1Icon aria-hidden="true" />
+              </Button>
+            </div>
+
+            {work.acf.materials && (
+              <span className="h3 text-2xl"> {work.acf.materials}</span>
+            )}
+            {work.acf.dimensions && (
+              <span className="h3 text-2xl"> {work.acf.dimensions}</span>
+            )}
+            {work.acf.year && (
+              <span className="h3 text-2xl"> {work.acf.year}</span>
+            )}
+          </div>
+
+          {work.acf.exhibition && (
+            <span className="h3 text-xl tracking-wide">
+              (Part of {work.acf.exhibition})
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Carousel */}
 
       {/* Work info */}
     </div>

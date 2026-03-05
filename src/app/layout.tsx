@@ -14,6 +14,11 @@ import NavWrapper from "@/components/NavWrapper";
 
 import { CarouselProvider } from "@/context/CarouselContext";
 
+const bookish = localFont({
+  src: "assets/fonts/Bookish-Book-TRIAL.otf",
+  variable: "--font-bookish",
+});
+
 const directorMono = localFont({
   src: "assets/fonts/Director-Regular.ttf",
   variable: "--font-directorMono",
@@ -129,7 +134,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoBlackItalic.variable} ${gintoRegular.variable}  ${gintoRegularItalic.variable} ${gintoMedium.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable}   antialiased`}
+        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoBlackItalic.variable} ${gintoRegular.variable}  ${gintoRegularItalic.variable} ${gintoMedium.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable}  antialiased`}
       >
         <ThemeProvider
           attribute="class"

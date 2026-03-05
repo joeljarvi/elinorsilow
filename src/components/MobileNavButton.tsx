@@ -87,7 +87,7 @@ export default function NavButton() {
 
   return (
     <button
-      className="fixed bottom-8 right-8 left-auto z-50 top-auto"
+      className="fixed bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-8 z-30"
       onClick={handleOpen}
       aria-label={open ? "Stäng meny" : "Öppna meny"}
       aria-expanded={open}

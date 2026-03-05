@@ -49,7 +49,7 @@ export default function ExFilter() {
   }, [exhibitionSort, exSelectedYear, selectedType]);
 
   return (
-    <div className="border-foreground border-t-[0.5px] flex flex-col w-full   pointer-events-auto  bg-transparent ">
+    <div className="border-foreground border-t-[0.5px] flex flex-col w-full   pointer-events-auto   ">
       {/* Sort */}
       <div className="grid grid-cols-3 items-center  w-full gap-4 ">
         <Select
@@ -111,7 +111,7 @@ export default function ExFilter() {
         <Button
           variant="default"
           size="lg"
-          className="col-span-1 justify-center  w-full"
+          className="col-span-1 justify-center  w-full h-16"
           onClick={async () => {
             await applyExhibitionsFilters(
               stagedExhibitionSort,
@@ -128,7 +128,8 @@ export default function ExFilter() {
         <Button
           variant="secondary"
           size="lg"
-          className="col-span-1   w-full"
+          className="col-span-1 h-16 justify-center  w-full
+         "
           onClick={async () => {
             await clearExhibitionsFilters();
             handleOpenExhibitionsFilter();

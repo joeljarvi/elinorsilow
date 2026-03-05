@@ -14,6 +14,7 @@ import { useUI } from "@/context/UIContext";
 import { usePathname } from "next/navigation";
 
 import NavSearch from "./NavSearch";
+import { DarkModeToggle } from "./DarkModeToggle";
 
 const navContainer: Variants = {
   hidden: {
@@ -33,25 +34,29 @@ function NavItem({
   active,
   children,
   className = "",
+  onClick,
 }: {
   href: string;
   active: boolean;
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }) {
   return (
     <Button
       variant="link"
-      size="linkSizeLg"
-      className={`
+      size="lg"
+      className={`px-2
    ${className}
 
-      ${active ? "uppercase" : "uppercase-none"}
+      ${active ? "" : ""}
       `}
       asChild
       aria-current={active ? "page" : undefined}
     >
-      <Link href={href}>{children}</Link>
+      <Link href={href} onClick={onClick}>
+        {children}
+      </Link>
     </Button>
   );
 }
@@ -60,7 +65,7 @@ export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
   const [hidden] = useState(false);
   const pathname = usePathname();
-  const { open } = useUI();
+  const { open, setOpen } = useUI();
 
   return (
     <div className="z-30 fixed top-0 lg:bottom-0 lg:top-auto left-0 w-full flex flex-col items-start justify-start gap-y-4 bg-background">
@@ -79,65 +84,98 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className=" pt-4 pl-4 pr-8 pb-4 lg:pl-8 lg:pt-8 lg:pb-8   lg:pr-64 flex flex-wrap gap-y-4 lg:gap-y-2 gap-x-0 lg:gap-x-2 no-hide-text  text-lg lg:text-xl font-directorLight items-baseline  max-w-full lg:max-w-6xl"
+              className=" p-4 flex flex-col lg:flex-row gap-x-30   no-hide-text  text-2xl font-bookish justify-center items-center w-full lg:items-baseline  "
             >
-              <motion.span variants={navItemVariant}>
-                <NavItem href="/" active={pathname === "/"}>
-                  Elinor Silow
-                </NavItem>
-              </motion.span>
-              ,
-              <motion.span variants={navItemVariant}>
+              <NavItem
+                className="w-full items-center justify-center lg:justify-start lg:w-auto"
+                href="/"
+                active={pathname === "/"}
+              >
+                Elinor Silow
+              </NavItem>
+              <span className="flex flex-col lg:hidden items-baseline justify-start gap-x-0">
                 <NavItem
                   href="/works"
-                  className="ml-2 lg:ml-2"
+                  className=""
+                  active={pathname.startsWith("/works")}
+                  onClick={() => setOpen(false)}
+                >
+                  Works
+                </NavItem>
+
+                <NavItem
+                  href="/exhibitions"
+                  className=""
+                  active={pathname.startsWith("/exhibitions")}
+                  onClick={() => setOpen(false)}
+                >
+                  Exhibitions
+                </NavItem>
+
+                <NavItem
+                  href="/info"
+                  className=""
+                  active={pathname.startsWith("/info")}
+                  onClick={() => setOpen(false)}
+                >
+                  Info
+                </NavItem>
+
+                <Button asChild variant="link" size="lg" className="px-2">
+                  <Link href="/">Contact</Link>
+                </Button>
+
+                <Button
+                  variant="link"
+                  size="lg"
+                  className="px-2"
+                  onClick={() => setOpenSearch(true)}
+                >
+                  Search
+                </Button>
+
+                <DarkModeToggle />
+              </span>
+              <span className="hidden lg:flex flex-wrap items-baseline gap-x-0 w-full">
+                <NavItem
+                  href="/works"
+                  className=""
                   active={pathname.startsWith("/works")}
                 >
                   Works
                 </NavItem>
-              </motion.span>
-              ,
-              <motion.span variants={navItemVariant}>
+                ,
                 <NavItem
                   href="/exhibitions"
-                  className="ml-2 lg:ml-2"
+                  className=""
                   active={pathname.startsWith("/exhibitions")}
                 >
                   Exhibitions
                 </NavItem>
-              </motion.span>
-              ,
-              <motion.span variants={navItemVariant}>
+                ,
                 <NavItem
                   href="/info"
-                  className="ml-0 lg:ml-0"
+                  className=""
                   active={pathname.startsWith("/info")}
                 >
                   Info
                 </NavItem>
-              </motion.span>
-              ,
-              <motion.span variants={navItemVariant}>
-                <Button
-                  asChild
-                  variant="link"
-                  size="linkSizeLg"
-                  className="ml-2 lg:ml-2"
-                >
+                ,
+                <Button asChild variant="link" size="lg" className="px-2">
                   <Link href="/">Contact</Link>
                 </Button>
-              </motion.span>
-              ,
-              <motion.span variants={navItemVariant}>
+                ,
                 <Button
                   variant="link"
-                  size="linkSizeLg"
-                  className="ml-2"
+                  size="lg"
+                  className="px-2"
                   onClick={() => setOpenSearch(true)}
                 >
-                  Search...
+                  Search
                 </Button>
-              </motion.span>
+                ,
+                <DarkModeToggle />
+              </span>
             </motion.nav>
           </motion.div>
         )}

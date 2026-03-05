@@ -49,7 +49,7 @@ export default function WorksFilter() {
   }, [workSort, selectedYear, categoryFilter]);
 
   return (
-    <div className="border-foreground border-t-[0.5px] lg:border-transparent w-full  flex flex-col pointer-events-auto px-0 lg:px-0 lg:pl-0  gap-y-0    ">
+    <div className="border-foreground border-t-[0.5px]  w-full  flex flex-col pointer-events-auto px-0 lg:px-0 lg:pl-0  gap-y-0    ">
       <div className=" grid grid-cols-3 gap-0 w-full items-center">
         <Select
           value={stagedWorkSort}
@@ -114,7 +114,7 @@ export default function WorksFilter() {
         <Button
           variant="default"
           size="lg"
-          className="col-span-1  w-full"
+          className="col-span-1 h-16 w-full"
           onClick={async () => {
             await applyWorksFilters(
               stagedWorkSort,
@@ -131,7 +131,7 @@ export default function WorksFilter() {
         <Button
           variant="secondary"
           size="lg"
-          className="col-span-1 justify-center  w-full"
+          className="col-span-1 h-16 justify-center  w-full"
           onClick={async () => {
             await clearWorksFilters();
             handleOpenWorksFilter();

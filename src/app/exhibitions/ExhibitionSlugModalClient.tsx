@@ -38,7 +38,11 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
   const loadExhibitionByIndex = useCallback(
     async (index: number) => {
-      if (!filteredExhibitions || index < 0 || index >= filteredExhibitions.length)
+      if (
+        !filteredExhibitions ||
+        index < 0 ||
+        index >= filteredExhibitions.length
+      )
         return;
       const ex = filteredExhibitions[index];
       setExhibition(ex);
@@ -46,7 +50,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       setLoading(false);
       window.history.replaceState(null, "", `/?exhibition=${ex.slug}`);
     },
-    [filteredExhibitions]
+    [filteredExhibitions],
   );
 
   useEffect(() => {
@@ -64,7 +68,10 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     }
 
     getFromContext(slug).then((ex) => {
-      if (!ex) { setLoading(false); return; }
+      if (!ex) {
+        setLoading(false);
+        return;
+      }
       setExhibition(ex);
       setLoading(false);
     });
@@ -79,7 +86,10 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       loadExhibitionByIndex(currentIndex + 1);
   }, [currentIndex, filteredExhibitions, loadExhibitionByIndex]);
 
-  const swipeHandlers = useSwipe({ onSwipedLeft: goNext, onSwipedRight: goPrev });
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: goNext,
+    onSwipedRight: goPrev,
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -127,61 +137,55 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     exhibition.acf.work_10,
   ].filter(Boolean);
 
+  const scrollToTop = () => {
+    const scrollable = document.querySelector('[aria-modal="true"]');
+    if (scrollable) scrollable.scrollTop = 0;
+  };
+
   return (
     <>
       <div
+        id="modal-top"
         {...swipeHandlers}
-        className="relative gap-4 grid grid-cols-6 p-4 z-30 w-full scroll-bar-hide bg-background shadow"
+        className="relative gap-0 p-4 z-30 w-full scroll-bar-hide bg-background shadow justify-start flex flex-col"
       >
-        <span className="w-full col-span-6 lg:col-span-6 flex justify-between lg:grid grid-cols-6 gap-4">
-          <div className="col-span-6 lg:col-start-2 lg:col-span-5 flex flex-col justify-start items-start w-full h3">
-            <div className="flex justify-between w-full">
-              <h1 id="exhibition-modal-title" className="max-w-xs uppercase font-directorBold">
-                {exhibition.title.rendered}
-              </h1>
-              <div className="flex gap-x-4">
-                <Button
-                  className="hidden lg:flex"
-                  variant="link"
-                  size="sm"
-                  aria-label="Dela länk till utställning"
-                  onClick={() => {
-                    const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
-                    navigator.clipboard.writeText(url);
-                  }}
-                >
-                  Dela
-                </Button>
-                <Button
-                  size="sm"
-                  variant="link"
-                  onClick={onClose || (() => router.push("/"))}
-                >
-                  Stäng (x)
-                </Button>
-              </div>
-            </div>
-            {exhibition.acf.exhibition_type && (
-              <span>{exhibition.acf.exhibition_type}</span>
-            )}
-            {exhibition.acf.year && <span>Year: {exhibition.acf.year}</span>}
-            {exhibition.acf.location && <span>Location: {exhibition.acf.location}</span>}
-            {exhibition.acf.city && <span>City: {exhibition.acf.city}</span>}
+        {/* Header */}
+        <div className="flex items-baseline justify-between w-full  p-8 lg:p-4">
+          <h1 id="exhibition-modal-title" className="h1 text-2xl">
+            {exhibition.title.rendered}
+          </h1>
+          <div className="flex gap-x-4 items-baseline">
+            <Button
+              className="hidden lg:flex"
+              variant="link"
+              size="lg"
+              aria-label="Copy exhibition link"
+              onClick={() => {
+                const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
+                navigator.clipboard.writeText(url);
+              }}
+            >
+              Share
+            </Button>
+            <Button
+              className="aspect-square h-auto"
+              size="lg"
+              variant="link"
+              onClick={onClose || (() => router.push("/"))}
+            >
+              Close (x)
+            </Button>
           </div>
-        </span>
-
-        <h3 className="mt-30 col-span-5 lg:mt-0 lg:col-start-4 lg:col-span-2 h3 whitespace-normal">
-          {exhibition.acf.description}
-        </h3>
+        </div>
 
         {/* Image grid */}
-        <div className="flex flex-col col-start-1 col-span-6 relative w-full pointer-events-auto bg-background mb-8">
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="w-full mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-8">
             {images.map((img, idx) => (
               <button
                 key={img.id}
                 onClick={() => setLightboxIndex(idx)}
-                className="relative aspect-square bg-foreground/5 overflow-hidden cursor-zoom-in"
+                className="relative aspect-video bg-foreground/5 overflow-hidden cursor-zoom-in"
                 aria-label={`Visa bild ${idx + 1}`}
               >
                 <Image
@@ -194,14 +198,22 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             ))}
           </div>
 
+          {/* Description — spans full width, split into 2 columns */}
+          {exhibition.acf.description && (
+            <div className="mt-8 columns-1 lg:columns-2 gap-8 w-full h3 whitespace-normal p-4 p text-2xl font-bookish">
+              {exhibition.acf.description}
+            </div>
+          )}
+
           {works.length > 0 && (
-            <div className="col-span-6 lg:col-span-6 mb-8 mt-8">
-              <h4 className="h4 font-directorBold mb-2">Verk i utställningen:</h4>
-              <ul className="space-y-0 grid grid-cols-2 gap-x-4 lg:grid-cols-3">
+            <div className="mb-8 mt-8 p-4">
+              <h4 className="h3  text-2xl mb-2">Verk i utställningen:</h4>
+              <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-4">
                 {works.map((work: any, index: number) => (
                   <li key={index}>
                     <Button
                       variant="link"
+                      size="lg"
                       className="p-0 h-auto text-left text-blue-600"
                       onClick={() => {
                         setOpen(false);
@@ -216,64 +228,72 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             </div>
           )}
 
-          <h3 className="col-start-1 col-span-6 whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4">
+          <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  text-2xl p-4">
             {exhibition.acf.credits}
           </h3>
         </div>
 
-        <div className="col-start-1 col-span-4 lg:col-span-3 pb-0 flex gap-y-4 mt-4 w-full">
-          <Button size="sm" variant="link" onClick={onClose}>
-            Tillbaka (x)
-          </Button>
-          <Button
-            size="sm"
-            variant="link"
-            onClick={goPrev}
-            disabled={currentIndex <= 0}
-          >
-            Föregående
-          </Button>
-          <Button
-            size="sm"
-            variant="link"
-            onClick={goNext}
-            disabled={!filteredExhibitions || currentIndex >= filteredExhibitions.length - 1}
-          >
-            Nästa
+        <div className="pb-0 flex gap-y-4 mt-4 w-full justify-between items-center">
+          <div className="flex">
+            <Button size="lg" variant="link" onClick={onClose}>
+              Back (x)
+            </Button>
+            <Button
+              size="lg"
+              variant="link"
+              onClick={goPrev}
+              disabled={currentIndex <= 0}
+            >
+              Prev
+            </Button>
+            <Button
+              size="lg"
+              variant="link"
+              onClick={goNext}
+              disabled={
+                !filteredExhibitions ||
+                currentIndex >= filteredExhibitions.length - 1
+              }
+            >
+              Next
+            </Button>
+          </div>
+          <Button size="lg" variant="link" onClick={scrollToTop}>
+            Back to top ↑
           </Button>
         </div>
       </div>
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col">
-          <div className="flex justify-between items-center px-4 py-3 shrink-0">
-            <span className="text-white/60 text-sm">
+        <div className="fixed inset-0 z-40 bg-background flex flex-col">
+          <div className="absolute flex justify-between items-baseline w-full px-4 py-3 shrink-0 z-">
+            <span className="text-foreground/60 text-2xl font-bookish">
               {lightboxCarousel.index + 1} / {images.length}
             </span>
             <Button
-              size="sm"
-              variant="ghost"
-              className="text-white hover:text-white/70"
+              size="lg"
+              variant="link"
+              className="items-start aspect-square z-50"
               onClick={() => setLightboxIndex(null)}
               aria-label="Stäng bildvisning"
             >
-              <Cross1Icon aria-hidden="true" />
+              Close (x)
             </Button>
           </div>
 
           <Carousel
             setApi={lightboxCarousel.setApi}
             opts={{ startIndex: lightboxIndex, align: "center", loop: true }}
-            className="flex-1 min-h-0"
+            className="flex-1 min-h-0 overflow-hidden"
           >
-            <CarouselContent className="h-full">
+            <CarouselContent className="-ml-0 h-full">
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="h-full flex flex-col items-center justify-center gap-4 px-8"
+                  className="pl-0 flex flex-col items-center justify-center gap-4 px-8 h-[calc(100vh-60px)]"
                 >
-                  <div className="relative w-full flex-1 min-h-0">
+                  <div className="relative w-full h-full">
                     <Image
                       src={img.url}
                       alt={img.alt || img.desc || `Bild ${idx + 1}`}

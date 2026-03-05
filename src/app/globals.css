@@ -34,6 +34,7 @@ html {
   --font-gintoRegular: var(--font-gintoRegular);
   --font-gintoRegularItalic: var(--font-gintoRegularItalic);
   --font-gintoMedium: var(--font-gintoMedium);
+  --font-bookish: var(--font-bookish);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -184,19 +185,19 @@ a {
 
 @layer components {
   .h1 {
-    @apply font-directorLight text-sm leading-normal;
+    @apply font-bookish  leading-normal whitespace-normal;
   }
   .h2 {
     @apply font-directorLight text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-directorLight text-sm leading-normal whitespace-nowrap;
+    @apply font-bookish  leading-normal whitespace-normal;
   }
   .h4 {
     @apply font-directorLight text-sm leading-normal whitespace-nowrap;
   }
   .p {
-    @apply font-directorLight text-sm leading-normal;
+    @apply font-bookish  leading-normal whitespace-normal;
   }
 }
 .text-trim {

@@ -14,7 +14,8 @@ import Staggered from "@/components/Staggered";
 import WorkModal from "@/app/works/WorkModal";
 
 export default function WorksPageClient() {
-  const { filteredWorks, setActiveWorkSlug, activeWorkSlug, getWorkSizeClass } = useWorks();
+  const { filteredWorks, setActiveWorkSlug, activeWorkSlug, getWorkSizeClass } =
+    useWorks();
   const [initialAnimDone, setInitialAnimDone] = useState(false);
 
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -40,7 +41,7 @@ export default function WorksPageClient() {
   const loading = !initialAnimDone || !dataLoaded;
 
   return (
-    <section className="relative w-full mt-[50vh] lg:mt-0  ">
+    <section className="relative w-full  mt-8 lg:mt-0">
       {/* Scroll container */}
       <div
         className="
@@ -60,34 +61,47 @@ export default function WorksPageClient() {
     min-h-screen
     flex flex-col gap-y-4
     lg:grid lg:grid-cols-4
-    gap-x-8 
+    gap-x-30 
     
-    col-span-4
+    col-span-5 lg:p-4
   "
           renderItem={(work: Work) => (
             <motion.div
               key={work.id}
-              className="h-screen lg:h-[75vh] flex flex-col   "
+              className="h-screen lg:h-[50vh] flex flex-col justify-start   "
             >
               <button
                 onClick={() => {
                   setActiveWorkSlug(work.slug);
                   setOpen(false);
-                  window.history.pushState(null, "", `/works?work=${work.slug}`);
+                  window.history.pushState(
+                    null,
+                    "",
+                    `/works?work=${work.slug}`,
+                  );
                 }}
-                className="relative cursor-pointer w-full flex justify-center"
-                aria-label={`Visa verk: ${work.title.rendered}`}
+                className="relative cursor-pointer w-full flex flex-col  "
+                aria-label={`Show work: ${work.title.rendered}`}
               >
                 {/* Image box */}
-                <div className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}>
+                <div className={`relative mx-0 h-[50vh] lg:h-[25vh] w-full  `}>
                   {work.image_url && (
                     <Image
                       src={work.image_url}
                       alt={work.title.rendered}
                       fill
-                      className="object-contain object-left lg:object-top-left p-4 lg:pt-4 lg:px-8 lg:pb-4"
+                      className="object-contain object-top  lg:object-top-left "
                     />
                   )}
+                </div>
+                <div className="flex flex-col justify-start h3 text-2xl lg:text-base items-start pt-4 px-8 lg:px-4  pb-16 ">
+                  <span className=" ">{work.title.rendered}</span>
+                  <span className=" whitespace-normal text-left">
+                    {work.acf.materials}
+                  </span>
+
+                  <span className="">{work.acf.dimensions}</span>
+                  <span className="">{work.acf.year}</span>
                 </div>
               </button>
             </motion.div>
@@ -95,10 +109,10 @@ export default function WorksPageClient() {
         />
         <div
           className="
-  fixed z-30
+  fixed z-20
 
   bottom-0 left-0 w-full
-
+p-4
   lg:bottom-auto
   lg:left-auto
   lg:right-8
@@ -108,14 +122,8 @@ export default function WorksPageClient() {
         >
           {/* Button */}
           <Button
-            className="
-    w-full uppercase justify-between
- lg:shadow-none
-    bg-background
-hover:bg-background
-  border-foreground  border-t-[0.5px] lg:border-b-[0.5px] lg:border-t-transparent px-8 lg:px-4
-    "
-            variant="ghost"
+            className={`    font-bookish ${showWorksFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
+            variant="link"
             size="lg"
             aria-expanded={showWorksFilter}
             onClick={() => {
@@ -123,12 +131,6 @@ hover:bg-background
             }}
           >
             Filter{" "}
-            <span
-              aria-hidden="true"
-              className={showWorksFilter ? "rotate-90 transition-all" : ""}
-            >
-              &gt;
-            </span>
           </Button>
 
           {/* Panel */}

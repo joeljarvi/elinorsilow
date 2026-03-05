@@ -53,66 +53,43 @@ export default function ExhibitionsPageClient() {
   const loading = !initialAnimDone || !dataLoaded;
 
   return (
-    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full  mt-[50vh] lg:mt-0">
-      <div
-        className="
-              flex flex-col
-                relative w-full
-    lg:grid  grid-cols-5 
- 
-    gap-x-4
- 
-  "
-      >
-        {" "}
-        <span className="px-8 w-full lg:col-span-5 grid grid-cols-5 gap-x-8 bg-transparent">
-          {/* Left title */}
-          <Button
-            variant="ghost"
-            size="lg"
-            className="hidden x lg:col-span-4 uppercase  hover:bg-transparent justify-start w-full lg:border-b-[0.5px] lg:border-foreground"
-          >
-            Exhibitions
-          </Button>
-        </span>
-        {/* Divider left */}
+    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full">
+      <div className="relative w-full">
         <Staggered
           items={filteredExhibitions}
           getKey={(ex) => ex.id}
           loading={loading}
-          className=" w-full
-    min-h-screen
-       col-span-5
-    flex flex-col gap-y-4
-    lg:grid lg:grid-cols-5
-    gap-x-8 
-    
- 
-  "
+          className="w-full min-h-screen flex flex-col gap-4 lg:grid lg:grid-cols-2 gap-y-30 lg:gap-x-4 p-8 lg:p-4"
           renderItem={(ex: Exhibition) => (
-            <motion.div
-              key={ex.id}
-              className="lg:col-span-3 h-screen flex flex-col bg-background w-full  "
-            >
+            <motion.div key={ex.id} className="w-full lg:col-span-2">
               <button
                 onClick={() => {
                   setActiveExhibitionSlug(ex.slug);
                   setOpen(false);
-                  window.history.pushState(null, "", `/exhibitions?exhibition=${ex.slug}`);
+                  window.history.pushState(
+                    null,
+                    "",
+                    `/exhibitions?exhibition=${ex.slug}`,
+                  );
                 }}
-                className="relative cursor-pointer w-full flex justify-center"
-                aria-label={`Visa utställning: ${ex.title.rendered}`}
+                className="relative cursor-pointer w-full flex flex-col "
+                aria-label={`Show exhibition: ${ex.title.rendered}`}
               >
                 {/* Image box */}
-                <div className={`relative mx-0 h-[80vh]  w-full `}>
+                <div className="relative w-full aspect-[3/4] lg:aspect-square  ">
                   {ex.acf.image_1 && (
                     <Image
                       src={ex.acf.image_1.url}
                       alt={ex.title.rendered}
                       fill
-                      className="object-contain object-left lg:object-top-left p-4 lg:px-8"
+                      className="object-cover  "
                     />
                   )}
+                </div>
+                <div className="absolute top-0 left-0 flex flex-col justify-start text-2xl text-left lg:text-base items-start p-4 lg:p-8 w-full ">
+                  <span className="text-foreground h3 text-2xl">
+                    {ex.title.rendered}
+                  </span>
                 </div>
               </button>
             </motion.div>
@@ -120,27 +97,20 @@ export default function ExhibitionsPageClient() {
         />
         <div
           className="
-  fixed z-40
-
-  bottom-0 left-0 w-full 
-
+fixed z-20
+  bottom-0 left-0 w-full
+p-8
   lg:bottom-auto
   lg:left-auto
   lg:right-8
-  lg:top-[50vh]
-  lg:w-[240px]
+  lg:top-[0vh]
+  lg:w-1/4
 "
         >
           {/* Button */}
           <Button
-            className="
-w-full uppercase justify-between
-lg:shadow-none
-    bg-background
-hover:bg-background
-  border-foreground border-t-[0.5px] lg:border-b-[0.5px] lg:border-t-transparent px-8 lg:px-4
-    "
-            variant="ghost"
+            className={`    font-bookish ${showExhibitionsFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
+            variant="link"
             size="lg"
             aria-expanded={showExhibitionsFilter}
             onClick={() => {
@@ -148,14 +118,6 @@ hover:bg-background
             }}
           >
             Filter{" "}
-            <span
-              aria-hidden="true"
-              className={
-                showExhibitionsFilter ? "rotate-90 transition-all" : ""
-              }
-            >
-              &gt;
-            </span>
           </Button>
 
           {/* Panel */}

@@ -64,7 +64,7 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 bg-background flex flex-col p-8 lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
+          className="fixed inset-0 z-50 bg-background flex flex-col pt-8 px-8 lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
         >
           <div className="flex items-baseline border-b-[0.5px] border-foreground pb-2 gap-x-4">
             <input
@@ -72,7 +72,7 @@ export default function NavSearch({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-lg lg:text-xl font-directorLight"
+              className="flex-1 outline-none bg-transparent text-2xl font-bookish"
             />
             <button
               onClick={onClose}
@@ -84,16 +84,16 @@ export default function NavSearch({
           </div>
 
           {query && results.length > 0 && (
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-0">
               {results.slice(0, 8).map((item) => (
                 <Button
                   variant="ghost"
                   size="lg"
                   key={item.id}
-                  className="w-full text-left justify-start font-directorLight hover:bg-foreground/10"
+                  className="w-full text-left justify-start font-bookish hover:bg-foreground/10"
                   onClick={() => handleResultClick(item)}
                 >
-                  <span className="opacity-50 mr-4 text-xs font-directorMono">
+                  <span className="opacity-50 mr-4 text-xs font-bookish  tracking-wider">
                     {item.type === "work" ? "Work" : "Exhibition"}
                   </span>
                   {item.title}

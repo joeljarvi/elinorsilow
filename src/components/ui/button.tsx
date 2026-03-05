@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-none  gap-1 whitespace-nowrap font-normal h3 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto  disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center rounded-none  gap-1 whitespace-nowrap font-normal font-bookish  cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  font-bookish focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto  disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -18,13 +18,13 @@ const buttonVariants = cva(
         secondary:
           "bg-background text-background-foreground  hover:bg-secondary/80 justify-center",
         ghost: "  bg-background hover:bg-foreground/20 justify-center",
-        link: "text-primary   transition-all   hover:underline active:underline underline-offset-8 decoration-[1px]   ",
+        link: "text-primary hover:text-foreground/80 transition-all      ",
         nav: "text-primary       transition-all w-full  justify-between hover:text-primary/80 ",
       },
       size: {
-        default: "h-9 px-4 py-2 h3",
-        sm: "h-6 px-4 py-1 h3",
-        lg: " px-4 py-2  text-xl lg:text-base font-directorLight h-16 lg:h-12 ",
+        default: "h-9 px-4 py-2  ",
+        sm: "h-6 px-4 py-1 ",
+        lg: " px-4 py-2  text-2xl   ",
         linkSize: "h-6  px-0 py-0 text-sm",
         linkSizeLg: " text-lg leading-tight ",
         listSize: "h-auto px-0 py-0",
