@@ -250,7 +250,7 @@ function MainContent({}: Props) {
               className="
     h-[50vh]
     flex flex-col gap-y-4
-    lg:grid lg:grid-cols-5
+    lg:grid lg:grid-cols-4
     gap-x-30
 
     col-span-5
@@ -258,7 +258,7 @@ function MainContent({}: Props) {
               renderItem={(work: Work) => (
                 <motion.div
                   key={work.id}
-                  className="h-screen lg:h-[25vh] flex flex-col   "
+                  className="h-screen lg:h-[75vh] flex flex-col   "
                 >
                   <div
                     onClick={() => {
@@ -303,10 +303,10 @@ function MainContent({}: Props) {
               getKey={(ex) => ex.id}
               loading={false}
               className="
-    h-[50vh]
+    h-[100vh]
        col-span-5
     flex flex-col gap-y-4
-lg:flex-row
+lg:grid grid-cols-4
     gap-x-8
 
 
@@ -354,8 +354,6 @@ lg:flex-row
           </Button>
         </div>
       </section>
-
-      <BottomLinkBar />
 
       <UnderConstructionOverlay />
 
