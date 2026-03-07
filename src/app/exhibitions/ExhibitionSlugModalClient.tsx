@@ -265,7 +265,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               Next
             </Button>
           </div>
-          <Button size="lg" variant="link" onClick={scrollToTop}>
+          <Button
+            size="lg"
+            className="hidden lg:flex"
+            variant="link"
+            onClick={scrollToTop}
+          >
             Back to top ↑
           </Button>
         </div>
