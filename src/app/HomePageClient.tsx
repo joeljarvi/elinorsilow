@@ -20,6 +20,7 @@ import HDivider from "@/components/HDivider";
 import { useState, useEffect } from "react";
 import UnderConstruction from "@/components/UnderConstruction";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import Hero from "@/components/Hero";
 
 type Props = {
   showInfo?: boolean;
@@ -204,10 +205,7 @@ function MainContent({}: Props) {
   w-full
 "
         >
-          <div
-            id="home-info"
-            className="bg-background  relative flex flex-col items-start justify-start lg:items-baseline  lg:grid grid-cols-5 pl-8 lg:pl-8  pt-8 lg:pt-4 pr-16 lg:pr-8  "
-          >
+          <div id="home-info" className="sr-only">
             <Link
               onClick={() => {}}
               className="items-baseline  no-hide-text  text-2xl font-bookish  whitespace-normal col-start-1 col-span-2 
@@ -231,121 +229,9 @@ function MainContent({}: Props) {
               for collaborations and inquires.
             </p>
           </div>
-          {/* Works */}
-          <div
-            id="home-works"
-            className="
-              flex flex-col
-                relative w-full
-    lg:grid  grid-cols-5
 
-    gap-x-4
-
-  "
-          >
-            <Staggered
-              items={featuredWorks}
-              getKey={(w) => w.id}
-              loading={false}
-              className="
-    h-[50vh]
-    flex flex-col gap-y-4
-    lg:grid lg:grid-cols-4
-    gap-x-30
-
-    col-span-5
-  "
-              renderItem={(work: Work) => (
-                <motion.div
-                  key={work.id}
-                  className="h-screen lg:h-[75vh] flex flex-col   "
-                >
-                  <div
-                    onClick={() => {
-                      setActiveWorkSlug(work.slug);
-                      setOpen(false);
-                      router.push(`/?work=${work.slug}`);
-                    }}
-                    className="relative cursor-pointer w-full flex justify-center"
-                  >
-                    {/* Image box */}
-                    <div className={`relative mx-0 w-full h-[50vh] `}>
-                      {work.image_url && (
-                        <Image
-                          src={work.image_url}
-                          alt={work.title.rendered}
-                          fill
-                          className="object-contain object-left lg:object-top-left p-4 lg:p-8"
-                        />
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            />
-          </div>
-
-          {/* Exhibitions */}
-          <div
-            id="home-exhibitions"
-            className="
-              flex flex-col
-                relative w-full
-    lg:grid  grid-cols-5
-
-    gap-x-4
-
-  "
-          >
-            {" "}
-            <Staggered
-              items={featuredExhibitions}
-              getKey={(ex) => ex.id}
-              loading={false}
-              className="
-    h-[100vh]
-       col-span-5
-    flex flex-col gap-y-4
-lg:grid grid-cols-4
-    gap-x-8
-
-
-  "
-              renderItem={(ex: Exhibition) => (
-                <motion.div
-                  key={ex.id}
-                  className="w-lg h-[50vh] flex flex-col bg-transparent  "
-                >
-                  <div
-                    onClick={() => {
-                      setActiveExhibitionSlug(ex.slug);
-                      setOpen(false);
-                      router.push(`/?exhibition=${ex.slug}`);
-                    }}
-                    className="relative cursor-pointer w-full flex justify-center"
-                  >
-                    {/* Image box */}
-                    <div
-                      className={`relative mx-0 h-[80vh] lg:h-[50vh] w-full `}
-                    >
-                      {ex.acf.image_1 && (
-                        <Image
-                          src={ex.acf.image_1.url}
-                          alt={ex.title.rendered}
-                          fill
-                          className="object-contain object-left lg:object-top-left p-4 lg:px-8"
-                        />
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            />
-          </div>
-
-          {/* Info / Bio */}
           <Button
-            className="col-start-1 w-min  "
+            className="col-start-1 w-min hidden  "
             variant="link"
             size="lg"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -360,14 +246,20 @@ lg:grid grid-cols-4
       {activeWorkSlug && (
         <WorkModal
           slug={activeWorkSlug}
-          onClose={() => setActiveWorkSlug(null)}
+          onClose={() => {
+            setActiveWorkSlug(null);
+            setOpen(true);
+          }}
         />
       )}
 
       {activeExhibitionSlug && (
         <ExhibitionModal
           slug={activeExhibitionSlug}
-          onClose={() => setActiveExhibitionSlug(null)}
+          onClose={() => {
+            setActiveExhibitionSlug(null);
+            setOpen(true);
+          }}
         />
       )}
     </>

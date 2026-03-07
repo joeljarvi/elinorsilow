@@ -19,6 +19,7 @@ import { motion } from "framer-motion";
 export default function ExhibitionsPageClient() {
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [showAsList, setShowAsList] = useState(false);
   const {
     filteredExhibitions,
     setActiveExhibitionSlug,
@@ -55,46 +56,79 @@ export default function ExhibitionsPageClient() {
   return (
     <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full">
       <div className="relative w-full">
-        <Staggered
-          items={filteredExhibitions}
-          getKey={(ex) => ex.id}
-          loading={loading}
-          className="w-full min-h-screen flex flex-col gap-4 lg:grid lg:grid-cols-2 gap-y-30 lg:gap-x-4 p-8 lg:p-4"
-          renderItem={(ex: Exhibition) => (
-            <motion.div key={ex.id} className="w-full lg:col-span-2">
-              <button
-                onClick={() => {
-                  setActiveExhibitionSlug(ex.slug);
-                  setOpen(false);
-                  window.history.pushState(
-                    null,
-                    "",
-                    `/exhibitions?exhibition=${ex.slug}`,
-                  );
-                }}
-                className="relative cursor-pointer w-full flex flex-col "
-                aria-label={`Show exhibition: ${ex.title.rendered}`}
-              >
-                {/* Image box */}
-                <div className="relative w-full aspect-[3/4] lg:aspect-square  ">
-                  {ex.acf.image_1 && (
-                    <Image
-                      src={ex.acf.image_1.url}
-                      alt={ex.title.rendered}
-                      fill
-                      className="object-cover  "
-                    />
-                  )}
-                </div>
-                <div className="absolute top-0 left-0 flex flex-col justify-start text-2xl text-left lg:text-base items-start p-4 lg:p-8 w-full ">
-                  <span className="text-foreground h3 text-2xl">
-                    {ex.title.rendered}
-                  </span>
-                </div>
-              </button>
-            </motion.div>
-          )}
-        />
+        {showAsList ? (
+          <div className="w-full min-h-screen p-8 lg:p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
+              {[...filteredExhibitions]
+                .sort((a, b) =>
+                  a.title.rendered.localeCompare(b.title.rendered, "sv"),
+                )
+                .map((ex: Exhibition) => (
+                  <Button
+                    key={ex.id}
+                    variant="link"
+                    size="lg"
+                    onClick={() => {
+                      setActiveExhibitionSlug(ex.slug);
+                      setOpen(false);
+                      window.history.pushState(
+                        null,
+                        "",
+                        `/exhibitions?exhibition=${ex.slug}`,
+                      );
+                    }}
+                    className="justify-start"
+                    aria-label={`Show exhibition: ${ex.title.rendered}`}
+                  >
+                    <span className="font-bookish text-2xl">
+                      {ex.title.rendered}
+                    </span>
+                  </Button>
+                ))}
+            </div>
+          </div>
+        ) : (
+          <Staggered
+            items={filteredExhibitions}
+            getKey={(ex) => ex.id}
+            loading={loading}
+            className="w-full min-h-screen flex flex-col gap-4 lg:grid lg:grid-cols-2 gap-y-30 lg:gap-x-4 p-8 lg:p-4"
+            renderItem={(ex: Exhibition) => (
+              <motion.div key={ex.id} className="w-full lg:col-span-2">
+                <button
+                  onClick={() => {
+                    setActiveExhibitionSlug(ex.slug);
+                    setOpen(false);
+                    window.history.pushState(
+                      null,
+                      "",
+                      `/exhibitions?exhibition=${ex.slug}`,
+                    );
+                  }}
+                  className="relative cursor-pointer w-full flex flex-col "
+                  aria-label={`Show exhibition: ${ex.title.rendered}`}
+                >
+                  {/* Image box */}
+                  <div className="relative w-full aspect-[3/4] lg:aspect-square  ">
+                    {ex.acf.image_1 && (
+                      <Image
+                        src={ex.acf.image_1.url}
+                        alt={ex.title.rendered}
+                        fill
+                        className="object-cover  "
+                      />
+                    )}
+                  </div>
+                  <div className="absolute top-0 left-0 flex flex-col justify-start text-2xl text-left lg:text-base items-start p-4 lg:p-8 w-full ">
+                    <span className="text-foreground h3 text-2xl">
+                      {ex.title.rendered}
+                    </span>
+                  </div>
+                </button>
+              </motion.div>
+            )}
+          />
+        )}
         <div
           className="
 fixed z-20
@@ -108,17 +142,26 @@ p-8
 "
         >
           {/* Button */}
-          <Button
-            className={`    font-bookish ${showExhibitionsFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
-            variant="link"
-            size="lg"
-            aria-expanded={showExhibitionsFilter}
-            onClick={() => {
-              handleOpenExhibitionsFilter();
-            }}
-          >
-            Filter{" "}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              className={`font-bookish ${showExhibitionsFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
+              variant="link"
+              size="lg"
+              aria-expanded={showExhibitionsFilter}
+              onClick={() => handleOpenExhibitionsFilter()}
+            >
+              Filter
+            </Button>
+            <Button
+              className="font-bookish bg-transparent"
+              variant="link"
+              size="lg"
+              aria-pressed={showAsList}
+              onClick={() => setShowAsList((prev) => !prev)}
+            >
+              {showAsList ? "Grid" : "List"}
+            </Button>
+          </div>
 
           {/* Panel */}
           {showExhibitionsFilter && (
@@ -133,7 +176,7 @@ p-8
       {activeExhibitionSlug && (
         <ExhibitionModal
           slug={activeExhibitionSlug}
-          onClose={() => setActiveExhibitionSlug(null)}
+          onClose={() => { setActiveExhibitionSlug(null); setOpen(true); }}
         />
       )}
     </section>

@@ -9,11 +9,12 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
+import { useWorks, normalizeSlug } from "@/context/WorksContext";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 import { Exhibition } from "../../../lib/sanity";
-import { useUI } from "@/context/UIContext";
 import useSwipe from "@/hooks/use-swipe";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Cross1Icon } from "@radix-ui/react-icons";
 
 type Props = {
@@ -23,9 +24,9 @@ type Props = {
 
 export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const router = useRouter();
-  const { open, setOpen } = useUI();
   const { filteredExhibitions, getExhibitionBySlug: getFromContext } =
     useExhibitions();
+  const { setActiveWorkSlug } = useWorks();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
@@ -147,10 +148,10 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       <div
         id="modal-top"
         {...swipeHandlers}
-        className="relative gap-0 p-4 z-30 w-full scroll-bar-hide bg-background shadow justify-start flex flex-col"
+        className="relative gap-0 px-4 pb-4 z-30 w-full scroll-bar-hide bg-background shadow justify-start  flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-baseline justify-between w-full  p-8 lg:p-4">
+        <div className="flex items-baseline justify-between w-full px-8 pb-8 lg:px-4 lg:pb-4">
           <h1 id="exhibition-modal-title" className="h1 text-2xl">
             {exhibition.title.rendered}
           </h1>
@@ -199,35 +200,41 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           </div>
 
           {/* Description — spans full width, split into 2 columns */}
-          {exhibition.acf.description && (
-            <div className="mt-8 columns-1 lg:columns-2 gap-8 w-full h3 whitespace-normal p-4 p text-2xl font-bookish">
-              {exhibition.acf.description}
-            </div>
-          )}
 
-          {works.length > 0 && (
-            <div className="mb-8 mt-8 p-4">
-              <h4 className="h3  text-2xl mb-2">Verk i utställningen:</h4>
-              <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-4">
-                {works.map((work: any, index: number) => (
-                  <li key={index}>
-                    <Button
-                      variant="link"
-                      size="lg"
-                      className="p-0 h-auto text-left text-blue-600"
-                      onClick={() => {
-                        setOpen(false);
-                        router.push(`/?work=${work}`);
-                      }}
-                    >
-                      {work}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {exhibition.acf.description && (
+              <div className="mt-8 columns-1   gap-8 w-full h3 whitespace-normal p-4 p text-2xl font-bookish">
+                {exhibition.acf.description}
+              </div>
+            )}
 
+            {works.length > 0 && (
+              <div className="mb-8 mt-8 p-4">
+                <h4 className="h3  text-2xl mb-2">Verk i utställningen:</h4>
+                <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-2">
+                  {works.map((work: any, index: number) => (
+                    <li key={index}>
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-left text-2xl font-bookish text-blue-600"
+                        onClick={() => {
+                          const slug = normalizeSlug(work);
+                          setActiveWorkSlug(slug);
+                          window.history.pushState(
+                            null,
+                            "",
+                            `/works?work=${slug}`,
+                          );
+                        }}
+                      >
+                        {work}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  text-2xl p-4">
             {exhibition.acf.credits}
           </h3>

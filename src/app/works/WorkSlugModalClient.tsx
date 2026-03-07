@@ -181,13 +181,12 @@ export default function WorkSlugModalClient({
             {work.acf.year && (
               <span className="h3 text-2xl"> {work.acf.year}</span>
             )}
+            {/* {work.acf.exhibition && (
+              <span className="h3 text-2xl  max-w-sm hidden lg:block">
+                Exhibition: {work.acf.exhibition}
+              </span>
+            )} */}
           </div>
-
-          {work.acf.exhibition && (
-            <span className="h3 text-xl tracking-wide">
-              (Part of {work.acf.exhibition})
-            </span>
-          )}
         </div>
       </div>
 

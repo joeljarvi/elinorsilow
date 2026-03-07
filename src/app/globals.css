@@ -153,7 +153,7 @@ html {
 
 /* Fade everything except whitelisted elements */
 [data-hide-text="true"]
-  :where(.h1, .h2, .h3, .p, .small, button, span, p, h1, h2, h3, h4, a):not(
+  :where(.h1, .h2, .h3, .p, .small, p, h1, h2, h3, h4):not(
     .no-hide-text
   ):not(.no-hide-text *) {
   opacity: 0 !important;
@@ -173,7 +173,7 @@ h2,
 h3,
 h4,
 a {
-  transition: opacity 0.4s ease-in-out;
+  transition: opacity 1.8s ease-in-out;
 }
 
 /* Never fade these */

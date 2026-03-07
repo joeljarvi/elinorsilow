@@ -1,12 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import Image from "next/image";
 
-export function DarkModeToggle() {
+export function DarkModeToggle({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -16,27 +14,17 @@ export function DarkModeToggle() {
 
   if (!mounted) return null;
 
+  const isDark = theme === "dark";
+
   return (
-    <div>
-      {theme === "light" ? (
-        <Button
-          variant="link"
-          size="lg"
-          onClick={() => setTheme("dark")}
-          className="nav-toggle no-hide-text px-2   "
-        >
-          Dark mode
-        </Button>
-      ) : (
-        <Button
-          variant="link"
-          size="lg"
-          onClick={() => setTheme("light")}
-          className="nav-toggle no-hide-text px-2 "
-        >
-          Light mode
-        </Button>
-      )}
-    </div>
+    <Button
+      variant="link"
+      size="lg"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className={`no-hide-text ${className ? ` ${className}` : ""}`}
+    >
+      {isDark ? "Light mode" : "Dark mode"}
+    </Button>
   );
 }

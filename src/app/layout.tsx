@@ -11,6 +11,7 @@ import { UIProvider } from "@/context/UIContext";
 
 import BodyClassManager from "@/components/BodyClassManager";
 import NavWrapper from "@/components/NavWrapper";
+import NavSpacer from "@/components/NavSpacer";
 
 import { CarouselProvider } from "@/context/CarouselContext";
 
@@ -152,6 +153,7 @@ export default function RootLayout({
                       <NavWrapper />
 
                       <CarouselProvider>
+                        <NavSpacer />
                         {children} {modal}
                       </CarouselProvider>
                     </AnimationProvider>
