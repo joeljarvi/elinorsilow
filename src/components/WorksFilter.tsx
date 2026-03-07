@@ -49,7 +49,7 @@ export default function WorksFilter() {
   }, [workSort, selectedYear, categoryFilter]);
 
   return (
-    <div className="border-foreground border-t-[0.5px]  w-full  flex flex-col pointer-events-auto px-0 lg:px-0 lg:pl-0  gap-y-0    ">
+    <div className="border-foreground border-t  w-full  flex flex-col pointer-events-auto px-0 lg:px-0 lg:pl-0  gap-y-0    ">
       <div className=" grid grid-cols-3 gap-0 w-full items-center">
         <Select
           value={stagedWorkSort}
@@ -61,7 +61,7 @@ export default function WorksFilter() {
           <SelectTrigger className=" col-span-3  w-full">
             <SelectValue placeholder="Sort by Latest" />
           </SelectTrigger>
-          <SelectContent side={isDesktop ? "bottom" : "top"}>
+          <SelectContent side={isDesktop ? "bottom" : "bottom"}>
             <SelectItem value="year-latest">Sort by latest</SelectItem>
             <SelectItem value="year-oldest">oldest</SelectItem>
             <SelectItem value="title">title</SelectItem>
@@ -78,7 +78,7 @@ export default function WorksFilter() {
           <SelectTrigger className="col-span-3 w-full">
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
-          <SelectContent side={isDesktop ? "bottom" : "top"}>
+          <SelectContent side={isDesktop ? "bottom" : "bottom"}>
             <SelectItem value="all">All categories</SelectItem>
             <SelectItem value="painting">Painting</SelectItem>
             <SelectItem value="sculpture">Sculpture</SelectItem>
@@ -99,7 +99,7 @@ export default function WorksFilter() {
             <SelectTrigger className="w-full col-span-3">
               <SelectValue placeholder="Select year" />
             </SelectTrigger>
-            <SelectContent side={isDesktop ? "bottom" : "top"}>
+            <SelectContent side={isDesktop ? "bottom" : "bottom"}>
               {uniqueYears.map((year) => (
                 <SelectItem key={year} value={year.toString()}>
                   {year}
@@ -110,7 +110,7 @@ export default function WorksFilter() {
         </div>
       )}
       {/* Actions */}
-      <div className="grid grid-cols-2  w-full items-center border-transparent lg:border-foreground lg:border-b-[0.5px]">
+      <div className="grid grid-cols-2  w-full items-center border-foreground border-b">
         <Button
           variant="default"
           size="lg"

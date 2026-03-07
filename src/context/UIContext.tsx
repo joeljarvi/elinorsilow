@@ -32,6 +32,10 @@ interface UIContextValue {
   setShowInfo: Dispatch<boolean>;
   showSettings: boolean;
   setShowSettings: Dispatch<boolean>;
+  proportionalImages: boolean;
+  setProportionalImages: Dispatch<boolean>;
+  showAsList: boolean;
+  setShowAsList: Dispatch<boolean>;
   handleShowSettings: () => void;
   handleOpen: () => void;
   handleOpenWorksMenu: () => void;
@@ -58,6 +62,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showExhibitionsFilter, setShowExhibitionsFilter] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [proportionalImages, setProportionalImages] = useState(false);
+  const [showAsList, setShowAsList] = useState(false);
 
   function handleOpen() {
     setOpen((prev) => !prev);
@@ -114,6 +120,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setShowInfo,
         showSettings,
         setShowSettings,
+        proportionalImages,
+        setProportionalImages,
+        showAsList,
+        setShowAsList,
         handleOpen,
         handleOpenWorksMenu,
         handleOpenAllWorksList,

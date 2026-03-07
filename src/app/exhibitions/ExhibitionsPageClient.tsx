@@ -142,7 +142,7 @@ p-8
 "
         >
           {/* Button */}
-          <div className="flex gap-2">
+          <div className="hidden lg:flex gap-2">
             <Button
               className={`font-bookish ${showExhibitionsFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
               variant="link"
@@ -176,7 +176,10 @@ p-8
       {activeExhibitionSlug && (
         <ExhibitionModal
           slug={activeExhibitionSlug}
-          onClose={() => { setActiveExhibitionSlug(null); setOpen(true); }}
+          onClose={() => {
+            setActiveExhibitionSlug(null);
+            setOpen(true);
+          }}
         />
       )}
     </section>

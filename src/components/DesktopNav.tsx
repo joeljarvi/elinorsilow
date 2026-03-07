@@ -14,7 +14,6 @@ import { useUI } from "@/context/UIContext";
 import { usePathname } from "next/navigation";
 
 import NavSearch from "./NavSearch";
-import { DarkModeToggle } from "./DarkModeToggle";
 import { HideTextToggle } from "./HideTextToggle";
 
 const navContainer: Variants = {
@@ -78,7 +77,7 @@ export default function DesktopNav() {
   }, []);
 
   useEffect(() => {
-    setOpen(true);
+    if (window.innerWidth >= 1024) setOpen(true);
     setScrollHidden(false);
     lastScrollY.current = 0;
   }, [pathname, setOpen]);
@@ -126,55 +125,12 @@ export default function DesktopNav() {
               className=" px-2 pt-4 lg:p-4 flex flex-col lg:flex-row gap-x-30   no-hide-text  text-2xl font-bookish justify-center items-center w-full lg:items-baseline  "
             >
               <NavItem
-                className="w-full items-center justify-center lg:justify-start lg:w-auto"
+                className="hidden lg:flex items-center justify-start lg:w-auto"
                 href="/"
                 active={pathname === "/"}
               >
                 Elinor Silow
               </NavItem>
-              <span className="flex flex-col lg:hidden items-baseline justify-start gap-x-0">
-                <NavItem
-                  href="/works"
-                  className=""
-                  active={pathname.startsWith("/works")}
-                  onClick={() => setOpen(false)}
-                >
-                  Works
-                </NavItem>
-
-                <NavItem
-                  href="/exhibitions"
-                  className=""
-                  active={pathname.startsWith("/exhibitions")}
-                  onClick={() => setOpen(false)}
-                >
-                  Exhibitions
-                </NavItem>
-
-                <NavItem
-                  href="/info"
-                  className=""
-                  active={pathname.startsWith("/info")}
-                  onClick={() => setOpen(false)}
-                >
-                  Info
-                </NavItem>
-
-                <Button asChild variant="link" size="lg" className="">
-                  <Link href="/">Contact</Link>
-                </Button>
-
-                <Button
-                  variant="link"
-                  size="lg"
-                  className=""
-                  onClick={() => setOpenSearch(true)}
-                >
-                  Search
-                </Button>
-                {pathname !== "/" && <HideTextToggle className="" />}
-                <DarkModeToggle className="" />
-              </span>
               <span className="hidden lg:flex flex-wrap items-baseline gap-x-0 w-full">
                 <NavItem
                   href="/works"

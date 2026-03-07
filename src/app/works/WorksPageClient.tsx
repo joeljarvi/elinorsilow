@@ -20,10 +20,16 @@ export default function WorksPageClient() {
 
   const [dataLoaded, setDataLoaded] = useState(false);
   const { workLoading } = useWorks();
-  const { setOpen, handleOpenWorksFilter, showWorksFilter } = useUI();
+  const {
+    setOpen,
+    handleOpenWorksFilter,
+    showWorksFilter,
+    proportionalImages,
+    setProportionalImages,
+    showAsList,
+    setShowAsList,
+  } = useUI();
   const { showInfo } = useUI();
-  const [proportionalImages, setProportionalImages] = useState(false);
-  const [showAsList, setShowAsList] = useState(false);
   useEffect(() => {
     if (!workLoading) {
       setDataLoaded(true);
@@ -156,7 +162,7 @@ p-4
 "
         >
           {/* Button */}
-          <div className="flex gap-2">
+          <div className="hidden lg:flex gap-2">
             <Button
               className={`font-bookish ${showWorksFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
               variant="link"
@@ -173,7 +179,7 @@ p-4
               variant="link"
               size="lg"
               aria-pressed={proportionalImages}
-              onClick={() => setProportionalImages((prev) => !prev)}
+              onClick={() => setProportionalImages(!proportionalImages)}
             >
               {proportionalImages ? "Full width" : "Proportional"}
             </Button>
@@ -182,7 +188,7 @@ p-4
               variant="link"
               size="lg"
               aria-pressed={showAsList}
-              onClick={() => setShowAsList((prev) => !prev)}
+              onClick={() => setShowAsList(!showAsList)}
             >
               {showAsList ? "Grid" : "List"}
             </Button>
@@ -190,7 +196,7 @@ p-4
 
           {/* Panel */}
           {showWorksFilter && (
-            <div className="bg-background    ">
+            <div className="bg-background hidden lg:block   ">
               <WorksFilter />
             </div>
           )}

@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import DesktopNav from "./DesktopNav";
 import MobileNavButton from "./MobileNavButton";
+import MobileNavOverlay from "./MobileNavOverlay";
 
 export default function NavWrapper() {
   const pathname = usePathname();
@@ -10,6 +11,7 @@ export default function NavWrapper() {
   return (
     <>
       <DesktopNav />
+      <MobileNavOverlay />
       <MobileNavButton />
     </>
   );
