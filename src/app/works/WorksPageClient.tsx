@@ -1,8 +1,9 @@
 "use client";
 
-import { useWorks } from "@/context/WorksContext";
+import { useWorks, CategoryFilter } from "@/context/WorksContext";
 import { useUI } from "@/context/UIContext";
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Work } from "../../../lib/sanity";
 import { motion, useScroll, useTransform } from "framer-motion";
 import HDivider from "@/components/HDivider";
@@ -23,8 +24,18 @@ export default function WorksPageClient() {
     getWorkSizeClass,
     workSort,
     categoryFilter,
+    setCategoryFilter,
     selectedYear,
   } = useWorks();
+
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const cat = searchParams.get("category");
+    if (cat && ["painting", "drawing", "sculpture", "textile"].includes(cat)) {
+      setCategoryFilter(cat as CategoryFilter);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [initialAnimDone, setInitialAnimDone] = useState(false);
 
   const [dataLoaded, setDataLoaded] = useState(false);

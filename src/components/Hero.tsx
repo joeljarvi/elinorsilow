@@ -137,20 +137,20 @@ export default function Hero() {
   );
 
   return (
-    <div className="max-w-full lg:max-w-3xl pt-4 pl-4 pr-8 pb-4 lg:p-8 relative z-10">
+    <div className="max-w-full lg:max-w-5xl pt-4 pl-4 pr-8 pb-4 lg:p-4 relative z-10">
       <p className="font-bookish text-2xl lg:text-4xl leading-snug">
         <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
         Sweden) is a Stockholm-based artist working with{" "}
         <HoverWord imageUrls={paintingUrls} alt="painting">
-          painting
+          <NavLink href="/works?category=painting">painting</NavLink>
         </HoverWord>
         ,{" "}
         <HoverWord imageUrls={sculptureUrls} alt="sculpture">
-          sculpture
+          <NavLink href="/works?category=sculpture">sculpture</NavLink>
         </HoverWord>
         , and{" "}
         <HoverWord imageUrls={textileUrls} alt="textile">
-          textile pieces
+          <NavLink href="/works?category=textile">textile pieces</NavLink>
         </HoverWord>
         . Her work explores raw emotion through material, gesture, and form.{" "}
         Discover her{" "}

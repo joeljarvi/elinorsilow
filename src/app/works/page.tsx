@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import WorksPageClient from "./WorksPageClient";
 
 export default function WorksPage() {
-  return <WorksPageClient />;
+  return (
+    <Suspense>
+      <WorksPageClient />
+    </Suspense>
+  );
 }

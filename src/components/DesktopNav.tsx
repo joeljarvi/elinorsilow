@@ -122,7 +122,7 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className=" px-2 pt-4 lg:p-4 flex flex-col lg:flex-row gap-x-30   no-hide-text  text-2xl font-bookish justify-center items-center w-full lg:items-baseline  "
+              className=" px-2 pt-4 lg:p-2 flex flex-col lg:flex-row gap-x-30   no-hide-text  text-2xl font-bookish justify-center items-center w-full lg:items-baseline  "
             >
               <NavItem
                 className="hidden lg:flex items-center justify-start lg:w-auto"
