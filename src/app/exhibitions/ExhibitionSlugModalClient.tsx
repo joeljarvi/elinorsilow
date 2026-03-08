@@ -153,7 +153,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       >
         {/* Header */}
         <div className="flex items-baseline justify-between w-full p-4 lg:p-8 ">
-          <h1 id="exhibition-modal-title" className="h1 text-xl lg:text-2xl">
+          <h1 id="exhibition-modal-title" className="h1 text-2xl">
             {exhibition.title.rendered}
           </h1>
           <div className="flex gap-x-4 items-baseline">
@@ -182,7 +182,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         </div>
 
         {/* Image grid */}
-        <div className="w-full mb-8 font-bookish text-xl lg:text-2xl">
+        <div className="w-full mb-8 font-bookish text-2xl">
           <span className="p-4 flex flex-col items-start gap-x-0 w-full ">
             {" "}
             {exhibition.acf.exhibition_type} Exhibition
@@ -198,17 +198,17 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           </span>
 
           {exhibition.acf.description && (
-            <div className="mt-8 columns-1   gap-8 w-full  whitespace-normal p-4 p text-xl lg:text-2xl font-bookish leading-snug ">
+            <div className="mt-8 columns-1   gap-8 w-full  whitespace-normal p-4 p text-2xl font-bookish leading-snug ">
               {exhibition.acf.description}
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:p-8 ">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4  px-4 lg:p-8 ">
             {images.map((img, idx) => (
               <button
                 key={img.id}
                 onClick={() => setLightboxIndex(idx)}
-                className="relative  bg-foreground/5 overflow-hidden cursor-zoom-in h-[50vh]"
+                className="relative  overflow-hidden cursor-zoom-in h-[75vh]"
                 aria-label={`Visa bild ${idx + 1}`}
               >
                 <Image
@@ -225,7 +225,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
           {works.length > 0 && (
             <div className="mb-8 mt-8 p-4">
-              <h4 className="h3  text-xl lg:text-2xl mb-2">
+              <h4 className="h3  text-2xl leading-snug ">
                 Verk i utställningen:
               </h4>
               <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-2">
@@ -233,7 +233,8 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                   <li key={index}>
                     <Button
                       variant="link"
-                      className="p-0 h-auto text-left text-xl lg:text-2xl font-bookish text-blue-600"
+                      className="p-0 h-auto text-left 
+                      text-2xl leading-snug font-bookish text-blue-600"
                       onClick={() => {
                         const slug = normalizeSlug(work);
                         setActiveWorkSlug(slug);
@@ -252,7 +253,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             </div>
           )}
         </div>
-        <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  text-xl lg:text-2xl px-4 lg:px-8">
+        <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  leading-snug max-w-sm text-2xl px-4 lg:px-8">
           {exhibition.acf.credits}
         </h3>
       </div>
@@ -295,18 +296,18 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-40 bg-background flex flex-col">
-          <div className="absolute flex justify-between items-baseline w-full px-4 py-3 shrink-0 z-">
-            <span className="text-foreground/60 text-2xl font-bookish">
+          <div className="absolute flex justify-between items-baseline w-full p-4shrink-0 z-40">
+            <span className="text-foreground/60 text-2xl font-bookish h-12 p-4 ">
               {lightboxCarousel.index + 1} / {images.length}
             </span>
             <Button
+              className=""
               size="lg"
               variant="link"
-              className="items-start aspect-square z-50"
               onClick={() => setLightboxIndex(null)}
-              aria-label="Stäng bildvisning"
+              aria-label="close"
             >
-              Close (x)
+              <Cross1Icon aria-hidden="true" />
             </Button>
           </div>
 
@@ -319,7 +320,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="pl-0 flex flex-col items-center justify-center gap-4 px-8 h-[calc(100vh-60px)]"
+                  className="pl-0 flex flex-col items-center justify-center gap-4 p-4 h-screen"
                 >
                   <div className="relative w-full h-full">
                     <Image

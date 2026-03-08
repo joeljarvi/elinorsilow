@@ -24,7 +24,7 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2  ",
         sm: "h-6 px-4 py-1 ",
-        lg: " px-4 py-2  text-xl lg:text-2xl h-12   ",
+        lg: " px-4 py-2  text-2xl h-12   ",
         linkSize: "h-6  px-0 py-0 text-sm",
         linkSizeLg: " text-lg leading-tight ",
         listSize: "h-auto px-0 py-0",

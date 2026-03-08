@@ -18,8 +18,8 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <div className=" flex items-baseline justify-between lg:justify-start gap-4 lg:gap-8 w-full px-4 pt-4 lg:px-8 font-bookish mb-4">
-      <h1 className="h1 text-xl lg:text-2xl ">Elinor Silow</h1>
-      <span className="text-xl lg:text-2xl">
+      <h1 className="h1 text-2xl ">Elinor Silow</h1>
+      <span className="text-2xl">
         {title}
         {count !== undefined && <span className="ml-1 ">({count})</span>}
       </span>

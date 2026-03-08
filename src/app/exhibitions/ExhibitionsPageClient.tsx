@@ -114,8 +114,8 @@ export default function ExhibitionsPageClient() {
                       className="max-h-screen max-w-full w-auto h-auto mx-auto block object-center"
                     />
                   )}
-                  <div className="flex flex-col justify-start text-left items-start pt-4 px-4 lg:px-8">
-                    <span className="text-foreground h3 text-xl lg:text-2xl">
+                  <div className="flex flex-col justify-start text-left items-start pt-4 px-4 ">
+                    <span className="text-foreground h3 text-2xl leading-snug">
                       {ex.title.rendered}
                     </span>
                   </div>
@@ -128,8 +128,8 @@ export default function ExhibitionsPageClient() {
 
       {/* Fixed header — same pattern as WorksPage */}
       <div className="fixed z-10 top-0 left-0 w-full p-0">
-        <div className="flex justify-between lg:justify-start items-baseline gap-2 w-full">
-          <PageHeader
+        <div className="flex justify-between lg:justify-end items-baseline gap-2 w-full">
+          {/* <PageHeader
             title="Exhibitions"
             count={filteredExhibitions.length}
             sortLabel={
@@ -148,9 +148,9 @@ export default function ExhibitionsPageClient() {
                 .filter(Boolean)
                 .join(" · ") || undefined
             }
-          />
+          /> */}
           <Button
-            className={`font-bookish hidden lg:flex ${showExhibitionsFilter ? "bg-background" : "bg-transparent"}`}
+            className={`font-bookish flex ${showExhibitionsFilter ? "bg-background" : "bg-transparent"}`}
             variant="link"
             size="lg"
             aria-expanded={showExhibitionsFilter}
@@ -170,7 +170,7 @@ export default function ExhibitionsPageClient() {
         </div>
 
         {showExhibitionsFilter && (
-          <div className="bg-background hidden lg:block">
+          <div className="bg-background">
             <ExFilter />
           </div>
         )}

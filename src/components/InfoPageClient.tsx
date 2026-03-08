@@ -22,15 +22,11 @@ export default function InfoPageClient() {
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   return (
-    <div className=" w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 pl-8 pr-16 pb-8 pt-8 ">
-      <div className="col-span-6 w-full -mx-8 -mt-8 mb-4 px-8">
-        <PageHeader title="Information" />
-      </div>
-
+    <div className=" w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-2 lg:gap-4  p-4 ">
       {/* LEFT COLUMN */}
 
       {/* About Section */}
-      <div className="mt-4 col-start-1 col-span-2 w-full flex flex-col items-start justify-start mb-16 font-bookish">
+      <div className="mt-4  w-full flex flex-col items-start justify-start mb-16 font-bookish">
         <p className="p font-bookish text-2xl text-left mb-4">
           Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based artist
           who explores raw emotion through painting, sculpture and textile.
@@ -40,7 +36,7 @@ export default function InfoPageClient() {
             Please contact
             <Link
               href="mailto:elinor.silow@gmail.com"
-              className="text-blue-600 mx-2"
+              className="underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline mx-2"
             >
               hej@elinorsilow.com
             </Link>
@@ -69,7 +65,7 @@ export default function InfoPageClient() {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
                       }}
-                      className=" text-blue-600  mr-1"
+                      className=" underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline mx-2"
                       variant="link"
                       size="linkSize"
                     >
@@ -102,7 +98,7 @@ export default function InfoPageClient() {
                     <Button
                       variant="link"
                       size="linkSize"
-                      className=" text-blue-600  mr-1"
+                      className=" underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline mx-2"
                       onClick={() => {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
@@ -165,7 +161,7 @@ export default function InfoPageClient() {
           <span className="mr-1">Hjärtat,</span>
           <p className="mr-1">Lappalainen Hjertström, L-E (2022),</p>
           <Link
-            className="text-blue-600 "
+            className="underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline mx-2 "
             href="https://kunstkritikk.se/hjartats-energi/"
           >
             "https://kunstkritikk.se/hjartats-energi/"
@@ -176,7 +172,7 @@ export default function InfoPageClient() {
           <p className="mr-1">Slöör, S (2025)</p>
           <p className="mr-1">Omkonst, </p>
           <Link
-            className="text-blue-600 "
+            className=" underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline mx-2 "
             href="https://omkonst.se/25-gameplay.shtml"
           >
             "https://omkonst.se/25-gameplay.shtml"
@@ -190,19 +186,23 @@ export default function InfoPageClient() {
         <div className="h3 ">
           <p>
             Design & code:{" "}
-            <Link className="text-blue-600" href="/">
+            <Link
+              className="underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline mx-2"
+              href="/"
+            >
               Joel Järvi
             </Link>
           </p>
           <p>
-            Font: <span className="">Director</span> from Velvetyne Type Foundry
+            Typeface: <span className="">Bookish</span> from Helsinki Type
+            Studio
           </p>
         </div>
       </div>
 
       {/* Copyright Full Width Footer inside Info */}
       <div className="col-start-1 col-span-2">
-        <p className="p">
+        <p className="p text-2xl leading-snug">
           All content on this site, including images, text, and design, is the
           intellectual property of <span className="">Elinor Silow</span> unless
           otherwise stated. No part of this website may be copied, reproduced,

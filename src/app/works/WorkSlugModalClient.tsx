@@ -130,7 +130,7 @@ export default function WorkSlugModalClient({
     <div
       {...swipeHandlers}
       className=" 
-    relative flex flex-col lg:flex-row h-screen items-start justify-start lg:items-start lg:justify-start w-full   "
+    relative flex flex-col lg:flex-row h-screen items-start justify-center lg:items-start lg:justify-start w-full p-4   "
     >
       <Carousel className=" w-full h-full  ">
         <CarouselContent>
@@ -139,13 +139,13 @@ export default function WorkSlugModalClient({
               key={idx}
               className="w-full flex justify-start lg:justify-start items-center"
             >
-              <div className="relative w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-1rem)] flex flex-col  lg:items-start justify-center items-center mx-auto">
+              <div className="relative w-full h-[calc(100vh-16rem)] lg:h-[calc(90vh-1rem)] flex flex-col  lg:items-start justify-center items-center mx-auto">
                 <Image
                   src={src}
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
                   className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-center lg:object-left-top
-                   lg:mx-0 px-4 lg:pr-16 lg:pl-8 lg:pb-4 pt-4 lg:pt-8 "
+                   lg:mx-0 px-4 lg:pr-16 lg:pl-8 lg:pb-4 pt-4 lg:pt-4 "
                 />
               </div>
             </CarouselItem>
@@ -154,8 +154,8 @@ export default function WorkSlugModalClient({
       </Carousel>
 
       <div className=" flex w-full h-full   ">
-        <div className="flex flex-col justify-start gap-y-30 h-full items-baseline text-sm   w-full mb-4 p-4 lg:p-8 ">
-          <div className="flex flex-col justify-start">
+        <div className="flex flex-col justify-start gap-y-30 h-full items-baseline text-sm   w-full mb-4 p-4 lg:p-4 ">
+          <div className="flex flex-col justify-start gap-y-0">
             <div className="flex justify-between items-center w-full font-bookish text-2xl">
               <h1 id="work-modal-title" className="h1 text-2xl ">
                 {work.title.rendered}
@@ -163,23 +163,29 @@ export default function WorkSlugModalClient({
 
               <Button
                 className="absolute top-0 right-0 aspect-square h-auto"
-                size="sm"
-                variant="ghost"
+                size="lg"
+                variant="link"
                 onClick={onClose || (() => router.push("/"))}
-                aria-label="Stäng"
+                aria-label="close"
               >
                 <Cross1Icon aria-hidden="true" />
               </Button>
             </div>
 
             {work.acf.materials && (
-              <span className="h3 text-2xl"> {work.acf.materials}</span>
+              <span className="h3 text-2xl leading-snug">
+                {" "}
+                {work.acf.materials}
+              </span>
             )}
             {work.acf.dimensions && (
-              <span className="h3 text-2xl"> {work.acf.dimensions}</span>
+              <span className="h3 text-2xl leading-snug">
+                {" "}
+                {work.acf.dimensions}
+              </span>
             )}
             {work.acf.year && (
-              <span className="h3 text-2xl"> {work.acf.year}</span>
+              <span className="h3 text-2xl leading-snug"> {work.acf.year}</span>
             )}
             {/* {work.acf.exhibition && (
               <span className="h3 text-2xl  max-w-sm hidden lg:block">

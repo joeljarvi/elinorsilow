@@ -13,6 +13,7 @@ import Staggered from "@/components/Staggered";
 import WorkModal from "@/app/works/WorkModal";
 import ProportionalWorkImage from "@/components/ProportionalWorkImage";
 import { PageHeader } from "@/components/PageHeader";
+import { AspectRatioIcon, WidthIcon } from "@radix-ui/react-icons";
 
 export default function WorksPageClient() {
   const {
@@ -71,7 +72,7 @@ export default function WorksPageClient() {
       >
         {showAsList ? (
           <div className="col-span-5 lg:p-4 min-h-screen">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4">
               {[...filteredWorks]
                 .sort((a, b) =>
                   a.title.rendered.localeCompare(b.title.rendered, "sv"),
@@ -106,9 +107,9 @@ export default function WorksPageClient() {
             getKey={(w) => w.id}
             loading={loading}
             className="
-    mt-24 min-h-screen
+    min-h-screen
     flex flex-col gap-y-4
-    lg:grid lg:grid-cols-2 
+    lg:grid lg:grid-cols-2
     gap-x-30
 
     col-span-5 lg:p-4
@@ -141,7 +142,7 @@ export default function WorksPageClient() {
                     />
                   )}
                   {showInfo && (
-                    <div className="flex flex-col justify-start h3 text-xl lg:text-2xl items-start pt-4 px-4  ">
+                    <div className="flex flex-col justify-start h3  text-2xl items-start pt-4 px-4  leading-snug ">
                       <span className=" ">{work.title.rendered}</span>
                       <span className=" whitespace-normal text-left">
                         {work.acf.materials}
@@ -160,38 +161,17 @@ export default function WorksPageClient() {
       <div
         className="
   fixed z-10
-  top-0 left-0 w-full p-0 
+  top-0 left-0 right-auto lg:right-0 lg:left-auto  w-full p-0 
 
 
 "
       >
         {/* Button */}
-        <div className=" flex justify-between lg:justify-start  items-baseline gap-2  w-full">
-          <PageHeader
-            title="Works"
-            count={filteredWorks.length}
-            sortLabel={
-              workSort === "title"
-                ? "a–ö"
-                : workSort === "year-oldest"
-                  ? "Oldest"
-                  : "Latest"
-            }
-            onSortClick={handleOpenWorksFilter}
-            filterLabel={
-              [
-                categoryFilter !== "all"
-                  ? categoryFilter.charAt(0).toUpperCase() +
-                    categoryFilter.slice(1)
-                  : null,
-                selectedYear ? String(selectedYear) : null,
-              ]
-                .filter(Boolean)
-                .join(" · ") || undefined
-            }
-          />
+        <div
+          className={`flex   ${showWorksFilter ? "bg-background w-full justify-start" : "bg-transparent"} justify-between lg:justify-end  items-baseline gap-2  w-full`}
+        >
           <Button
-            className={`font-bookish hidden lg:flex ${showWorksFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
+            className={`flex font-bookish px-4   ${showWorksFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
             variant="link"
             size="lg"
             aria-expanded={showWorksFilter}
@@ -223,7 +203,7 @@ export default function WorksPageClient() {
 
         {/* Panel */}
         {showWorksFilter && (
-          <div className="bg-background hidden lg:block   ">
+          <div className="bg-background">
             <WorksFilter />
           </div>
         )}
