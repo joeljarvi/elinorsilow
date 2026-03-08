@@ -137,7 +137,7 @@ export default function Hero() {
   );
 
   return (
-    <div className="max-w-full lg:max-w-3xl p-4 lg:p-8 relative z-10">
+    <div className="max-w-full lg:max-w-3xl pt-4 pl-4 pr-8 pb-4 lg:p-8 relative z-10">
       <p className="font-bookish text-2xl lg:text-4xl leading-snug">
         <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
         Sweden) is a Stockholm-based artist working with{" "}

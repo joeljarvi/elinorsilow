@@ -145,7 +145,7 @@ export default function WorkSlugModalClient({
                   alt={`${work.title.rendered} - ${idx + 1}`}
                   fill
                   className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-center lg:object-left-top
-                   lg:mx-0 px-4 lg:pr-16 lg:pl-8 lg:pb-4 pt-4 lg:pt-4 "
+                   lg:mx-0  lg:pr-16 lg:pl-8 lg:pb-4 pt-4 lg:pt-4 "
                 />
               </div>
             </CarouselItem>
@@ -154,7 +154,7 @@ export default function WorkSlugModalClient({
       </Carousel>
 
       <div className=" flex w-full h-full   ">
-        <div className="flex flex-col justify-start gap-y-30 h-full items-baseline text-sm   w-full mb-4 p-4 lg:p-4 ">
+        <div className="flex flex-col justify-start gap-y-30 h-full items-baseline text-sm   w-full mb-4 pt-4 lg:p-4 ">
           <div className="flex flex-col justify-start gap-y-0">
             <div className="flex justify-between items-center w-full font-bookish text-2xl">
               <h1 id="work-modal-title" className="h1 text-2xl ">

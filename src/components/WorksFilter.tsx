@@ -114,7 +114,7 @@ export default function WorksFilter() {
         <Button
           variant="default"
           size="lg"
-          className="col-span-1 h-12 w-full"
+          className="col-span-1 h-12 w-full border-foreground border-r"
           onClick={async () => {
             await applyWorksFilters(
               stagedWorkSort,

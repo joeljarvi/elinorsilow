@@ -17,6 +17,7 @@ import useSwipe from "@/hooks/use-swipe";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { Copy } from "lucide-react";
 
 type Props = {
   slug: string;
@@ -152,14 +153,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         className="relative gap-0  z-30 w-full scroll-bar-hide bg-background shadow justify-start items-start  flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-baseline justify-between w-full p-4 lg:p-8 ">
+        <div className="flex items-baseline justify-between w-full p-4  ">
           <h1 id="exhibition-modal-title" className="h1 text-2xl">
             {exhibition.title.rendered}
           </h1>
           <div className="flex gap-x-4 items-baseline">
             <Button
-              className="hidden lg:flex"
-              variant="link"
+              className="hidden lg:flex aspect-square"
+              variant="ghost"
               size="lg"
               aria-label="Copy exhibition link"
               onClick={() => {
@@ -167,7 +168,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                 navigator.clipboard.writeText(url);
               }}
             >
-              Share
+              <Copy className="inline-block size-6 ml-1" />
             </Button>
             <Button
               className=" aspect-square h-auto"
@@ -198,12 +199,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           </span>
 
           {exhibition.acf.description && (
-            <div className="mt-8 columns-1   gap-8 w-full  whitespace-normal p-4 p text-2xl font-bookish leading-snug ">
+            <div className="mt-8 columns-2 max-w-5xl   gap-4 w-full  whitespace-normal p-4 p text-2xl font-bookish leading-snug ">
               {exhibition.acf.description}
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4  px-4 lg:p-8 ">
+          <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4   ">
             {images.map((img, idx) => (
               <button
                 key={img.id}
@@ -215,7 +216,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                   src={img.url}
                   alt={img.alt || img.desc || `Bild ${idx + 1}`}
                   fill
-                  className="object-contain "
+                  className="object-contain lg:object-left-top "
                 />
               </button>
             ))}
@@ -253,7 +254,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             </div>
           )}
         </div>
-        <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  leading-snug max-w-sm text-2xl px-4 lg:px-8">
+        <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1  gap-8 w-full h3  leading-snug max-w-5xl lg:columns-1 text-2xl px-4 ">
           {exhibition.acf.credits}
         </h3>
       </div>

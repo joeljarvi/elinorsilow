@@ -87,7 +87,7 @@ export default function ExhibitionsPageClient() {
             items={filteredExhibitions}
             getKey={(ex) => ex.id}
             loading={loading}
-            className="w-full min-h-screen flex flex-col gap-y-24 lg:grid lg:grid-cols-2 lg:gap-y-30 lg:gap-x-4 p-4 lg:p-8"
+            className="w-full min-h-screen flex flex-col gap-y-24 lg:grid lg:grid-cols-1 lg:gap-y-30 lg:gap-x-4 p-4 "
             renderItem={(ex: Exhibition) => (
               <motion.div key={ex.id} className="w-full lg:col-span-2">
                 <button

@@ -14,6 +14,7 @@ import NavSearch from "./NavSearch";
 import WorksFilter from "./WorksFilter";
 import ExFilter from "./ExFilter";
 import { Work, Exhibition } from "../../lib/sanity";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 function Caret({ open }: { open: boolean }) {
   return (
@@ -70,7 +71,7 @@ export default function MobileNavOverlay() {
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <nav className="flex flex-col px-2 pt-4 pb-0 text-2xl font-bookish">
+            <nav className="flex flex-col px-0 pt-4 pb-0 text-2xl font-bookish">
               <div className="flex items-center  mb-8 ">
                 <Button
                   variant="link"
@@ -411,7 +412,7 @@ export default function MobileNavOverlay() {
                   setOpenSearch(true);
                 }}
               >
-                Search
+                Search{" "}
               </Button>
               <HideTextToggle className="justify-start px-4 border-b border-foreground" />
               <DarkModeToggle className="justify-start  px-4" />
