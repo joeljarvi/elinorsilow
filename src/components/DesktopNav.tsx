@@ -77,7 +77,7 @@ export default function DesktopNav() {
   }, []);
 
   useEffect(() => {
-    if (window.innerWidth >= 1024) setOpen(true);
+    if (window.innerWidth >= 798) setOpen(true);
     setScrollHidden(false);
     lastScrollY.current = 0;
   }, [pathname, setOpen]);
@@ -134,7 +134,7 @@ export default function DesktopNav() {
               <span className="hidden lg:flex flex-wrap items-baseline gap-x-0 w-full">
                 <NavItem
                   href="/works"
-                  className="px-2"
+                  className="pl-2 pr-0.5"
                   active={pathname.startsWith("/works")}
                 >
                   Works
@@ -142,7 +142,7 @@ export default function DesktopNav() {
                 ,
                 <NavItem
                   href="/exhibitions"
-                  className="px-2"
+                  className="pl-2 pr-0.5"
                   active={pathname.startsWith("/exhibitions")}
                 >
                   Exhibitions
@@ -150,20 +150,25 @@ export default function DesktopNav() {
                 ,
                 <NavItem
                   href="/info"
-                  className="px-2"
+                  className="pl-2 pr-0.5"
                   active={pathname.startsWith("/info")}
                 >
                   Info
                 </NavItem>
                 ,
-                <Button asChild variant="link" size="lg" className="px-2">
+                <Button
+                  asChild
+                  variant="link"
+                  size="lg"
+                  className="pl-2 pr-0.5"
+                >
                   <Link href="/">Contact</Link>
                 </Button>
                 ,
                 <Button
                   variant="link"
                   size="lg"
-                  className="px-2"
+                  className="pl-2 pr-0.5"
                   onClick={() => setOpenSearch(true)}
                 >
                   Search

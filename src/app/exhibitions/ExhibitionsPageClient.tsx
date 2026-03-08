@@ -1,20 +1,17 @@
 "use client";
 
 import Staggered from "@/components/Staggered";
-import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
 import { useState } from "react";
-import { Work, Exhibition } from "../../../lib/sanity";
+import { Exhibition } from "../../../lib/sanity";
 import { useUI } from "@/context/UIContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import WorksFilter from "@/components/WorksFilter";
 import ExFilter from "@/components/ExFilter";
-import { ExhibitionsCarousel } from "@/components/ExhibitionsCarousel";
 import { useEffect } from "react";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import { motion } from "framer-motion";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function ExhibitionsPageClient() {
   const [initialAnimDone, setInitialAnimDone] = useState(false);
@@ -25,15 +22,13 @@ export default function ExhibitionsPageClient() {
     setActiveExhibitionSlug,
     activeExhibitionSlug,
     exLoading,
+    exhibitionSort,
+    selectedType,
+    debouncedSelectedYear,
   } = useExhibitions();
 
-  const {
-    showInfo,
-    open,
-    setOpen,
-    showExhibitionsFilter,
-    handleOpenExhibitionsFilter,
-  } = useUI();
+  const { setOpen, showExhibitionsFilter, handleOpenExhibitionsFilter } =
+    useUI();
 
   useEffect(() => {
     if (!exLoading) {
@@ -45,7 +40,7 @@ export default function ExhibitionsPageClient() {
     if (dataLoaded) {
       const t = setTimeout(() => {
         setInitialAnimDone(true);
-      }, 600); // length of your intro animation
+      }, 600);
 
       return () => clearTimeout(t);
     }
@@ -54,10 +49,10 @@ export default function ExhibitionsPageClient() {
   const loading = !initialAnimDone || !dataLoaded;
 
   return (
-    <section className="flex flex-col items-center justify-center lg:items-start lg:justify-start w-full">
+    <section className="relative w-full mt-24 lg:mt-0">
       <div className="relative w-full">
         {showAsList ? (
-          <div className="w-full min-h-screen p-8 lg:p-4">
+          <div className="w-full min-h-screen p-4 lg:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8">
               {[...filteredExhibitions]
                 .sort((a, b) =>
@@ -92,7 +87,7 @@ export default function ExhibitionsPageClient() {
             items={filteredExhibitions}
             getKey={(ex) => ex.id}
             loading={loading}
-            className="w-full min-h-screen flex flex-col gap-4 lg:grid lg:grid-cols-2 gap-y-30 lg:gap-x-4 p-8 lg:p-4"
+            className="w-full min-h-screen flex flex-col gap-y-24 lg:grid lg:grid-cols-2 lg:gap-y-30 lg:gap-x-4 p-4 lg:p-8"
             renderItem={(ex: Exhibition) => (
               <motion.div key={ex.id} className="w-full lg:col-span-2">
                 <button
@@ -109,18 +104,18 @@ export default function ExhibitionsPageClient() {
                   aria-label={`Show exhibition: ${ex.title.rendered}`}
                 >
                   {/* Image box */}
-                  <div className="relative w-full aspect-[3/4] lg:aspect-square  ">
-                    {ex.acf.image_1 && (
-                      <Image
-                        src={ex.acf.image_1.url}
-                        alt={ex.title.rendered}
-                        fill
-                        className="object-cover  "
-                      />
-                    )}
-                  </div>
-                  <div className="absolute top-0 left-0 flex flex-col justify-start text-2xl text-left lg:text-base items-start p-4 lg:p-8 w-full ">
-                    <span className="text-foreground h3 text-2xl">
+                  {ex.acf.image_1 && (
+                    <Image
+                      src={ex.acf.image_1.url}
+                      alt={ex.title.rendered}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      className="max-h-screen max-w-full w-auto h-auto mx-auto block object-center"
+                    />
+                  )}
+                  <div className="flex flex-col justify-start text-left items-start pt-4 px-4 lg:px-8">
+                    <span className="text-foreground h3 text-xl lg:text-2xl">
                       {ex.title.rendered}
                     </span>
                   </div>
@@ -129,48 +124,56 @@ export default function ExhibitionsPageClient() {
             )}
           />
         )}
-        <div
-          className="
-fixed z-20
-  bottom-0 left-0 w-full
-p-8
-  lg:bottom-auto
-  lg:left-auto
-  lg:right-8
-  lg:top-[0vh]
-  lg:w-1/4
-"
-        >
-          {/* Button */}
-          <div className="hidden lg:flex gap-2">
-            <Button
-              className={`font-bookish ${showExhibitionsFilter ? "bg-background w-full justify-start" : "bg-transparent"}`}
-              variant="link"
-              size="lg"
-              aria-expanded={showExhibitionsFilter}
-              onClick={() => handleOpenExhibitionsFilter()}
-            >
-              Filter
-            </Button>
-            <Button
-              className="font-bookish bg-transparent"
-              variant="link"
-              size="lg"
-              aria-pressed={showAsList}
-              onClick={() => setShowAsList((prev) => !prev)}
-            >
-              {showAsList ? "Grid" : "List"}
-            </Button>
-          </div>
+      </div>
 
-          {/* Panel */}
-          {showExhibitionsFilter && (
-            <div className="bg-background ">
-              <ExFilter />
-            </div>
-          )}
+      {/* Fixed header — same pattern as WorksPage */}
+      <div className="fixed z-10 top-0 left-0 w-full p-0">
+        <div className="flex justify-between lg:justify-start items-baseline gap-2 w-full">
+          <PageHeader
+            title="Exhibitions"
+            count={filteredExhibitions.length}
+            sortLabel={
+              exhibitionSort === "title"
+                ? "a–ö"
+                : exhibitionSort === "type"
+                  ? "Type"
+                  : "Latest"
+            }
+            onSortClick={handleOpenExhibitionsFilter}
+            filterLabel={
+              [
+                selectedType !== "all" ? selectedType : null,
+                debouncedSelectedYear !== "all" ? debouncedSelectedYear : null,
+              ]
+                .filter(Boolean)
+                .join(" · ") || undefined
+            }
+          />
+          <Button
+            className={`font-bookish hidden lg:flex ${showExhibitionsFilter ? "bg-background" : "bg-transparent"}`}
+            variant="link"
+            size="lg"
+            aria-expanded={showExhibitionsFilter}
+            onClick={() => handleOpenExhibitionsFilter()}
+          >
+            Filter
+          </Button>
+          <Button
+            className="font-bookish bg-transparent hidden lg:flex"
+            variant="link"
+            size="lg"
+            aria-pressed={showAsList}
+            onClick={() => setShowAsList((prev) => !prev)}
+          >
+            {showAsList ? "Grid" : "List"}
+          </Button>
         </div>
-        {/* Exhibitions */}
+
+        {showExhibitionsFilter && (
+          <div className="bg-background hidden lg:block">
+            <ExFilter />
+          </div>
+        )}
       </div>
 
       {activeExhibitionSlug && (

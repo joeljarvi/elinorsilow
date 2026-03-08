@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useState,
-
   ReactNode,
   Dispatch,
 } from "react";
@@ -51,7 +50,7 @@ const UIContext = createContext<UIContextValue | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true);
-  const [openDesktopNav, setOpenDesktopNav] = useState(false);
+  const [openDesktopNav, setOpenDesktopNav] = useState(true);
 
   const [showWorksMenu, setShowWorksMenu] = useState(false);
   const [showExhibitionsMenu, setShowExhibitionsMenu] = useState(false);

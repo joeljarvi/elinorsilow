@@ -29,130 +29,6 @@ type Props = {
   setView?: (v: "works" | "exhibitions" | "info") => void;
 };
 
-type BottomSection = "works" | "exhibitions" | "info" | "bottom";
-
-function BottomLinkBar() {
-  const [activeSection, setActiveSection] = useState<BottomSection>("works");
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const atBottom =
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 100;
-
-      if (atBottom) {
-        setActiveSection("bottom");
-        return;
-      }
-
-      const exEl = document.getElementById("home-exhibitions");
-      const infoEl = document.getElementById("home-info");
-      const mid = window.scrollY + window.innerHeight / 2;
-
-      if (infoEl && mid >= infoEl.offsetTop) {
-        setActiveSection("info");
-      } else if (exEl && mid >= exEl.offsetTop) {
-        setActiveSection("exhibitions");
-      } else {
-        setActiveSection("works");
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <div className="fixed bottom-0 w-full lg:hidden z-20 shadow-[0px_0px_10px_0px_rgba(0,0,0,0.25)] bg-background p-4">
-      <AnimatePresence mode="wait">
-        {activeSection === "works" && (
-          <motion.div
-            key="works"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Button
-              className="w-full uppercase justify-start"
-              variant="ghost"
-              size="linkSizeLg"
-              asChild
-            >
-              <Link href="/works" className="flex items-baseline gap-4 w-full">
-                See all works
-              </Link>
-            </Button>
-          </motion.div>
-        )}
-
-        {activeSection === "exhibitions" && (
-          <motion.div
-            key="exhibitions"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Button
-              className="w-full uppercase justify-start"
-              variant="ghost"
-              size="linkSizeLg"
-              asChild
-            >
-              <Link
-                href="/exhibitions"
-                className="flex items-center gap-4 w-full"
-              >
-                See all Exhibitions
-              </Link>
-            </Button>
-          </motion.div>
-        )}
-
-        {activeSection === "info" && (
-          <motion.div
-            key="info"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Button
-              className="flex items-center justify-between gap-4 w-full"
-              variant="ghost"
-              size="linkSizeLg"
-              asChild
-            >
-              <Link href="/info">About Elinor</Link>
-            </Button>
-          </motion.div>
-        )}
-
-        {activeSection === "bottom" && (
-          <motion.div
-            key="bottom"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Button
-              className="w-full uppercase justify-start"
-              variant="ghost"
-              size="linkSizeLg"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              Back to top <span>↑</span>
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 function UnderConstructionOverlay() {
   const [open, setOpen] = useState(true);
 
@@ -196,50 +72,18 @@ function MainContent({}: Props) {
     <>
       <section
         className=" mx-auto
-      flex flex-col items-center justify-start w-full mt-0   "
+      flex flex-col items-start justify-start w-full min-h-screen  "
       >
-        <div
-          className="
-  flex flex-col
-
-  w-full
-"
-        >
-          <div id="home-info" className="sr-only">
-            <Link
-              onClick={() => {}}
-              className="items-baseline  no-hide-text  text-2xl font-bookish  whitespace-normal col-start-1 col-span-2 
-   px-0 py
-"
-              href="/"
-            >
-              <strong className="font-normal   mr-2">Elinor Silow</strong>
-              (b. 1993) in Malmö, Sweden, is a Stockholm based artist who
-              explores raw emotion through painting, sculpture and textile.
-            </Link>
-
-            <p className=" mt-4   col-start-3 col-span-2 mb-8 no-hide-text  text-2xl font-bookish">
-              Please contact
-              <Link
-                href="mailto:elinor.silow@gmail.com"
-                className="text-blue-700 mx-2 "
-              >
-                hej@elinorsilow.com
-              </Link>
-              for collaborations and inquires.
-            </p>
-          </div>
-
-          <Button
-            className="col-start-1 w-min hidden  "
-            variant="link"
-            size="lg"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            Back to top
-          </Button>
-        </div>
+        <Hero />
       </section>
+      <Button
+        className=" w-min hidden  "
+        variant="link"
+        size="lg"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        Back to top
+      </Button>
 
       <UnderConstructionOverlay />
 

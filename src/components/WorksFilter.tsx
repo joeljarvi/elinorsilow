@@ -114,7 +114,7 @@ export default function WorksFilter() {
         <Button
           variant="default"
           size="lg"
-          className="col-span-1 h-16 w-full"
+          className="col-span-1 h-12 w-full"
           onClick={async () => {
             await applyWorksFilters(
               stagedWorkSort,
@@ -131,7 +131,7 @@ export default function WorksFilter() {
         <Button
           variant="secondary"
           size="lg"
-          className="col-span-1 h-16 justify-center  w-full"
+          className="col-span-1 h-12 justify-center  w-full"
           onClick={async () => {
             await clearWorksFilters();
             handleOpenWorksFilter();

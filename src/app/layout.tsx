@@ -152,6 +152,8 @@ export default function RootLayout({
                       <BodyClassManager />
                       <NavWrapper />
 
+                      <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
+                      <div className="fixed bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-background/0 z-50 pointer-events-none" />
                       <CarouselProvider>
                         <NavSpacer />
                         {children} {modal}

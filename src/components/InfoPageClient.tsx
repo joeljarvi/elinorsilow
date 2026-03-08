@@ -6,6 +6,7 @@ import Staggered from "@/components/Staggered";
 import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function InfoPageClient() {
   const {
@@ -22,6 +23,10 @@ export default function InfoPageClient() {
 
   return (
     <div className=" w-full flex flex-col items-start justify-start lg:grid lg:grid-cols-6 lg:gap-4 pl-8 pr-16 pb-8 pt-8 ">
+      <div className="col-span-6 w-full -mx-8 -mt-8 mb-4 px-8">
+        <PageHeader title="Information" />
+      </div>
+
       {/* LEFT COLUMN */}
 
       {/* About Section */}

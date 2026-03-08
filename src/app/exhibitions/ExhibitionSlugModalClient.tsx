@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useWorks, normalizeSlug } from "@/context/WorksContext";
+import WorkModal from "@/app/works/WorkModal";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 import { Exhibition } from "../../../lib/sanity";
 import useSwipe from "@/hooks/use-swipe";
@@ -26,7 +27,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const router = useRouter();
   const { filteredExhibitions, getExhibitionBySlug: getFromContext } =
     useExhibitions();
-  const { setActiveWorkSlug } = useWorks();
+  const { setActiveWorkSlug, activeWorkSlug } = useWorks();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
@@ -148,11 +149,11 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       <div
         id="modal-top"
         {...swipeHandlers}
-        className="relative gap-0 px-4 pb-4 z-30 w-full scroll-bar-hide bg-background shadow justify-start  flex flex-col"
+        className="relative gap-0  z-30 w-full scroll-bar-hide bg-background shadow justify-start items-start  flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-baseline justify-between w-full px-8 pb-8 lg:px-4 lg:pb-4">
-          <h1 id="exhibition-modal-title" className="h1 text-2xl">
+        <div className="flex items-baseline justify-between w-full p-4 lg:p-8 ">
+          <h1 id="exhibition-modal-title" className="h1 text-xl lg:text-2xl">
             {exhibition.title.rendered}
           </h1>
           <div className="flex gap-x-4 items-baseline">
@@ -169,31 +170,52 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               Share
             </Button>
             <Button
-              className="aspect-square h-auto"
+              className=" aspect-square h-auto"
               size="lg"
               variant="link"
               onClick={onClose || (() => router.push("/"))}
+              aria-label="close"
             >
-              Close (x)
+              <Cross1Icon aria-hidden="true" />
             </Button>
           </div>
         </div>
 
         {/* Image grid */}
-        <div className="w-full mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-8">
+        <div className="w-full mb-8 font-bookish text-xl lg:text-2xl">
+          <span className="p-4 flex flex-col items-start gap-x-0 w-full ">
+            {" "}
+            {exhibition.acf.exhibition_type} Exhibition
+            {exhibition.acf.location && (
+              <span className=" max-w-xl shrink-0  ">
+                {exhibition.acf.location},
+              </span>
+            )}
+            <span className=" max-w-xl shrink-0 ">{exhibition.acf.city}</span>
+            <span className=" max-w-xl shrink-0 pb-4">
+              {exhibition.acf.year}
+            </span>
+          </span>
+
+          {exhibition.acf.description && (
+            <div className="mt-8 columns-1   gap-8 w-full  whitespace-normal p-4 p text-xl lg:text-2xl font-bookish leading-snug ">
+              {exhibition.acf.description}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:p-8 ">
             {images.map((img, idx) => (
               <button
                 key={img.id}
                 onClick={() => setLightboxIndex(idx)}
-                className="relative aspect-video bg-foreground/5 overflow-hidden cursor-zoom-in"
+                className="relative  bg-foreground/5 overflow-hidden cursor-zoom-in h-[50vh]"
                 aria-label={`Visa bild ${idx + 1}`}
               >
                 <Image
                   src={img.url}
                   alt={img.alt || img.desc || `Bild ${idx + 1}`}
                   fill
-                  className="object-cover hover:scale-105 transition-transform duration-300"
+                  className="object-contain "
                 />
               </button>
             ))}
@@ -201,79 +223,73 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
           {/* Description — spans full width, split into 2 columns */}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {exhibition.acf.description && (
-              <div className="mt-8 columns-1   gap-8 w-full h3 whitespace-normal p-4 p text-2xl font-bookish">
-                {exhibition.acf.description}
-              </div>
-            )}
-
-            {works.length > 0 && (
-              <div className="mb-8 mt-8 p-4">
-                <h4 className="h3  text-2xl mb-2">Verk i utställningen:</h4>
-                <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-2">
-                  {works.map((work: any, index: number) => (
-                    <li key={index}>
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto text-left text-2xl font-bookish text-blue-600"
-                        onClick={() => {
-                          const slug = normalizeSlug(work);
-                          setActiveWorkSlug(slug);
-                          window.history.pushState(
-                            null,
-                            "",
-                            `/works?work=${slug}`,
-                          );
-                        }}
-                      >
-                        {work}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  text-2xl p-4">
-            {exhibition.acf.credits}
-          </h3>
+          {works.length > 0 && (
+            <div className="mb-8 mt-8 p-4">
+              <h4 className="h3  text-xl lg:text-2xl mb-2">
+                Verk i utställningen:
+              </h4>
+              <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-2">
+                {works.map((work: any, index: number) => (
+                  <li key={index}>
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto text-left text-xl lg:text-2xl font-bookish text-blue-600"
+                      onClick={() => {
+                        const slug = normalizeSlug(work);
+                        setActiveWorkSlug(slug);
+                        window.history.pushState(
+                          null,
+                          "",
+                          `/works?work=${slug}`,
+                        );
+                      }}
+                    >
+                      {work}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
+        <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1 lg:columns-2 gap-8 w-full h3  text-xl lg:text-2xl px-4 lg:px-8">
+          {exhibition.acf.credits}
+        </h3>
+      </div>
 
-        <div className="pb-0 flex gap-y-4 mt-4 w-full justify-between items-center">
-          <div className="flex">
-            <Button size="lg" variant="link" onClick={onClose}>
-              Back (x)
-            </Button>
-            <Button
-              size="lg"
-              variant="link"
-              onClick={goPrev}
-              disabled={currentIndex <= 0}
-            >
-              Prev
-            </Button>
-            <Button
-              size="lg"
-              variant="link"
-              onClick={goNext}
-              disabled={
-                !filteredExhibitions ||
-                currentIndex >= filteredExhibitions.length - 1
-              }
-            >
-              Next
-            </Button>
-          </div>
+      <div className="pb-0 flex gap-y-4 mt-4 w-full justify-between items-center">
+        <div className="flex">
+          <Button size="lg" variant="link" onClick={onClose}>
+            Back (x)
+          </Button>
           <Button
             size="lg"
-            className="hidden lg:flex"
             variant="link"
-            onClick={scrollToTop}
+            onClick={goPrev}
+            disabled={currentIndex <= 0}
           >
-            Back to top ↑
+            Prev
+          </Button>
+          <Button
+            size="lg"
+            variant="link"
+            onClick={goNext}
+            disabled={
+              !filteredExhibitions ||
+              currentIndex >= filteredExhibitions.length - 1
+            }
+          >
+            Next
           </Button>
         </div>
+        <Button
+          size="lg"
+          className="hidden lg:flex"
+          variant="link"
+          onClick={scrollToTop}
+        >
+          Back to top ↑
+        </Button>
       </div>
 
       {/* Lightbox */}
@@ -323,6 +339,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             </CarouselContent>
           </Carousel>
         </div>
+      )}
+
+      {activeWorkSlug && (
+        <WorkModal
+          slug={activeWorkSlug}
+          onClose={() => setActiveWorkSlug(null)}
+        />
       )}
     </>
   );

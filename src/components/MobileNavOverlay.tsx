@@ -9,9 +9,8 @@ import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { Button } from "./ui/button";
 import { DarkModeToggle } from "./DarkModeToggle";
-import { buildSearchIndex } from "@/lib/searchIndex";
-import { useSiteSearch } from "@/lib/useSiteSearch";
 import { HideTextToggle } from "./HideTextToggle";
+import NavSearch from "./NavSearch";
 import WorksFilter from "./WorksFilter";
 import ExFilter from "./ExFilter";
 import { Work, Exhibition } from "../../lib/sanity";
@@ -41,13 +40,10 @@ export default function MobileNavOverlay() {
     setProportionalImages,
   } = useUI();
 
-  const { allWorks, filteredWorks, setActiveWorkSlug } = useWorks();
-  const { exhibitions, filteredExhibitions, setActiveExhibitionSlug } =
-    useExhibitions();
+  const { filteredWorks, setActiveWorkSlug } = useWorks();
+  const { filteredExhibitions, setActiveExhibitionSlug } = useExhibitions();
 
-  const searchIndex = buildSearchIndex({ works: allWorks, exhibitions });
-  const { query, setQuery, results } = useSiteSearch(searchIndex);
-
+  const [openSearch, setOpenSearch] = useState(false);
   const [worksExpanded, setWorksExpanded] = useState(false);
   const [exhibitionsExpanded, setExhibitionsExpanded] = useState(false);
   const [worksListOpen, setWorksListOpen] = useState(false);
@@ -55,7 +51,7 @@ export default function MobileNavOverlay() {
   const [infoExpanded, setInfoExpanded] = useState(false);
 
   useEffect(() => {
-    setOpen(false);
+    if (window.innerWidth < 1024) setOpen(false);
     setWorksExpanded(false);
     setExhibitionsExpanded(false);
     setInfoExpanded(false);
@@ -63,6 +59,7 @@ export default function MobileNavOverlay() {
 
   return (
     <>
+      <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <AnimatePresence>
         {open && (
           <motion.div
@@ -85,52 +82,6 @@ export default function MobileNavOverlay() {
                     Elinor Silow
                   </Link>
                 </Button>
-              </div>
-
-              {/* Inline search */}
-              <div className="px-4 mb-8">
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full outline-none bg-transparent text-2xl font-bookish border-b  border-foreground py-2 max-w-sm"
-                />
-                {query && results.length > 0 && (
-                  <div className="flex flex-col mt-1">
-                    {results.slice(0, 8).map((item) => (
-                      <Button
-                        key={item.id}
-                        variant="ghost"
-                        size="lg"
-                        className="justify-start font-bookish"
-                        onClick={() => {
-                          if (item.type === "work") {
-                            setActiveWorkSlug(item.slug);
-                            window.history.pushState(
-                              null,
-                              "",
-                              `/works?work=${item.slug}`,
-                            );
-                          } else {
-                            setActiveExhibitionSlug(item.slug);
-                            window.history.pushState(
-                              null,
-                              "",
-                              `/exhibitions?exhibition=${item.slug}`,
-                            );
-                          }
-                          setQuery("");
-                          setOpen(false);
-                        }}
-                      >
-                        <span className="opacity-50 mr-4 text-xs tracking-wider">
-                          {item.type === "work" ? "Work" : "Exhibition"}
-                        </span>
-                        {item.title}
-                      </Button>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Works row */}
@@ -451,6 +402,17 @@ export default function MobileNavOverlay() {
                 )}
               </AnimatePresence>
 
+              <Button
+                variant="link"
+                size="lg"
+                className="justify-start border-b border-foreground"
+                onClick={() => {
+                  setOpen(false);
+                  setOpenSearch(true);
+                }}
+              >
+                Search
+              </Button>
               <HideTextToggle className="justify-start px-4 border-b border-foreground" />
               <DarkModeToggle className="justify-start  px-4" />
             </nav>
