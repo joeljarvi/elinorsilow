@@ -51,8 +51,6 @@ export default function WorksPageClient() {
   const [col2Min, setCol2Min] = useState(false);
   const [col3Min, setCol3Min] = useState(false);
 
-  const [headerHidden, setHeaderHidden] = useState(false);
-  const lastScrollY = useRef(0);
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
   const col3Ref = useRef<HTMLDivElement>(null);
@@ -91,35 +89,6 @@ export default function WorksPageClient() {
   }, [dataLoaded]);
 
   const loading = !initialAnimDone || !dataLoaded;
-
-  useEffect(() => {
-    function handleScroll(scrollY: number) {
-      const diff = scrollY - lastScrollY.current;
-      if (scrollY < 40) setHeaderHidden(false);
-      else if (diff > 8) setHeaderHidden(true);
-      else if (diff < -8) setHeaderHidden(false);
-      lastScrollY.current = scrollY;
-    }
-
-    const onWindowScroll = () => handleScroll(window.scrollY);
-    const onCol1Scroll = () => handleScroll(col1Ref.current?.scrollTop ?? 0);
-    const onCol2Scroll = () => handleScroll(col2Ref.current?.scrollTop ?? 0);
-    const onCol3Scroll = () => handleScroll(col3Ref.current?.scrollTop ?? 0);
-
-    window.addEventListener("scroll", onWindowScroll, { passive: true });
-    const c1 = col1Ref.current;
-    const c2 = col2Ref.current;
-    const c3 = col3Ref.current;
-    c1?.addEventListener("scroll", onCol1Scroll, { passive: true });
-    c2?.addEventListener("scroll", onCol2Scroll, { passive: true });
-    c3?.addEventListener("scroll", onCol3Scroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onWindowScroll);
-      c1?.removeEventListener("scroll", onCol1Scroll);
-      c2?.removeEventListener("scroll", onCol2Scroll);
-      c3?.removeEventListener("scroll", onCol3Scroll);
-    };
-  }, []);
 
   function filterAndSort(filter: CategoryFilter, sort: WorkSort): Work[] {
     const filtered =
@@ -176,11 +145,11 @@ export default function WorksPageClient() {
   }
 
   return (
-    <section className="relative w-full mt-0 lg:mt-12">
+    <section className="relative w-full mt-0">
       {/* Mobile: single scroll */}
       <div className="lg:hidden relative z-40 bg-transparent">
         {/* Mobile sticky header */}
-        <div className="sticky top-0 z-50 bg-transparent px-4 pt-2 flex items-stretch font-bookish text-sm w-full gap-x-2">
+        <div className="sticky top-0 z-50 bg-transparent px-4 py-3 flex items-stretch font-bookish text-sm w-full gap-x-2">
           <div className="flex items-center gap-x-2 w-1/2">
             <Select
               value={workSort}
@@ -270,9 +239,7 @@ export default function WorksPageClient() {
             loading={loading}
             className="min-h-screen flex flex-col gap-y-0"
             renderItem={(work: Work) => (
-              <div className="">
-                {renderWorkItem(work)}
-              </div>
+              <div className="">{renderWorkItem(work)}</div>
             )}
           />
         )}
@@ -283,163 +250,297 @@ export default function WorksPageClient() {
         className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
         style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
       >
+        {/* Global controls + restore pills */}
+        <div className="absolute right-2 top-2 flex items-center gap-x-2 z-50">
+          {col1Min && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCol1Min(false)}
+              className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm"
+            >
+              +{" "}
+              {col1Filter === "all"
+                ? "All"
+                : col1Filter.charAt(0).toUpperCase() + col1Filter.slice(1)}
+            </Button>
+          )}
+          {col2Min && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCol2Min(false)}
+              className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm"
+            >
+              +{" "}
+              {col2Filter === "all"
+                ? "All"
+                : col2Filter.charAt(0).toUpperCase() + col2Filter.slice(1)}
+            </Button>
+          )}
+          {col3Min && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCol3Min(false)}
+              className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm"
+            >
+              +{" "}
+              {col3Filter === "all"
+                ? "All"
+                : col3Filter.charAt(0).toUpperCase() + col3Filter.slice(1)}
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setProportionalImages(!proportionalImages)}
+            className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm whitespace-nowrap"
+          >
+            {proportionalImages ? "Full width" : "Proportional"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAsList(!showAsList)}
+            className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm"
+          >
+            {showAsList ? "Grid" : "List"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowInfo(!showInfo)}
+            className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "line-through decoration-1" : ""}`}
+            aria-label={showInfo ? "Hide text" : "Show text"}
+          >
+            T
+          </Button>
+        </div>
+
         {!col1Min && (
-          <div ref={col1Ref} className="flex-1 overflow-y-auto h-full border-r border-border">
+          <div
+            ref={col1Ref}
+            className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col"
+          >
+            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
+              <Select
+                value={col1Filter}
+                onValueChange={(v) => setCol1Filter(v as CategoryFilter)}
+              >
+                <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="painting">Painting</SelectItem>
+                  <SelectItem value="drawing">Drawing</SelectItem>
+                  <SelectItem value="sculpture">Sculpture</SelectItem>
+                  <SelectItem value="textile">Textile</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={col1Sort}
+                onValueChange={(v) => setCol1Sort(v as WorkSort)}
+              >
+                <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                  <SelectItem value="year-latest">Year — latest</SelectItem>
+                  <SelectItem value="year-oldest">Year — oldest</SelectItem>
+                  <SelectItem value="title">Title</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCol1Min(true)}
+                className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none"
+              >
+                −
+              </Button>
+            </div>
             {showAsList ? (
               <div className="p-0">
                 {col1Works.map((work) => (
-                  <Button key={work.id} variant="link" size="lg" onClick={() => openWork(work)} className="justify-start w-full" aria-label={`Show work: ${work.title.rendered}`}>
-                    <span className="font-bookish text-2xl">{work.title.rendered}</span>
+                  <Button
+                    key={work.id}
+                    variant="link"
+                    size="lg"
+                    onClick={() => openWork(work)}
+                    className="justify-start w-full"
+                    aria-label={`Show work: ${work.title.rendered}`}
+                  >
+                    <span className="font-bookish text-2xl">
+                      {work.title.rendered}
+                    </span>
                   </Button>
                 ))}
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5 }} className="flex flex-col">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: loading ? 0 : 1 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col"
+              >
                 {col1Works.map((work) => (
-                  <div key={work.id} className="">{renderWorkItem(work)}</div>
+                  <div key={work.id}>{renderWorkItem(work)}</div>
                 ))}
               </motion.div>
             )}
           </div>
         )}
         {!col2Min && (
-          <div ref={col2Ref} className="flex-1 overflow-y-auto h-full border-r border-border">
+          <div
+            ref={col2Ref}
+            className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col"
+          >
+            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
+              <Select
+                value={col2Filter}
+                onValueChange={(v) => setCol2Filter(v as CategoryFilter)}
+              >
+                <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="painting">Painting</SelectItem>
+                  <SelectItem value="drawing">Drawing</SelectItem>
+                  <SelectItem value="sculpture">Sculpture</SelectItem>
+                  <SelectItem value="textile">Textile</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={col2Sort}
+                onValueChange={(v) => setCol2Sort(v as WorkSort)}
+              >
+                <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                  <SelectItem value="year-latest">Year — latest</SelectItem>
+                  <SelectItem value="year-oldest">Year — oldest</SelectItem>
+                  <SelectItem value="title">Title</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCol2Min(true)}
+                className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none"
+              >
+                −
+              </Button>
+            </div>
             {showAsList ? (
               <div className="p-0">
                 {col2Works.map((work) => (
-                  <Button key={work.id} variant="link" size="lg" onClick={() => openWork(work)} className="justify-start w-full" aria-label={`Show work: ${work.title.rendered}`}>
-                    <span className="font-bookish text-2xl">{work.title.rendered}</span>
+                  <Button
+                    key={work.id}
+                    variant="link"
+                    size="lg"
+                    onClick={() => openWork(work)}
+                    className="justify-start w-full"
+                    aria-label={`Show work: ${work.title.rendered}`}
+                  >
+                    <span className="font-bookish text-2xl">
+                      {work.title.rendered}
+                    </span>
                   </Button>
                 ))}
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.06 }} className="flex flex-col">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: loading ? 0 : 1 }}
+                transition={{ duration: 0.5, delay: 0.06 }}
+                className="flex flex-col"
+              >
                 {col2Works.map((work) => (
-                  <div key={work.id} className="">{renderWorkItem(work)}</div>
+                  <div key={work.id}>{renderWorkItem(work)}</div>
                 ))}
               </motion.div>
             )}
           </div>
         )}
         {!col3Min && (
-          <div ref={col3Ref} className="flex-1 overflow-y-auto h-full">
+          <div
+            ref={col3Ref}
+            className="flex-1 overflow-y-auto h-full flex flex-col"
+          >
+            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
+              <Select
+                value={col3Filter}
+                onValueChange={(v) => setCol3Filter(v as CategoryFilter)}
+              >
+                <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="painting">Painting</SelectItem>
+                  <SelectItem value="drawing">Drawing</SelectItem>
+                  <SelectItem value="sculpture">Sculpture</SelectItem>
+                  <SelectItem value="textile">Textile</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={col3Sort}
+                onValueChange={(v) => setCol3Sort(v as WorkSort)}
+              >
+                <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                  <SelectItem value="year-latest">Year — latest</SelectItem>
+                  <SelectItem value="year-oldest">Year — oldest</SelectItem>
+                  <SelectItem value="title">Title</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCol3Min(true)}
+                className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none"
+              >
+                −
+              </Button>
+            </div>
             {showAsList ? (
               <div className="p-0">
                 {col3Works.map((work) => (
-                  <Button key={work.id} variant="link" size="lg" onClick={() => openWork(work)} className="justify-start w-full" aria-label={`Show work: ${work.title.rendered}`}>
-                    <span className="font-bookish text-2xl">{work.title.rendered}</span>
+                  <Button
+                    key={work.id}
+                    variant="link"
+                    size="lg"
+                    onClick={() => openWork(work)}
+                    className="justify-start w-full"
+                    aria-label={`Show work: ${work.title.rendered}`}
+                  >
+                    <span className="font-bookish text-2xl">
+                      {work.title.rendered}
+                    </span>
                   </Button>
                 ))}
               </div>
             ) : (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.12 }} className="flex flex-col">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: loading ? 0 : 1 }}
+                transition={{ duration: 0.5, delay: 0.12 }}
+                className="flex flex-col"
+              >
                 {col3Works.map((work) => (
-                  <div key={work.id} className="">{renderWorkItem(work)}</div>
+                  <div key={work.id}>{renderWorkItem(work)}</div>
                 ))}
               </motion.div>
             )}
           </div>
         )}
       </div>
-
-      {/* Desktop fixed header */}
-      <motion.div
-        className="hidden lg:flex fixed z-50 left-0 w-full bg-transparent font-bookish text-sm items-stretch"
-        style={{ top: "var(--nav-height, 0px)" }}
-        animate={{ y: headerHidden ? "-150%" : "0%" }}
-        transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-      >
-        {!col1Min && (
-          <div className="flex-1 flex items-center gap-x-2 px-4 pt-2 pb-0">
-            <Select value={col1Filter} onValueChange={(v) => setCol1Filter(v as CategoryFilter)}>
-              <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="painting">Painting</SelectItem>
-                <SelectItem value="drawing">Drawing</SelectItem>
-                <SelectItem value="sculpture">Sculpture</SelectItem>
-                <SelectItem value="textile">Textile</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={col1Sort} onValueChange={(v) => setCol1Sort(v as WorkSort)}>
-              <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                <SelectItem value="year-latest">Year — latest</SelectItem>
-                <SelectItem value="year-oldest">Year — oldest</SelectItem>
-                <SelectItem value="title">Title</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="ghost" size="sm" onClick={() => setCol1Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-          </div>
-        )}
-        {!col2Min && (
-          <div className="flex-1 flex items-center gap-x-2 px-4 pt-2 pb-0">
-            <Select value={col2Filter} onValueChange={(v) => setCol2Filter(v as CategoryFilter)}>
-              <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="painting">Painting</SelectItem>
-                <SelectItem value="drawing">Drawing</SelectItem>
-                <SelectItem value="sculpture">Sculpture</SelectItem>
-                <SelectItem value="textile">Textile</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={col2Sort} onValueChange={(v) => setCol2Sort(v as WorkSort)}>
-              <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                <SelectItem value="year-latest">Year — latest</SelectItem>
-                <SelectItem value="year-oldest">Year — oldest</SelectItem>
-                <SelectItem value="title">Title</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="ghost" size="sm" onClick={() => setCol2Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-          </div>
-        )}
-        {!col3Min && (
-          <div className="flex-1 flex items-center gap-x-2 px-4 pt-2 pb-0">
-            <Select value={col3Filter} onValueChange={(v) => setCol3Filter(v as CategoryFilter)}>
-              <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="painting">Painting</SelectItem>
-                <SelectItem value="drawing">Drawing</SelectItem>
-                <SelectItem value="sculpture">Sculpture</SelectItem>
-                <SelectItem value="textile">Textile</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={col3Sort} onValueChange={(v) => setCol3Sort(v as WorkSort)}>
-              <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                <SelectItem value="year-latest">Year — latest</SelectItem>
-                <SelectItem value="year-oldest">Year — oldest</SelectItem>
-                <SelectItem value="title">Title</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="ghost" size="sm" onClick={() => setCol3Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-          </div>
-        )}
-        {/* Global controls + restore pills — absolutely positioned so they don't affect column widths */}
-        <div className="absolute right-2 top-2 flex items-center gap-x-2">
-          {col1Min && <Button variant="ghost" size="sm" onClick={() => setCol1Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col1Filter === "all" ? "All" : col1Filter.charAt(0).toUpperCase() + col1Filter.slice(1)}</Button>}
-          {col2Min && <Button variant="ghost" size="sm" onClick={() => setCol2Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col2Filter === "all" ? "All" : col2Filter.charAt(0).toUpperCase() + col2Filter.slice(1)}</Button>}
-          {col3Min && <Button variant="ghost" size="sm" onClick={() => setCol3Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col3Filter === "all" ? "All" : col3Filter.charAt(0).toUpperCase() + col3Filter.slice(1)}</Button>}
-          <Button variant="ghost" size="sm" onClick={() => setProportionalImages(!proportionalImages)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm whitespace-nowrap">{proportionalImages ? "Full width" : "Proportional"}</Button>
-          <Button variant="ghost" size="sm" onClick={() => setShowAsList(!showAsList)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">{showAsList ? "Grid" : "List"}</Button>
-          <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "line-through decoration-1" : ""}`} aria-label={showInfo ? "Hide text" : "Show text"}>T</Button>
-        </div>
-      </motion.div>
 
       {activeWorkSlug && (
         <WorkModal

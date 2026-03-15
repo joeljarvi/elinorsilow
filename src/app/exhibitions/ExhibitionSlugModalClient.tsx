@@ -237,24 +237,44 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           </div>
         </div>
 
-        {/* Description + Image grid: description as first cell, images flow around and below */}
+        {/* Description + first image: 3-col */}
         {(exhibition.acf.description || images.length > 0) && (
-          <div className="p-4 grid grid-cols-3 gap-4">
+          <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-x-4">
             {exhibition.acf.description && (
-              <div className="col-span-1 pt-12 pr-4 font-bookish text-2xl leading-snug">
+              <div className="lg:col-span-1 pt-12 pr-4 font-bookish text-2xl leading-snug">
                 {exhibition.acf.description}
               </div>
             )}
-            {images.map((img, idx) => (
+            {images[0] && (
+              <button
+                onClick={() => setLightboxIndex(0)}
+                className="lg:col-span-2 relative overflow-hidden cursor-zoom-in h-[75vh]"
+                aria-label="Visa bild 1"
+              >
+                <Image
+                  src={images[0].url}
+                  alt={images[0].alt || images[0].desc || "Bild 1"}
+                  fill
+                  className="object-contain object-top lg:object-left-top"
+                />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Remaining images: 4-col grid */}
+        {images.length > 1 && (
+          <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-x-4">
+            {images.slice(1).map((img, idx) => (
               <button
                 key={img.id}
-                onClick={() => setLightboxIndex(idx)}
-                className={`relative overflow-hidden cursor-zoom-in h-[75vh] ${img.isLandscape ? "col-span-2" : "col-span-1"}`}
-                aria-label={`Visa bild ${idx + 1}`}
+                onClick={() => setLightboxIndex(idx + 1)}
+                className={`relative overflow-hidden cursor-zoom-in h-[75vh] ${img.isLandscape ? "lg:col-span-2" : "lg:col-span-1"}`}
+                aria-label={`Visa bild ${idx + 2}`}
               >
                 <Image
                   src={img.url}
-                  alt={img.alt || img.desc || `Bild ${idx + 1}`}
+                  alt={img.alt || img.desc || `Bild ${idx + 2}`}
                   fill
                   className="object-contain object-top lg:object-left-top"
                 />

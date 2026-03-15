@@ -21,7 +21,6 @@ import {
 export default function ExhibitionsPageClient() {
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [headerHidden, setHeaderHidden] = useState(false);
   const [col1Sort, setCol1Sort] = useState<ExhibitionSort>("year");
   const [col2Sort, setCol2Sort] = useState<ExhibitionSort>("year");
   const [col3Sort, setCol3Sort] = useState<ExhibitionSort>("year");
@@ -33,7 +32,6 @@ export default function ExhibitionsPageClient() {
   const [col3Min, setCol3Min] = useState(true);
   const [showInfo, setShowInfo] = useState(true);
   const [proportional, setProportional] = useState(false);
-  const lastScrollY = useRef(0);
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
   const col3Ref = useRef<HTMLDivElement>(null);
@@ -59,33 +57,6 @@ export default function ExhibitionsPageClient() {
   }, [dataLoaded]);
 
   const loading = !initialAnimDone || !dataLoaded;
-
-  useEffect(() => {
-    function handleScroll(scrollY: number) {
-      const diff = scrollY - lastScrollY.current;
-      if (scrollY < 40) setHeaderHidden(false);
-      else if (diff > 8) setHeaderHidden(true);
-      else if (diff < -8) setHeaderHidden(false);
-      lastScrollY.current = scrollY;
-    }
-    const onWindowScroll = () => handleScroll(window.scrollY);
-    const onCol1Scroll = () => handleScroll(col1Ref.current?.scrollTop ?? 0);
-    const onCol2Scroll = () => handleScroll(col2Ref.current?.scrollTop ?? 0);
-    const onCol3Scroll = () => handleScroll(col3Ref.current?.scrollTop ?? 0);
-    window.addEventListener("scroll", onWindowScroll, { passive: true });
-    const c1 = col1Ref.current;
-    const c2 = col2Ref.current;
-    const c3 = col3Ref.current;
-    c1?.addEventListener("scroll", onCol1Scroll, { passive: true });
-    c2?.addEventListener("scroll", onCol2Scroll, { passive: true });
-    c3?.addEventListener("scroll", onCol3Scroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onWindowScroll);
-      c1?.removeEventListener("scroll", onCol1Scroll);
-      c2?.removeEventListener("scroll", onCol2Scroll);
-      c3?.removeEventListener("scroll", onCol3Scroll);
-    };
-  }, []);
 
   function sortExhibitions(
     list: Exhibition[],
@@ -218,7 +189,7 @@ export default function ExhibitionsPageClient() {
     <section className="relative w-full mt-0">
       {/* Mobile: single staggered list */}
       <div className="lg:hidden">
-        <div className="sticky top-0 z-50 bg-transparent px-4 pt-2 flex items-center gap-x-2 font-bookish text-sm">
+        <div className="sticky top-0 z-50 bg-transparent px-4 py-3 flex items-center gap-x-2 font-bookish text-sm">
           <SortSelect value={col1Sort} onChange={setCol1Sort} />
           <Button variant="ghost" size="sm" onClick={() => setProportional(!proportional)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${proportional ? "line-through decoration-1" : ""}`}>P</Button>
           <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "" : "line-through decoration-1"}`}>T</Button>
@@ -237,64 +208,51 @@ export default function ExhibitionsPageClient() {
         className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
         style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
       >
+        {/* Restore pills + global controls */}
+        <div className="absolute right-2 top-2 flex items-center gap-x-2 z-50">
+          {col1Min && <Button variant="ghost" size="sm" onClick={() => setCol1Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col1Type === "all" ? "All" : col1Type}</Button>}
+          {col2Min && <Button variant="ghost" size="sm" onClick={() => setCol2Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col2Type === "all" ? "All" : col2Type}</Button>}
+          {col3Min && <Button variant="ghost" size="sm" onClick={() => setCol3Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col3Type === "all" ? "All" : col3Type}</Button>}
+          <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "line-through decoration-1" : ""}`}>T</Button>
+        </div>
+
         {!col1Min && (
-          <div ref={col1Ref} className="flex-1 overflow-y-auto h-full border-r border-border">
+          <div ref={col1Ref} className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col">
+            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
+              <TypeSelect value={col1Type} onChange={setCol1Type} />
+              <SortSelect value={col1Sort} onChange={setCol1Sort} />
+              <Button variant="ghost" size="sm" onClick={() => setCol1Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
+            </div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5 }} className="flex flex-col">
               {col1Exhibitions.map((ex) => renderExhibitionItem(ex))}
             </motion.div>
           </div>
         )}
         {!col2Min && (
-          <div ref={col2Ref} className="flex-1 overflow-y-auto h-full border-r border-border">
+          <div ref={col2Ref} className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col">
+            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
+              <TypeSelect value={col2Type} onChange={setCol2Type} />
+              <SortSelect value={col2Sort} onChange={setCol2Sort} />
+              <Button variant="ghost" size="sm" onClick={() => setCol2Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
+            </div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.06 }} className="flex flex-col">
               {col2Exhibitions.map((ex) => renderExhibitionItem(ex))}
             </motion.div>
           </div>
         )}
         {!col3Min && (
-          <div ref={col3Ref} className="flex-1 overflow-y-auto h-full">
+          <div ref={col3Ref} className="flex-1 overflow-y-auto h-full flex flex-col">
+            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
+              <TypeSelect value={col3Type} onChange={setCol3Type} />
+              <SortSelect value={col3Sort} onChange={setCol3Sort} />
+              <Button variant="ghost" size="sm" onClick={() => setCol3Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
+            </div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.12 }} className="flex flex-col">
               {col3Exhibitions.map((ex) => renderExhibitionItem(ex))}
             </motion.div>
           </div>
         )}
       </div>
-
-      {/* Desktop fixed header */}
-      <motion.div
-        className="hidden lg:flex fixed z-50 left-0 w-full bg-transparent font-bookish text-sm items-stretch"
-        style={{ top: "var(--nav-height, 0px)" }}
-        animate={{ y: headerHidden ? "-150%" : "0%" }}
-        transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-      >
-        {!col1Min && (
-          <div className="flex-1 flex items-center gap-x-2 px-4 pt-2 pb-0">
-            <TypeSelect value={col1Type} onChange={setCol1Type} />
-            <SortSelect value={col1Sort} onChange={setCol1Sort} />
-            <Button variant="ghost" size="sm" onClick={() => setCol1Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-          </div>
-        )}
-        {!col2Min && (
-          <div className="flex-1 flex items-center gap-x-2 px-4 pt-2 pb-0">
-            <TypeSelect value={col2Type} onChange={setCol2Type} />
-            <SortSelect value={col2Sort} onChange={setCol2Sort} />
-            <Button variant="ghost" size="sm" onClick={() => setCol2Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-          </div>
-        )}
-        {!col3Min && (
-          <div className="flex-1 flex items-center gap-x-2 px-4 pt-2 pb-0">
-            <TypeSelect value={col3Type} onChange={setCol3Type} />
-            <SortSelect value={col3Sort} onChange={setCol3Sort} />
-            <Button variant="ghost" size="sm" onClick={() => setCol3Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-          </div>
-        )}
-        <div className="absolute right-2 top-2 flex items-center gap-x-2">
-          {col1Min && <Button variant="ghost" size="sm" onClick={() => setCol1Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col1Type === "all" ? "All" : col1Type}</Button>}
-          {col2Min && <Button variant="ghost" size="sm" onClick={() => setCol2Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col2Type === "all" ? "All" : col2Type}</Button>}
-          {col3Min && <Button variant="ghost" size="sm" onClick={() => setCol3Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col3Type === "all" ? "All" : col3Type}</Button>}
-          <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "line-through decoration-1" : ""}`}>T</Button>
-        </div>
-      </motion.div>
 
       {activeExhibitionSlug && (
         <ExhibitionModal

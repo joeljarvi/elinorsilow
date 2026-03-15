@@ -5,16 +5,21 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useUI } from "@/context/UIContext";
-import { useWorks } from "@/context/WorksContext";
-import { useExhibitions } from "@/context/ExhibitionsContext";
+import { useWorks, CategoryFilter, WorkSort } from "@/context/WorksContext";
+import { useExhibitions, ExhibitionSort } from "@/context/ExhibitionsContext";
 import { Button } from "./ui/button";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { HideTextToggle } from "./HideTextToggle";
 import NavSearch from "./NavSearch";
-import WorksFilter from "./WorksFilter";
-import ExFilter from "./ExFilter";
 import { Work, Exhibition } from "../../lib/sanity";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function Caret({ open }: { open: boolean }) {
   return (
@@ -30,19 +35,24 @@ function Caret({ open }: { open: boolean }) {
 
 export default function MobileNavOverlay() {
   const pathname = usePathname();
-  const {
-    open,
-    setOpen,
-    showWorksFilter,
-    handleOpenWorksFilter,
-    showExhibitionsFilter,
-    handleOpenExhibitionsFilter,
-    proportionalImages,
-    setProportionalImages,
-  } = useUI();
+  const { open, setOpen, proportionalImages, setProportionalImages } = useUI();
 
-  const { filteredWorks, setActiveWorkSlug } = useWorks();
-  const { filteredExhibitions, setActiveExhibitionSlug } = useExhibitions();
+  const {
+    filteredWorks,
+    setActiveWorkSlug,
+    workSort,
+    setWorkSort,
+    categoryFilter,
+    setCategoryFilter,
+  } = useWorks();
+  const {
+    filteredExhibitions,
+    setActiveExhibitionSlug,
+    exhibitionSort,
+    setExhibitionSort,
+    selectedType,
+    setSelectedType,
+  } = useExhibitions();
 
   const [openSearch, setOpenSearch] = useState(false);
   const [worksExpanded, setWorksExpanded] = useState(false);
@@ -118,33 +128,42 @@ export default function MobileNavOverlay() {
                     transition={{ duration: 0.25, ease: "easeInOut" }}
                     className="overflow-hidden flex flex-col pl-0"
                   >
-                    <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start"
-                      onClick={() => {
-                        if (showExhibitionsFilter)
-                          handleOpenExhibitionsFilter();
-                        handleOpenWorksFilter();
-                      }}
-                      aria-expanded={showWorksFilter}
-                    >
-                      Filter
-                    </Button>
-                    <AnimatePresence initial={false}>
-                      {showWorksFilter && (
-                        <motion.div
-                          key="works-filter"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2, ease: "easeInOut" }}
-                          className="overflow-hidden"
-                        >
-                          <WorksFilter />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div className="flex flex-wrap gap-2 px-4 py-2">
+                      <Select
+                        value={categoryFilter}
+                        onValueChange={(v) =>
+                          setCategoryFilter(v as CategoryFilter)
+                        }
+                      >
+                        <SelectTrigger className="border-none shadow-none h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 px-2 py-2 backdrop-blur-sm bg-foreground/10 text-foreground w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="painting">Painting</SelectItem>
+                          <SelectItem value="drawing">Drawing</SelectItem>
+                          <SelectItem value="sculpture">Sculpture</SelectItem>
+                          <SelectItem value="textile">Textile</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select
+                        value={workSort}
+                        onValueChange={(v) => setWorkSort(v as WorkSort)}
+                      >
+                        <SelectTrigger className="border-none shadow-none h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 px-2 py-2 backdrop-blur-sm bg-foreground/10 text-foreground w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                          <SelectItem value="year-latest">
+                            Year — latest
+                          </SelectItem>
+                          <SelectItem value="year-oldest">
+                            Year — oldest
+                          </SelectItem>
+                          <SelectItem value="title">Title</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <Button
                       variant="link"
                       size="lg"
@@ -245,32 +264,37 @@ export default function MobileNavOverlay() {
                     transition={{ duration: 0.25, ease: "easeInOut" }}
                     className="overflow-hidden flex flex-col "
                   >
-                    <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start"
-                      onClick={() => {
-                        if (showWorksFilter) handleOpenWorksFilter();
-                        handleOpenExhibitionsFilter();
-                      }}
-                      aria-expanded={showExhibitionsFilter}
-                    >
-                      Filter
-                    </Button>
-                    <AnimatePresence initial={false}>
-                      {showExhibitionsFilter && (
-                        <motion.div
-                          key="exhibitions-filter"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2, ease: "easeInOut" }}
-                          className="overflow-hidden"
-                        >
-                          <ExFilter />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div className="flex flex-wrap gap-2 px-4 py-2">
+                      <Select
+                        value={selectedType}
+                        onValueChange={setSelectedType}
+                      >
+                        <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground w-auto">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="Solo">Solo Exhibitions</SelectItem>
+                          <SelectItem value="Group">
+                            Group Exhibitions
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select
+                        value={exhibitionSort}
+                        onValueChange={(v) =>
+                          setExhibitionSort(v as ExhibitionSort)
+                        }
+                      >
+                        <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground w-auto">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
+                          <SelectItem value="year">Year</SelectItem>
+                          <SelectItem value="title">Title</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <Button
                       variant="link"
                       size="lg"
