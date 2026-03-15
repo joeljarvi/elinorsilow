@@ -89,11 +89,11 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className="flex justify-between no-hide-text font-bookish items-baseline w-screen bg-background shadow-md py-2 px-2 lg:px-0 "
+              className="flex justify-between no-hide-text font-bookish items-baseline w-screen bg-background shadow-md pt-8 pb-4 px-4 lg:px-0 border-b border-border"
             >
               <motion.div variants={navItemVariant}>
                 <NavItem
-                  className="flex items-center justify-start w-min  "
+                  className="flex items-center justify-start w-min text-2xl lg:text-xl "
                   href="/"
                   active={pathname === "/"}
                 >
@@ -142,7 +142,7 @@ export default function DesktopNav() {
                   className="pl-2 pr-0.5"
                   onClick={() => setOpenSearch(true)}
                 >
-                  <MagnifyingGlassIcon className="w-4 h-4" />
+                  <MagnifyingGlassIcon className="w-6 h-6 lg:w-4 lg:h-4" />
                 </Button>
               </motion.span>
 

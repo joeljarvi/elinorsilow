@@ -30,8 +30,9 @@ export default function ExhibitionsPageClient() {
   const [col3Type, setCol3Type] = useState("all");
   const [col1Min, setCol1Min] = useState(false);
   const [col2Min, setCol2Min] = useState(false);
-  const [col3Min, setCol3Min] = useState(false);
+  const [col3Min, setCol3Min] = useState(true);
   const [showInfo, setShowInfo] = useState(true);
+  const [proportional, setProportional] = useState(false);
   const lastScrollY = useRef(0);
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
@@ -135,19 +136,30 @@ export default function ExhibitionsPageClient() {
         className="relative cursor-pointer w-full flex flex-col shadow-[0_0_60px_rgba(255,255,255,0.15)]"
         aria-label={`Show exhibition: ${ex.title.rendered}`}
       >
-        <div className="relative aspect-video w-full overflow-hidden">
+        <div
+          className="relative w-full overflow-hidden"
+          style={
+            proportional && ex.acf.image_1?.width && ex.acf.image_1?.height
+              ? { aspectRatio: `${ex.acf.image_1.width} / ${ex.acf.image_1.height}` }
+              : { aspectRatio: "16 / 9" }
+          }
+        >
           {ex.acf.image_1 && (
-            <Image
-              src={ex.acf.image_1.url}
-              alt={ex.title.rendered}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
+            <div className="absolute inset-2">
+              <Image
+                src={ex.acf.image_1.url}
+                alt={ex.title.rendered}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
           )}
         </div>
         {showInfo && (
-          <div className="w-full font-bookish text-sm">
+          <div className="relative w-full font-bookish text-sm">
+            <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
+            <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
             <InfoRow label="Title" value={ex.title.rendered} />
             <InfoRow label="Year" value={ex.acf.year} />
             <InfoRow label="Location" value={ex.acf.location} />
@@ -208,6 +220,8 @@ export default function ExhibitionsPageClient() {
       <div className="lg:hidden">
         <div className="sticky top-0 z-50 bg-transparent px-4 pt-2 flex items-center gap-x-2 font-bookish text-sm">
           <SortSelect value={col1Sort} onChange={setCol1Sort} />
+          <Button variant="ghost" size="sm" onClick={() => setProportional(!proportional)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${proportional ? "line-through decoration-1" : ""}`}>P</Button>
+          <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "" : "line-through decoration-1"}`}>T</Button>
         </div>
         <Staggered
           items={sortExhibitions(exhibitions, col1Sort)}

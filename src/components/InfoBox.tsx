@@ -14,11 +14,11 @@ export function InfoRow({
   if (!value && !children) return null;
   return (
     <>
-      <div className="grid grid-cols-4 gap-x-3 items-center justify-start font-bookish">
-        <span className="text-sm text-left text-muted-foreground whitespace-nowrap py-1.5 border-r border-border px-4">
+      <div className="grid grid-cols-3 gap-x-3 items-center justify-start font-bookish">
+        <span className="text-sm text-left text-muted-foreground whitespace-nowrap py-1.5 border-r border-border px-4 ">
           {label}
         </span>
-        <div className="text-sm py-1.5 text-left col-span-3 px-3">
+        <div className="text-sm py-1.5 text-left col-span-2 px-3">
           {children ?? value}
         </div>
       </div>

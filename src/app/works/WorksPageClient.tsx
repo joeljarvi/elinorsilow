@@ -231,8 +231,8 @@ export default function WorksPageClient() {
           <div className="flex items-center">
             <Button
               variant="ghost"
-              size="lg"
-              className="border-none shadow-none px-3 h-full font-bookish text-sm focus:ring-0 rounded-full gap-2 backdrop-blur-sm bg-foreground/10 text-foreground self-stretch"
+              size="sm"
+              className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground"
               onClick={() => setShowInfo(!showInfo)}
               aria-label={showInfo ? "Hide text" : "Show text"}
             >
@@ -270,7 +270,7 @@ export default function WorksPageClient() {
             loading={loading}
             className="min-h-screen flex flex-col gap-y-0"
             renderItem={(work: Work) => (
-              <div className="h-screen flex flex-col justify-start p-0">
+              <div className="">
                 {renderWorkItem(work)}
               </div>
             )}
@@ -296,7 +296,7 @@ export default function WorksPageClient() {
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5 }} className="flex flex-col">
                 {col1Works.map((work) => (
-                  <div key={work.id} className="h-screen flex flex-col justify-start p-0">{renderWorkItem(work)}</div>
+                  <div key={work.id} className="">{renderWorkItem(work)}</div>
                 ))}
               </motion.div>
             )}
@@ -315,7 +315,7 @@ export default function WorksPageClient() {
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.06 }} className="flex flex-col">
                 {col2Works.map((work) => (
-                  <div key={work.id} className="h-screen flex flex-col justify-start p-0">{renderWorkItem(work)}</div>
+                  <div key={work.id} className="">{renderWorkItem(work)}</div>
                 ))}
               </motion.div>
             )}
@@ -334,7 +334,7 @@ export default function WorksPageClient() {
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.12 }} className="flex flex-col">
                 {col3Works.map((work) => (
-                  <div key={work.id} className="h-screen flex flex-col justify-start p-0">{renderWorkItem(work)}</div>
+                  <div key={work.id} className="">{renderWorkItem(work)}</div>
                 ))}
               </motion.div>
             )}
