@@ -73,7 +73,7 @@ export default function DesktopNav() {
   return (
     <div
       id="main-nav"
-      className="z-[55] absolute top-0 left-0 w-full flex flex-col items-start justify-start bg-background"
+      className="z-[55] absolute top-0  left-0 w-full flex flex-col items-start justify-start bg-background"
     >
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <div className="absolute hidden lg:block top-0 left-0 w-full h-[10px] -translate-y-full pointer-events-none bg-gradient-to-b from-background/0 to-background" />
@@ -89,11 +89,11 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className="flex justify-between no-hide-text font-bookish items-baseline w-screen bg-background shadow-md pt-8 pb-4 px-4 lg:px-0 border-b border-border"
+              className="flex justify-center lg:justify-between no-hide-text font-bookish items-baseline w-screen bg-background shadow-md pt-4 pb-2 px-4 lg:px-0 border-b border-border"
             >
               <motion.div variants={navItemVariant}>
                 <NavItem
-                  className="flex items-center justify-start w-min text-2xl lg:text-xl "
+                  className="lg:flex items-center justify-start w-min  hidden tracking-tight lg:text-xl "
                   href="/"
                   active={pathname === "/"}
                 >
@@ -134,7 +134,7 @@ export default function DesktopNav() {
               </motion.span>
               <motion.span
                 variants={navItemVariant}
-                className="flex items-center ml-auto pr-4 gap-x-2"
+                className="hidden lg:flex items-center ml-auto pr-4 gap-x-2"
               >
                 <Button
                   variant="link"

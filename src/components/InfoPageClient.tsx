@@ -15,9 +15,9 @@ export default function InfoPageClient() {
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   return (
-    <div className="w-full p-4 grid grid-cols-1 lg:grid-cols-3 lg:gap-x-8">
+    <div className="w-full p-4 grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-border">
       {/* COL 1: About + Solo Exhibitions */}
-      <div className="flex flex-col gap-y-12">
+      <div className="flex flex-col gap-y-12 lg:pr-8">
         <section className={textCls}>
           <p className="mb-4">
             Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based artist
@@ -71,7 +71,7 @@ export default function InfoPageClient() {
       </div>
 
       {/* COL 2: Group Exhibitions */}
-      <div className="flex flex-col gap-y-12 mt-12 lg:mt-0">
+      <div className="flex flex-col gap-y-12 mt-12 lg:mt-0 lg:px-8">
         {groupExhibitions.length > 0 && (
           <section>
             <h3 className={headingCls}>Group Exhibitions</h3>
@@ -108,7 +108,7 @@ export default function InfoPageClient() {
       </div>
 
       {/* COL 3: Grants + Press + Colophon + Copyright */}
-      <div className="flex flex-col gap-y-12 mt-12 lg:mt-0">
+      <div className="flex flex-col gap-y-12 mt-12 lg:mt-0 lg:pl-8">
         {educations.length > 0 && (
           <section>
             <h3 className={headingCls}>Education</h3>
