@@ -49,7 +49,7 @@ export default function ExFilter() {
   }, [exhibitionSort, exSelectedYear, selectedType]);
 
   return (
-    <div className="border-foreground border-t-[0.5px] flex flex-col w-full   pointer-events-auto   ">
+    <div className="border-border border-t-[0.5px] flex flex-col w-full   pointer-events-auto   ">
       {/* Sort */}
       <div className="grid grid-cols-3 items-center  w-full gap-4 ">
         <Select

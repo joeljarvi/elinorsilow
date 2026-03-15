@@ -33,7 +33,7 @@ export default function PopUpGubbe() {
           transition={{ duration: 0.4 }}
         >
           {/* Text (fades in after image) */}
-          <div className="flex items-start justify-start border-[0.025rem] border-foreground rounded-xs bg-background p-3">
+          <div className="flex items-start justify-start border-[0.025rem] border-border rounded-xs bg-background p-3">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

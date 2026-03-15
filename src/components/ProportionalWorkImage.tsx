@@ -42,12 +42,12 @@ export default function ProportionalWorkImage({
 
   if (!proportional || !parsed) {
     return (
-      <div className={`relative w-full aspect-[4/3] ${className}`}>
+      <div className={`relative w-full h-full ${className}`}>
         <Image
           src={src}
           alt={alt}
           fill
-          className="object-contain object-bottom lg:object-bottom-left px-4 lg:px-4"
+          className="object-contain object-center"
         />
       </div>
     );
@@ -59,7 +59,7 @@ export default function ProportionalWorkImage({
 
   return (
     <div
-      className={`mx-auto ${className}`}
+      className={`max-h-[75vh] ${className}`}
       style={{
         width: `${widthFraction * 100}%`,
         aspectRatio: `${aspectRatio}`,
@@ -70,7 +70,7 @@ export default function ProportionalWorkImage({
           src={src}
           alt={alt}
           fill
-          className="object-contain object-bottom lg:object-bottom-left"
+          className="object-contain object-top lg:object-left-top"
         />
       </div>
     </div>

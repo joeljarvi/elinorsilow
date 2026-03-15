@@ -12,7 +12,9 @@ export default function NavSpacer() {
     if (!nav) return;
 
     const observer = new ResizeObserver(([entry]) => {
-      setHeight(entry.contentRect.height);
+      const h = entry.contentRect.height;
+      setHeight(h);
+      document.documentElement.style.setProperty("--nav-height", `${h}px`);
     });
     observer.observe(nav);
     return () => observer.disconnect();
@@ -20,6 +22,5 @@ export default function NavSpacer() {
 
   if (pathname.startsWith("/studio")) return null;
 
-  // Only needed on mobile — on desktop the nav is at the bottom
-  return <div className="lg:hidden" style={{ height }} />;
+  return <div style={{ height }} />;
 }

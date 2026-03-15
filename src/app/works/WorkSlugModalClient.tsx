@@ -3,19 +3,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { Work, getWorkBySlug } from "../../../lib/sanity";
 import { useWorks } from "@/context/WorksContext";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon, ChevronRightIcon, Share2 } from "lucide-react";
 import useSwipe from "@/hooks/use-swipe";
-import HDivider from "@/components/HDivider";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import ProportionalWorkImage from "@/components/ProportionalWorkImage";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -40,6 +33,7 @@ export default function WorkSlugModalClient({
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [proportional, setProportional] = useState(false);
 
   // Load the work by slug
   const loadWorkByIndex = useCallback(
@@ -124,81 +118,36 @@ export default function WorkSlugModalClient({
   if (loading) return <div></div>;
   if (!work) return <p>Work not found</p>;
 
-  const images: string[] = [work.image_url || "/placeholder.jpg"];
-
   return (
-    <div
-      {...swipeHandlers}
-      className=" 
-    relative flex flex-col lg:flex-row h-screen items-start justify-center lg:items-start lg:justify-start w-full p-4   "
-    >
-      <Carousel className=" w-full h-full  ">
-        <CarouselContent>
-          {images.map((src, idx) => (
-            <CarouselItem
-              key={idx}
-              className="w-full flex justify-start lg:justify-start items-center"
-            >
-              <div className="relative w-full h-[calc(100vh-16rem)] lg:h-[calc(90vh-1rem)] flex flex-col  lg:items-start justify-center items-center mx-auto">
-                <Image
-                  src={src}
-                  alt={`${work.title.rendered} - ${idx + 1}`}
-                  fill
-                  className="w-auto max-w-[100vw] lg:max-w-[100vw] h-auto object-contain  mx-0 object-center lg:object-left-top
-                   lg:mx-0  lg:pr-16 lg:pl-8 lg:pb-4 pt-4 lg:pt-4 "
-                />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-
-      <div className=" flex w-full h-full   ">
-        <div className="flex flex-col justify-start gap-y-30 h-full items-baseline text-sm   w-full mb-4 pt-4 lg:p-4 ">
-          <div className="flex flex-col justify-start gap-y-0">
-            <div className="flex justify-between items-center w-full font-bookish text-2xl">
-              <h1 id="work-modal-title" className="h1 text-2xl ">
-                {work.title.rendered}
-              </h1>
-
-              <Button
-                className="absolute top-0 right-0 aspect-square h-auto"
-                size="lg"
-                variant="link"
-                onClick={onClose || (() => router.push("/"))}
-                aria-label="close"
-              >
-                <Cross1Icon aria-hidden="true" />
-              </Button>
-            </div>
-
-            {work.acf.materials && (
-              <span className="h3 text-2xl leading-snug">
-                {" "}
-                {work.acf.materials}
-              </span>
-            )}
-            {work.acf.dimensions && (
-              <span className="h3 text-2xl leading-snug">
-                {" "}
-                {work.acf.dimensions}
-              </span>
-            )}
-            {work.acf.year && (
-              <span className="h3 text-2xl leading-snug"> {work.acf.year}</span>
-            )}
-            {/* {work.acf.exhibition && (
-              <span className="h3 text-2xl  max-w-sm hidden lg:block">
-                Exhibition: {work.acf.exhibition}
-              </span>
-            )} */}
-          </div>
-        </div>
+    <div {...swipeHandlers} className="relative w-full h-screen">
+      <div className="absolute inset-4 flex items-center justify-center">
+        {work.image_url && (
+          <ProportionalWorkImage
+            src={work.image_url}
+            alt={work.title.rendered}
+            dimensions={work.acf.dimensions}
+            proportional={proportional}
+            className="max-w-full lg:max-h-screen"
+          />
+        )}
       </div>
-
-      {/* Carousel */}
-
-      {/* Work info */}
+      <Button
+        className="absolute top-2 left-2 z-10 font-bookish "
+        size="lg"
+        variant="link"
+        onClick={() => setProportional((p) => !p)}
+      >
+        {proportional ? "Full width" : "Proportional"}
+      </Button>
+      <Button
+        className="absolute top-2 right-2 aspect-square h-auto z-10 "
+        size="lg"
+        variant="link"
+        onClick={onClose || (() => router.push("/"))}
+        aria-label="close"
+      >
+        <Cross1Icon aria-hidden="true" />
+      </Button>
     </div>
   );
 }

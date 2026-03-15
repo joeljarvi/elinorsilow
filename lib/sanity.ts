@@ -38,6 +38,8 @@ export type AcfImage = {
   alt?: string;
   caption?: string;
   description?: string;
+  width?: number;
+  height?: number;
 };
 
 export type Exhibition = {
@@ -155,10 +157,12 @@ function transformExhibition(doc: any): Exhibition {
     doc.images.slice(0, 10).forEach((img: any, i: number) => {
       images[`image_${i + 1}`] = {
         id: i,
-        url: img.asset ? urlFor(img).url() : img.url || "",
+        url: img.url || "",
         alt: img.alt || "",
         caption: img.caption || "",
         description: img.description || "",
+        width: img.width,
+        height: img.height,
       };
     });
   }
@@ -220,7 +224,13 @@ const WORK_FIELDS = `
 
 const EXHIBITION_FIELDS = `
   _id, "slug": slug.current, title, year, exhibition_type,
-  location, city, description, credits, images, related_works, featured, _createdAt
+  location, city, description, credits, related_works, featured, _createdAt,
+  "images": images[]{
+    alt, caption, description,
+    "url": asset->url,
+    "width": asset->metadata.dimensions.width,
+    "height": asset->metadata.dimensions.height
+  }
 `;
 
 export async function getAllWorks(): Promise<Work[]> {

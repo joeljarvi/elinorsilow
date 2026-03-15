@@ -65,7 +65,7 @@ export default function MobileNavOverlay() {
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className="lg:hidden fixed inset-0 z-20 bg-background overflow-y-auto h-screen "
+            className="lg:hidden fixed inset-0 z-[60] bg-background overflow-y-auto h-screen "
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
@@ -86,7 +86,7 @@ export default function MobileNavOverlay() {
               </div>
 
               {/* Works row */}
-              <div className="flex items-center border-b border-foreground">
+              <div className="flex items-center border-b border-border">
                 <Button
                   variant="link"
                   size="lg"
@@ -157,10 +157,11 @@ export default function MobileNavOverlay() {
                     >
                       {proportionalImages ? "Full width" : "Proportional"}
                     </Button>
+                    <HideTextToggle className="justify-start" />
                     <Button
                       variant="link"
                       size="lg"
-                      className="justify-start border-b border-foreground"
+                      className="justify-start border-b border-border"
                       aria-expanded={worksListOpen}
                       onClick={() => setWorksListOpen((prev) => !prev)}
                     >
@@ -212,7 +213,7 @@ export default function MobileNavOverlay() {
               </AnimatePresence>
 
               {/* Exhibitions row */}
-              <div className="flex items-center border-b border-foreground">
+              <div className="flex items-center border-b border-border">
                 <Button
                   variant="link"
                   size="lg"
@@ -325,7 +326,7 @@ export default function MobileNavOverlay() {
               </AnimatePresence>
 
               {/* Info row */}
-              <div className="flex items-center border-b border-foreground">
+              <div className="flex items-center border-b border-border">
                 <Button
                   variant="link"
                   size="lg"
@@ -339,7 +340,7 @@ export default function MobileNavOverlay() {
               </div>
 
               {/* Contact row with submenu */}
-              <div className="flex items-center border-b border-foreground">
+              <div className="flex items-center border-b border-border">
                 <Button
                   variant="link"
                   size="lg"
@@ -369,7 +370,7 @@ export default function MobileNavOverlay() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden flex flex-col  border-b border-foreground"
+                    className="overflow-hidden flex flex-col  border-b border-border"
                   >
                     <Button
                       variant="link"
@@ -406,7 +407,7 @@ export default function MobileNavOverlay() {
               <Button
                 variant="link"
                 size="lg"
-                className="justify-start border-b border-foreground"
+                className="justify-start border-b border-border"
                 onClick={() => {
                   setOpen(false);
                   setOpenSearch(true);
@@ -414,7 +415,7 @@ export default function MobileNavOverlay() {
               >
                 Search{" "}
               </Button>
-              <HideTextToggle className="justify-start px-4 border-b border-foreground" />
+              <HideTextToggle className="justify-start px-4 border-b border-border" />
               <DarkModeToggle className="justify-start  px-4" />
             </nav>
           </motion.div>

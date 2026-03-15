@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export default function HDivider({
   loading,
   className = "",
-  color = "border-foreground",
+  color = "border-border",
 }: {
   loading?: boolean;
   className?: string;

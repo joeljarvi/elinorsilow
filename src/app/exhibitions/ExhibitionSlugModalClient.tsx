@@ -15,9 +15,8 @@ import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 import { Exhibition } from "../../../lib/sanity";
 import useSwipe from "@/hooks/use-swipe";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { Copy } from "lucide-react";
+
 
 type Props = {
   slug: string;
@@ -59,7 +58,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
-
     if (filteredExhibitions && filteredExhibitions.length > 0) {
       const index = filteredExhibitions.findIndex((e) => e.slug === slug);
       if (index >= 0) {
@@ -69,7 +67,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         return;
       }
     }
-
     getFromContext(slug).then((ex) => {
       if (!ex) {
         setLoading(false);
@@ -125,6 +122,8 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       url: img?.url ?? "",
       alt: img?.alt ?? "",
       desc: img?.description ?? "",
+      isLandscape:
+        img?.width && img?.height ? img.width >= img.height : true,
     }));
 
   const works = [
@@ -140,169 +139,206 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     exhibition.acf.work_10,
   ].filter(Boolean);
 
-  const scrollToTop = () => {
-    const scrollable = document.querySelector('[aria-modal="true"]');
-    if (scrollable) scrollable.scrollTop = 0;
-  };
-
   return (
     <>
       <div
         id="modal-top"
         {...swipeHandlers}
-        className="relative gap-0  z-30 w-full scroll-bar-hide bg-background shadow justify-start items-start  flex flex-col"
+        className="relative w-full bg-background"
       >
-        {/* Header */}
-        <div className="flex items-baseline justify-between w-full p-4  ">
-          <h1 id="exhibition-modal-title" className="h1 text-2xl">
-            {exhibition.title.rendered}
-          </h1>
-          <div className="flex gap-x-4 items-baseline">
-            <Button
-              className="hidden lg:flex aspect-square"
-              variant="ghost"
-              size="lg"
-              aria-label="Copy exhibition link"
-              onClick={() => {
-                const url = `${window.location.origin}/exhibitions/${exhibition.slug}`;
-                navigator.clipboard.writeText(url);
-              }}
+        {/* Fixed controls */}
+        <div className="fixed top-0 right-0 z-50 flex items-center gap-x-2 p-4">
+          <Button
+            className="aspect-square h-auto"
+            size="lg"
+            variant="link"
+            onClick={onClose || (() => router.push("/"))}
+            aria-label="close"
+          >
+            <Cross1Icon aria-hidden="true" />
+          </Button>
+        </div>
+
+        {/* Hero */}
+        {/* Mobile: full-screen image with text overlay + progressive blur */}
+        <div className="relative h-screen lg:hidden">
+          {exhibition.acf.image_1 && (
+            <Image
+              src={exhibition.acf.image_1.url}
+              alt={exhibition.title.rendered}
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority
+            />
+          )}
+          {/* Progressive blur overlay at bottom */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(to top, hsl(var(--background)) 0%, hsl(var(--background) / 0.85) 30%, hsl(var(--background) / 0.4) 60%, transparent 100%)",
+              backdropFilter: "blur(0px)",
+            }}
+          />
+          <div className="absolute inset-0 p-8 font-bookish flex flex-col items-center justify-center text-center backdrop-blur-sm">
+            <h1
+              id="exhibition-modal-title"
+              className="text-foreground text-3xl leading-tight mb-3"
             >
-              <Copy className="inline-block size-6 ml-1" />
-            </Button>
-            <Button
-              className=" aspect-square h-auto"
-              size="lg"
-              variant="link"
-              onClick={onClose || (() => router.push("/"))}
-              aria-label="close"
-            >
-              <Cross1Icon aria-hidden="true" />
-            </Button>
+              {exhibition.title.rendered}
+            </h1>
+            <p className="text-foreground/70 text-base">
+              {[
+                exhibition.acf.exhibition_type,
+                exhibition.acf.location,
+                exhibition.acf.city,
+                exhibition.acf.year,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
           </div>
         </div>
 
-        {/* Image grid */}
-        <div className="w-full mb-8 font-bookish text-2xl">
-          <span className="p-4 flex flex-col items-start gap-x-0 w-full ">
-            {" "}
-            {exhibition.acf.exhibition_type} Exhibition
-            {exhibition.acf.location && (
-              <span className=" max-w-xl shrink-0  ">
-                {exhibition.acf.location},
-              </span>
+        {/* Desktop: 3-col split */}
+        <div className="hidden lg:grid grid-cols-3 h-screen">
+          {/* Col 1: text info */}
+          <div className="col-span-1 flex flex-col justify-between p-8 font-bookish border-r border-border overflow-y-auto">
+            <h1
+              id="exhibition-modal-title"
+              className="text-foreground text-4xl leading-tight mb-3"
+            >
+              {exhibition.title.rendered}
+            </h1>
+            <p className="text-foreground/70 text-lg">
+              {[
+                exhibition.acf.exhibition_type,
+                exhibition.acf.location,
+                exhibition.acf.city,
+                exhibition.acf.year,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          </div>
+          {/* Col 2–3: landscape image */}
+          <div className="col-span-2 relative">
+            {exhibition.acf.image_1 && (
+              <Image
+                src={exhibition.acf.image_1.url}
+                alt={exhibition.title.rendered}
+                fill
+                sizes="66vw"
+                className="object-cover"
+                priority
+              />
             )}
-            <span className=" max-w-xl shrink-0 ">{exhibition.acf.city}</span>
-            <span className=" max-w-xl shrink-0 pb-4">
-              {exhibition.acf.year}
-            </span>
-          </span>
+          </div>
+        </div>
 
-          {exhibition.acf.description && (
-            <div className="mt-8 columns-2 max-w-5xl   gap-4 w-full  whitespace-normal p-4 p text-2xl font-bookish leading-snug ">
-              {exhibition.acf.description}
-            </div>
-          )}
-
-          <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4   ">
+        {/* Description + Image grid: description as first cell, images flow around and below */}
+        {(exhibition.acf.description || images.length > 0) && (
+          <div className="p-4 grid grid-cols-3 gap-4">
+            {exhibition.acf.description && (
+              <div className="col-span-1 pt-12 pr-4 font-bookish text-2xl leading-snug">
+                {exhibition.acf.description}
+              </div>
+            )}
             {images.map((img, idx) => (
               <button
                 key={img.id}
                 onClick={() => setLightboxIndex(idx)}
-                className="relative  overflow-hidden cursor-zoom-in h-[75vh]"
+                className={`relative overflow-hidden cursor-zoom-in h-[75vh] ${img.isLandscape ? "col-span-2" : "col-span-1"}`}
                 aria-label={`Visa bild ${idx + 1}`}
               >
                 <Image
                   src={img.url}
                   alt={img.alt || img.desc || `Bild ${idx + 1}`}
                   fill
-                  className="object-contain lg:object-left-top "
+                  className="object-contain object-top lg:object-left-top"
                 />
               </button>
             ))}
           </div>
+        )}
 
-          {/* Description — spans full width, split into 2 columns */}
+        {/* Works */}
+        {works.length > 0 && (
+          <div className="px-8 py-8 font-bookish">
+            <h4 className="text-2xl leading-snug mb-4">Verk i utställningen</h4>
+            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-x-4">
+              {works.map((work: any, index: number) => (
+                <li key={index}>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-left text-2xl leading-snug font-bookish text-blue-600"
+                    onClick={() => {
+                      const s = normalizeSlug(work);
+                      setActiveWorkSlug(s);
+                      window.history.pushState(null, "", `/works?work=${s}`);
+                    }}
+                  >
+                    {work}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-          {works.length > 0 && (
-            <div className="mb-8 mt-8 p-4">
-              <h4 className="h3  text-2xl leading-snug ">
-                Verk i utställningen:
-              </h4>
-              <ul className="space-y-0 grid grid-cols-1 gap-x-4 lg:grid-cols-2">
-                {works.map((work: any, index: number) => (
-                  <li key={index}>
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto text-left 
-                      text-2xl leading-snug font-bookish text-blue-600"
-                      onClick={() => {
-                        const slug = normalizeSlug(work);
-                        setActiveWorkSlug(slug);
-                        window.history.pushState(
-                          null,
-                          "",
-                          `/works?work=${slug}`,
-                        );
-                      }}
-                    >
-                      {work}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        <h3 className="whitespace-normal mx-0 h3 mb-4 lg:mb-2 mt-4 columns-1  gap-8 w-full h3  leading-snug max-w-5xl lg:columns-1 text-2xl px-4 ">
-          {exhibition.acf.credits}
-        </h3>
-      </div>
+        {/* Credits */}
+        {exhibition.acf.credits && (
+          <div className="px-8 pb-8 font-bookish text-2xl leading-snug text-foreground/60">
+            {exhibition.acf.credits}
+          </div>
+        )}
 
-      <div className="pb-0 flex gap-y-4 mt-4 w-full justify-between items-center">
-        <div className="flex">
-          <Button size="lg" variant="link" onClick={onClose}>
-            Back (x)
-          </Button>
+        {/* Footer nav */}
+        <div className="flex justify-between items-center px-4 pb-8 pt-4">
+          <div className="flex">
+            <Button
+              size="lg"
+              variant="link"
+              onClick={goPrev}
+              disabled={currentIndex <= 0}
+            >
+              Prev
+            </Button>
+            <Button
+              size="lg"
+              variant="link"
+              onClick={goNext}
+              disabled={
+                !filteredExhibitions ||
+                currentIndex >= filteredExhibitions.length - 1
+              }
+            >
+              Next
+            </Button>
+          </div>
           <Button
             size="lg"
+            className="hidden lg:flex"
             variant="link"
-            onClick={goPrev}
-            disabled={currentIndex <= 0}
+            onClick={() => {
+              const scrollable = document.querySelector('[aria-modal="true"]');
+              if (scrollable) scrollable.scrollTop = 0;
+            }}
           >
-            Prev
-          </Button>
-          <Button
-            size="lg"
-            variant="link"
-            onClick={goNext}
-            disabled={
-              !filteredExhibitions ||
-              currentIndex >= filteredExhibitions.length - 1
-            }
-          >
-            Next
+            Back to top ↑
           </Button>
         </div>
-        <Button
-          size="lg"
-          className="hidden lg:flex"
-          variant="link"
-          onClick={scrollToTop}
-        >
-          Back to top ↑
-        </Button>
       </div>
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-40 bg-background flex flex-col">
-          <div className="absolute flex justify-between items-baseline w-full p-4shrink-0 z-40">
-            <span className="text-foreground/60 text-2xl font-bookish h-12 p-4 ">
+          <div className="absolute flex justify-between items-baseline w-full p-4 z-40">
+            <span className="text-foreground/60 text-2xl font-bookish h-12 p-4">
               {lightboxCarousel.index + 1} / {images.length}
             </span>
             <Button
-              className=""
               size="lg"
               variant="link"
               onClick={() => setLightboxIndex(null)}
@@ -311,7 +347,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               <Cross1Icon aria-hidden="true" />
             </Button>
           </div>
-
           <Carousel
             setApi={lightboxCarousel.setApi}
             opts={{ startIndex: lightboxIndex, align: "center", loop: true }}

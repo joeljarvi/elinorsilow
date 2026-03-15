@@ -66,7 +66,7 @@ export default function NavSearch({
           transition={{ duration: 0.2 }}
           className="fixed inset-0 z-50 bg-background flex flex-col pt-8 px-8 lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
         >
-          <div className="flex items-baseline border-b-[0.5px] border-foreground pb-2 gap-x-4">
+          <div className="flex items-baseline border-b-[0.5px] border-border pb-2 gap-x-4">
             <input
               ref={inputRef}
               value={query}
