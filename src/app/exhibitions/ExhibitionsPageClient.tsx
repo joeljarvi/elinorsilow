@@ -154,10 +154,10 @@ export default function ExhibitionsPageClient() {
 
   function colStyle(dark: boolean) {
     return {
-      column: dark ? "bg-black text-white" : "bg-background text-foreground",
-      header: dark ? "bg-black" : "bg-background",
+      column: dark ? "bg-black text-white" : "bg-secondary text-foreground",
+      header: dark ? "bg-black" : "bg-secondary",
       headerRow: `shadow-[var(--shadow-ui)] [&>*+*]:border-l [&>*+*]:border-foreground/8`,
-      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${dark ? "bg-black text-white" : "bg-background text-foreground"}`,
+      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${dark ? "bg-black text-white" : "bg-secondary text-foreground"}`,
       content: `bg-background text-foreground font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)] shadow-[var(--shadow-md)]`,
       item: `rounded-none text-foreground focus:bg-foreground/10 focus:text-foreground`,
     };
@@ -168,7 +168,7 @@ export default function ExhibitionsPageClient() {
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single staggered list */}
-      <div className="lg:hidden relative z-40 bg-background">
+      <div className="lg:hidden relative z-40 bg-secondary">
         {/* Mobile fixed header — hide on scroll down, show on scroll up */}
         <motion.div
           className="fixed top-0 left-0 right-0 z-50 bg-background shadow-[var(--shadow-nav)]"

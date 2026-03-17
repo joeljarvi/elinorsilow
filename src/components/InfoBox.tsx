@@ -1,6 +1,5 @@
 import React from "react";
 import { Work, Exhibition } from "../../lib/sanity";
-import HDivider from "@/components/HDivider";
 
 export function InfoRow({
   label,
@@ -13,15 +12,12 @@ export function InfoRow({
 }) {
   if (!value && !children) return null;
   return (
-    <>
-      <div className="flex flex-row items-baseline font-bookish shadow-[var(--shadow-ui)] transition-shadow">
-        <span className="text-left text-muted-foreground whitespace-nowrap py-1.5 border-r border-foreground/10 px-2 font-bookish h3">
-          {label}
-        </span>
-        <div className="h3 py-1.5 text-left px-3">{children ?? value}</div>
-      </div>
-      <HDivider className="group-hover:border-foreground" />
-    </>
+    <div className="flex flex-row items-baseline font-bookish shadow-[var(--shadow-ui)]">
+      <span className="text-left text-muted-foreground whitespace-nowrap py-1.5 px-2 font-bookish h3">
+        {label}
+      </span>
+      <div className="h3 py-1.5 text-left px-3">{children ?? value}</div>
+    </div>
   );
 }
 
@@ -34,7 +30,6 @@ export default function InfoBox({
 }) {
   return (
     <div className="relative w-full mt-0 px-4">
-      <HDivider className="group-hover:border-foreground" />
       {work && (
         <>
           <InfoRow label="Title" value={work.title.rendered} />

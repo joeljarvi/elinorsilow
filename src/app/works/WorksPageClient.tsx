@@ -141,12 +141,12 @@ export default function WorksPageClient() {
     return {
       column: active
         ? "bg-red-600 text-background"
-        : "bg-background text-foreground",
-      header: active ? "bg-red-600" : "bg-background",
+        : "bg-secondary text-foreground",
+      header: active ? "bg-red-600" : "bg-secondary",
       headerRow: active
         ? "[&>*+*]:border-l [&>*+*]:border-background/20"
         : "[&>*+*]:border-l [&>*+*]:border-foreground/8",
-      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${active ? "bg-red-600 text-background" : "bg-background text-foreground"}`,
+      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${active ? "bg-red-600 text-background" : "bg-secondary text-foreground"}`,
       content: `${active ? "bg-red-600 text-background" : "bg-background text-foreground"} font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)] shadow-[var(--shadow-md)]`,
       item: `rounded-none ${active ? "text-background focus:bg-background/20 focus:text-background" : "text-foreground focus:bg-foreground/10 focus:text-foreground"}`,
     };
@@ -188,7 +188,7 @@ export default function WorksPageClient() {
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single scroll */}
-      <div className="lg:hidden relative z-40 bg-background">
+      <div className="lg:hidden relative z-40 bg-secondary">
         {/* Mobile fixed header — hide on scroll down, show on scroll up */}
         <motion.div
           className="fixed top-0 left-0 right-0 z-50 bg-background shadow-[var(--shadow-nav)]"
