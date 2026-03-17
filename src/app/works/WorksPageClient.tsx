@@ -141,13 +141,13 @@ export default function WorksPageClient() {
     return {
       column: active
         ? "bg-red-600 text-background"
-        : "bg-secondary text-foreground",
-      header: active ? "bg-red-600" : "bg-secondary",
+        : "bg-background text-foreground",
+      header: active ? "bg-red-600" : "bg-background",
       headerRow: active
         ? "[&>*+*]:border-l [&>*+*]:border-background/20"
         : "[&>*+*]:border-l [&>*+*]:border-foreground/8",
-      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${active ? "bg-red-600 text-background" : "bg-secondary text-foreground"}`,
-      content: `${active ? "bg-red-600 text-background" : "bg-background text-foreground"} font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)] shadow-[var(--shadow-md)]`,
+      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${active ? "bg-red-600 text-background" : "bg-background text-neutral-600 dark:text-neutral-400"}`,
+      content: `${active ? "bg-red-600 text-background" : "bg-background text-neutral-600 dark:text-neutral-400"} font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)] shadow-[var(--shadow-md)]`,
       item: `rounded-none ${active ? "text-background focus:bg-background/20 focus:text-background" : "text-foreground focus:bg-foreground/10 focus:text-foreground"}`,
     };
   }
@@ -188,7 +188,7 @@ export default function WorksPageClient() {
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single scroll */}
-      <div className="lg:hidden relative z-40 bg-secondary">
+      <div className="lg:hidden relative z-40 bg-background">
         {/* Mobile fixed header — hide on scroll down, show on scroll up */}
         <motion.div
           className="fixed top-0 left-0 right-0 z-50 bg-background shadow-[var(--shadow-nav)]"
@@ -196,12 +196,12 @@ export default function WorksPageClient() {
           animate={{ y: mobileHeaderVisible ? 0 : "-100%" }}
           transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
         >
-          <div className="flex items-center p-4 gap-x-2 font-bookish text-sm">
+          <div className="flex items-center p-4 font-bookish text-sm">
             <Select
               value={workSort}
               onValueChange={(v) => setWorkSort(v as WorkSort)}
             >
-              <SelectTrigger className="shadow-[var(--shadow-ui)] px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base">
+              <SelectTrigger className="shadow-[var(--shadow-ui)] px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-neutral-600 dark:text-neutral-400 w-full text-base">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-background text-foreground font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)]">
@@ -309,7 +309,7 @@ export default function WorksPageClient() {
             ref={col1Ref}
             className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)] ${c1.column}`}
           >
-            <div className={`sticky top-0 z-10 pt-4 ${c1.header}`}>
+            <div className={`sticky top-0 z-10 pt-4 shadow-[var(--shadow-col-left)] ${c1.header}`}>
               <div
                 className={`mx-4 flex items-center gap-x-0 font-bookish text-sm shadow-[var(--shadow-ui)] ${c1.headerRow}`}
               >
@@ -355,6 +355,7 @@ export default function WorksPageClient() {
                   variant="ghost"
                   size="controlsIcon"
                   onClick={() => setCol1Min(true)}
+                  className="no-hide-text"
                 >
                   <Cross1Icon />
                 </Button>
@@ -389,12 +390,13 @@ export default function WorksPageClient() {
             )}
           </div>
         )}
+        {(!col1Min && !col2Min) && <div className="w-px bg-foreground/10 self-stretch flex-none" />}
         {!col2Min && (
           <div
             ref={col2Ref}
             className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)] ${c2.column}`}
           >
-            <div className={`sticky top-0 z-10 pt-4 ${c2.header}`}>
+            <div className={`sticky top-0 z-10 pt-4 shadow-[var(--shadow-col-right)] ${c2.header}`}>
               <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm ">
                 <div
                   className={`flex w-full items-center gap-0 shadow-[var(--shadow-ui)] ${c2.headerRow}`}
@@ -437,6 +439,7 @@ export default function WorksPageClient() {
                     variant="ghost"
                     size="controlsIcon"
                     onClick={() => setCol2Min(true)}
+                    className="no-hide-text"
                   >
                     <Cross1Icon />
                   </Button>

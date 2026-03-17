@@ -86,20 +86,18 @@ export default function NavSearch({
           </div>
 
           {query && results.length > 0 && (
-            <div className="flex flex-col shadow-[var(--shadow-md)]">
+            <div className="flex flex-col">
               {results.slice(0, 8).map((item) => (
-                <Button
-                  variant="ghost"
-                  size="controls"
+                <button
                   key={item.id}
-                  className="w-full justify-start shadow-[0_1px_0_0_rgb(0_0_0/0.05)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.05)]"
+                  className="flex flex-row items-baseline font-bookish border-b border-foreground/[0.06] w-full text-left hover:bg-foreground/10 transition-colors"
                   onClick={() => handleResultClick(item)}
                 >
-                  <span className="opacity-50 text-xs tracking-wider">
+                  <span className="h3 text-muted-foreground whitespace-nowrap py-1.5 px-2 border-r border-foreground/[0.06]">
                     {item.type === "work" ? "Work" : "Exhibition"}
                   </span>
-                  {item.title}
-                </Button>
+                  <span className="h3 py-1.5 px-3">{item.title}</span>
+                </button>
               ))}
             </div>
           )}

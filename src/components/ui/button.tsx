@@ -18,7 +18,7 @@ const buttonVariants = cva(
         secondary:
           "bg-background text-background-foreground  hover:bg-secondary/80 justify-center",
         ghost:
-          "bg-background hover:bg-foreground/10 hover:text-foreground/80 justify-center",
+          "bg-background text-neutral-600 dark:text-neutral-400 hover:bg-foreground/10 hover:text-foreground justify-center",
         link: "text-primary hover:text-foreground/80 transition-all      ",
         nav: "text-primary       transition-all w-full  justify-between hover:text-primary/80 ",
       },

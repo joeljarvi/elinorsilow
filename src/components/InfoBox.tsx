@@ -12,8 +12,8 @@ export function InfoRow({
 }) {
   if (!value && !children) return null;
   return (
-    <div className="flex flex-row items-baseline font-bookish shadow-[var(--shadow-ui)]">
-      <span className="text-left text-muted-foreground whitespace-nowrap py-1.5 px-2 font-bookish h3">
+    <div className="flex flex-row items-baseline font-bookish border-b border-foreground/[0.06]">
+      <span className="text-left text-muted-foreground whitespace-nowrap py-1.5 px-2 font-bookish h3 border-r border-foreground/[0.06]">
         {label}
       </span>
       <div className="h3 py-1.5 text-left px-3">{children ?? value}</div>
@@ -29,7 +29,7 @@ export default function InfoBox({
   exhibition?: Exhibition;
 }) {
   return (
-    <div className="relative w-full mt-0 px-4">
+    <div className="relative w-full mt-0 px-4 pb-2">
       {work && (
         <>
           <InfoRow label="Title" value={work.title.rendered} />

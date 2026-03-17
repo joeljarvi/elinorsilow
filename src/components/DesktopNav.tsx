@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Button } from "./ui/button";
@@ -50,19 +49,6 @@ function NavItem({
   );
 }
 
-function ContactButton({ href }: { href: string }) {
-  return (
-    <Button
-      variant="ghost"
-      size="controls"
-      className="h3 hidden lg:flex font-bookish px-3 py-1.5 border border-foreground/25 transition-shadow duration-300 shadow-[0_0_0_0px_hsl(var(--foreground)/0)] hover:shadow-[0_0_14px_2px_hsl(var(--foreground)/0.15)] hover:border-foreground/50"
-      asChild
-    >
-      <Link href={href}>Contact</Link>
-    </Button>
-  );
-}
-
 export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -92,7 +78,7 @@ export default function DesktopNav() {
       if (!isDesktopRef.current) return;
       const target = e.target as HTMLElement;
       const currentScrollY =
-        (e.target === document || e.target === document.documentElement)
+        e.target === document || e.target === document.documentElement
           ? window.scrollY
           : target.scrollTop;
       const prev = lastScrollY.current.get(e.target!) ?? 0;
@@ -103,8 +89,12 @@ export default function DesktopNav() {
       }
       lastScrollY.current.set(e.target!, currentScrollY);
     };
-    document.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-    return () => document.removeEventListener("scroll", handleScroll, { capture: true });
+    document.addEventListener("scroll", handleScroll, {
+      capture: true,
+      passive: true,
+    });
+    return () =>
+      document.removeEventListener("scroll", handleScroll, { capture: true });
   }, []);
 
   return (
@@ -128,9 +118,9 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className="relative flex justify-between no-hide-text font-bookish items-center w-full bg-background shadow-[var(--shadow-nav)]"
+              className="relative flex justify-between no-hide-text font-bookish items-center w-full bg-background shadow-[var(--shadow-nav)] lg:border-b lg:border-foreground/[0.06] lg:px-4"
             >
-              {/* Left: Elinor Silow (desktop) */}
+              {/* Left: ES logo (desktop) */}
               <motion.div
                 variants={navItemVariant}
                 className="flex items-center"
@@ -155,20 +145,25 @@ export default function DesktopNav() {
                 </span>
               </motion.span>
 
-              {/* Right: Contact (glow) + dark mode + search */}
+              {/* Right: Contact + dark mode + search */}
               <motion.span
                 variants={navItemVariant}
                 className="flex items-center gap-x-0"
               >
-                <ContactButton href="/contact" />
+                <NavItem
+                  className="hidden lg:flex font-bookish px-3"
+                  href="/contact"
+                >
+                  Contact
+                </NavItem>
                 <DarkModeToggle className="hidden lg:flex" />
                 <Button
                   className="hidden lg:flex"
                   variant="ghost"
-                  size="controlsIcon"
+                  size="controls"
                   onClick={() => setOpenSearch(true)}
                 >
-                  <MagnifyingGlassIcon />
+                  Search
                 </Button>
               </motion.span>
             </motion.nav>

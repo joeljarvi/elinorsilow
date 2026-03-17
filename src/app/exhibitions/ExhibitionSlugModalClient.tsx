@@ -186,6 +186,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             size="controlsIcon"
             onClick={onClose ?? (() => router.push("/exhibitions"))}
             aria-label="Close"
+            className="no-hide-text"
           >
             <Cross1Icon />
           </Button>
@@ -349,6 +350,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                 size="controlsIcon"
                 onClick={() => setLightboxIndex(null)}
                 aria-label="Close lightbox"
+                className="no-hide-text"
               >
                 <Cross1Icon />
               </Button>

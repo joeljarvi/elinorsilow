@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import { InfoRow } from "@/components/InfoBox";
-import HDivider from "@/components/HDivider";
 
 function groupByYear<T extends { acf: { year: number | string } }>(
   items: T[],
@@ -24,9 +23,9 @@ function groupByYear<T extends { acf: { year: number | string } }>(
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="sticky top-0 lg:top-8 z-10 pt-4 bg-background">
-      <div className="mx-4 flex items-center font-bookish text-sm border border-border">
-        <span className="h3 px-3 py-1.5 text-muted-foreground">{children}</span>
+    <div className="sticky top-0 lg:top-0 z-10 pt-4 bg-background">
+      <div className="mx-4 flex items-center font-bookish text-sm shadow-[var(--shadow-ui)]">
+        <span className="h3 px-3 py-1.5 text-neutral-600 dark:text-neutral-400">{children}</span>
       </div>
     </div>
   );
@@ -34,7 +33,7 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 
 export default function InfoPageClient() {
   const { educations, grants, soloExhibitions, groupExhibitions } = useInfo();
-  const { setOpen } = useUI();
+  const { setOpen, navVisible } = useUI();
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   function ExhibitionList({ items }: { items: typeof soloExhibitions }) {
@@ -42,18 +41,17 @@ export default function InfoPageClient() {
       <div className="flex flex-col px-4 mb-4">
         {groupByYear(items).map(([year, exs]) => (
           <div key={year}>
-            <div className="flex flex-row items-baseline font-bookish border-x border-border">
+            <div className="flex flex-row items-baseline font-bookish border-b border-foreground/[0.06] mt-2">
               <span className="h3 py-1.5 px-2 text-muted-foreground">
                 {year}
               </span>
             </div>
-            <HDivider />
             {exs.map((ex) => {
               const slug = findExhibitionSlug(ex.title.rendered);
               return (
                 <div
                   key={ex.id}
-                  className="flex flex-wrap items-baseline gap-x-1 h3 px-3 py-1.5  border-x border-b border-border"
+                  className="flex flex-wrap items-baseline gap-x-1 h3 px-3 py-1.5 border-b border-foreground/[0.06]"
                 >
                   {slug ? (
                     <Button
@@ -85,7 +83,7 @@ export default function InfoPageClient() {
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single column */}
-      <div className="lg:hidden flex flex-col mb-36 ">
+      <div className="lg:hidden flex flex-col mb-36">
         <SectionHeader>About</SectionHeader>
         <div className="px-8 py-4 font-bookish flex flex-col gap-y-3 mb-4">
           <p className="h3">
@@ -149,13 +147,13 @@ export default function InfoPageClient() {
         )}
       </div>
 
-      {/* Desktop: 3 fixed scrolling columns */}
+      {/* Desktop: 2 fixed scrolling columns */}
       <div
-        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
-        style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
+        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0 transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+        style={{ top: navVisible ? "var(--nav-height, 0px)" : "0px" }}
       >
         {/* Col 1: About + Solo Exhibitions */}
-        <div className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col">
+        <div className="flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)] bg-background">
           <SectionHeader>About</SectionHeader>
           <div className="px-4 py-4 font-bookish flex flex-col gap-y-3 mb-4">
             <p className="h3">
@@ -183,8 +181,10 @@ export default function InfoPageClient() {
           )}
         </div>
 
+        <div className="w-px bg-foreground/10 self-stretch flex-none" />
+
         {/* Col 2: Group Exhibitions + Education + Grants + Press + Colophon */}
-        <div className="flex-1 overflow-y-auto h-full flex flex-col">
+        <div className="flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)] bg-background">
           {groupExhibitions.length > 0 && (
             <>
               <SectionHeader>Group Exhibitions</SectionHeader>
@@ -195,7 +195,6 @@ export default function InfoPageClient() {
             <>
               <SectionHeader>Education</SectionHeader>
               <div className="flex flex-col px-4 mb-4">
-                <HDivider />
                 {educations.map((edu) => (
                   <InfoRow
                     key={edu.id}
@@ -214,7 +213,6 @@ export default function InfoPageClient() {
             <>
               <SectionHeader>Grants</SectionHeader>
               <div className="flex flex-col px-4 mb-4">
-                <HDivider />
                 {groupByYear(grants).map(([year, gs]) =>
                   gs.map((grant) => (
                     <InfoRow key={grant.id} label={year}>
@@ -228,7 +226,6 @@ export default function InfoPageClient() {
 
           <SectionHeader>Press</SectionHeader>
           <div className="flex flex-col px-4 mb-4">
-            <HDivider />
             <InfoRow label="2022">
               <span className="h3 flex flex-wrap gap-x-1">
                 <span>Hjärtat,</span>
@@ -257,7 +254,6 @@ export default function InfoPageClient() {
 
           <SectionHeader>Colophon</SectionHeader>
           <div className="flex flex-col px-4 mb-4">
-            <HDivider />
             <InfoRow label="Design & code">
               <Link
                 className="h3 underline underline-offset-4 decoration-1 hover:no-underline"

@@ -167,6 +167,7 @@ export default function WorkSlugModalClient({
             size="controlsIcon"
             onClick={onClose ?? (() => router.push("/works"))}
             aria-label="Close"
+            className="no-hide-text"
           >
             <Cross1Icon />
           </Button>

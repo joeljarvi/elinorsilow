@@ -120,6 +120,7 @@ html {
   --shadow-nav: 0 2px 16px -2px rgb(0 0 0 / 0.45);
   --shadow-col-left: inset -10px 0 20px -10px rgb(0 0 0 / 0.40);
   --shadow-col-right: inset 10px 0 20px -10px rgb(0 0 0 / 0.40);
+  --shadow-header: 0 6px 16px -4px rgb(0 0 0 / 0.35);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -191,6 +192,12 @@ a {
 .no-hide-text * {
   opacity: 1 !important;
   pointer-events: auto !important;
+}
+
+/* Hide shadows on buttons/selects when text is hidden */
+[data-hide-text="true"] button:not(.no-hide-text):not(.no-hide-text *),
+[data-hide-text="true"] [data-slot="select-trigger"]:not(.no-hide-text):not(.no-hide-text *) {
+  box-shadow: none !important;
 }
 
 @layer components {

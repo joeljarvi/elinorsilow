@@ -3,6 +3,7 @@
 import React from "react";
 import { useUI } from "@/context/UIContext";
 import { Button } from "./ui/button";
+import { EyeOpenIcon, EyeClosedIcon } from "@radix-ui/react-icons";
 
 export function HideTextToggle({
   className,
@@ -23,7 +24,11 @@ export function HideTextToggle({
       aria-label={showInfo ? "Hide text" : "Show text"}
       className={`no-hide-text ${className ?? ""}`}
     >
-      {showInfo ? "Hide text" : "Show text"}
+      {size === "controlsIcon" ? (
+        showInfo ? <EyeClosedIcon /> : <EyeOpenIcon />
+      ) : (
+        showInfo ? "Hide text" : "Show text"
+      )}
     </Button>
   );
 }
