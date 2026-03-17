@@ -11,7 +11,7 @@ import { HideTextToggle } from "./HideTextToggle";
 import NavSearch from "./NavSearch";
 
 const rowClass =
-  "justify-start w-full px-6 py-4 font-bookish text-base border-b border-foreground/[0.06] rounded-none h-auto";
+  "justify-start w-full px-6 py-4 font-bookish text-xl border-b border-foreground/[0.06] rounded-none h-auto";
 
 export default function MobileNavOverlay() {
   const pathname = usePathname();
@@ -29,17 +29,18 @@ export default function MobileNavOverlay() {
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className="lg:hidden fixed inset-0 z-[60] bg-background overflow-y-auto h-screen"
+            className="lg:hidden fixed inset-0 z-[60] bg-background overflow-y-auto h-screen flex flex-col"
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <nav className="no-hide-text flex flex-col font-bookish">
-              <Button variant="ghost" size="controls" className={rowClass} asChild>
+            <nav className="no-hide-text flex flex-col font-bookish flex-1">
+              <Button variant="ghost" size="controls" className="justify-start w-full px-6 py-4 font-bookish text-xl rounded-none h-auto" asChild>
                 <Link href="/" onClick={() => setOpen(false)}>Elinor Silow</Link>
               </Button>
 
+              <div className="flex flex-col justify-center flex-1">
               <Button variant="ghost" size="controls" className={rowClass} asChild>
                 <Link href="/works" onClick={() => setOpen(false)}>Works</Link>
               </Button>
@@ -68,13 +69,14 @@ export default function MobileNavOverlay() {
                 Search
               </Button>
 
-              <div className="flex items-center border-b border-foreground/[0.06]">
+              <div className="flex flex-col border-b border-foreground/[0.06]">
                 <HideTextToggle
                   variant="ghost"
                   size="controlsIcon"
-                  className="px-6 py-4 rounded-none h-auto"
+                  className="px-6 py-4 ml-2 rounded-none h-auto"
                 />
-                <DarkModeToggle className="px-6 py-4 rounded-none h-auto" />
+                <DarkModeToggle className="px-6 py-4 ml-2 rounded-none h-auto" />
+              </div>
               </div>
             </nav>
           </motion.div>

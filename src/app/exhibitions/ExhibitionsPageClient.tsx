@@ -281,7 +281,7 @@ export default function ExhibitionsPageClient() {
             ref={col1Ref}
             className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)] ${c1.column}`}
           >
-            <div className={`sticky top-0 z-10 pt-4 shadow-[var(--shadow-col-left)] ${c1.header}`}>
+            <div className={`sticky top-0 z-10 shadow-[var(--shadow-col-left)] ${c1.header}`}>
               <div className={`mx-4 flex items-center gap-x-0 font-bookish text-sm ${c1.headerRow}`}>
                 <Select
                   value={col1Sort}
@@ -363,7 +363,7 @@ export default function ExhibitionsPageClient() {
             ref={col2Ref}
             className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)] ${c2.column}`}
           >
-            <div className={`sticky top-0 z-10 pt-4 shadow-[var(--shadow-col-right)] ${c2.header}`}>
+            <div className={`sticky top-0 z-10 shadow-[var(--shadow-col-right)] ${c2.header}`}>
               <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm">
                 <div className={`flex w-full items-center gap-0 ${c2.headerRow}`}>
                   <Select value={col2Type} onValueChange={setCol2Type}>

@@ -309,7 +309,7 @@ export default function WorksPageClient() {
             ref={col1Ref}
             className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)] ${c1.column}`}
           >
-            <div className={`sticky top-0 z-10 pt-4 shadow-[var(--shadow-col-left)] ${c1.header}`}>
+            <div className={`sticky top-0 z-10 shadow-[var(--shadow-col-left)] ${c1.header}`}>
               <div
                 className={`mx-4 flex items-center gap-x-0 font-bookish text-sm shadow-[var(--shadow-ui)] ${c1.headerRow}`}
               >
@@ -396,7 +396,7 @@ export default function WorksPageClient() {
             ref={col2Ref}
             className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)] ${c2.column}`}
           >
-            <div className={`sticky top-0 z-10 pt-4 shadow-[var(--shadow-col-right)] ${c2.header}`}>
+            <div className={`sticky top-0 z-10 shadow-[var(--shadow-col-right)] ${c2.header}`}>
               <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm ">
                 <div
                   className={`flex w-full items-center gap-0 shadow-[var(--shadow-ui)] ${c2.headerRow}`}
