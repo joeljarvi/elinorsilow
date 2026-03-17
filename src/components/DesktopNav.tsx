@@ -122,7 +122,7 @@ export default function DesktopNav() {
                 variants={navItemVariant}
                 className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex-1 lg:flex-none"
               >
-                <span className="lg:hidden flex">
+                <span className="hidden">
                   <NavItem
                     href="/"
                     active={pathname === "/"}

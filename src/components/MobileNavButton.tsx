@@ -42,7 +42,7 @@ function NavIcon({ state }: { state: "loading" | "idle" | "open" }) {
             }
           : { duration: 0.25, ease: "easeOut" }
       }
-      className="relative w-18 h-18 no-hide-text"
+      className="relative w-16 h-16 lg:w-18 lg:h-18 no-hide-text"
     >
       <Image
         src={src}
@@ -97,7 +97,7 @@ export default function NavButton() {
 
   return (
     <motion.button
-      className="fixed bottom-8 right-8 z-[70] drop-shadow-lg"
+      className="fixed top-0 left-1/2 -translate-x-1/2 h-16 flex items-center justify-center z-[70] drop-shadow-lg lg:top-auto lg:bottom-8 lg:left-auto lg:right-8 lg:translate-x-0 lg:h-auto"
       onClick={handleOpen}
       aria-label={open ? "Stäng meny" : "Öppna meny"}
       aria-expanded={open}

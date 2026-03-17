@@ -109,7 +109,23 @@ export default function ExhibitionsPageClient() {
         className="group relative cursor-pointer w-full flex flex-col"
         aria-label={`Show exhibition: ${ex.title.rendered}`}
       >
-        <div className="relative h-[75vh] w-full overflow-hidden p-4 pb-0">
+        {/* Mobile: hug image height */}
+        {ex.acf.image_1 && (
+          <div className="lg:hidden relative w-full p-4 pb-0">
+            <CornerFrame />
+            <Image
+              src={ex.acf.image_1.url}
+              alt={ex.title.rendered}
+              width={ex.acf.image_1.width ?? 800}
+              height={ex.acf.image_1.height ?? 600}
+              style={{ width: "100%", height: "auto" }}
+              sizes="100vw"
+              className="object-contain"
+            />
+          </div>
+        )}
+        {/* Desktop: fixed tall container */}
+        <div className="hidden lg:block relative h-[75vh] w-full overflow-hidden p-4 pb-0">
           <CornerFrame />
           {ex.acf.image_1 && (
             <div className="absolute inset-4 flex items-end">
@@ -117,7 +133,7 @@ export default function ExhibitionsPageClient() {
                 src={ex.acf.image_1.url}
                 alt={ex.title.rendered}
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="50vw"
                 className="object-contain"
               />
             </div>
@@ -139,14 +155,14 @@ export default function ExhibitionsPageClient() {
     <section className="relative w-full mt-0">
       {/* Mobile: single staggered list */}
       <div className="lg:hidden relative z-40 bg-transparent">
-        <div className="sticky top-8 z-50 bg-background w-full pt-0 pb-0">
+        <div className="sticky top-0 lg:top-8 z-50 bg-background w-full pt-0 pb-0">
           <div className="mx-0 flex items-stretch font-bookish text-sm gap-x-0 border-x-0 border-border border-t-0 [&>*+*]:border-l [&>*+*]:border-border">
             <div className="flex items-center gap-x-2 w-1/2">
               <Select
                 value={col1Sort}
                 onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
               >
-                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full">
+                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className={selectContentClass}>
@@ -161,7 +177,7 @@ export default function ExhibitionsPageClient() {
             </div>
             <div className="flex items-center flex-1 w-full gap-x-2">
               <Select value={col1Type} onValueChange={setCol1Type}>
-                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full">
+                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className={selectContentClass}>

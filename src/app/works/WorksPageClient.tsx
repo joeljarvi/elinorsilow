@@ -165,14 +165,14 @@ export default function WorksPageClient() {
       {/* Mobile: single scroll */}
       <div className="lg:hidden relative z-40 bg-transparent">
         {/* Mobile sticky header */}
-        <div className="sticky top-8 z-50 bg-background w-full pt-0 pb-0">
+        <div className="sticky top-0 lg:top-8 z-50 bg-background w-full pt-0 pb-0">
           <div className="mx-0 flex items-stretch font-bookish text-sm gap-x-0 border-x-0 border-border border-t-0 [&>*+*]:border-l border-b-0 [&>*+*]:border-border">
             <div className="flex items-center gap-x-2 w-1/2">
               <Select
                 value={workSort}
                 onValueChange={(v) => setWorkSort(v as WorkSort)}
               >
-                <SelectTrigger className="border border-border border-x-0 shadow-none pl-3 pr-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full">
+                <SelectTrigger className="border border-border border-x-0 shadow-none pl-3 pr-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">
@@ -202,7 +202,7 @@ export default function WorksPageClient() {
                 value={categoryFilter}
                 onValueChange={(v) => setCategoryFilter(v as CategoryFilter)}
               >
-                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full">
+                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">

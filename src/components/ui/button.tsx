@@ -31,7 +31,7 @@ const buttonVariants = cva(
         listSize: "h-auto px-0 py-0",
         linkIcon: "h-6 w-6 px-0 py-0",
         controls: "h-8 px-3 py-1.5 [&_svg]:size-3 h3",
-        controlsIcon: "h-8 w-8 px-0 py-1.5 aspect-square  [&_svg]:size-3 h3",
+        controlsIcon: "h-auto w-8 px-0 py-1.5 lg:h-8 [&_svg]:size-3 h3",
         icon: "h-9 w-9",
       },
     },

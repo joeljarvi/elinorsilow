@@ -24,7 +24,7 @@ function groupByYear<T extends { acf: { year: number | string } }>(
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="sticky top-8 z-10 pt-4 bg-background">
+    <div className="sticky top-0 lg:top-8 z-10 pt-4 bg-background">
       <div className="mx-4 flex items-center font-bookish text-sm border border-border">
         <span className="h3 px-3 py-1.5 text-muted-foreground">{children}</span>
       </div>

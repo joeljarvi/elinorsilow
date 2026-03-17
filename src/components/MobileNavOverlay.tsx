@@ -12,6 +12,7 @@ import { DarkModeToggle } from "./DarkModeToggle";
 import { HideTextToggle } from "./HideTextToggle";
 import NavSearch from "./NavSearch";
 import { Work, Exhibition } from "../../lib/sanity";
+import { ChevronDownIcon } from "lucide-react";
 
 import {
   Select,
@@ -23,18 +24,17 @@ import {
 
 function Caret({ open }: { open: boolean }) {
   return (
-    <motion.span
-      animate={{ rotate: open ? 90 : 0 }}
+    <motion.div
+      animate={{ rotate: open ? 180 : 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="inline-block text-xl leading-none"
     >
-      ›
-    </motion.span>
+      <ChevronDownIcon className="w-3 h-3 text-foreground" />
+    </motion.div>
   );
 }
 
 const rowClass =
-  "justify-start w-full px-6 font-bookish h4 border-b border-border rounded-none";
+  "justify-start w-full px-6 py-4 font-bookish text-base border-b border-border rounded-none h-auto";
 
 export default function MobileNavOverlay() {
   const pathname = usePathname();
@@ -89,7 +89,7 @@ export default function MobileNavOverlay() {
               <Button
                 variant="ghost"
                 size="controls"
-                className={`${rowClass} py-6`}
+                className={rowClass}
                 asChild
               >
                 <Link href="/" onClick={() => setOpen(false)}>
@@ -102,7 +102,7 @@ export default function MobileNavOverlay() {
                 <Button
                   variant="ghost"
                   size="controls"
-                  className="justify-start flex-1 px-6 py-6 h4 font-bookish rounded-none"
+                  className="justify-start flex-1 px-6 py-4 text-base font-bookish rounded-none h-auto"
                   asChild
                 >
                   <Link href="/works" onClick={() => setOpen(false)}>
@@ -112,7 +112,7 @@ export default function MobileNavOverlay() {
                 <Button
                   variant="ghost"
                   size="controlsIcon"
-                  className="px-6 rounded-none"
+                  className="px-6 py-4 rounded-none h-auto"
                   onClick={() => setWorksExpanded((prev) => !prev)}
                   aria-expanded={worksExpanded}
                   aria-label="Toggle Works submenu"
@@ -136,7 +136,7 @@ export default function MobileNavOverlay() {
                         setCategoryFilter(v as CategoryFilter)
                       }
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
@@ -151,7 +151,7 @@ export default function MobileNavOverlay() {
                       value={workSort}
                       onValueChange={(v) => setWorkSort(v as WorkSort)}
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
@@ -167,7 +167,7 @@ export default function MobileNavOverlay() {
                     <Button
                       variant="ghost"
                       size="controls"
-                      className={`${rowClass} py-6 !h-auto`}
+                      className={rowClass}
                       aria-pressed={proportionalImages}
                       onClick={() => {
                         setProportionalImages(!proportionalImages);
@@ -176,11 +176,14 @@ export default function MobileNavOverlay() {
                     >
                       {proportionalImages ? "Full width" : "Proportional"}
                     </Button>
-                    <HideTextToggle variant="ghost" className={`${rowClass} py-6 !h-auto`} />
+                    <HideTextToggle
+                      variant="ghost"
+                      className={rowClass}
+                    />
                     <Button
                       variant="ghost"
                       size="controls"
-                      className={`${rowClass} py-6 !h-auto`}
+                      className={rowClass}
                       aria-expanded={worksListOpen}
                       onClick={() => setWorksListOpen((prev) => !prev)}
                     >
@@ -209,7 +212,7 @@ export default function MobileNavOverlay() {
                                   key={work.id}
                                   variant="ghost"
                                   size="controls"
-                                  className="justify-start px-8 py-3 h4 font-bookish border-b border-border rounded-none"
+                                  className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
                                   onClick={() => {
                                     setActiveWorkSlug(work.slug);
                                     setOpen(false);
@@ -236,7 +239,7 @@ export default function MobileNavOverlay() {
                 <Button
                   variant="ghost"
                   size="controls"
-                  className="justify-start flex-1 px-6 py-6 h4 font-bookish rounded-none"
+                  className="justify-start flex-1 px-6 py-4 text-base font-bookish rounded-none h-auto"
                   asChild
                 >
                   <Link href="/exhibitions" onClick={() => setOpen(false)}>
@@ -246,7 +249,7 @@ export default function MobileNavOverlay() {
                 <Button
                   variant="ghost"
                   size="controlsIcon"
-                  className="px-6 rounded-none"
+                  className="px-6 py-4 rounded-none h-auto"
                   onClick={() => setExhibitionsExpanded((prev) => !prev)}
                   aria-expanded={exhibitionsExpanded}
                   aria-label="Toggle Exhibitions submenu"
@@ -268,15 +271,13 @@ export default function MobileNavOverlay() {
                       value={selectedType}
                       onValueChange={setSelectedType}
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
                         <SelectItem value="all">All</SelectItem>
                         <SelectItem value="Solo">Solo Exhibitions</SelectItem>
-                        <SelectItem value="Group">
-                          Group Exhibitions
-                        </SelectItem>
+                        <SelectItem value="Group">Group Exhibitions</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select
@@ -285,7 +286,7 @@ export default function MobileNavOverlay() {
                         setExhibitionSort(v as ExhibitionSort)
                       }
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
@@ -296,7 +297,7 @@ export default function MobileNavOverlay() {
                     <Button
                       variant="ghost"
                       size="controls"
-                      className={`${rowClass} py-6 !h-auto`}
+                      className={rowClass}
                       aria-expanded={exListOpen}
                       onClick={() => setExListOpen((prev) => !prev)}
                     >
@@ -325,7 +326,7 @@ export default function MobileNavOverlay() {
                                   key={ex.id}
                                   variant="ghost"
                                   size="controls"
-                                  className="justify-start px-8 py-3 h4 font-bookish border-b border-border rounded-none"
+                                  className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
                                   onClick={() => {
                                     setActiveExhibitionSlug(ex.slug);
                                     setOpen(false);
@@ -351,7 +352,7 @@ export default function MobileNavOverlay() {
               <Button
                 variant="ghost"
                 size="controls"
-                className={`${rowClass} py-6`}
+                className={rowClass}
                 asChild
               >
                 <Link href="/info" onClick={() => setOpen(false)}>
@@ -364,7 +365,7 @@ export default function MobileNavOverlay() {
                 <Button
                   variant="ghost"
                   size="controls"
-                  className="justify-start flex-1 px-6 py-6 h4 font-bookish rounded-none"
+                  className="justify-start flex-1 px-6 py-4 text-base font-bookish rounded-none h-auto"
                   asChild
                 >
                   <Link href="/" onClick={() => setOpen(false)}>
@@ -374,7 +375,7 @@ export default function MobileNavOverlay() {
                 <Button
                   variant="ghost"
                   size="controlsIcon"
-                  className="px-6 rounded-none"
+                  className="px-6 py-4 rounded-none h-auto"
                   onClick={() => setInfoExpanded((prev) => !prev)}
                   aria-expanded={infoExpanded}
                   aria-label="Toggle Contact submenu"
@@ -395,7 +396,7 @@ export default function MobileNavOverlay() {
                     <Button
                       variant="ghost"
                       size="controls"
-                      className="justify-start px-8 py-4 h4 font-bookish border-b border-border rounded-none"
+                      className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
                       asChild
                     >
                       <a
@@ -410,7 +411,7 @@ export default function MobileNavOverlay() {
                     <Button
                       variant="ghost"
                       size="controls"
-                      className="justify-start px-8 py-4 h4 font-bookish border-b border-border rounded-none"
+                      className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
                       asChild
                     >
                       <a
@@ -428,7 +429,7 @@ export default function MobileNavOverlay() {
               <Button
                 variant="ghost"
                 size="controls"
-                className={`${rowClass} py-6`}
+                className={rowClass}
                 onClick={() => {
                   setOpen(false);
                   setOpenSearch(true);
@@ -437,8 +438,14 @@ export default function MobileNavOverlay() {
                 Search
               </Button>
 
-              <HideTextToggle variant="ghost" className={`${rowClass} py-6 !h-auto`} />
-              <DarkModeToggle size="default" className={`${rowClass} py-6 !h-auto`} />
+              <HideTextToggle
+                variant="ghost"
+                className={rowClass}
+              />
+              <DarkModeToggle
+                size="default"
+                className={rowClass}
+              />
             </nav>
           </motion.div>
         )}
