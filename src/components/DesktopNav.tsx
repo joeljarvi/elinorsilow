@@ -128,7 +128,7 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className="relative flex justify-between no-hide-text font-bookish items-center w-full bg-background border-b border-border"
+              className="relative flex justify-between no-hide-text font-bookish items-center w-full bg-background shadow-[var(--shadow-nav)]"
             >
               {/* Left: Elinor Silow (desktop) */}
               <motion.div

@@ -66,7 +66,7 @@ export default function NavSearch({
           transition={{ duration: 0.2 }}
           className="fixed inset-0 z-50 bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
         >
-          <div className="flex items-center border-b border-border [&>*+*]:border-l [&>*+*]:border-border">
+          <div className="flex items-center shadow-[var(--shadow-nav)] [&>*+*]:border-l [&>*+*]:border-foreground/8">
             <MagnifyingGlassIcon className="mx-2 text-muted-foreground shrink-0" />
             <input
               ref={inputRef}
@@ -86,13 +86,13 @@ export default function NavSearch({
           </div>
 
           {query && results.length > 0 && (
-            <div className="flex flex-col border-b border-border">
+            <div className="flex flex-col shadow-[var(--shadow-md)]">
               {results.slice(0, 8).map((item) => (
                 <Button
                   variant="ghost"
                   size="controls"
                   key={item.id}
-                  className="w-full justify-start border-t border-border"
+                  className="w-full justify-start shadow-[0_1px_0_0_rgb(0_0_0/0.05)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.05)]"
                   onClick={() => handleResultClick(item)}
                 >
                   <span className="opacity-50 text-xs tracking-wider">

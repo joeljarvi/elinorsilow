@@ -156,9 +156,9 @@ export default function ExhibitionsPageClient() {
     return {
       column: dark ? "bg-black text-white" : "bg-background text-foreground",
       header: dark ? "bg-black" : "bg-background",
-      headerRow: `border border-border [&>*+*]:border-l [&>*+*]:border-border`,
+      headerRow: `shadow-[var(--shadow-ui)] [&>*+*]:border-l [&>*+*]:border-foreground/8`,
       trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${dark ? "bg-black text-white" : "bg-background text-foreground"}`,
-      content: `bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]`,
+      content: `bg-background text-foreground font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)] shadow-[var(--shadow-md)]`,
       item: `rounded-none text-foreground focus:bg-foreground/10 focus:text-foreground`,
     };
   }
@@ -171,7 +171,7 @@ export default function ExhibitionsPageClient() {
       <div className="lg:hidden relative z-40 bg-background">
         {/* Mobile fixed header — hide on scroll down, show on scroll up */}
         <motion.div
-          className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border"
+          className="fixed top-0 left-0 right-0 z-50 bg-background shadow-[var(--shadow-nav)]"
           style={{ paddingTop: "var(--nav-height, 0px)" }}
           animate={{ y: mobileHeaderVisible ? 0 : "-100%" }}
           transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
@@ -181,10 +181,10 @@ export default function ExhibitionsPageClient() {
               value={col1Sort}
               onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
             >
-              <SelectTrigger className="border border-border shadow-none px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base">
+              <SelectTrigger className="shadow-[var(--shadow-ui)] px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">
+              <SelectContent className="bg-background text-foreground font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)]">
                 <SelectItem
                   value="year"
                   className="text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none"
@@ -209,7 +209,7 @@ export default function ExhibitionsPageClient() {
               variant="ghost"
               size="controls"
               onClick={() => setMobileAsList((v) => !v)}
-              className="shrink-0 border border-border"
+              className="shrink-0 shadow-[var(--shadow-ui)]"
             >
               {mobileAsList ? "Thumbnails" : "List"}
             </Button>
@@ -227,7 +227,7 @@ export default function ExhibitionsPageClient() {
                 <button
                   key={ex.id}
                   onClick={() => openExhibition(ex)}
-                  className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                  className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left hover:bg-foreground/10 transition-colors"
                   aria-label={`Show exhibition: ${ex.title.rendered}`}
                 >
                   {ex.title.rendered}
@@ -258,7 +258,7 @@ export default function ExhibitionsPageClient() {
               variant="ghost"
               size="sm"
               onClick={() => setCol1Min(false)}
-              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
+              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm shadow-[var(--shadow-ui)]"
             >
               + Exhibitions
             </Button>
@@ -268,7 +268,7 @@ export default function ExhibitionsPageClient() {
               variant="ghost"
               size="sm"
               onClick={() => setCol2Min(false)}
-              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
+              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm shadow-[var(--shadow-ui)]"
             >
               + {col2Type === "all" ? "All Types" : col2Type}
             </Button>
@@ -279,7 +279,7 @@ export default function ExhibitionsPageClient() {
         {!col1Min && (
           <div
             ref={col1Ref}
-            className={`flex-1 overflow-y-auto h-full border-r border-border flex flex-col ${c1.column}`}
+            className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)] ${c1.column}`}
           >
             <div className={`sticky top-0 z-10 pt-4 ${c1.header}`}>
               <div className={`mx-4 flex items-center gap-x-0 font-bookish text-sm ${c1.headerRow}`}>
@@ -329,12 +329,12 @@ export default function ExhibitionsPageClient() {
             </div>
             {col1AsList ? (
               <div className="p-4">
-                <div className="border-t border-x border-border">
+                <div className="shadow-[var(--shadow-md)]">
                   {col1Exhibitions.map((ex) => (
                     <button
                       key={ex.id}
                       onClick={() => openExhibition(ex)}
-                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left hover:bg-foreground/10 transition-colors"
                       aria-label={`Show exhibition: ${ex.title.rendered}`}
                     >
                       {ex.title.rendered}
@@ -359,7 +359,7 @@ export default function ExhibitionsPageClient() {
         {!col2Min && (
           <div
             ref={col2Ref}
-            className={`flex-1 overflow-y-auto h-full flex flex-col ${c2.column}`}
+            className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)] ${c2.column}`}
           >
             <div className={`sticky top-0 z-10 pt-4 ${c2.header}`}>
               <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm">
@@ -419,12 +419,12 @@ export default function ExhibitionsPageClient() {
             </div>
             {col2AsList ? (
               <div className="p-4">
-                <div className="border-t border-x border-border">
+                <div className="shadow-[var(--shadow-md)]">
                   {col2Exhibitions.map((ex) => (
                     <button
                       key={ex.id}
                       onClick={() => openExhibition(ex)}
-                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left hover:bg-foreground/10 transition-colors"
                       aria-label={`Show exhibition: ${ex.title.rendered}`}
                     >
                       {ex.title.rendered}

@@ -34,7 +34,7 @@ function Caret({ open }: { open: boolean }) {
 }
 
 const rowClass =
-  "justify-start w-full px-6 py-4 font-bookish text-base border-b border-border rounded-none h-auto";
+  "justify-start w-full px-6 py-4 font-bookish text-base shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)] rounded-none h-auto";
 
 export default function MobileNavOverlay() {
   const pathname = usePathname();
@@ -98,7 +98,7 @@ export default function MobileNavOverlay() {
               </Button>
 
               {/* Works row */}
-              <div className="flex items-center border-b border-border">
+              <div className="flex items-center shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                 <Button
                   variant="ghost"
                   size="controls"
@@ -136,10 +136,10 @@ export default function MobileNavOverlay() {
                         setCategoryFilter(v as CategoryFilter)
                       }
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4 shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                      <SelectContent className="bg-background rounded-none font-bookish">
                         <SelectItem value="all">All</SelectItem>
                         <SelectItem value="painting">Painting</SelectItem>
                         <SelectItem value="drawing">Drawing</SelectItem>
@@ -151,10 +151,10 @@ export default function MobileNavOverlay() {
                       value={workSort}
                       onValueChange={(v) => setWorkSort(v as WorkSort)}
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4 shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                      <SelectContent className="bg-background rounded-none font-bookish">
                         <SelectItem value="year-latest">
                           Year — latest
                         </SelectItem>
@@ -212,7 +212,7 @@ export default function MobileNavOverlay() {
                                   key={work.id}
                                   variant="ghost"
                                   size="controls"
-                                  className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
+                                  className="justify-start px-8 py-4 text-base font-bookish shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)] rounded-none h-auto"
                                   onClick={() => {
                                     setActiveWorkSlug(work.slug);
                                     setOpen(false);
@@ -235,7 +235,7 @@ export default function MobileNavOverlay() {
               </AnimatePresence>
 
               {/* Exhibitions row */}
-              <div className="flex items-center border-b border-border">
+              <div className="flex items-center shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                 <Button
                   variant="ghost"
                   size="controls"
@@ -271,10 +271,10 @@ export default function MobileNavOverlay() {
                       value={selectedType}
                       onValueChange={setSelectedType}
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4 shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                      <SelectContent className="bg-background rounded-none font-bookish">
                         <SelectItem value="all">All</SelectItem>
                         <SelectItem value="Solo">Solo Exhibitions</SelectItem>
                         <SelectItem value="Group">Group Exhibitions</SelectItem>
@@ -286,10 +286,10 @@ export default function MobileNavOverlay() {
                         setExhibitionSort(v as ExhibitionSort)
                       }
                     >
-                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4">
+                      <SelectTrigger className="w-full rounded-none border-0 h-auto font-bookish text-base focus:ring-0 bg-background text-foreground px-6 py-4 shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                      <SelectContent className="bg-background rounded-none font-bookish">
                         <SelectItem value="year">Year</SelectItem>
                         <SelectItem value="title">Title</SelectItem>
                       </SelectContent>
@@ -326,7 +326,7 @@ export default function MobileNavOverlay() {
                                   key={ex.id}
                                   variant="ghost"
                                   size="controls"
-                                  className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
+                                  className="justify-start px-8 py-4 text-base font-bookish shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)] rounded-none h-auto"
                                   onClick={() => {
                                     setActiveExhibitionSlug(ex.slug);
                                     setOpen(false);
@@ -361,7 +361,7 @@ export default function MobileNavOverlay() {
               </Button>
 
               {/* Contact row */}
-              <div className="flex items-center border-b border-border">
+              <div className="flex items-center shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)]">
                 <Button
                   variant="ghost"
                   size="controls"
@@ -396,7 +396,7 @@ export default function MobileNavOverlay() {
                     <Button
                       variant="ghost"
                       size="controls"
-                      className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
+                      className="justify-start px-8 py-4 text-base font-bookish shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)] rounded-none h-auto"
                       asChild
                     >
                       <a
@@ -411,7 +411,7 @@ export default function MobileNavOverlay() {
                     <Button
                       variant="ghost"
                       size="controls"
-                      className="justify-start px-8 py-4 text-base font-bookish border-b border-border rounded-none h-auto"
+                      className="justify-start px-8 py-4 text-base font-bookish shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)] rounded-none h-auto"
                       asChild
                     >
                       <a
