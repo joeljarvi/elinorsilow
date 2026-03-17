@@ -74,7 +74,7 @@ function WorkItem({ work, onClick }: { work: Work; onClick: () => void }) {
               alt={work.title.rendered}
               fill
               sizes="50vw"
-              className="object-contain object-top"
+              className="object-contain object-left"
             />
           </div>
         )}
@@ -108,7 +108,7 @@ function ExhibitionItem({
               alt={exhibition.title.rendered}
               fill
               sizes="50vw"
-              className="object-contain object-top"
+              className="object-contain object-left"
             />
           </div>
         )}

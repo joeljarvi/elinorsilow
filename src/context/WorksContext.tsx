@@ -11,7 +11,7 @@ import React, {
 import { Work, getAllWorks } from "../../lib/sanity";
 import { useNav } from "./NavContext";
 
-export type WorkSort = "year-latest" | "year-oldest" | "year" | "title";
+export type WorkSort = "year-latest" | "year-oldest" | "year" | "title" | "category";
 export type CategoryFilter =
   | "all"
   | "painting"

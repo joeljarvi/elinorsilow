@@ -20,25 +20,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-function TIcon({ active }: { active: boolean }) {
-  return (
-    <span className={`font-serif text-sm ${!active ? " " : "line-through"}`}>
-      T
-    </span>
-  );
-}
-
 export default function ExhibitionsPageClient() {
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [col1Sort, setCol1Sort] = useState<ExhibitionSort>("year");
-  const [col2Sort, setCol2Sort] = useState<ExhibitionSort>("year");
-  const [col1Type, setCol1Type] = useState("Solo");
-  const [col2Type, setCol2Type] = useState("Group");
+  const [col2Type, setCol2Type] = useState("all");
   const [col1Min, setCol1Min] = useState(false);
   const [col2Min, setCol2Min] = useState(false);
   const [col1Dark, setCol1Dark] = useState(false);
   const [col2Dark, setCol2Dark] = useState(false);
+  const [col1AsList, setCol1AsList] = useState(false);
+  const [col2AsList, setCol2AsList] = useState(false);
+  const [mobileAsList, setMobileAsList] = useState(false);
+  const [mobileHeaderVisible, setMobileHeaderVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
 
@@ -49,7 +45,7 @@ export default function ExhibitionsPageClient() {
     exLoading,
   } = useExhibitions();
 
-  const { setOpen, showInfo, setShowInfo } = useUI();
+  const { setOpen, showInfo, setShowInfo, navVisible } = useUI();
 
   useEffect(() => {
     if (!exLoading) setDataLoaded(true);
@@ -62,6 +58,20 @@ export default function ExhibitionsPageClient() {
     }
   }, [dataLoaded]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY.current) {
+        setMobileHeaderVisible(true);
+      } else if (currentScrollY > lastScrollY.current + 5) {
+        setMobileHeaderVisible(false);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const loading = !initialAnimDone || !dataLoaded;
 
   function sortExhibitions(
@@ -73,6 +83,10 @@ export default function ExhibitionsPageClient() {
         return [...list].sort(
           (a, b) => Number(b.acf.year) - Number(a.acf.year),
         );
+      case "year-oldest":
+        return [...list].sort(
+          (a, b) => Number(a.acf.year) - Number(b.acf.year),
+        );
       case "title":
         return [...list].sort((a, b) =>
           a.title.rendered.localeCompare(b.title.rendered, "sv"),
@@ -82,18 +96,14 @@ export default function ExhibitionsPageClient() {
     }
   }
 
-  const col1Exhibitions = sortExhibitions(
-    col1Type === "all"
-      ? exhibitions
-      : exhibitions.filter((e) => e.acf.exhibition_type === col1Type),
-    col1Sort,
-  );
-  const col2Exhibitions = sortExhibitions(
-    col2Type === "all"
-      ? exhibitions
-      : exhibitions.filter((e) => e.acf.exhibition_type === col2Type),
-    col2Sort,
-  );
+  function filterByType(list: Exhibition[], type: string): Exhibition[] {
+    return type === "all" ? list : list.filter((e) => e.acf.exhibition_type === type);
+  }
+
+  // Left col: all types, user-controlled sort
+  const col1Exhibitions = sortExhibitions(exhibitions, col1Sort);
+  // Right col: user-controlled type filter, sorted newest first
+  const col2Exhibitions = sortExhibitions(filterByType(exhibitions, col2Type), "year");
 
   function openExhibition(ex: Exhibition) {
     setActiveExhibitionSlug(ex.slug);
@@ -109,7 +119,6 @@ export default function ExhibitionsPageClient() {
         className="group relative cursor-pointer w-full flex flex-col"
         aria-label={`Show exhibition: ${ex.title.rendered}`}
       >
-        {/* Mobile: hug image height */}
         {ex.acf.image_1 && (
           <div className="lg:hidden relative w-full p-4 pb-0">
             <CornerFrame />
@@ -124,7 +133,6 @@ export default function ExhibitionsPageClient() {
             />
           </div>
         )}
-        {/* Desktop: fixed tall container */}
         <div className="hidden lg:block relative h-[75vh] w-full overflow-hidden p-4 pb-0">
           <CornerFrame />
           {ex.acf.image_1 && (
@@ -134,7 +142,7 @@ export default function ExhibitionsPageClient() {
                 alt={ex.title.rendered}
                 fill
                 sizes="50vw"
-                className="object-contain"
+                className="object-contain object-bottom-left"
               />
             </div>
           )}
@@ -144,81 +152,104 @@ export default function ExhibitionsPageClient() {
     );
   }
 
-  const selectTriggerClass =
-    "border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full";
-  const selectContentClass =
-    "bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]";
-  const selectItemClass =
-    "text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none";
+  function colStyle(dark: boolean) {
+    return {
+      column: dark ? "bg-black text-white" : "bg-background text-foreground",
+      header: dark ? "bg-black" : "bg-background",
+      headerRow: `border border-border [&>*+*]:border-l [&>*+*]:border-border`,
+      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${dark ? "bg-black text-white" : "bg-background text-foreground"}`,
+      content: `bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]`,
+      item: `rounded-none text-foreground focus:bg-foreground/10 focus:text-foreground`,
+    };
+  }
+  const c1 = colStyle(col1Dark);
+  const c2 = colStyle(col2Dark);
 
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single staggered list */}
-      <div className="lg:hidden relative z-40 bg-transparent">
-        <div className="sticky top-0 lg:top-8 z-50 bg-background w-full pt-0 pb-0">
-          <div className="mx-0 flex items-stretch font-bookish text-sm gap-x-0 border-x-0 border-border border-t-0 [&>*+*]:border-l [&>*+*]:border-border">
-            <div className="flex items-center gap-x-2 w-1/2">
-              <Select
-                value={col1Sort}
-                onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
-              >
-                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className={selectContentClass}>
-                  <SelectItem value="year" className={selectItemClass}>
-                    Year
-                  </SelectItem>
-                  <SelectItem value="title" className={selectItemClass}>
-                    Title
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center flex-1 w-full gap-x-2">
-              <Select value={col1Type} onValueChange={setCol1Type}>
-                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className={selectContentClass}>
-                  <SelectItem value="all" className={selectItemClass}>
-                    All
-                  </SelectItem>
-                  <SelectItem value="Solo" className={selectItemClass}>
-                    Solo
-                  </SelectItem>
-                  <SelectItem value="Group" className={selectItemClass}>
-                    Group
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="border border-border border-x-0 shadow-none px-3 h-auto font-bookish text-sm focus:ring-0 rounded-none pb-1 bg-background pt-2 text-muted-foreground"
-                onClick={() => setShowInfo(!showInfo)}
-                aria-label={showInfo ? "Hide text" : "Show text"}
-              >
-                <TIcon active={showInfo} />
-              </Button>
+      <div className="lg:hidden relative z-40 bg-background">
+        {/* Mobile fixed header — hide on scroll down, show on scroll up */}
+        <motion.div
+          className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border"
+          style={{ paddingTop: "var(--nav-height, 0px)" }}
+          animate={{ y: mobileHeaderVisible ? 0 : "-100%" }}
+          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+        >
+          <div className="flex items-center p-4 gap-x-2 font-bookish text-sm">
+            <Select
+              value={col1Sort}
+              onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
+            >
+              <SelectTrigger className="border border-border shadow-none px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">
+                <SelectItem
+                  value="year"
+                  className="text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none"
+                >
+                  Exhibitions — Newest First
+                </SelectItem>
+                <SelectItem
+                  value="year-oldest"
+                  className="text-foreground focus:bg-foreground/10 focus:text-foreground"
+                >
+                  Exhibitions — Oldest First
+                </SelectItem>
+                <SelectItem
+                  value="title"
+                  className="text-foreground focus:bg-foreground/10 focus:text-foreground"
+                >
+                  Exhibitions — Title A–Z
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="controls"
+              onClick={() => setMobileAsList((v) => !v)}
+              className="shrink-0 border border-border"
+            >
+              {mobileAsList ? "Thumbnails" : "List"}
+            </Button>
+          </div>
+        </motion.div>
+        {/* Spacer */}
+        <motion.div
+          animate={{ height: mobileHeaderVisible ? "calc(var(--nav-height, 0px) + 52px)" : 0 }}
+          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+        />
+        {mobileAsList ? (
+          <div className="p-4">
+            <div className="border-t border-x border-border">
+              {sortExhibitions(exhibitions, col1Sort).map((ex: Exhibition) => (
+                <button
+                  key={ex.id}
+                  onClick={() => openExhibition(ex)}
+                  className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                  aria-label={`Show exhibition: ${ex.title.rendered}`}
+                >
+                  {ex.title.rendered}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-        <Staggered
-          items={sortExhibitions(exhibitions, col1Sort)}
-          getKey={(ex) => ex.id}
-          loading={loading}
-          className="flex flex-col"
-          renderItem={(ex: Exhibition) => renderExhibitionItem(ex)}
-        />
+        ) : (
+          <Staggered
+            items={sortExhibitions(exhibitions, col1Sort)}
+            getKey={(ex) => ex.id}
+            loading={loading}
+            className="flex flex-col"
+            renderItem={(ex: Exhibition) => renderExhibitionItem(ex)}
+          />
+        )}
       </div>
 
       {/* Desktop: two fixed scrolling columns */}
       <div
-        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
-        style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
+        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0 transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+        style={{ top: navVisible ? "var(--nav-height, 0px)" : "0px" }}
       >
         {/* Restore pills */}
         <div className="absolute right-2 top-8 flex items-center gap-x-2 z-50">
@@ -229,7 +260,7 @@ export default function ExhibitionsPageClient() {
               onClick={() => setCol1Min(false)}
               className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
             >
-              + {col1Type === "all" ? "All" : col1Type}
+              + Exhibitions
             </Button>
           )}
           {col2Min && (
@@ -239,54 +270,48 @@ export default function ExhibitionsPageClient() {
               onClick={() => setCol2Min(false)}
               className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
             >
-              + {col2Type === "all" ? "All" : col2Type}
+              + {col2Type === "all" ? "All Types" : col2Type}
             </Button>
           )}
         </div>
 
+        {/* Left col: sort only */}
         {!col1Min && (
           <div
             ref={col1Ref}
-            className={`flex-1 overflow-y-auto h-full border-r border-border flex flex-col ${col1Dark ? "bg-black text-white" : "bg-background text-foreground"}`}
+            className={`flex-1 overflow-y-auto h-full border-r border-border flex flex-col ${c1.column}`}
           >
-            <div
-              className={`sticky top-0 z-10 pt-4 ${col1Dark ? "bg-black" : "bg-background"}`}
-            >
-              <div className="mx-4 flex items-center gap-x-0 font-bookish text-sm border border-border [&>*+*]:border-l [&>*+*]:border-border">
-                <Select value={col1Type} onValueChange={setCol1Type}>
-                  <SelectTrigger className={selectTriggerClass}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className={selectContentClass}>
-                    <SelectItem value="all" className={selectItemClass}>
-                      All
-                    </SelectItem>
-                    <SelectItem value="Solo" className={selectItemClass}>
-                      Solo
-                    </SelectItem>
-                    <SelectItem value="Group" className={selectItemClass}>
-                      Group
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className={`sticky top-0 z-10 pt-4 ${c1.header}`}>
+              <div className={`mx-4 flex items-center gap-x-0 font-bookish text-sm ${c1.headerRow}`}>
                 <Select
                   value={col1Sort}
                   onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
                 >
-                  <SelectTrigger className={selectTriggerClass}>
+                  <SelectTrigger className={c1.trigger}>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className={selectContentClass}>
-                    <SelectItem value="year" className={selectItemClass}>
-                      Year
+                  <SelectContent className={c1.content}>
+                    <SelectItem value="year" className={c1.item}>
+                      Exhibitions — Newest First
                     </SelectItem>
-                    <SelectItem value="title" className={selectItemClass}>
-                      Title
+                    <SelectItem value="year-oldest" className={c1.item}>
+                      Exhibitions — Oldest First
+                    </SelectItem>
+                    <SelectItem value="title" className={c1.item}>
+                      Exhibitions — Title A–Z
                     </SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
                   variant="ghost"
+                  size="controls"
+                  onClick={() => setCol1AsList((v) => !v)}
+                >
+                  {col1AsList ? "Thumbnails" : "List"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="hidden"
                   size="controlsIcon"
                   onClick={() => setCol1Dark((d) => !d)}
                   aria-label="Toggle dark background"
@@ -302,62 +327,70 @@ export default function ExhibitionsPageClient() {
                 </Button>
               </div>
             </div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: loading ? 0 : 1 }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-col"
-            >
-              {col1Exhibitions.map((ex) => renderExhibitionItem(ex))}
-            </motion.div>
+            {col1AsList ? (
+              <div className="p-4">
+                <div className="border-t border-x border-border">
+                  {col1Exhibitions.map((ex) => (
+                    <button
+                      key={ex.id}
+                      onClick={() => openExhibition(ex)}
+                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                      aria-label={`Show exhibition: ${ex.title.rendered}`}
+                    >
+                      {ex.title.rendered}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: loading ? 0 : 1 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col"
+              >
+                {col1Exhibitions.map((ex) => renderExhibitionItem(ex))}
+              </motion.div>
+            )}
           </div>
         )}
 
+        {/* Right col: type filter only */}
         {!col2Min && (
           <div
             ref={col2Ref}
-            className={`flex-1 overflow-y-auto h-full flex flex-col ${col2Dark ? "bg-black text-white" : "bg-background text-foreground"}`}
+            className={`flex-1 overflow-y-auto h-full flex flex-col ${c2.column}`}
           >
-            <div
-              className={`sticky top-0 z-10 pt-4 ${col2Dark ? "bg-black" : "bg-background"}`}
-            >
+            <div className={`sticky top-0 z-10 pt-4 ${c2.header}`}>
               <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm">
-                <div className="flex w-full items-center gap-0 border border-border [&>*+*]:border-l [&>*+*]:border-border">
+                <div className={`flex w-full items-center gap-0 ${c2.headerRow}`}>
                   <Select value={col2Type} onValueChange={setCol2Type}>
-                    <SelectTrigger className={selectTriggerClass}>
+                    <SelectTrigger className={c2.trigger}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className={selectContentClass}>
-                      <SelectItem value="all" className={selectItemClass}>
-                        All
+                    <SelectContent className={c2.content}>
+                      <SelectItem value="all" className={c2.item}>
+                        Exhibitions — All Types
                       </SelectItem>
-                      <SelectItem value="Solo" className={selectItemClass}>
-                        Solo
+                      <SelectItem value="Solo" className={c2.item}>
+                        Exhibitions — Solo
                       </SelectItem>
-                      <SelectItem value="Group" className={selectItemClass}>
-                        Group
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={col2Sort}
-                    onValueChange={(v) => setCol2Sort(v as ExhibitionSort)}
-                  >
-                    <SelectTrigger className={selectTriggerClass}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentClass}>
-                      <SelectItem value="year" className={selectItemClass}>
-                        Year
-                      </SelectItem>
-                      <SelectItem value="title" className={selectItemClass}>
-                        Title
+                      <SelectItem value="Group" className={c2.item}>
+                        Exhibitions — Group
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
                     variant="ghost"
+                    size="controls"
+                    onClick={() => setCol2AsList((v) => !v)}
+                  >
+                    {col2AsList ? "Thumbnails" : "List"}
+                  </Button>
+                  <Button
+                    variant="ghost"
                     size="controlsIcon"
+                    className="hidden"
                     onClick={() => setCol2Dark((d) => !d)}
                     aria-label="Toggle dark background"
                   >
@@ -384,14 +417,31 @@ export default function ExhibitionsPageClient() {
                 </div>
               </div>
             </div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: loading ? 0 : 1 }}
-              transition={{ duration: 0.5, delay: 0.06 }}
-              className="flex flex-col"
-            >
-              {col2Exhibitions.map((ex) => renderExhibitionItem(ex))}
-            </motion.div>
+            {col2AsList ? (
+              <div className="p-4">
+                <div className="border-t border-x border-border">
+                  {col2Exhibitions.map((ex) => (
+                    <button
+                      key={ex.id}
+                      onClick={() => openExhibition(ex)}
+                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                      aria-label={`Show exhibition: ${ex.title.rendered}`}
+                    >
+                      {ex.title.rendered}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: loading ? 0 : 1 }}
+                transition={{ duration: 0.5, delay: 0.06 }}
+                className="flex flex-col"
+              >
+                {col2Exhibitions.map((ex) => renderExhibitionItem(ex))}
+              </motion.div>
+            )}
           </div>
         )}
       </div>

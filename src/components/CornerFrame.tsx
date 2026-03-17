@@ -16,7 +16,7 @@ export default function CornerFrame({
 }) {
   return (
     <div
-      className={`absolute pointer-events-none text-[var(--border)] group-hover:text-foreground transition-colors duration-300 ${padding}`}
+      className={`hidden absolute pointer-events-none text-[var(--border)] group-hover:text-foreground transition-colors duration-300 ${padding}`}
     >
       <div className="absolute top-0 left-0">
         <Corner />

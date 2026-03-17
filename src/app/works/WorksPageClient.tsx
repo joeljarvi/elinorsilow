@@ -43,17 +43,20 @@ export default function WorksPageClient() {
     setCategoryFilter,
   } = useWorks();
 
-  const [col1Filter, setCol1Filter] = useState<CategoryFilter>("all");
   const [col2Filter, setCol2Filter] = useState<CategoryFilter>("all");
   const [col1Sort, setCol1Sort] = useState<WorkSort>("year-latest");
-  const [col2Sort, setCol2Sort] = useState<WorkSort>("title");
   const [col1Min, setCol1Min] = useState(false);
   const [col2Min, setCol2Min] = useState(false);
   const [col1Dark, setCol1Dark] = useState(false);
   const [col2Dark, setCol2Dark] = useState(false);
+  const [col1AsList, setCol1AsList] = useState(false);
+  const [col2AsList, setCol2AsList] = useState(false);
+  const [mobileAsList, setMobileAsList] = useState(false);
+  const [mobileHeaderVisible, setMobileHeaderVisible] = useState(true);
 
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
 
   const searchParams = useSearchParams();
   useEffect(() => {
@@ -71,15 +74,28 @@ export default function WorksPageClient() {
     setOpen,
     proportionalImages,
     setProportionalImages,
-    showAsList,
-    setShowAsList,
     showInfo,
     setShowInfo,
+    navVisible,
   } = useUI();
 
   useEffect(() => {
     if (!workLoading) setDataLoaded(true);
   }, [workLoading]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY.current) {
+        setMobileHeaderVisible(true);
+      } else if (currentScrollY > lastScrollY.current + 5) {
+        setMobileHeaderVisible(false);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (dataLoaded) {
@@ -104,13 +120,22 @@ export default function WorksPageClient() {
         return [...filtered].sort((a, b) =>
           a.title.rendered.localeCompare(b.title.rendered, "sv"),
         );
+      case "category":
+        return [...filtered].sort((a, b) => {
+          const cat = (a.acf.category ?? "").localeCompare(
+            b.acf.category ?? "",
+            "sv",
+          );
+          if (cat !== 0) return cat;
+          return a.title.rendered.localeCompare(b.title.rendered, "sv");
+        });
       default:
         return filtered;
     }
   }
 
-  const col1Works = filterAndSort(col1Filter, col1Sort);
-  const col2Works = filterAndSort(col2Filter, col2Sort);
+  const col1Works = filterAndSort("all", col1Sort);
+  const col2Works = filterAndSort(col2Filter, "category");
 
   function colStyle(active: boolean) {
     return {
@@ -163,91 +188,75 @@ export default function WorksPageClient() {
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single scroll */}
-      <div className="lg:hidden relative z-40 bg-transparent">
-        {/* Mobile sticky header */}
-        <div className="sticky top-0 lg:top-8 z-50 bg-background w-full pt-0 pb-0">
-          <div className="mx-0 flex items-stretch font-bookish text-sm gap-x-0 border-x-0 border-border border-t-0 [&>*+*]:border-l border-b-0 [&>*+*]:border-border">
-            <div className="flex items-center gap-x-2 w-1/2">
-              <Select
-                value={workSort}
-                onValueChange={(v) => setWorkSort(v as WorkSort)}
-              >
-                <SelectTrigger className="border border-border border-x-0 shadow-none pl-3 pr-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">
-                  <SelectItem
-                    value="year-latest"
-                    className="text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none"
-                  >
-                    Latest added
-                  </SelectItem>
-                  <SelectItem
-                    value="year-oldest"
-                    className="text-foreground focus:bg-foreground/10 focus:text-foreground"
-                  >
-                    Oldest added
-                  </SelectItem>
-                  <SelectItem
-                    value="title"
-                    className="text-foreground focus:bg-foreground/10 focus:text-foreground"
-                  >
-                    Title
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center flex-1 w-full gap-x-2">
-              <Select
-                value={categoryFilter}
-                onValueChange={(v) => setCategoryFilter(v as CategoryFilter)}
-              >
-                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base lg:text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="painting">Painting</SelectItem>
-                  <SelectItem value="drawing">Drawing</SelectItem>
-                  <SelectItem value="sculpture">Sculpture</SelectItem>
-                  <SelectItem value="textile">Textile</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="controlsIcon"
-                className="border border-border border-x-0 shadow-none px-3 h-auto font-bookish text-sm focus:ring-0 rounded-none pb-1 bg-background pt-2  text-muted-foreground"
-                onClick={() => setShowInfo(!showInfo)}
-                aria-label={showInfo ? "Hide text" : "Show text"}
-              >
-                <TIcon active={showInfo} />
-              </Button>
-            </div>
+      <div className="lg:hidden relative z-40 bg-background">
+        {/* Mobile fixed header — hide on scroll down, show on scroll up */}
+        <motion.div
+          className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border"
+          style={{ paddingTop: "var(--nav-height, 0px)" }}
+          animate={{ y: mobileHeaderVisible ? 0 : "-100%" }}
+          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+        >
+          <div className="flex items-center p-4 gap-x-2 font-bookish text-sm">
+            <Select
+              value={workSort}
+              onValueChange={(v) => setWorkSort(v as WorkSort)}
+            >
+              <SelectTrigger className="border border-border shadow-none px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]">
+                <SelectItem
+                  value="year-latest"
+                  className="text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none"
+                >
+                  Works — Newest First
+                </SelectItem>
+                <SelectItem
+                  value="year-oldest"
+                  className="text-foreground focus:bg-foreground/10 focus:text-foreground"
+                >
+                  Works — Oldest First
+                </SelectItem>
+                <SelectItem
+                  value="title"
+                  className="text-foreground focus:bg-foreground/10 focus:text-foreground"
+                >
+                  Works — Title A–Z
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="controls"
+              onClick={() => setMobileAsList((v) => !v)}
+              className="shrink-0 border border-border"
+            >
+              {mobileAsList ? "Thumbnails" : "List"}
+            </Button>
           </div>
-        </div>
-        {showAsList ? (
+        </motion.div>
+        {/* Spacer so content doesn't sit under fixed header */}
+        <motion.div
+          animate={{
+            height: mobileHeaderVisible
+              ? "calc(var(--nav-height, 0px) + 52px)"
+              : 0,
+          }}
+          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+        />
+        {mobileAsList ? (
           <div className="p-4">
-            <div className="grid grid-cols-1 gap-x-4">
-              {[...filteredWorks]
-                .sort((a, b) =>
-                  a.title.rendered.localeCompare(b.title.rendered, "sv"),
-                )
-                .map((work: Work) => (
-                  <Button
-                    key={work.id}
-                    variant="link"
-                    size="lg"
-                    onClick={() => openWork(work)}
-                    className="justify-start"
-                    aria-label={`Show work: ${work.title.rendered}`}
-                  >
-                    <span className="font-bookish text-2xl">
-                      {work.title.rendered}
-                    </span>
-                  </Button>
-                ))}
+            <div className="border-t border-x border-border">
+              {filteredWorks.map((work: Work) => (
+                <button
+                  key={work.id}
+                  onClick={() => openWork(work)}
+                  className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                  aria-label={`Show work: ${work.title.rendered}`}
+                >
+                  {work.title.rendered}
+                </button>
+              ))}
             </div>
           </div>
         ) : (
@@ -265,8 +274,8 @@ export default function WorksPageClient() {
 
       {/* Desktop: three independently scrolling columns */}
       <div
-        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
-        style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
+        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0 transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+        style={{ top: navVisible ? "var(--nav-height, 0px)" : "0px" }}
       >
         {/* Global controls + restore pills */}
         <div className="absolute right-2 top-12 flex items-center gap-x-2 z-50">
@@ -277,10 +286,7 @@ export default function WorksPageClient() {
               onClick={() => setCol1Min(false)}
               className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
             >
-              +{" "}
-              {col1Filter === "all"
-                ? "All"
-                : col1Filter.charAt(0).toUpperCase() + col1Filter.slice(1)}
+              + Works
             </Button>
           )}
           {col2Min && (
@@ -304,22 +310,9 @@ export default function WorksPageClient() {
             className={`flex-1 overflow-y-auto h-full border-r flex flex-col ${col1Dark ? "border-background" : "border-border"} ${c1.column}`}
           >
             <div className={`sticky top-0 z-10 pt-4 ${c1.header}`}>
-              <div className={`mx-4 flex items-center gap-x-0 font-bookish text-sm border ${c1.headerRow}`}>
-                <Select
-                  value={col1Filter}
-                  onValueChange={(v) => setCol1Filter(v as CategoryFilter)}
-                >
-                  <SelectTrigger className={c1.trigger}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className={c1.content}>
-                    <SelectItem value="all" className={c1.item}>All</SelectItem>
-                    <SelectItem value="painting" className={c1.item}>Painting</SelectItem>
-                    <SelectItem value="drawing" className={c1.item}>Drawing</SelectItem>
-                    <SelectItem value="sculpture" className={c1.item}>Sculpture</SelectItem>
-                    <SelectItem value="textile" className={c1.item}>Textile</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div
+                className={`mx-4 flex items-center gap-x-0 font-bookish text-sm border ${c1.headerRow}`}
+              >
                 <Select
                   value={col1Sort}
                   onValueChange={(v) => setCol1Sort(v as WorkSort)}
@@ -328,13 +321,30 @@ export default function WorksPageClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className={c1.content}>
-                    <SelectItem value="year-latest" className={c1.item}>Year — latest</SelectItem>
-                    <SelectItem value="year-oldest" className={c1.item}>Year — oldest</SelectItem>
-                    <SelectItem value="title" className={c1.item}>Title</SelectItem>
+                    <SelectItem value="year-latest" className={c1.item}>
+                      Works — Newest First
+                    </SelectItem>
+                    <SelectItem value="year-oldest" className={c1.item}>
+                      Works — Oldest First
+                    </SelectItem>
+                    <SelectItem value="title" className={c1.item}>
+                      Works — Title A–Z
+                    </SelectItem>
+                    <SelectItem value="category" className={c1.item}>
+                      Works — Category A–Z
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
                   variant="ghost"
+                  size="controls"
+                  onClick={() => setCol1AsList((v) => !v)}
+                >
+                  {col1AsList ? "Thumbnails" : "List"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="hidden"
                   size="controlsIcon"
                   onClick={() => setCol1Dark((d) => !d)}
                   aria-label="Toggle color mode"
@@ -350,22 +360,20 @@ export default function WorksPageClient() {
                 </Button>
               </div>
             </div>
-            {showAsList ? (
-              <div className="p-0">
-                {col1Works.map((work) => (
-                  <Button
-                    key={work.id}
-                    variant="link"
-                    size="lg"
-                    onClick={() => openWork(work)}
-                    className="justify-start w-full"
-                    aria-label={`Show work: ${work.title.rendered}`}
-                  >
-                    <span className="font-bookish text-2xl">
+            {col1AsList ? (
+              <div className="p-4">
+                <div className="border-t border-x border-border">
+                  {col1Works.map((work) => (
+                    <button
+                      key={work.id}
+                      onClick={() => openWork(work)}
+                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                      aria-label={`Show work: ${work.title.rendered}`}
+                    >
                       {work.title.rendered}
-                    </span>
-                  </Button>
-                ))}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
               <motion.div
@@ -388,7 +396,9 @@ export default function WorksPageClient() {
           >
             <div className={`sticky top-0 z-10 pt-4 ${c2.header}`}>
               <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm ">
-                <div className={`flex w-full items-center gap-0 border ${c2.headerRow}`}>
+                <div
+                  className={`flex w-full items-center gap-0 border ${c2.headerRow}`}
+                >
                   <Select
                     value={col2Filter}
                     onValueChange={(v) => setCol2Filter(v as CategoryFilter)}
@@ -397,30 +407,27 @@ export default function WorksPageClient() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className={c2.content}>
-                      <SelectItem value="all" className={c2.item}>All</SelectItem>
-                      <SelectItem value="painting" className={c2.item}>Painting</SelectItem>
-                      <SelectItem value="drawing" className={c2.item}>Drawing</SelectItem>
-                      <SelectItem value="sculpture" className={c2.item}>Sculpture</SelectItem>
-                      <SelectItem value="textile" className={c2.item}>Textile</SelectItem>
+                      <SelectItem value="all" className={c2.item}>
+                        Works — All Categories
+                      </SelectItem>
+                      <SelectItem value="painting" className={c2.item}>
+                        Works — Categories — Painting
+                      </SelectItem>
+                      <SelectItem value="drawing" className={c2.item}>
+                        Works — Categories — Drawing
+                      </SelectItem>
+                      <SelectItem value="sculpture" className={c2.item}>
+                        Works — Categories — Sculpture
+                      </SelectItem>
+                      <SelectItem value="textile" className={c2.item}>
+                        Works — Categories — Textile
+                      </SelectItem>
                     </SelectContent>
                   </Select>
-                  <Select
-                    value={col2Sort}
-                    onValueChange={(v) => setCol2Sort(v as WorkSort)}
-                  >
-                    <SelectTrigger className={c2.trigger}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className={c2.content}>
-                      <SelectItem value="year-latest" className={c2.item}>Year — latest</SelectItem>
-                      <SelectItem value="year-oldest" className={c2.item}>Year — oldest</SelectItem>
-                      <SelectItem value="title" className={c2.item}>Title</SelectItem>
-                    </SelectContent>
-                  </Select>
-
                   <Button
                     variant="ghost"
                     size="controlsIcon"
+                    className="hidden"
                     onClick={() => setCol2Dark((d) => !d)}
                     aria-label="Toggle color mode"
                   >
@@ -438,9 +445,9 @@ export default function WorksPageClient() {
                   <Button
                     variant="ghost"
                     size="controls"
-                    onClick={() => setShowAsList(!showAsList)}
+                    onClick={() => setCol2AsList((v) => !v)}
                   >
-                    {showAsList ? "Thumbnails" : "List"}
+                    {col2AsList ? "Thumbnails" : "List"}
                   </Button>
                   <Button
                     variant="ghost"
@@ -464,22 +471,20 @@ export default function WorksPageClient() {
                 </div>
               </div>
             </div>
-            {showAsList ? (
-              <div className="p-0">
-                {col2Works.map((work) => (
-                  <Button
-                    key={work.id}
-                    variant="link"
-                    size="lg"
-                    onClick={() => openWork(work)}
-                    className="justify-start w-full"
-                    aria-label={`Show work: ${work.title.rendered}`}
-                  >
-                    <span className="font-bookish text-2xl">
+            {col2AsList ? (
+              <div className="p-4">
+                <div className="border-t border-x border-border">
+                  {col2Works.map((work) => (
+                    <button
+                      key={work.id}
+                      onClick={() => openWork(work)}
+                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left border-b border-border hover:bg-foreground/10 transition-colors"
+                      aria-label={`Show work: ${work.title.rendered}`}
+                    >
                       {work.title.rendered}
-                    </span>
-                  </Button>
-                ))}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
               <motion.div

@@ -11,6 +11,8 @@ import {
 interface UIContextValue {
   open: boolean;
   setOpen: (v: boolean) => void;
+  navVisible: boolean;
+  setNavVisible: (v: boolean) => void;
   openDesktopNav: boolean;
   setOpenDesktopNav: (v: boolean) => void;
   showWorksMenu: boolean;
@@ -51,6 +53,7 @@ const UIContext = createContext<UIContextValue | undefined>(undefined);
 export function UIProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true);
   const [openDesktopNav, setOpenDesktopNav] = useState(true);
+  const [navVisible, setNavVisible] = useState(true);
 
   const [showWorksMenu, setShowWorksMenu] = useState(false);
   const [showExhibitionsMenu, setShowExhibitionsMenu] = useState(false);
@@ -99,6 +102,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
       value={{
         open,
         setOpen,
+        navVisible,
+        setNavVisible,
         openDesktopNav,
         setOpenDesktopNav,
         showWorksMenu,

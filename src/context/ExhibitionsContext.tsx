@@ -19,7 +19,7 @@ import { useNav } from "./NavContext";
 
 import { useDebounce } from "use-debounce";
 
-export type ExhibitionSort = "year" | "title" | "type";
+export type ExhibitionSort = "year" | "year-oldest" | "title" | "type";
 
 type ExhibitionsContextType = {
   exhibitions: Exhibition[];
@@ -169,6 +169,10 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
           (a.acf.exhibition_type ?? "").localeCompare(
             b.acf.exhibition_type ?? ""
           )
+        );
+      case "year-oldest":
+        return [...exhibitions].sort(
+          (a, b) => Number(a.acf.year) - Number(b.acf.year)
         );
       case "year":
       default:
