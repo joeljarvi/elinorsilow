@@ -191,13 +191,13 @@ a {
     @apply font-bookish text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-bookish text-sm leading-snug whitespace-normal;
+    @apply font-bookish text-base lg:text-sm leading-snug whitespace-normal;
   }
   .h4 {
     @apply font-bookish text-xl leading-snug whitespace-normal;
   }
   .p {
-    @apply font-bookish text-xl  leading-snug whitespace-normal;
+    @apply font-bookish text-base lg:text-sm  leading-snug whitespace-normal;
   }
 }
 .text-trim {

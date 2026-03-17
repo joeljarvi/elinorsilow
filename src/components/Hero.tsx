@@ -83,7 +83,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="underline underline-offset-4 decoration-2 inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline"
+      className=" inline-flex items-baseline gap-0.5 text-blue-600 hover:no-underline"
     >
       {children}
     </Link>
@@ -153,7 +153,7 @@ export default function Hero({ showHover = true }: { showHover?: boolean }) {
 
   return (
     <div className="p-4 lg:p-8 relative z-10  ">
-      <p className="font-bookish text-2xl leading-snug max-w-2xl">
+      <p className="font-bookish text-xl leading-snug max-w-2xl">
         <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
         Sweden) is a Stockholm-based artist working with{" "}
         {wrap(
