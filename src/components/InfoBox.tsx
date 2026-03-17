@@ -1,5 +1,5 @@
 import React from "react";
-import { Work } from "../../lib/sanity";
+import { Work, Exhibition } from "../../lib/sanity";
 import HDivider from "@/components/HDivider";
 
 export function InfoRow({
@@ -14,29 +14,56 @@ export function InfoRow({
   if (!value && !children) return null;
   return (
     <>
-      <div className="grid grid-cols-3 gap-x-3 items-center justify-start font-bookish">
-        <span className="text-sm text-left text-muted-foreground whitespace-nowrap py-1.5 border-r border-border px-4 ">
+      <div className="flex flex-row items-baseline font-bookish border-x border-border group-hover:border-foreground transition-colors">
+        <span className=" text-left text-muted-foreground whitespace-nowrap py-1.5 border-r border-border group-hover:border-foreground px-2 font-bookish transition-colors h3">
           {label}
         </span>
-        <div className="text-sm py-1.5 text-left col-span-2 px-3">
-          {children ?? value}
-        </div>
+        <div className="h3 py-1.5 text-left px-3">{children ?? value}</div>
       </div>
-      <HDivider />
+      <HDivider className="group-hover:border-foreground" />
     </>
   );
 }
 
-export default function InfoBox({ work }: { work: Work }) {
+export default function InfoBox({
+  work,
+  exhibition,
+}: {
+  work?: Work;
+  exhibition?: Exhibition;
+}) {
   return (
-    <div className="relative w-full mt-2">
-      <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
-      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
-      <HDivider />
-      <InfoRow label="Title" value={work.title.rendered} />
-      <InfoRow label="Year" value={work.acf.year} />
-      <InfoRow label="Materials" value={work.acf.materials} />
-      <InfoRow label="Dimensions" value={work.acf.dimensions} />
+    <div className="relative w-full mt-0 px-4">
+      <HDivider className="group-hover:border-foreground" />
+      {work && (
+        <>
+          <InfoRow label="Title" value={work.title.rendered} />
+          <InfoRow label="Materials" value={work.acf.materials} />
+          <InfoRow label="Dimensions" value={work.acf.dimensions} />
+          <InfoRow label="Year" value={work.acf.year} />
+          <InfoRow label="Exhibition" value={work.acf.exhibition} />
+          {work.acf.status && (
+            <InfoRow label="Status">
+              <span className="flex items-center gap-2">
+                {work.acf.status === "sold" && (
+                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                )}
+                {work.acf.status === "on view" && (
+                  <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
+                )}
+              </span>
+            </InfoRow>
+          )}
+        </>
+      )}
+      {exhibition && (
+        <>
+          <InfoRow label="Title" value={exhibition.title.rendered} />
+          <InfoRow label="Year" value={exhibition.acf.year} />
+          <InfoRow label="Location" value={exhibition.acf.location} />
+          <InfoRow label="City" value={exhibition.acf.city} />
+        </>
+      )}
     </div>
   );
 }

@@ -47,7 +47,7 @@ export default function ProportionalWorkImage({
           src={src}
           alt={alt}
           fill
-          className="object-contain object-center"
+          className="object-contain object-bottom-left"
         />
       </div>
     );

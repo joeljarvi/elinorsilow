@@ -33,6 +33,9 @@ function Caret({ open }: { open: boolean }) {
   );
 }
 
+const rowClass =
+  "justify-start w-full px-6 font-bookish h4 border-b border-border rounded-none";
+
 export default function MobileNavOverlay() {
   const pathname = usePathname();
   const { open, setOpen, proportionalImages, setProportionalImages } = useUI();
@@ -75,32 +78,31 @@ export default function MobileNavOverlay() {
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className="lg:hidden fixed inset-0 z-[60] bg-background overflow-y-auto h-screen "
+            className="lg:hidden fixed inset-0 z-[60] bg-background overflow-y-auto h-screen"
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <nav className="flex flex-col px-0 pt-4 pb-0 text-2xl font-bookish">
-              <div className="flex items-center  mb-8 ">
-                <Button
-                  variant="link"
-                  size="lg"
-                  className="justify-start w-full"
-                  asChild
-                >
-                  <Link href="/" onClick={() => setOpen(false)}>
-                    Elinor Silow
-                  </Link>
-                </Button>
-              </div>
+            <nav className="flex flex-col font-bookish">
+              {/* Elinor Silow */}
+              <Button
+                variant="ghost"
+                size="controls"
+                className={`${rowClass} py-6`}
+                asChild
+              >
+                <Link href="/" onClick={() => setOpen(false)}>
+                  Elinor Silow
+                </Link>
+              </Button>
 
               {/* Works row */}
               <div className="flex items-center border-b border-border">
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="justify-start flex-1"
+                  variant="ghost"
+                  size="controls"
+                  className="justify-start flex-1 px-6 py-6 h4 font-bookish rounded-none"
                   asChild
                 >
                   <Link href="/works" onClick={() => setOpen(false)}>
@@ -108,9 +110,9 @@ export default function MobileNavOverlay() {
                   </Link>
                 </Button>
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="px-4"
+                  variant="ghost"
+                  size="controlsIcon"
+                  className="px-6 rounded-none"
                   onClick={() => setWorksExpanded((prev) => !prev)}
                   aria-expanded={worksExpanded}
                   aria-label="Toggle Works submenu"
@@ -126,48 +128,46 @@ export default function MobileNavOverlay() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden flex flex-col pl-0"
+                    className="overflow-hidden flex flex-col"
                   >
-                    <div className="flex flex-wrap gap-2 px-4 py-2">
-                      <Select
-                        value={categoryFilter}
-                        onValueChange={(v) =>
-                          setCategoryFilter(v as CategoryFilter)
-                        }
-                      >
-                        <SelectTrigger className="border-none shadow-none h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 px-2 py-2 backdrop-blur-sm bg-foreground/10 text-foreground w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                          <SelectItem value="all">All</SelectItem>
-                          <SelectItem value="painting">Painting</SelectItem>
-                          <SelectItem value="drawing">Drawing</SelectItem>
-                          <SelectItem value="sculpture">Sculpture</SelectItem>
-                          <SelectItem value="textile">Textile</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select
-                        value={workSort}
-                        onValueChange={(v) => setWorkSort(v as WorkSort)}
-                      >
-                        <SelectTrigger className="border-none shadow-none h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 px-2 py-2 backdrop-blur-sm bg-foreground/10 text-foreground w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                          <SelectItem value="year-latest">
-                            Year — latest
-                          </SelectItem>
-                          <SelectItem value="year-oldest">
-                            Year — oldest
-                          </SelectItem>
-                          <SelectItem value="title">Title</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <Select
+                      value={categoryFilter}
+                      onValueChange={(v) =>
+                        setCategoryFilter(v as CategoryFilter)
+                      }
+                    >
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="painting">Painting</SelectItem>
+                        <SelectItem value="drawing">Drawing</SelectItem>
+                        <SelectItem value="sculpture">Sculpture</SelectItem>
+                        <SelectItem value="textile">Textile</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={workSort}
+                      onValueChange={(v) => setWorkSort(v as WorkSort)}
+                    >
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                        <SelectItem value="year-latest">
+                          Year — latest
+                        </SelectItem>
+                        <SelectItem value="year-oldest">
+                          Year — oldest
+                        </SelectItem>
+                        <SelectItem value="title">Title</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start"
+                      variant="ghost"
+                      size="controls"
+                      className={`${rowClass} py-6 !h-auto`}
                       aria-pressed={proportionalImages}
                       onClick={() => {
                         setProportionalImages(!proportionalImages);
@@ -176,11 +176,11 @@ export default function MobileNavOverlay() {
                     >
                       {proportionalImages ? "Full width" : "Proportional"}
                     </Button>
-                    <HideTextToggle className="justify-start" />
+                    <HideTextToggle variant="ghost" className={`${rowClass} py-6 !h-auto`} />
                     <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start border-b border-border"
+                      variant="ghost"
+                      size="controls"
+                      className={`${rowClass} py-6 !h-auto`}
                       aria-expanded={worksListOpen}
                       onClick={() => setWorksListOpen((prev) => !prev)}
                     >
@@ -196,7 +196,7 @@ export default function MobileNavOverlay() {
                           transition={{ duration: 0.2, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
-                          <div className="flex flex-col pl-2 py-1">
+                          <div className="flex flex-col">
                             {[...filteredWorks]
                               .sort((a, b) =>
                                 a.title.rendered.localeCompare(
@@ -207,9 +207,9 @@ export default function MobileNavOverlay() {
                               .map((work: Work) => (
                                 <Button
                                   key={work.id}
-                                  variant="link"
-                                  size="lg"
-                                  className="justify-start text-xl"
+                                  variant="ghost"
+                                  size="controls"
+                                  className="justify-start px-8 py-3 h4 font-bookish border-b border-border rounded-none"
                                   onClick={() => {
                                     setActiveWorkSlug(work.slug);
                                     setOpen(false);
@@ -234,9 +234,9 @@ export default function MobileNavOverlay() {
               {/* Exhibitions row */}
               <div className="flex items-center border-b border-border">
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="justify-start flex-1"
+                  variant="ghost"
+                  size="controls"
+                  className="justify-start flex-1 px-6 py-6 h4 font-bookish rounded-none"
                   asChild
                 >
                   <Link href="/exhibitions" onClick={() => setOpen(false)}>
@@ -244,9 +244,9 @@ export default function MobileNavOverlay() {
                   </Link>
                 </Button>
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="px-4"
+                  variant="ghost"
+                  size="controlsIcon"
+                  className="px-6 rounded-none"
                   onClick={() => setExhibitionsExpanded((prev) => !prev)}
                   aria-expanded={exhibitionsExpanded}
                   aria-label="Toggle Exhibitions submenu"
@@ -262,43 +262,41 @@ export default function MobileNavOverlay() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden flex flex-col "
+                    className="overflow-hidden flex flex-col"
                   >
-                    <div className="flex flex-wrap gap-2 px-4 py-2">
-                      <Select
-                        value={selectedType}
-                        onValueChange={setSelectedType}
-                      >
-                        <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground w-auto">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                          <SelectItem value="all">All</SelectItem>
-                          <SelectItem value="Solo">Solo Exhibitions</SelectItem>
-                          <SelectItem value="Group">
-                            Group Exhibitions
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select
-                        value={exhibitionSort}
-                        onValueChange={(v) =>
-                          setExhibitionSort(v as ExhibitionSort)
-                        }
-                      >
-                        <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground w-auto">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-                          <SelectItem value="year">Year</SelectItem>
-                          <SelectItem value="title">Title</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <Select
+                      value={selectedType}
+                      onValueChange={setSelectedType}
+                    >
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="Solo">Solo Exhibitions</SelectItem>
+                        <SelectItem value="Group">
+                          Group Exhibitions
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={exhibitionSort}
+                      onValueChange={(v) =>
+                        setExhibitionSort(v as ExhibitionSort)
+                      }
+                    >
+                      <SelectTrigger className="w-full rounded-none border-0 border-b border-border shadow-none h-auto font-bookish text-xl focus:ring-0 bg-background text-foreground px-6 py-4">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border border-border rounded-none shadow-none font-bookish">
+                        <SelectItem value="year">Year</SelectItem>
+                        <SelectItem value="title">Title</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start"
+                      variant="ghost"
+                      size="controls"
+                      className={`${rowClass} py-6 !h-auto`}
                       aria-expanded={exListOpen}
                       onClick={() => setExListOpen((prev) => !prev)}
                     >
@@ -314,7 +312,7 @@ export default function MobileNavOverlay() {
                           transition={{ duration: 0.2, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
-                          <div className="flex flex-col pl-2 py-1">
+                          <div className="flex flex-col">
                             {[...filteredExhibitions]
                               .sort((a, b) =>
                                 a.title.rendered.localeCompare(
@@ -325,9 +323,9 @@ export default function MobileNavOverlay() {
                               .map((ex: Exhibition) => (
                                 <Button
                                   key={ex.id}
-                                  variant="link"
-                                  size="lg"
-                                  className="justify-start text-xl"
+                                  variant="ghost"
+                                  size="controls"
+                                  className="justify-start px-8 py-3 h4 font-bookish border-b border-border rounded-none"
                                   onClick={() => {
                                     setActiveExhibitionSlug(ex.slug);
                                     setOpen(false);
@@ -349,26 +347,24 @@ export default function MobileNavOverlay() {
                 )}
               </AnimatePresence>
 
-              {/* Info row */}
-              <div className="flex items-center border-b border-border">
-                <Button
-                  variant="link"
-                  size="lg"
-                  className="justify-start flex-1"
-                  asChild
-                >
-                  <Link href="/info" onClick={() => setOpen(false)}>
-                    Information
-                  </Link>
-                </Button>
-              </div>
+              {/* Information row */}
+              <Button
+                variant="ghost"
+                size="controls"
+                className={`${rowClass} py-6`}
+                asChild
+              >
+                <Link href="/info" onClick={() => setOpen(false)}>
+                  Information
+                </Link>
+              </Button>
 
-              {/* Contact row with submenu */}
+              {/* Contact row */}
               <div className="flex items-center border-b border-border">
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="justify-start flex-1"
+                  variant="ghost"
+                  size="controls"
+                  className="justify-start flex-1 px-6 py-6 h4 font-bookish rounded-none"
                   asChild
                 >
                   <Link href="/" onClick={() => setOpen(false)}>
@@ -376,9 +372,9 @@ export default function MobileNavOverlay() {
                   </Link>
                 </Button>
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="px-4"
+                  variant="ghost"
+                  size="controlsIcon"
+                  className="px-6 rounded-none"
                   onClick={() => setInfoExpanded((prev) => !prev)}
                   aria-expanded={infoExpanded}
                   aria-label="Toggle Contact submenu"
@@ -394,12 +390,12 @@ export default function MobileNavOverlay() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden flex flex-col  border-b border-border"
+                    className="overflow-hidden flex flex-col"
                   >
                     <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start"
+                      variant="ghost"
+                      size="controls"
+                      className="justify-start px-8 py-4 h4 font-bookish border-b border-border rounded-none"
                       asChild
                     >
                       <a
@@ -412,9 +408,9 @@ export default function MobileNavOverlay() {
                       </a>
                     </Button>
                     <Button
-                      variant="link"
-                      size="lg"
-                      className="justify-start"
+                      variant="ghost"
+                      size="controls"
+                      className="justify-start px-8 py-4 h4 font-bookish border-b border-border rounded-none"
                       asChild
                     >
                       <a
@@ -428,19 +424,21 @@ export default function MobileNavOverlay() {
                 )}
               </AnimatePresence>
 
+              {/* Search */}
               <Button
-                variant="link"
-                size="lg"
-                className="justify-start border-b border-border"
+                variant="ghost"
+                size="controls"
+                className={`${rowClass} py-6`}
                 onClick={() => {
                   setOpen(false);
                   setOpenSearch(true);
                 }}
               >
-                Search{" "}
+                Search
               </Button>
-              <HideTextToggle className="justify-start px-4 border-b border-border" />
-              <DarkModeToggle className="justify-start  px-4" />
+
+              <HideTextToggle variant="ghost" className={`${rowClass} py-6 !h-auto`} />
+              <DarkModeToggle size="default" className={`${rowClass} py-6 !h-auto`} />
             </nav>
           </motion.div>
         )}

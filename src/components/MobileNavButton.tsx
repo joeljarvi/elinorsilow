@@ -64,6 +64,7 @@ export default function NavButton() {
   const { workLoading } = useWorks();
   const { exLoading } = useExhibitions();
   const [initialLoaded, setInitialLoaded] = useState(false);
+  const [isPulsing, setIsPulsing] = useState(false);
 
   useEffect(() => {
     if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
@@ -85,16 +86,27 @@ export default function NavButton() {
       ? "open"
       : "idle";
 
+  useEffect(() => {
+    if (navState !== "idle") return;
+    const id = setInterval(() => {
+      setIsPulsing(true);
+      setTimeout(() => setIsPulsing(false), 600);
+    }, 8000);
+    return () => clearInterval(id);
+  }, [navState]);
+
   return (
-    <button
-      className="fixed bottom-8 right-8 z-[70]"
+    <motion.button
+      className="fixed bottom-8 right-8 z-[70] drop-shadow-lg"
       onClick={handleOpen}
       aria-label={open ? "Stäng meny" : "Öppna meny"}
       aria-expanded={open}
+      animate={isPulsing ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
     >
       <AnimatePresence mode="wait">
         <NavIcon state={navState} />
       </AnimatePresence>
-    </button>
+    </motion.button>
   );
 }

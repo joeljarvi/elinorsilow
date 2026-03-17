@@ -10,12 +10,14 @@ function Corner() {
 }
 
 export default function CornerFrame({
-  padding = "inset-0",
+  padding = "inset-4",
 }: {
   padding?: string;
 }) {
   return (
-    <div className={`absolute pointer-events-none text-[var(--border)] group-hover:text-foreground transition-colors duration-300 ${padding}`}>
+    <div
+      className={`absolute pointer-events-none text-[var(--border)] group-hover:text-foreground transition-colors duration-300 ${padding}`}
+    >
       <div className="absolute top-0 left-0">
         <Corner />
       </div>

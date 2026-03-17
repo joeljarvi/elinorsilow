@@ -34,7 +34,7 @@ export default function ExhibitionModal({
           <motion.div
             key="modal"
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full h-full overflow-y-auto scrollbar-hide z-40"
+            className="relative w-full h-full lg:overflow-hidden overflow-y-auto scrollbar-hide z-40"
             initial={{ y: "4%", opacity: 0 }}
             animate={{ y: "0%", opacity: 1 }}
             exit={{ y: "4%", opacity: 0 }}

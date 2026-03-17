@@ -17,7 +17,8 @@ const buttonVariants = cva(
           "border-[0.5px] border-border bg-background  hover:bg-accent hover:text-accent-foreground justify-center",
         secondary:
           "bg-background text-background-foreground  hover:bg-secondary/80 justify-center",
-        ghost: "  bg-background hover:bg-foreground/20 justify-center",
+        ghost:
+          "bg-background hover:bg-foreground/10 hover:text-foreground/80 justify-center",
         link: "text-primary hover:text-foreground/80 transition-all      ",
         nav: "text-primary       transition-all w-full  justify-between hover:text-primary/80 ",
       },
@@ -29,6 +30,8 @@ const buttonVariants = cva(
         linkSizeLg: " text-lg leading-tight ",
         listSize: "h-auto px-0 py-0",
         linkIcon: "h-6 w-6 px-0 py-0",
+        controls: "h-8 px-3 py-1.5 [&_svg]:size-3 h3",
+        controlsIcon: "h-8 w-8 px-0 py-1.5 aspect-square  [&_svg]:size-3",
         icon: "h-9 w-9",
       },
     },

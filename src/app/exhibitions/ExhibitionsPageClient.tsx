@@ -7,8 +7,10 @@ import { useUI } from "@/context/UIContext";
 import { useExhibitions, ExhibitionSort } from "@/context/ExhibitionsContext";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import { motion } from "framer-motion";
+import { Cross1Icon, Half2Icon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
-import { InfoRow } from "@/components/InfoBox";
+import InfoBox from "@/components/InfoBox";
+import CornerFrame from "@/components/CornerFrame";
 import Staggered from "@/components/Staggered";
 import {
   Select,
@@ -18,23 +20,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+function TIcon({ active }: { active: boolean }) {
+  return (
+    <span className={`font-serif text-sm ${!active ? " " : "line-through"}`}>
+      T
+    </span>
+  );
+}
+
 export default function ExhibitionsPageClient() {
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [col1Sort, setCol1Sort] = useState<ExhibitionSort>("year");
   const [col2Sort, setCol2Sort] = useState<ExhibitionSort>("year");
-  const [col3Sort, setCol3Sort] = useState<ExhibitionSort>("year");
   const [col1Type, setCol1Type] = useState("Solo");
   const [col2Type, setCol2Type] = useState("Group");
-  const [col3Type, setCol3Type] = useState("all");
   const [col1Min, setCol1Min] = useState(false);
   const [col2Min, setCol2Min] = useState(false);
-  const [col3Min, setCol3Min] = useState(true);
-  const [showInfo, setShowInfo] = useState(true);
-  const [proportional, setProportional] = useState(false);
+  const [col1Dark, setCol1Dark] = useState(false);
+  const [col2Dark, setCol2Dark] = useState(false);
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
-  const col3Ref = useRef<HTMLDivElement>(null);
 
   const {
     exhibitions,
@@ -43,7 +49,7 @@ export default function ExhibitionsPageClient() {
     exLoading,
   } = useExhibitions();
 
-  const { setOpen } = useUI();
+  const { setOpen, showInfo, setShowInfo } = useUI();
 
   useEffect(() => {
     if (!exLoading) setDataLoaded(true);
@@ -64,7 +70,9 @@ export default function ExhibitionsPageClient() {
   ): Exhibition[] {
     switch (sort) {
       case "year":
-        return [...list].sort((a, b) => Number(b.acf.year) - Number(a.acf.year));
+        return [...list].sort(
+          (a, b) => Number(b.acf.year) - Number(a.acf.year),
+        );
       case "title":
         return [...list].sort((a, b) =>
           a.title.rendered.localeCompare(b.title.rendered, "sv"),
@@ -86,12 +94,6 @@ export default function ExhibitionsPageClient() {
       : exhibitions.filter((e) => e.acf.exhibition_type === col2Type),
     col2Sort,
   );
-  const col3Exhibitions = sortExhibitions(
-    col3Type === "all"
-      ? exhibitions
-      : exhibitions.filter((e) => e.acf.exhibition_type === col3Type),
-    col3Sort,
-  );
 
   function openExhibition(ex: Exhibition) {
     setActiveExhibitionSlug(ex.slug);
@@ -104,95 +106,89 @@ export default function ExhibitionsPageClient() {
       <button
         key={ex.id}
         onClick={() => openExhibition(ex)}
-        className="relative cursor-pointer w-full flex flex-col shadow-[0_0_60px_rgba(255,255,255,0.15)]"
+        className="group relative cursor-pointer w-full flex flex-col"
         aria-label={`Show exhibition: ${ex.title.rendered}`}
       >
-        <div
-          className="relative w-full overflow-hidden"
-          style={
-            proportional && ex.acf.image_1?.width && ex.acf.image_1?.height
-              ? { aspectRatio: `${ex.acf.image_1.width} / ${ex.acf.image_1.height}` }
-              : { aspectRatio: "16 / 9" }
-          }
-        >
+        <div className="relative h-[75vh] w-full overflow-hidden p-4 pb-0">
+          <CornerFrame />
           {ex.acf.image_1 && (
-            <div className="absolute inset-2">
+            <div className="absolute inset-4 flex items-end">
               <Image
                 src={ex.acf.image_1.url}
                 alt={ex.title.rendered}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           )}
         </div>
-        {showInfo && (
-          <div className="relative w-full font-bookish text-sm">
-            <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
-            <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
-            <InfoRow label="Title" value={ex.title.rendered} />
-            <InfoRow label="Year" value={ex.acf.year} />
-            <InfoRow label="Location" value={ex.acf.location} />
-            <InfoRow label="City" value={ex.acf.city} />
-          </div>
-        )}
+        {showInfo && <InfoBox exhibition={ex} />}
       </button>
     );
   }
 
-  function TypeSelect({
-    value,
-    onChange,
-  }: {
-    value: string;
-    onChange: (v: string) => void;
-  }) {
-    return (
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="Solo">Solo</SelectItem>
-          <SelectItem value="Group">Group</SelectItem>
-        </SelectContent>
-      </Select>
-    );
-  }
-
-  function SortSelect({
-    value,
-    onChange,
-  }: {
-    value: ExhibitionSort;
-    onChange: (v: ExhibitionSort) => void;
-  }) {
-    return (
-      <Select
-        value={value}
-        onValueChange={(v) => onChange(v as ExhibitionSort)}
-      >
-        <SelectTrigger className="border-none shadow-none px-4 h-auto font-bookish text-sm focus:ring-0 rounded-full gap-2 py-1.5 backdrop-blur-sm bg-foreground/10 text-foreground">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent className="backdrop-blur-md bg-background/80 text-foreground border-none font-bookish rounded-2xl shadow-lg text-sm">
-          <SelectItem value="year">Latest added</SelectItem>
-          <SelectItem value="title">Title</SelectItem>
-        </SelectContent>
-      </Select>
-    );
-  }
+  const selectTriggerClass =
+    "border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full";
+  const selectContentClass =
+    "bg-background text-foreground border border-border font-bookish rounded-none shadow-none text-sm w-[var(--radix-select-trigger-width)]";
+  const selectItemClass =
+    "text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none";
 
   return (
     <section className="relative w-full mt-0">
       {/* Mobile: single staggered list */}
-      <div className="lg:hidden">
-        <div className="sticky top-0 z-50 bg-transparent px-4 py-3 flex items-center gap-x-2 font-bookish text-sm">
-          <SortSelect value={col1Sort} onChange={setCol1Sort} />
-          <Button variant="ghost" size="sm" onClick={() => setProportional(!proportional)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${proportional ? "line-through decoration-1" : ""}`}>P</Button>
-          <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "" : "line-through decoration-1"}`}>T</Button>
+      <div className="lg:hidden relative z-40 bg-transparent">
+        <div className="sticky top-8 z-50 bg-background w-full pt-0 pb-0">
+          <div className="mx-0 flex items-stretch font-bookish text-sm gap-x-0 border-x-0 border-border border-t-0 [&>*+*]:border-l [&>*+*]:border-border">
+            <div className="flex items-center gap-x-2 w-1/2">
+              <Select
+                value={col1Sort}
+                onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
+              >
+                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className={selectContentClass}>
+                  <SelectItem value="year" className={selectItemClass}>
+                    Year
+                  </SelectItem>
+                  <SelectItem value="title" className={selectItemClass}>
+                    Title
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center flex-1 w-full gap-x-2">
+              <Select value={col1Type} onValueChange={setCol1Type}>
+                <SelectTrigger className="border border-border border-x-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-foreground w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className={selectContentClass}>
+                  <SelectItem value="all" className={selectItemClass}>
+                    All
+                  </SelectItem>
+                  <SelectItem value="Solo" className={selectItemClass}>
+                    Solo
+                  </SelectItem>
+                  <SelectItem value="Group" className={selectItemClass}>
+                    Group
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="border border-border border-x-0 shadow-none px-3 h-auto font-bookish text-sm focus:ring-0 rounded-none pb-1 bg-background pt-2 text-muted-foreground"
+                onClick={() => setShowInfo(!showInfo)}
+                aria-label={showInfo ? "Hide text" : "Show text"}
+              >
+                <TIcon active={showInfo} />
+              </Button>
+            </div>
+          </div>
         </div>
         <Staggered
           items={sortExhibitions(exhibitions, col1Sort)}
@@ -203,52 +199,182 @@ export default function ExhibitionsPageClient() {
         />
       </div>
 
-      {/* Desktop: three fixed scrolling columns */}
+      {/* Desktop: two fixed scrolling columns */}
       <div
         className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
         style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
       >
-        {/* Restore pills + global controls */}
-        <div className="absolute right-2 top-2 flex items-center gap-x-2 z-50">
-          {col1Min && <Button variant="ghost" size="sm" onClick={() => setCol1Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col1Type === "all" ? "All" : col1Type}</Button>}
-          {col2Min && <Button variant="ghost" size="sm" onClick={() => setCol2Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col2Type === "all" ? "All" : col2Type}</Button>}
-          {col3Min && <Button variant="ghost" size="sm" onClick={() => setCol3Min(false)} className="rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm">+ {col3Type === "all" ? "All" : col3Type}</Button>}
-          <Button variant="ghost" size="sm" onClick={() => setShowInfo(!showInfo)} className={`rounded-full px-3 h-7 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-sm ${showInfo ? "line-through decoration-1" : ""}`}>T</Button>
+        {/* Restore pills */}
+        <div className="absolute right-2 top-8 flex items-center gap-x-2 z-50">
+          {col1Min && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCol1Min(false)}
+              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
+            >
+              + {col1Type === "all" ? "All" : col1Type}
+            </Button>
+          )}
+          {col2Min && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCol2Min(false)}
+              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm border border-border"
+            >
+              + {col2Type === "all" ? "All" : col2Type}
+            </Button>
+          )}
         </div>
 
         {!col1Min && (
-          <div ref={col1Ref} className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col">
-            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
-              <TypeSelect value={col1Type} onChange={setCol1Type} />
-              <SortSelect value={col1Sort} onChange={setCol1Sort} />
-              <Button variant="ghost" size="sm" onClick={() => setCol1Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
+          <div
+            ref={col1Ref}
+            className={`flex-1 overflow-y-auto h-full border-r border-border flex flex-col ${col1Dark ? "bg-black text-white" : "bg-background text-foreground"}`}
+          >
+            <div
+              className={`sticky top-0 z-10 pt-4 ${col1Dark ? "bg-black" : "bg-background"}`}
+            >
+              <div className="mx-4 flex items-center gap-x-0 font-bookish text-sm border border-border [&>*+*]:border-l [&>*+*]:border-border">
+                <Select value={col1Type} onValueChange={setCol1Type}>
+                  <SelectTrigger className={selectTriggerClass}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className={selectContentClass}>
+                    <SelectItem value="all" className={selectItemClass}>
+                      All
+                    </SelectItem>
+                    <SelectItem value="Solo" className={selectItemClass}>
+                      Solo
+                    </SelectItem>
+                    <SelectItem value="Group" className={selectItemClass}>
+                      Group
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={col1Sort}
+                  onValueChange={(v) => setCol1Sort(v as ExhibitionSort)}
+                >
+                  <SelectTrigger className={selectTriggerClass}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className={selectContentClass}>
+                    <SelectItem value="year" className={selectItemClass}>
+                      Year
+                    </SelectItem>
+                    <SelectItem value="title" className={selectItemClass}>
+                      Title
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="ghost"
+                  size="controlsIcon"
+                  onClick={() => setCol1Dark((d) => !d)}
+                  aria-label="Toggle dark background"
+                >
+                  <Half2Icon />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="controlsIcon"
+                  onClick={() => setCol1Min(true)}
+                >
+                  <Cross1Icon />
+                </Button>
+              </div>
             </div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5 }} className="flex flex-col">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: loading ? 0 : 1 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col"
+            >
               {col1Exhibitions.map((ex) => renderExhibitionItem(ex))}
             </motion.div>
           </div>
         )}
+
         {!col2Min && (
-          <div ref={col2Ref} className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col">
-            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
-              <TypeSelect value={col2Type} onChange={setCol2Type} />
-              <SortSelect value={col2Sort} onChange={setCol2Sort} />
-              <Button variant="ghost" size="sm" onClick={() => setCol2Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
+          <div
+            ref={col2Ref}
+            className={`flex-1 overflow-y-auto h-full flex flex-col ${col2Dark ? "bg-black text-white" : "bg-background text-foreground"}`}
+          >
+            <div
+              className={`sticky top-0 z-10 pt-4 ${col2Dark ? "bg-black" : "bg-background"}`}
+            >
+              <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm">
+                <div className="flex w-full items-center gap-0 border border-border [&>*+*]:border-l [&>*+*]:border-border">
+                  <Select value={col2Type} onValueChange={setCol2Type}>
+                    <SelectTrigger className={selectTriggerClass}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className={selectContentClass}>
+                      <SelectItem value="all" className={selectItemClass}>
+                        All
+                      </SelectItem>
+                      <SelectItem value="Solo" className={selectItemClass}>
+                        Solo
+                      </SelectItem>
+                      <SelectItem value="Group" className={selectItemClass}>
+                        Group
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={col2Sort}
+                    onValueChange={(v) => setCol2Sort(v as ExhibitionSort)}
+                  >
+                    <SelectTrigger className={selectTriggerClass}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className={selectContentClass}>
+                      <SelectItem value="year" className={selectItemClass}>
+                        Year
+                      </SelectItem>
+                      <SelectItem value="title" className={selectItemClass}>
+                        Title
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="ghost"
+                    size="controlsIcon"
+                    onClick={() => setCol2Dark((d) => !d)}
+                    aria-label="Toggle dark background"
+                  >
+                    <Half2Icon />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="controlsIcon"
+                    onClick={() => setCol2Min(true)}
+                  >
+                    <Cross1Icon />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-0 border border-border [&>*+*]:border-l [&>*+*]:border-border">
+                  <Button
+                    variant="ghost"
+                    size="controlsIcon"
+                    onClick={() => setShowInfo(!showInfo)}
+                    className={showInfo ? "line-through decoration-1" : ""}
+                    aria-label={showInfo ? "Hide text" : "Show text"}
+                  >
+                    T
+                  </Button>
+                </div>
+              </div>
             </div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.06 }} className="flex flex-col">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: loading ? 0 : 1 }}
+              transition={{ duration: 0.5, delay: 0.06 }}
+              className="flex flex-col"
+            >
               {col2Exhibitions.map((ex) => renderExhibitionItem(ex))}
-            </motion.div>
-          </div>
-        )}
-        {!col3Min && (
-          <div ref={col3Ref} className="flex-1 overflow-y-auto h-full flex flex-col">
-            <div className="sticky top-0 z-10 flex items-center gap-x-2 px-4 pt-2 pb-2 bg-transparent font-bookish text-sm">
-              <TypeSelect value={col3Type} onChange={setCol3Type} />
-              <SortSelect value={col3Sort} onChange={setCol3Sort} />
-              <Button variant="ghost" size="sm" onClick={() => setCol3Min(true)} className="shrink-0 rounded-full w-7 h-7 p-0 backdrop-blur-sm bg-foreground/10 hover:bg-foreground/20 font-bookish text-base leading-none">−</Button>
-            </div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: loading ? 0 : 1 }} transition={{ duration: 0.5, delay: 0.12 }} className="flex flex-col">
-              {col3Exhibitions.map((ex) => renderExhibitionItem(ex))}
             </motion.div>
           </div>
         )}

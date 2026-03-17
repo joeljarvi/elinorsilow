@@ -43,7 +43,6 @@ function HoverWord({
       <AnimatePresence>
         {activeUrl && (
           <>
-            {/* Mobile: tap backdrop to close */}
             <motion.span
               key="hover-backdrop"
               className="fixed inset-0 z-10 lg:hidden"
@@ -58,13 +57,13 @@ function HoverWord({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="fixed top-0 right-0 w-full h-[50vh] lg:w-1/2 lg:h-screen pointer-events-none z-10 lg:-z-10"
+              className="fixed top-0 right-0 w-full h-[50vh] pointer-events-none z-10"
             >
               <Image
                 src={activeUrl}
                 alt={alt}
                 fill
-                className="object-contain object-center lg:object-right p-30"
+                className="object-contain object-center p-8"
               />
             </motion.span>
           </>
@@ -91,7 +90,7 @@ function NavLink({
   );
 }
 
-export default function Hero() {
+export default function Hero({ showHover = true }: { showHover?: boolean }) {
   const { allWorks } = useWorks();
   const { featuredExhibitions } = useExhibitions();
 
@@ -136,31 +135,60 @@ export default function Hero() {
     [featuredExhibitions],
   );
 
+  function wrap(
+    key: string,
+    href: string,
+    label: string,
+    urls: string[],
+    text: string,
+  ) {
+    const link = <NavLink href={href}>{text}</NavLink>;
+    if (!showHover) return link;
+    return (
+      <HoverWord key={key} imageUrls={urls} alt={label}>
+        {link}
+      </HoverWord>
+    );
+  }
+
   return (
-    <div className="max-w-full lg:max-w-1/2 pt-4 pl-4 pr-8 pb-4 lg:p-4 relative z-10">
-      <p className="font-bookish text-2xl lg:text-2xl leading-snug">
+    <div className="p-4 lg:p-8 relative z-10  ">
+      <p className="font-bookish text-2xl leading-snug max-w-2xl">
         <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
         Sweden) is a Stockholm-based artist working with{" "}
-        <HoverWord imageUrls={paintingUrls} alt="painting">
-          <NavLink href="/works?category=painting">painting</NavLink>
-        </HoverWord>
+        {wrap(
+          "painting",
+          "/works?category=painting",
+          "painting",
+          paintingUrls,
+          "painting",
+        )}
         ,{" "}
-        <HoverWord imageUrls={sculptureUrls} alt="sculpture">
-          <NavLink href="/works?category=sculpture">sculpture</NavLink>
-        </HoverWord>
+        {wrap(
+          "sculpture",
+          "/works?category=sculpture",
+          "sculpture",
+          sculptureUrls,
+          "sculpture",
+        )}
         , and{" "}
-        <HoverWord imageUrls={textileUrls} alt="textile">
-          <NavLink href="/works?category=textile">textile pieces</NavLink>
-        </HoverWord>
+        {wrap(
+          "textile",
+          "/works?category=textile",
+          "textile",
+          textileUrls,
+          "textile pieces",
+        )}
         . Her work explores raw emotion through material, gesture, and form.{" "}
-        Discover her{" "}
-        <HoverWord imageUrls={allWorkUrls} alt="works">
-          <NavLink href="/works">works</NavLink>
-        </HoverWord>
-        , or see{" "}
-        <HoverWord imageUrls={exhibitionUrls} alt="exhibition">
-          <NavLink href="/exhibitions">exhibitions</NavLink>
-        </HoverWord>{" "}
+        Discover her {wrap("works", "/works", "works", allWorkUrls, "works")},
+        or see{" "}
+        {wrap(
+          "exhibitions",
+          "/exhibitions",
+          "exhibition",
+          exhibitionUrls,
+          "exhibitions",
+        )}{" "}
         where the work has been presented publicly. For further information,
         including CV and background, visit the{" "}
         <NavLink href="/info">info</NavLink> page. For collaborations or

@@ -52,6 +52,18 @@ export default defineType({
       type: "string",
     }),
     defineField({
+      name: "status",
+      title: "Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Sold", value: "sold" },
+          { title: "On view", value: "on view" },
+          { title: "Available", value: "available" },
+        ],
+      },
+    }),
+    defineField({
       name: "description",
       title: "Description",
       type: "text",

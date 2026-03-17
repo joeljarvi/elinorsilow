@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Button } from "./ui/button";
@@ -11,6 +11,8 @@ import { usePathname } from "next/navigation";
 
 import NavSearch from "./NavSearch";
 import { HideTextToggle } from "./HideTextToggle";
+import { DarkModeToggle } from "./DarkModeToggle";
+import { NavTypewriter } from "./NavTypewriter";
 
 const navContainer: Variants = {
   hidden: {
@@ -40,9 +42,9 @@ function NavItem({
 }) {
   return (
     <Button
-      variant="link"
-      size="lg"
-      className={`text-base lg:text-xl ${className} ${active ? "underline underline-offset-4 decoration-1 " : ""}`}
+      variant="ghost"
+      size="controls"
+      className={`h3 ${className} ${active ? "bg-foreground/10 text-foreground/80 " : ""}`}
       asChild
       aria-current={active ? "page" : undefined}
     >
@@ -57,7 +59,7 @@ export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const pathname = usePathname();
-  const { open, setOpen } = useUI();
+  const { open, setOpen, handleOpen } = useUI();
 
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 1024);
@@ -73,14 +75,15 @@ export default function DesktopNav() {
   return (
     <div
       id="main-nav"
-      className="z-[55] absolute top-0  left-0 w-full flex flex-col items-start justify-start bg-background"
+      className="z-[55] fixed top-0 left-0 w-full flex flex-col items-start justify-start bg-background px-0 py-0"
     >
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
-      <div className="absolute hidden lg:block top-0 left-0 w-full h-[10px] -translate-y-full pointer-events-none bg-gradient-to-b from-background/0 to-background" />
+      {/* <div className="absolute top-0 left-0 w-full -translate-y-full pointer-events-none h-8 bg-gradient-to-b from-background/0 to-background" /> */}
       <AnimatePresence>
         {(open || !isDesktop) && (
           <motion.div
             key="desktop-nav"
+            className="w-full"
             exit={{ opacity: 0, transition: { duration: 0.15 } }}
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
           >
@@ -89,64 +92,88 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className="flex justify-center lg:justify-between no-hide-text font-bookish items-baseline w-screen bg-background shadow-md pt-4 pb-2 px-4 lg:px-0 border-b border-border"
+              className="flex justify-between no-hide-text font-bookish items-center w-full bg-background border-b border-border"
             >
-              <motion.div variants={navItemVariant}>
+              {/* Left: hamburger (mobile) / Elinor Silow (desktop) */}
+              <motion.div
+                variants={navItemVariant}
+                className="flex items-center"
+              >
+                <Button
+                  variant="ghost"
+                  size="controlsIcon"
+                  className="hidden"
+                  onClick={handleOpen}
+                  aria-label="Open menu"
+                >
+                  <HamburgerMenuIcon />
+                </Button>
                 <NavItem
-                  className="lg:flex items-center justify-start w-min  hidden tracking-tight lg:text-xl "
+                  className="hidden lg:flex items-center justify-center font-bookish  px-4 "
                   href="/"
                   active={pathname === "/"}
                 >
                   Elinor Silow
                 </NavItem>
               </motion.div>
+
+              {/* Center: Elinor Silow (mobile) / nav links (desktop) */}
               <motion.span
                 variants={navItemVariant}
-                className="hidden lg:flex flex-row items-baseline gap-x-2 absolute left-1/2 -translate-x-1/2"
+                className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex-1 lg:flex-none"
               >
-                <NavItem
-                  href="/works"
-                  className="pl-2 pr-0.5"
-                  active={pathname.startsWith("/works")}
-                >
-                  Works
-                </NavItem>
-
-                <NavItem
-                  href="/exhibitions"
-                  className="pl-2 pr-0.5"
-                  active={pathname.startsWith("/exhibitions")}
-                >
-                  Exhibitions
-                </NavItem>
-
-                <NavItem
-                  href="/info"
-                  className="pl-2 pr-0.5"
-                  active={pathname.startsWith("/info")}
-                >
-                  Info
-                </NavItem>
-
-                <NavItem href="/" className="pl-2 pr-0.5" active={false}>
-                  Contact
-                </NavItem>
+                <span className="lg:hidden flex">
+                  <NavItem
+                    href="/"
+                    active={pathname === "/"}
+                    className="w-full"
+                  >
+                    Elinor Silow
+                  </NavItem>
+                </span>
+                <span className="hidden lg:flex flex-row items-baseline gap-x-0">
+                  <NavItem
+                    href="/works"
+                    className=""
+                    active={pathname.startsWith("/works")}
+                  >
+                    Works
+                  </NavItem>
+                  <NavItem
+                    href="/exhibitions"
+                    className=""
+                    active={pathname.startsWith("/exhibitions")}
+                  >
+                    Exhibitions
+                  </NavItem>
+                  <NavItem
+                    href="/info"
+                    className=""
+                    active={pathname.startsWith("/info")}
+                  >
+                    Info
+                  </NavItem>
+                  <NavItem href="/" className="" active={false}>
+                    Contact
+                  </NavItem>
+                </span>
               </motion.span>
+
+              {/* Right: dark mode + search */}
               <motion.span
                 variants={navItemVariant}
-                className="hidden lg:flex items-center ml-auto pr-4 gap-x-2"
+                className="flex items-center pr-0 lg:pr-0 gap-x-0"
               >
+                <DarkModeToggle className="hidden lg:flex" />
                 <Button
-                  variant="link"
-                  size="lg"
-                  className="pl-2 pr-0.5"
+                  className="hidden lg:flex "
+                  variant="ghost"
+                  size="controlsIcon"
                   onClick={() => setOpenSearch(true)}
                 >
-                  <MagnifyingGlassIcon className="w-6 h-6 lg:w-4 lg:h-4" />
+                  <MagnifyingGlassIcon />
                 </Button>
               </motion.span>
-
-              {/* <DarkModeToggle /> */}
             </motion.nav>
           </motion.div>
         )}

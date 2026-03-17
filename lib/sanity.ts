@@ -25,6 +25,7 @@ export type Work = {
     year: number;
     category: string;
     exhibition?: string;
+    status?: string;
     dimensions: string;
     materials: string;
   };
@@ -143,6 +144,7 @@ function transformWork(doc: any): Work {
       year: doc.year,
       category: doc.category?.toLowerCase() || "",
       exhibition: doc.exhibition,
+      status: doc.status,
       dimensions: doc.dimensions || "",
       materials: doc.materials || "",
     },
@@ -219,7 +221,7 @@ let cachedExhibitions: Exhibition[] | null = null;
 
 const WORK_FIELDS = `
   _id, "slug": slug.current, title, year, category,
-  materials, dimensions, exhibition, description, image, featured
+  materials, dimensions, exhibition, status, description, image, featured
 `;
 
 const EXHIBITION_FIELDS = `

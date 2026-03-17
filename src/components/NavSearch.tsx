@@ -6,7 +6,7 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import { buildSearchIndex } from "@/lib/searchIndex";
 import { useSiteSearch } from "@/lib/useSiteSearch";
 import { Button } from "@/components/ui/button";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function NavSearch({
@@ -64,36 +64,38 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 bg-background flex flex-col pt-8 px-8 lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
+          className="fixed inset-0 z-50 bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
         >
-          <div className="flex items-baseline border-b-[0.5px] border-border pb-2 gap-x-4">
+          <div className="flex items-center border-b border-border [&>*+*]:border-l [&>*+*]:border-border">
+            <MagnifyingGlassIcon className="mx-2 text-muted-foreground shrink-0" />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-2xl font-bookish"
+              className="flex-1 outline-none bg-transparent text-sm font-bookish py-1.5 px-2"
             />
-            <button
+            <Button
+              variant="ghost"
+              size="controlsIcon"
               onClick={onClose}
               aria-label="Close search"
-              className="text-foreground"
             >
-              <Cross1Icon className="size-4" />
-            </button>
+              <Cross1Icon />
+            </Button>
           </div>
 
           {query && results.length > 0 && (
-            <div className="flex flex-col mt-0">
+            <div className="flex flex-col border-b border-border">
               {results.slice(0, 8).map((item) => (
                 <Button
                   variant="ghost"
-                  size="lg"
+                  size="controls"
                   key={item.id}
-                  className="w-full text-left justify-start font-bookish hover:bg-foreground/10"
+                  className="w-full justify-start border-t border-border"
                   onClick={() => handleResultClick(item)}
                 >
-                  <span className="opacity-50 mr-4 text-xs font-bookish  tracking-wider">
+                  <span className="opacity-50 text-xs tracking-wider">
                     {item.type === "work" ? "Work" : "Exhibition"}
                   </span>
                   {item.title}

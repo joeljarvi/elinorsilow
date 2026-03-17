@@ -153,9 +153,9 @@ html {
 
 /* Fade everything except whitelisted elements */
 [data-hide-text="true"]
-  :where(.h1, .h2, .h3, .p, .small, p, h1, h2, h3, h4):not(
-    .no-hide-text
-  ):not(.no-hide-text *) {
+  :where(.h1, .h2, .h3, .p, .small, p, h1, h2, h3, h4):not(.no-hide-text):not(
+    .no-hide-text *
+  ) {
   opacity: 0 !important;
   pointer-events: none !important;
 }
@@ -188,16 +188,16 @@ a {
     @apply font-bookish  leading-normal whitespace-normal;
   }
   .h2 {
-    @apply font-directorLight text-sm leading-normal whitespace-nowrap;
+    @apply font-bookish text-sm leading-normal whitespace-nowrap;
   }
   .h3 {
-    @apply font-bookish  leading-normal whitespace-normal;
+    @apply font-bookish text-sm leading-snug whitespace-normal;
   }
   .h4 {
-    @apply font-directorLight text-sm leading-normal whitespace-nowrap;
+    @apply font-bookish text-xl leading-snug whitespace-normal;
   }
   .p {
-    @apply font-bookish  leading-normal whitespace-normal;
+    @apply font-bookish text-xl  leading-snug whitespace-normal;
   }
 }
 .text-trim {

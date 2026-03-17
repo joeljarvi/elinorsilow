@@ -1,13 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useInfo } from "@/context/InfoContext";
-import Staggered from "@/components/Staggered";
 import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
-
-const textCls = "font-bookish text-base lg:text-xl";
-const headingCls = `${textCls} mb-4 pb-2 border-b border-border`;
+import { InfoRow } from "@/components/InfoBox";
+import HDivider from "@/components/HDivider";
 
 function groupByYear<T extends { acf: { year: number | string } }>(
   items: T[],
@@ -24,205 +22,266 @@ function groupByYear<T extends { acf: { year: number | string } }>(
   return Array.from(map.entries());
 }
 
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky top-8 z-10 pt-4 bg-background">
+      <div className="mx-4 flex items-center font-bookish text-sm border border-border">
+        <span className="h3 px-3 py-1.5 text-muted-foreground">{children}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function InfoPageClient() {
   const { educations, grants, soloExhibitions, groupExhibitions } = useInfo();
   const { setOpen } = useUI();
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
+  function ExhibitionList({ items }: { items: typeof soloExhibitions }) {
+    return (
+      <div className="flex flex-col px-4 mb-4">
+        {groupByYear(items).map(([year, exs]) => (
+          <div key={year}>
+            <div className="flex flex-row items-baseline font-bookish border-x border-border">
+              <span className="h3 py-1.5 px-2 text-muted-foreground">
+                {year}
+              </span>
+            </div>
+            <HDivider />
+            {exs.map((ex) => {
+              const slug = findExhibitionSlug(ex.title.rendered);
+              return (
+                <div
+                  key={ex.id}
+                  className="flex flex-wrap items-baseline gap-x-1 h3 px-3 py-1.5  border-x border-b border-border"
+                >
+                  {slug ? (
+                    <Button
+                      variant="ghost"
+                      size="controls"
+                      className="h3 p-0 h-auto underline underline-offset-4 decoration-1 hover:no-underline justify-start"
+                      onClick={() => {
+                        setActiveExhibitionSlug(slug);
+                        setOpen(false);
+                      }}
+                    >
+                      {ex.title.rendered},
+                    </Button>
+                  ) : (
+                    <span className="h3">{ex.title.rendered},</span>
+                  )}
+                  <span className="h3">
+                    {ex.acf.venue}, {ex.acf.city}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-3 lg:divide-x lg:divide-border">
-      {/* COL 1: About + Solo Exhibitions */}
-      <div className="flex flex-col gap-y-12 p-4 lg:pr-8">
-        <section className={textCls}>
-          <p className="mb-4">
+    <section className="relative w-full mt-0">
+      {/* Mobile: single column */}
+      <div className="lg:hidden flex flex-col mb-36 ">
+        <SectionHeader>About</SectionHeader>
+        <div className="px-8 py-4 font-bookish flex flex-col gap-y-3 mb-4">
+          <p className="h3">
             Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based artist
             who explores raw emotion through painting, sculpture and textile.
           </p>
-          <p>
+          <p className="h3">
             Please contact{" "}
             <Link
-              href="mailto:elinor.silow@gmail.com"
-              className="underline underline-offset-4 decoration-1 text-blue-600 hover:no-underline"
+              href="mailto:hej@elinorsilow.com"
+              className="underline underline-offset-4 decoration-1 hover:no-underline"
             >
               hej@elinorsilow.com
             </Link>{" "}
             for collaborations and inquiries.
           </p>
-        </section>
+        </div>
 
         {soloExhibitions.length > 0 && (
-          <section>
-            <h3 className={headingCls}>Solo Exhibitions</h3>
-            <div className={`flex flex-col gap-y-4 ${textCls}`}>
-              {groupByYear(soloExhibitions).map(([year, exs]) => (
-                <div key={year}>
-                  <p className="mb-1">{year}</p>
-                  <div className="flex flex-col">
-                    {exs.map((ex) => {
-                      const slug = findExhibitionSlug(ex.title.rendered);
-                      return (
-                        <div
-                          key={ex.id}
-                          className="flex flex-wrap items-baseline"
-                        >
-                          {slug ? (
-                            <Button
-                              onClick={() => {
-                                setActiveExhibitionSlug(slug);
-                                setOpen(false);
-                              }}
-                              className="underline underline-offset-4 decoration-1 text-blue-600 hover:no-underline p-0 h-auto text-base lg:text-xl font-bookish mr-1"
-                              variant="link"
-                            >
-                              {ex.title.rendered},
-                            </Button>
-                          ) : (
-                            <span className="mr-1">{ex.title.rendered},</span>
-                          )}
-                          <span>
-                            {ex.acf.venue}, {ex.acf.city}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <>
+            <SectionHeader>Solo Exhibitions</SectionHeader>
+            <ExhibitionList items={soloExhibitions} />
+          </>
         )}
-      </div>
-
-      {/* COL 2: Group Exhibitions */}
-      <div className="flex flex-col gap-y-12 p-4 mt-12 lg:mt-0 lg:px-8">
         {groupExhibitions.length > 0 && (
-          <section>
-            <h3 className={headingCls}>Group Exhibitions</h3>
-            <div className={`flex flex-col gap-y-4 ${textCls}`}>
-              {groupByYear(groupExhibitions).map(([year, exs]) => (
-                <div key={year}>
-                  <p className="mb-1">{year}</p>
-                  <div className="flex flex-col">
-                    {exs.map((ex) => {
-                      const slug = findExhibitionSlug(ex.title.rendered);
-                      return (
-                        <div
-                          key={ex.id}
-                          className="flex flex-wrap items-baseline"
-                        >
-                          {slug ? (
-                            <Button
-                              variant="link"
-                              onClick={() => {
-                                setActiveExhibitionSlug(slug);
-                                setOpen(false);
-                              }}
-                              className="underline underline-offset-4 decoration-1 text-blue-600 hover:no-underline p-0 h-auto text-base lg:text-xl font-bookish mr-1"
-                            >
-                              {ex.title.rendered},
-                            </Button>
-                          ) : (
-                            <span className="mr-1">{ex.title.rendered},</span>
-                          )}
-                          <span>
-                            {ex.acf.venue}, {ex.acf.city}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <>
+            <SectionHeader>Group Exhibitions</SectionHeader>
+            <ExhibitionList items={groupExhibitions} />
+          </>
         )}
-      </div>
-
-      {/* COL 3: Grants + Press + Colophon + Copyright */}
-      <div className="flex flex-col gap-y-12 p-4 mt-12 lg:mt-0 lg:pl-8">
         {educations.length > 0 && (
-          <section>
-            <h3 className={headingCls}>Education</h3>
-            <Staggered
-              items={educations}
-              className={`flex flex-col ${textCls}`}
-              renderItem={(edu) => (
-                <div key={edu.id} className="flex flex-wrap items-baseline">
-                  <span className="mr-1">{edu.acf.school},</span>
-                  <span>
-                    {edu.acf.city} ({edu.acf.start_year}–{edu.acf.end_year})
+          <>
+            <SectionHeader>Education</SectionHeader>
+            <div className="flex flex-col px-4 mb-4">
+              {educations.map((edu) => (
+                <InfoRow
+                  key={edu.id}
+                  label={`${edu.acf.start_year}–${edu.acf.end_year}`}
+                >
+                  <span className="h3">
+                    {edu.acf.school}, {edu.acf.city}
                   </span>
-                </div>
-              )}
-            />
-          </section>
-        )}
-
-        {grants.length > 0 && (
-          <section>
-            <h3 className={headingCls}>Grants</h3>
-            <div className={`flex flex-col gap-y-4 ${textCls}`}>
-              {groupByYear(grants).map(([year, gs]) => (
-                <div key={year}>
-                  <p className="mb-1">{year}</p>
-                  <div className="flex flex-col">
-                    {gs.map((grant) => (
-                      <span key={grant.id}>{grant.acf.title}</span>
-                    ))}
-                  </div>
-                </div>
+                </InfoRow>
               ))}
             </div>
-          </section>
+          </>
         )}
-
-        <section>
-          <h3 className={headingCls}>Press</h3>
-          <div className={`flex flex-col gap-y-1 ${textCls}`}>
-            <div className="flex flex-wrap items-baseline">
-              <span className="mr-1">Hjärtat,</span>
-              <span className="mr-1">Lappalainen Hjertström, L-E (2022),</span>
-              <Link
-                className="underline underline-offset-4 decoration-1 text-blue-600 hover:no-underline"
-                href="https://kunstkritikk.se/hjartats-energi/"
-              >
-                kunstkritikk.se
-              </Link>
+        {grants.length > 0 && (
+          <>
+            <SectionHeader>Grants</SectionHeader>
+            <div className="flex flex-col px-4">
+              {groupByYear(grants).map(([year, gs]) =>
+                gs.map((grant) => (
+                  <InfoRow key={grant.id} label={year}>
+                    <span className="h3">{grant.acf.title}</span>
+                  </InfoRow>
+                )),
+              )}
             </div>
-            <div className="flex flex-wrap items-baseline">
-              <span className="mr-1">Gameplay,</span>
-              <span className="mr-1">Slöör, S (2025), Omkonst,</span>
-              <Link
-                className="underline underline-offset-4 decoration-1 text-blue-600 hover:no-underline"
-                href="https://omkonst.se/25-gameplay.shtml"
-              >
-                omkonst.se
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className={textCls}>
-          <h3 className={headingCls}>Colophon</h3>
-          <p>
-            Design & code:{" "}
-            <Link
-              className="underline underline-offset-4 decoration-1 text-blue-600 hover:no-underline"
-              href="/"
-            >
-              Joel Järvi
-            </Link>
-          </p>
-          <p>Typeface: Bookish from Helsinki Type Studio</p>
-        </section>
-
-        <p className={textCls}>
-          All content on this site, including images, text, and design, is the
-          intellectual property of Elinor Silow unless otherwise stated. No part
-          of this website may be copied, reproduced, distributed, or used
-          without explicit written permission from the copyright holder.
-        </p>
+          </>
+        )}
       </div>
-    </div>
+
+      {/* Desktop: 3 fixed scrolling columns */}
+      <div
+        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0"
+        style={{ top: "calc(var(--nav-height, 0px) + 0px)" }}
+      >
+        {/* Col 1: About + Solo Exhibitions */}
+        <div className="flex-1 overflow-y-auto h-full border-r border-border flex flex-col">
+          <SectionHeader>About</SectionHeader>
+          <div className="px-4 py-4 font-bookish flex flex-col gap-y-3 mb-4">
+            <p className="h3">
+              Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
+              artist who explores raw emotion through painting, sculpture and
+              textile.
+            </p>
+            <p className="h3">
+              Please contact{" "}
+              <Link
+                href="mailto:hej@elinorsilow.com"
+                className="underline underline-offset-4 decoration-1 hover:no-underline"
+              >
+                hej@elinorsilow.com
+              </Link>{" "}
+              for collaborations and inquiries.
+            </p>
+          </div>
+
+          {soloExhibitions.length > 0 && (
+            <>
+              <SectionHeader>Solo Exhibitions</SectionHeader>
+              <ExhibitionList items={soloExhibitions} />
+            </>
+          )}
+        </div>
+
+        {/* Col 2: Group Exhibitions + Education + Grants + Press + Colophon */}
+        <div className="flex-1 overflow-y-auto h-full flex flex-col">
+          {groupExhibitions.length > 0 && (
+            <>
+              <SectionHeader>Group Exhibitions</SectionHeader>
+              <ExhibitionList items={groupExhibitions} />
+            </>
+          )}
+          {educations.length > 0 && (
+            <>
+              <SectionHeader>Education</SectionHeader>
+              <div className="flex flex-col px-4 mb-4">
+                <HDivider />
+                {educations.map((edu) => (
+                  <InfoRow
+                    key={edu.id}
+                    label={`${edu.acf.start_year}–${edu.acf.end_year}`}
+                  >
+                    <span className="h3">
+                      {edu.acf.school}, {edu.acf.city}
+                    </span>
+                  </InfoRow>
+                ))}
+              </div>
+            </>
+          )}
+
+          {grants.length > 0 && (
+            <>
+              <SectionHeader>Grants</SectionHeader>
+              <div className="flex flex-col px-4 mb-4">
+                <HDivider />
+                {groupByYear(grants).map(([year, gs]) =>
+                  gs.map((grant) => (
+                    <InfoRow key={grant.id} label={year}>
+                      <span className="h3">{grant.acf.title}</span>
+                    </InfoRow>
+                  )),
+                )}
+              </div>
+            </>
+          )}
+
+          <SectionHeader>Press</SectionHeader>
+          <div className="flex flex-col px-4 mb-4">
+            <HDivider />
+            <InfoRow label="2022">
+              <span className="h3 flex flex-wrap gap-x-1">
+                <span>Hjärtat,</span>
+                <span>Lappalainen Hjertström, L-E,</span>
+                <Link
+                  className="underline underline-offset-4 decoration-1 hover:no-underline"
+                  href="https://kunstkritikk.se/hjartats-energi/"
+                >
+                  kunstkritikk.se
+                </Link>
+              </span>
+            </InfoRow>
+            <InfoRow label="2025">
+              <span className="h3 flex flex-wrap gap-x-1">
+                <span>Gameplay,</span>
+                <span>Slöör, S, Omkonst,</span>
+                <Link
+                  className="underline underline-offset-4 decoration-1 hover:no-underline"
+                  href="https://omkonst.se/25-gameplay.shtml"
+                >
+                  omkonst.se
+                </Link>
+              </span>
+            </InfoRow>
+          </div>
+
+          <SectionHeader>Colophon</SectionHeader>
+          <div className="flex flex-col px-4 mb-4">
+            <HDivider />
+            <InfoRow label="Design & code">
+              <Link
+                className="h3 underline underline-offset-4 decoration-1 hover:no-underline"
+                href="/"
+              >
+                Joel Järvi
+              </Link>
+            </InfoRow>
+            <InfoRow label="Typeface">
+              <span className="h3">Bookish, Helsinki Type Studio</span>
+            </InfoRow>
+          </div>
+
+          <div className="px-4 py-4">
+            <p className="h3 text-muted-foreground">
+              All content on this site, including images, text, and design, is
+              the intellectual property of Elinor Silow unless otherwise stated.
+              No part of this website may be copied, reproduced, distributed, or
+              used without explicit written permission from the copyright
+              holder.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
