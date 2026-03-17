@@ -152,7 +152,7 @@ export default function Hero({ showHover = true }: { showHover?: boolean }) {
   }
 
   return (
-    <div className="p-4 lg:p-8 relative z-10  ">
+    <div className="mt-9 lg:mt-0 p-4 lg:p-8 relative z-10  ">
       <p className="font-bookish text-xl leading-snug max-w-2xl">
         <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
         Sweden) is a Stockholm-based artist working with{" "}
