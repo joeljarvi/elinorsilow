@@ -118,7 +118,7 @@ export default function DesktopNav() {
               initial="hidden"
               animate="visible"
               aria-label="Site navigation"
-              className="relative flex justify-between no-hide-text font-bookish items-center w-full bg-background shadow-[var(--shadow-nav)] lg:border-b lg:border-foreground/[0.06] lg:px-4"
+              className="relative flex justify-between no-hide-text font-bookish h-16 items-center w-full bg-background shadow-[var(--shadow-nav)] lg:border-b lg:border-foreground/[0.06] lg:px-4"
             >
               {/* Left: ES logo (desktop) */}
               <motion.div
