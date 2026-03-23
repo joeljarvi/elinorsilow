@@ -1,12 +1,15 @@
 "use client";
-import { Button } from "./ui/button";
+
+import { ReactNode } from "react";
+import { OGubbeText } from "./OGubbeText";
 
 interface PageHeaderProps {
   title: string;
   count?: number;
   sortLabel?: string;
   onSortClick?: () => void;
-  filterLabel?: string;
+  loading?: boolean;
+  controls?: ReactNode;
 }
 
 export function PageHeader({
@@ -14,30 +17,42 @@ export function PageHeader({
   count,
   sortLabel,
   onSortClick,
-  filterLabel,
+  loading,
+  controls,
 }: PageHeaderProps) {
   return (
-    <div className=" flex items-baseline justify-between lg:justify-start gap-4 lg:gap-8 w-full px-4 pt-4 lg:px-8 font-bookish mb-4">
-      <h1 className="h1 text-2xl ">Elinor Silow</h1>
-      <span className="text-2xl">
-        {title}
-        {count !== undefined && <span className="ml-1 ">({count})</span>}
-      </span>
-      {sortLabel && onSortClick && (
-        <Button
-          variant="link"
-          size="lg"
-          aria-label="Sort"
-          onClick={onSortClick}
-          className="hidden lg:inline-flex text-2xl opacity-40 hover:opacity-100 transition-opacity"
-        >
-          {sortLabel}
-        </Button>
-      )}
-      {filterLabel && (
-        <span className="hidden lg:inline text-2xl opacity-40">
-          {filterLabel}
+    <div className="flex flex-col items-start lg:items-center">
+      <div className="flex flex-col px-[18px] pt-[18px] lg:pt-0 pb-[9px] lg:px-[32px] items-start lg:items-center gap-x-8">
+        <OGubbeText
+          text={title}
+          loading={loading}
+          className="block lg:hidden text-[18px] font-universNextProExt font-extrabold leading-none mb-[9px]"
+        />
+        <span className="flex flex-col lg:flex-row items-start lg:items-center gap-x-4">
+          {count !== undefined && (
+            <p className="text-[16px] font-timesNewRoman">
+              Now showing{" "}
+              <span className="font-bold">({loading ? "—" : count})</span>{" "}
+              {title.toLowerCase()}
+            </p>
+          )}
+          {sortLabel && (
+            <p className="text-[16px] font-timesNewRoman">
+              sorted by{" "}
+              <button
+                onClick={onSortClick}
+                className="font-bold hover:underline underline-offset-2 cursor-pointer"
+              >
+                ({sortLabel.toLowerCase()})
+              </button>
+            </p>
+          )}
         </span>
+      </div>
+      {controls && (
+        <div className="hidden lg:flex fixed bottom-0 left-1/2 -translate-x-1/2 z-50 items-center gap-x-4 px-[32px] py-[12px] bg-transparent drop-shadow-[var(--shadow-ui)]">
+          {controls}
+        </div>
       )}
     </div>
   );

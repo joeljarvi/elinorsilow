@@ -8,18 +8,39 @@ import { useUI } from "@/context/UIContext";
 import { Button } from "./ui/button";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { HideTextToggle } from "./HideTextToggle";
+import { WidthIcon } from "@radix-ui/react-icons";
 import NavSearch from "./NavSearch";
+import { useNav } from "@/context/NavContext";
+import { useInfo } from "@/context/InfoContext";
+import { useWorks } from "@/context/WorksContext";
+import { useExhibitions } from "@/context/ExhibitionsContext";
+import { OGubbeText } from "./OGubbeText";
 
 const rowClass =
   "justify-start w-full px-6 py-4 font-bookish text-xl border-b border-foreground/[0.06] rounded-none h-auto";
 
 export default function MobileNavOverlay() {
   const pathname = usePathname();
-  const { open, setOpen } = useUI();
+  const { open, setOpen, proportionalImages, setProportionalImages } = useUI();
   const [openSearch, setOpenSearch] = useState(false);
+  const { viewLoading } = useNav();
+  const { infoLoading } = useInfo();
+  const { workLoading } = useWorks();
+  const { exLoading } = useExhibitions();
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
   useEffect(() => {
-    if (window.innerWidth < 1024) setOpen(false);
+    if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
+      setInitialLoaded(true);
+    }
+    const fallback = setTimeout(() => setInitialLoaded(true), 2000);
+    return () => clearTimeout(fallback);
+  }, [initialLoaded, workLoading, exLoading, infoLoading]);
+
+  const loading = !initialLoaded || viewLoading;
+
+  useEffect(() => {
+    setOpen(false);
   }, [pathname, setOpen]);
 
   return (
@@ -29,56 +50,79 @@ export default function MobileNavOverlay() {
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className="lg:hidden fixed inset-0 z-[60] bg-background overflow-y-auto h-screen flex flex-col"
+            className={` fixed inset-0 z-[60] bg-background overflow-y-auto h-screen flex flex-col`}
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <nav className="no-hide-text flex flex-col font-bookish flex-1">
-              <Button variant="ghost" size="controls" className="justify-start w-full px-6 py-4 font-bookish text-xl rounded-none h-auto" asChild>
-                <Link href="/" onClick={() => setOpen(false)}>Elinor Silow</Link>
+            <div className="pt-[18px] px-0 lg:p-8 relative z-10">
+              <Button variant="link" size="controls" className=" " asChild>
+                <Link href="/">
+                  <OGubbeText text="Elinor Silow" loading={loading} />
+                </Link>
               </Button>
+              <NavSearch
+                open={openSearch}
+                onClose={() => setOpenSearch(false)}
+              />
 
-              <div className="flex flex-col justify-center flex-1">
-              <Button variant="ghost" size="controls" className={rowClass} asChild>
-                <Link href="/works" onClick={() => setOpen(false)}>Works</Link>
-              </Button>
+              <p className="p text-[18px] leading-snug max-w-sm lg:max-w-xl  px-[18px] pt-[18px]">
+                <span className="font-medium">Elinor Silow</span> (b. 1993,
+                Malmö, Sweden) is a Stockholm-based artist working with
+                painting, sculpture, and textile. Her work explores raw emotion
+                through material, gesture, and form. Discover her works, or see
+                exhibitions where the work has been presented publicly.{" "}
+                <span className="indent-6 block mt-4">
+                  For further information, including CV and background, visit
+                  the info page. For collaborations or inquiries:{" "}
+                  <Link
+                    href="mailto:hej@elinorsilow.com"
+                    className="text-blue-600 hover:underline hover:underline-offset-4 hover:decoration-1"
+                  >
+                    hej@elinorsilow.com
+                  </Link>
+                  .
+                </span>
+              </p>
 
-              <Button variant="ghost" size="controls" className={rowClass} asChild>
-                <Link href="/exhibitions" onClick={() => setOpen(false)}>Exhibitions</Link>
-              </Button>
-
-              <Button variant="ghost" size="controls" className={rowClass} asChild>
-                <Link href="/info" onClick={() => setOpen(false)}>Information</Link>
-              </Button>
-
-              <Button variant="ghost" size="controls" className={rowClass} asChild>
-                <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="controls"
-                className={rowClass}
-                onClick={() => {
-                  setOpen(false);
-                  setOpenSearch(true);
-                }}
-              >
-                Search
-              </Button>
-
-              <div className="flex flex-col border-b border-foreground/[0.06]">
-                <HideTextToggle
-                  variant="ghost"
-                  size="controlsIcon"
-                  className="px-6 py-4 ml-2 rounded-none h-auto"
-                />
-                <DarkModeToggle className="px-6 py-4 ml-2 rounded-none h-auto" />
-              </div>
-              </div>
-            </nav>
+              <nav className="grid grid-cols-2 items-start justify-start mt-8">
+                {[
+                  { href: "/works", label: "Works" },
+                  { href: "/exhibitions", label: "Exhibitions" },
+                  { href: "/info", label: "Information" },
+                  { href: "/contact", label: "Contact" },
+                ].map(({ href, label }) => (
+                  <Button
+                    key={href}
+                    variant="link"
+                    className="justify-start"
+                    size="controls"
+                    asChild
+                  >
+                    <Link href={href}>{label}</Link>
+                  </Button>
+                ))}
+                <Button
+                  variant="link"
+                  className="justify-start"
+                  size="controls"
+                  onClick={() => setOpenSearch(true)}
+                >
+                  Search
+                </Button>
+                <DarkModeToggle className="justify-start" />
+                <HideTextToggle className="justify-start" size="controls" />
+                <Button
+                  variant="link"
+                  size="controls"
+                  className="justify-start"
+                  onClick={() => setProportionalImages(!proportionalImages)}
+                >
+                  {proportionalImages ? "Full width" : "Proportional"}
+                </Button>
+              </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

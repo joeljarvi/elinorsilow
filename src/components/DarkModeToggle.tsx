@@ -7,8 +7,8 @@ import { Button } from "./ui/button";
 import { Half2Icon } from "@radix-ui/react-icons";
 
 export function DarkModeToggle({
-  className,
-  size = "controlsIcon",
+  className = "",
+  size = "controls",
 }: {
   className?: string;
   size?: React.ComponentProps<typeof Button>["size"];
@@ -26,13 +26,13 @@ export function DarkModeToggle({
 
   return (
     <Button
-      variant="ghost"
+      variant="link"
       size={size}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className={`no-hide-text ${className ?? ""}`}
     >
-      <Half2Icon />
+      {isDark ? "Light" : "Dark"}
     </Button>
   );
 }

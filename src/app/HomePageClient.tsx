@@ -5,17 +5,26 @@ import WorkModal from "./works/WorkModal";
 import ExhibitionModal from "./exhibitions/ExhibitionModal";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
+import { useInfo } from "@/context/InfoContext";
 import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import type { Work, Exhibition } from "../../lib/sanity";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, WidthIcon } from "@radix-ui/react-icons";
+import WorksList from "@/components/WorksList";
 import UnderConstruction from "@/components/UnderConstruction";
 import Hero from "@/components/Hero";
 import InfoBox from "@/components/InfoBox";
 import CornerFrame from "@/components/CornerFrame";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function UnderConstructionOverlay() {
   const [open, setOpen] = useState(true);
@@ -47,28 +56,18 @@ function UnderConstructionOverlay() {
   );
 }
 
-function SectionHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="sticky top-0 z-10 pt-4 bg-background">
-      <div className="mx-4 flex items-center font-bookish text-sm shadow-[var(--shadow-ui)]">
-        <span className="h3 px-3 py-1.5 text-neutral-600 dark:text-neutral-400">{children}</span>
-      </div>
-    </div>
-  );
-}
-
 function WorkItem({ work, onClick }: { work: Work; onClick: () => void }) {
   const { showInfo } = useUI();
   return (
     <button
       onClick={onClick}
-      className="group relative cursor-pointer w-full flex flex-col"
+      className="group relative cursor-pointer w-full flex flex-col gap-y-[18px] mb-[32px]"
       aria-label={`Open work: ${work.title.rendered}`}
     >
-      <div className="relative h-[75vh] w-full overflow-hidden p-4 pb-0">
+      <div className="relative h-[75vh] w-full overflow-hidden">
         <CornerFrame />
         {work.image_url && (
-          <div className="absolute inset-4 flex items-end">
+          <div className="absolute inset-0 flex items-end">
             <Image
               src={work.image_url}
               alt={work.title.rendered}
@@ -96,13 +95,13 @@ function ExhibitionItem({
   return (
     <button
       onClick={onClick}
-      className="group relative cursor-pointer w-full flex flex-col"
+      className="group relative cursor-pointer w-full flex flex-col gap-y-[18px] mb-[32px]"
       aria-label={`Open exhibition: ${exhibition.title.rendered}`}
     >
-      <div className="relative h-[75vh] w-full overflow-hidden p-4 pb-0">
+      <div className="relative h-[75vh] w-full overflow-hidden">
         <CornerFrame />
         {imgUrl && (
-          <div className="absolute inset-4 flex items-end">
+          <div className="absolute inset-0 flex items-end">
             <Image
               src={imgUrl}
               alt={exhibition.title.rendered}
@@ -118,122 +117,300 @@ function ExhibitionItem({
   );
 }
 
+type RightSection =
+  | "works"
+  | "all-works"
+  | "exhibitions"
+  | "all-exhibitions"
+  | "info";
+
 export default function HomePageClient() {
-  const { setOpen, navVisible } = useUI();
-  const { setActiveWorkSlug, activeWorkSlug, featuredWorks } = useWorks();
-  const { activeExhibitionSlug, setActiveExhibitionSlug, featuredExhibitions } =
-    useExhibitions();
-  const [heroOpen, setHeroOpen] = useState(true);
+  const {
+    setOpen,
+    navVisible,
+    showInfo,
+    setShowInfo,
+    proportionalImages,
+    setProportionalImages,
+  } = useUI();
+  const { setActiveWorkSlug, activeWorkSlug, featuredWorks, allWorks } =
+    useWorks();
+  const {
+    activeExhibitionSlug,
+    setActiveExhibitionSlug,
+    featuredExhibitions,
+    exhibitions,
+  } = useExhibitions();
+  const { soloExhibitions, groupExhibitions } = useInfo();
+  const [rightSection, setRightSection] = useState<RightSection>("works");
+  const [asList, setAsList] = useState(false);
+
+  const selectTriggerClass =
+    "border-0 shadow-none bg-secondary text-neutral-600 dark:text-neutral-400 w-full";
 
   return (
     <div className="min-h-full w-full">
       {/* Mobile: hero text + links only */}
-      <div className="lg:hidden min-h-screen pt-4">
+      <div className="lg:hidden min-h-screen">
         <Hero />
       </div>
 
       {/* Desktop: 2 fixed scrolling columns */}
       <div
-        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0 transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+        className="hidden lg:flex fixed left-0 right-0 bottom-0 flex-col transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
         style={{ top: navVisible ? "var(--nav-height, 0px)" : "0px" }}
       >
-        {/* Col 1: Featured Works */}
-        <div className="flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)]">
-          <SectionHeader>Featured Works</SectionHeader>
-          {featuredWorks.map((work: Work) => (
-            <WorkItem
-              key={work.id}
-              work={work}
-              onClick={() => {
-                setActiveWorkSlug(work.slug);
-                setOpen(false);
-                window.history.pushState(null, "", `/works?work=${work.slug}`);
-              }}
-            />
-          ))}
-          <div className="px-4 py-4 mt-auto">
-            <Button
-              variant="ghost"
-              size="controls"
-              className="w-full shadow-[var(--shadow-ui)] font-bookish h3 rounded-none"
-              asChild
-            >
-              <Link href="/works">See more works</Link>
-            </Button>
+        {/* SubNavbar */}
+        <div className="flex-none flex items-center bg-background border-b border-foreground/[0.06] shadow-[var(--shadow-ui)]">
+          {/* Col1: empty spacer to align with hero col */}
+          <div className="flex-1 px-[32px] py-[18px]" />
+
+          {/* Col2: section select + controls */}
+          <div className="flex-1 flex items-center px-[32px] py-[18px]">
+            <div className="flex-1 min-w-0 [&>*]:w-full">
+              <Select
+                value={rightSection}
+                onValueChange={(v) => {
+                  setRightSection(v as RightSection);
+                  setAsList(false);
+                }}
+              >
+                <SelectTrigger className={selectTriggerClass}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="works">Featured Works</SelectItem>
+                  <SelectItem value="all-works">All Works</SelectItem>
+                  <SelectItem value="exhibitions">
+                    Featured Exhibitions
+                  </SelectItem>
+                  <SelectItem value="all-exhibitions">
+                    All Exhibitions
+                  </SelectItem>
+                  <SelectItem value="info">Info</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="ml-2 flex items-center gap-x-0 bg-secondary rounded-full">
+              <Button
+                variant="secondary"
+                size="controlsIcon"
+                className="aspect-square"
+                onClick={() => setAsList((v) => !v)}
+              >
+                {asList ? "⊞" : "☰"}
+              </Button>
+              <Button
+                variant="secondary"
+                size="controlsIcon"
+                className="aspect-square"
+                onClick={() => setShowInfo(!showInfo)}
+              >
+                T
+              </Button>
+              <Button
+                variant="secondary"
+                size="controlsIcon"
+                className="aspect-square"
+                onClick={() => setProportionalImages(!proportionalImages)}
+                aria-label={proportionalImages ? "Full width" : "Proportional"}
+              >
+                <WidthIcon />
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="w-px bg-foreground/10 self-stretch flex-none" />
+        {/* Columns */}
+        <div className="flex-1 grid lg:grid-cols-2 overflow-hidden">
+          {/* Col 1: Hero */}
+          <div className="overflow-y-auto h-full flex flex-col">
+            <Hero />
+          </div>
 
-        {/* Col 2: Featured Exhibitions */}
-        <div className="flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)]">
-          <SectionHeader>Featured Exhibitions</SectionHeader>
-          {featuredExhibitions.map((ex: Exhibition) => (
-            <ExhibitionItem
-              key={ex.id}
-              exhibition={ex}
-              onClick={() => {
-                setActiveExhibitionSlug(ex.slug);
-                setOpen(false);
-                window.history.pushState(
-                  null,
-                  "",
-                  `/exhibitions?exhibition=${ex.slug}`,
-                );
-              }}
-            />
-          ))}
-          <div className="px-4 py-4 mt-auto">
-            <Button
-              variant="ghost"
-              size="controls"
-              className="w-full shadow-[var(--shadow-ui)] font-bookish h3 rounded-none"
-              asChild
-            >
-              <Link href="/exhibitions">See more exhibitions</Link>
-            </Button>
+          {/* Col 2: switchable content */}
+          <div className="overflow-y-auto h-full flex flex-col px-[32px] pt-[18px]">
+            {(rightSection === "works" || rightSection === "all-works") && (
+              <>
+                {asList ? (
+                  <WorksList
+                    works={
+                      rightSection === "all-works" ? allWorks : featuredWorks
+                    }
+                    onSelect={(work) => {
+                      setActiveWorkSlug(work.slug);
+                      setOpen(false);
+                      window.history.pushState(
+                        null,
+                        "",
+                        `/works?work=${work.slug}`,
+                      );
+                    }}
+                  />
+                ) : (
+                  (rightSection === "all-works" ? allWorks : featuredWorks).map(
+                    (work: Work) => (
+                      <WorkItem
+                        key={work.id}
+                        work={work}
+                        onClick={() => {
+                          setActiveWorkSlug(work.slug);
+                          setOpen(false);
+                          window.history.pushState(
+                            null,
+                            "",
+                            `/works?work=${work.slug}`,
+                          );
+                        }}
+                      />
+                    ),
+                  )
+                )}
+                {rightSection === "works" && (
+                  <div className="py-4 mt-auto">
+                    <Button
+                      variant="ghost"
+                      size="controls"
+                      className="w-full shadow-[var(--shadow-ui)] font-bookish h3 rounded-none"
+                      asChild
+                    >
+                      <Link href="/works">See all works</Link>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+
+            {(rightSection === "exhibitions" ||
+              rightSection === "all-exhibitions") && (
+              <>
+                {asList ? (
+                  <div className="pt-[18px]">
+                    {(rightSection === "all-exhibitions"
+                      ? exhibitions
+                      : featuredExhibitions
+                    ).map((ex: Exhibition) => (
+                      <Button
+                        key={ex.id}
+                        variant="ghost"
+                        size="controls"
+                        onClick={() => {
+                          setActiveExhibitionSlug(ex.slug);
+                          setOpen(false);
+                          window.history.pushState(
+                            null,
+                            "",
+                            `/exhibitions?exhibition=${ex.slug}`,
+                          );
+                        }}
+                        className="w-full rounded-none justify-start"
+                      >
+                        {ex.title.rendered}
+                      </Button>
+                    ))}
+                  </div>
+                ) : (
+                  (rightSection === "all-exhibitions"
+                    ? exhibitions
+                    : featuredExhibitions
+                  ).map((ex: Exhibition) => (
+                    <ExhibitionItem
+                      key={ex.id}
+                      exhibition={ex}
+                      onClick={() => {
+                        setActiveExhibitionSlug(ex.slug);
+                        setOpen(false);
+                        window.history.pushState(
+                          null,
+                          "",
+                          `/exhibitions?exhibition=${ex.slug}`,
+                        );
+                      }}
+                    />
+                  ))
+                )}
+                {rightSection === "exhibitions" && (
+                  <div className="py-4 mt-auto">
+                    <Button
+                      variant="ghost"
+                      size="controls"
+                      className="w-full shadow-[var(--shadow-ui)] font-bookish h3 rounded-none"
+                      asChild
+                    >
+                      <Link href="/exhibitions">See all exhibitions</Link>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+
+            {rightSection === "info" && (
+              <div className="flex flex-col font-bookish pb-8">
+                <div className="flex flex-col gap-y-3 mb-6">
+                  <p className="h3">
+                    Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm
+                    based artist who explores raw emotion through painting,
+                    sculpture and textile.
+                  </p>
+                  <p className="h3">
+                    Please contact{" "}
+                    <Link
+                      href="mailto:hej@elinorsilow.com"
+                      className="underline underline-offset-4 decoration-1 hover:no-underline"
+                    >
+                      hej@elinorsilow.com
+                    </Link>{" "}
+                    for collaborations and inquiries.
+                  </p>
+                </div>
+
+                {soloExhibitions.length > 0 && (
+                  <>
+                    <p className="font-universNextPro font-medium text-[14px] text-muted-foreground mb-2">
+                      Solo Exhibitions
+                    </p>
+                    {soloExhibitions.slice(0, 8).map((ex) => (
+                      <p
+                        key={ex.id}
+                        className="h3 border-b border-foreground/[0.06] py-1"
+                      >
+                        {ex.acf.year} — {ex.title.rendered}
+                      </p>
+                    ))}
+                  </>
+                )}
+
+                {groupExhibitions.length > 0 && (
+                  <>
+                    <p className="font-universNextPro font-medium text-[14px] text-muted-foreground mt-4 mb-2">
+                      Group Exhibitions
+                    </p>
+                    {groupExhibitions.slice(0, 8).map((ex) => (
+                      <p
+                        key={ex.id}
+                        className="h3 border-b border-foreground/[0.06] py-1"
+                      >
+                        {ex.acf.year} — {ex.title.rendered}
+                      </p>
+                    ))}
+                  </>
+                )}
+
+                <div className="py-4 mt-4">
+                  <Button
+                    variant="ghost"
+                    size="controls"
+                    className="w-full shadow-[var(--shadow-ui)] font-bookish h3 rounded-none"
+                    asChild
+                  >
+                    <Link href="/info">Full CV</Link>
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Hero text overlay — desktop only */}
-      <AnimatePresence>
-        {heroOpen && (
-          <>
-            {/* Backdrop: click outside to close */}
-            <motion.div
-              key="hero-backdrop"
-              className="hidden lg:block fixed inset-0 z-[19]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setHeroOpen(false)}
-            />
-            <motion.div
-              key="hero-overlay"
-              className="hidden lg:block fixed top-14 left-8 z-20 w-[50vw] h-[90vh] bg-background/80 backdrop-blur-md shadow-[var(--shadow-md)]"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-end shadow-[0_1px_0_0_rgb(0_0_0/0.06)] dark:shadow-[0_1px_0_0_rgb(255_255_255/0.06)] px-3 py-1.5">
-                <Button
-                  variant="ghost"
-                  size="controlsIcon"
-                  onClick={() => setHeroOpen(false)}
-                  aria-label="Close"
-                  className="no-hide-text"
-                >
-                  <Cross1Icon />
-                </Button>
-              </div>
-              <Hero />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
       <UnderConstructionOverlay />
 

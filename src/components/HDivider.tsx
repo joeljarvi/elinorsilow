@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export default function HDivider({
   loading,
   className = "",
-  color = "border-border",
+  color = "border-foreground",
 }: {
   loading?: boolean;
   className?: string;
@@ -15,7 +15,7 @@ export default function HDivider({
       animate={{ scaleX: loading ? 0 : 1 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
       style={{ transformOrigin: "left" }}
-      className={`border-inset border-[0.5px] ${color} w-full my-0 transition-colors ${className}`}
+      className={`border-inset border-[0.5px] ${color} mx-[18px] my-0 transition-colors ${className}`}
     />
   );
 }

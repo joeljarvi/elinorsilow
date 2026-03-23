@@ -35,36 +35,6 @@ const directorLight = localFont({
   variable: "--font-directorLight",
 });
 
-const gintoNordBlack = localFont({
-  src: "assets/fonts/Ginto Nord Black.ttf",
-  variable: "--font-gintoNordBlack",
-});
-
-const gintoBlack = localFont({
-  src: "assets/fonts/Ginto Black.ttf",
-  variable: "--font-gintoBlack",
-});
-
-const gintoBlackItalic = localFont({
-  src: "assets/fonts/Ginto Black Italic.ttf",
-  variable: "--font-gintoBlackItalic",
-});
-
-const gintoRegular = localFont({
-  src: "assets/fonts/Ginto Regular.ttf",
-  variable: "--font-gintoRegular",
-});
-
-const gintoRegularItalic = localFont({
-  src: "assets/fonts/Ginto Regular Italic.ttf",
-  variable: "--font-gintoRegularItalic",
-});
-
-const gintoMedium = localFont({
-  src: "assets/fonts/Ginto Medium.ttf",
-  variable: "--font-gintoMedium",
-});
-
 const EBGaramond = localFont({
   src: "assets/fonts/EBGaramond12-Regular.woff",
   variable: "--font-EBGaramond",
@@ -80,44 +50,24 @@ const EBGaramondAC = localFont({
   variable: "--font-EBGaramondAC",
 });
 
-const libreBaskerville = localFont({
-  src: "assets/fonts/LibreBaskerville-Regular.otf",
-  variable: "--font-libreBaskerville",
+const universNextPro = localFont({
+  src: [
+    { path: "assets/fonts/UniversNextPro-Regular.ttf", weight: "400", style: "normal" },
+    { path: "assets/fonts/UniversNextPro-Medium.ttf", weight: "500", style: "normal" },
+  ],
+  variable: "--font-universNextPro",
 });
 
-const libreBaskervilleBold = localFont({
-  src: "assets/fonts/LibreBaskerville-Bold.otf",
-  variable: "--font-libreBaskervilleBold",
-});
-
-const timesNewerRoman = localFont({
-  src: "assets/fonts/TimesNewerRoman-Regular.woff",
-  variable: "--font-Times-Newer-Roman",
-});
-
-const timesNewerRomanItalic = localFont({
-  src: "assets/fonts/TimesNewerRoman-Italic.woff",
-  variable: "--font-Times-Newer-Roman-Italic",
-});
-
-const timesNewerRomanBold = localFont({
-  src: "assets/fonts/TimesNewerRoman-Bold.woff",
-  variable: "--font-Times-Newer-Roman-Bold",
-});
-
-const neueHaas = localFont({
-  src: "assets/fonts/NHaasGroteskTXPro-55Rg.ttf",
-  variable: "--font-neueHaas",
-});
-
-const pressura = localFont({
-  src: "assets/fonts/gt-pressura-mono-regular.woff",
-  variable: "--font-pressura",
-});
-
-const pressuraLight = localFont({
-  src: "assets/fonts/gt-pressura-mono-light.woff",
-  variable: "--font-pressuraLight",
+const universNextProExt = localFont({
+  src: [
+    { path: "assets/fonts/UniversNextPro-Ext.ttf", weight: "400", style: "normal" },
+    { path: "assets/fonts/UniversNextPro-ExtItalic.ttf", weight: "400", style: "italic" },
+    { path: "assets/fonts/UniversNextPro-MediumExt.ttf", weight: "500", style: "normal" },
+    { path: "assets/fonts/UniversNextPro-MediumExtIt.ttf", weight: "500", style: "italic" },
+    { path: "assets/fonts/UniversNextPro-HeavyExt.ttf", weight: "800", style: "normal" },
+    { path: "assets/fonts/UniversNextPro-HeavyExtIt.ttf", weight: "800", style: "italic" },
+  ],
+  variable: "--font-universNextProExt",
 });
 
 export const metadata: Metadata = {
@@ -135,7 +85,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${libreBaskervilleBold.variable} ${libreBaskerville.variable} ${timesNewerRoman.variable} ${timesNewerRomanItalic.variable} ${timesNewerRomanBold.variable}  ${neueHaas.variable}   ${pressura.variable} ${pressuraLight.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${gintoNordBlack.variable} ${gintoBlack.variable} ${gintoBlackItalic.variable} ${gintoRegular.variable}  ${gintoRegularItalic.variable} ${gintoMedium.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable}  antialiased`}
+        className={`${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable} ${universNextPro.variable} ${universNextProExt.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -150,6 +100,11 @@ export default function RootLayout({
                   <UIProvider>
                     <AnimationProvider>
                       <BodyClassManager />
+                      {/* Column shadow overlay — fixed, covers full viewport */}
+                      <div className="fixed inset-0 pointer-events-none z-[5] hidden lg:grid lg:grid-cols-2">
+                        <div className="shadow-[var(--shadow-col-left)]" />
+                        <div className="shadow-[var(--shadow-col-right)]" />
+                      </div>
                       <NavWrapper />
 
                       {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />

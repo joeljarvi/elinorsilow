@@ -8,33 +8,16 @@ html {
 }
 
 @theme inline {
-  --font-sans: var(--font-NewEdge666-Ultra-Bold-Rounded);
   --font-directorMono: var(--font-directorMono);
   --font-directorBold: var(--font-directorBold);
   --font-directorLight: var(--font-directorLight);
-  --font-haas: var(--font-neueHaas);
-  --font-monument: var(--font-monument);
-  --font-mono: var(--font-pressura);
-  --font-serif: var(--font-Times-Newer-Roman);
-  --font-serif-italic: var(--font-Times-Newer-Roman-Italic);
-  --font-serif-bold: var(--font-Times-Newer-Roman-Bold);
-  --font-walkingOCR: var(--font-walkingOCR);
-  --font-hershey: var(--font-hershey);
-  --font-hersheyItalic: var(--font-hersheyItalic);
-  --font-pressura: var(--font-pressura);
-  --font-pressuraLight: var(--font-pressuraLight);
-  --font-libreBaskerville: var(--font-libreBaskerville);
-  --font-libreBaskervilleBold: var(--font-libreBaskervilleBold);
   --font-EBGaramond: var(--font-EBGaramond);
   --font-EBGaramondItalic: var(--font-EBGaramondItalic);
   --font-EBGaramondAC: var(--font-EBGaramondAC);
-  --font-gintoNordBlack: var(--font-gintoNordBlack);
-  --font-gintoBlack: var(--font-gintoBlack);
-  --font-gintoBlackItalic: var(--font-gintoBlackItalic);
-  --font-gintoRegular: var(--font-gintoRegular);
-  --font-gintoRegularItalic: var(--font-gintoRegularItalic);
-  --font-gintoMedium: var(--font-gintoMedium);
   --font-bookish: var(--font-bookish);
+  --font-universNextPro: var(--font-universNextPro);
+  --font-universNextProExt: var(--font-universNextProExt);
+  --font-timesNewRoman: "Times New Roman", Times, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -78,7 +61,8 @@ html {
 :root {
   --radius: 0.625rem;
   --shadow-ui: 0 1px 4px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 20px -2px rgb(0 0 0 / 0.10), 0 2px 6px -2px rgb(0 0 0 / 0.06);
+  --shadow-md:
+    0 4px 20px -2px rgb(0 0 0 / 0.1), 0 2px 6px -2px rgb(0 0 0 / 0.06);
   --shadow-nav: 0 2px 16px -2px rgb(0 0 0 / 0.07);
   --shadow-col-left: inset -10px 0 20px -10px rgb(0 0 0 / 0.07);
   --shadow-col-right: inset 10px 0 20px -10px rgb(0 0 0 / 0.07);
@@ -115,11 +99,12 @@ html {
   --sidebar-ring: oklch(0.708 0 0);
 }
 .dark {
-  --shadow-ui: 0 1px 4px 0 rgb(0 0 0 / 0.45), 0 1px 2px -1px rgb(0 0 0 / 0.30);
-  --shadow-md: 0 4px 20px -2px rgb(0 0 0 / 0.55), 0 2px 6px -2px rgb(0 0 0 / 0.35);
+  --shadow-ui: 0 1px 4px 0 rgb(0 0 0 / 0.45), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md:
+    0 4px 20px -2px rgb(0 0 0 / 0.55), 0 2px 6px -2px rgb(0 0 0 / 0.35);
   --shadow-nav: 0 2px 16px -2px rgb(0 0 0 / 0.45);
-  --shadow-col-left: inset -10px 0 20px -10px rgb(0 0 0 / 0.40);
-  --shadow-col-right: inset 10px 0 20px -10px rgb(0 0 0 / 0.40);
+  --shadow-col-left: inset -10px 0 20px -10px rgb(0 0 0 / 0.4);
+  --shadow-col-right: inset 10px 0 20px -10px rgb(0 0 0 / 0.4);
   --shadow-header: 0 6px 16px -4px rgb(0 0 0 / 0.35);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -196,25 +181,29 @@ a {
 
 /* Hide shadows on buttons/selects when text is hidden */
 [data-hide-text="true"] button:not(.no-hide-text):not(.no-hide-text *),
-[data-hide-text="true"] [data-slot="select-trigger"]:not(.no-hide-text):not(.no-hide-text *) {
+[data-hide-text="true"]
+  [data-slot="select-trigger"]:not(.no-hide-text):not(.no-hide-text *) {
   box-shadow: none !important;
 }
 
 @layer components {
   .h1 {
-    @apply font-bookish  leading-normal whitespace-normal;
+    @apply font-bookish text-xl leading-snug whitespace-normal;
   }
   .h2 {
-    @apply font-bookish text-sm leading-normal whitespace-nowrap;
+    @apply font-bookish text-lg lg:text-base leading-snug whitespace-normal;
   }
   .h3 {
-    @apply font-bookish text-base lg:text-sm leading-snug whitespace-normal;
+    @apply font-bookish text-[18px] lg:text-sm leading-snug whitespace-normal;
   }
   .h4 {
-    @apply font-bookish text-base lg:text-sm leading-snug whitespace-normal;
+    @apply font-bookish text-base lg:text-xs leading-snug whitespace-normal;
   }
   .p {
-    @apply font-bookish text-base lg:text-sm  leading-snug whitespace-normal;
+    @apply font-timesNewRoman text-[14px] lg:text-[19px] leading-snug whitespace-normal;
+  }
+  .label {
+    @apply font-bookish text-[13px] lg:text-[13px] text-muted-foreground leading-snug whitespace-normal;
   }
 }
 .text-trim {

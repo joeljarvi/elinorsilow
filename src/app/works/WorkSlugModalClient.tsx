@@ -84,7 +84,10 @@ export default function WorkSlugModalClient({
       loadWorkByIndex(currentIndex + 1);
   }, [currentIndex, filteredWorks, loadWorkByIndex]);
 
-  const swipeHandlers = useSwipe({ onSwipedLeft: goNext, onSwipedRight: goPrev });
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: goNext,
+    onSwipedRight: goPrev,
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -122,12 +125,12 @@ export default function WorkSlugModalClient({
       {...swipeHandlers}
       className="flex flex-col w-full h-screen bg-background"
     >
-      {/* Controls header */}
-      <div className="pt-4 bg-background">
-        <div className="mx-4 flex items-center font-bookish text-sm border border-border [&>*+*]:border-l [&>*+*]:border-border">
+      {/* Controls — bottom on mobile, top on desktop */}
+      <div className="order-2 lg:order-1 pb-4 lg:pb-0 lg:pt-4 bg-background">
+        <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
           <Button
-            variant="ghost"
-            size="controlsIcon"
+            variant="link"
+            size="controls"
             onClick={goPrev}
             disabled={!hasPrev}
             aria-label="Previous work"
@@ -135,36 +138,37 @@ export default function WorkSlugModalClient({
             <ArrowLeftIcon />
           </Button>
           <Button
-            variant="ghost"
-            size="controlsIcon"
+            variant="link"
+            size="controls"
             onClick={goNext}
             disabled={!hasNext}
             aria-label="Next work"
           >
             <ArrowRightIcon />
           </Button>
-          <span className="flex-1 px-3 py-1.5 text-sm truncate text-muted-foreground">
+          <span className="flex-1 px-1 text-sm truncate text-muted-foreground font-timesNewRoman font-bold">
             {work.title.rendered}
           </span>
           <Button
-            variant="ghost"
-            size="controlsIcon"
+            variant="link"
+            size="controls"
             onClick={() => setProportional((p) => !p)}
             aria-label={proportional ? "Full width" : "Proportional"}
           >
             <WidthIcon />
           </Button>
           <Button
-            variant="ghost"
-            size="controlsIcon"
+            variant="link"
+            size="controls"
+            className="hidden lg:block"
             onClick={toggleFullscreen}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
             {isFullscreen ? <ExitFullScreenIcon /> : <EnterFullScreenIcon />}
           </Button>
           <Button
-            variant="ghost"
-            size="controlsIcon"
+            variant="link"
+            size="controls"
             onClick={onClose ?? (() => router.push("/works"))}
             aria-label="Close"
             className="no-hide-text"
@@ -174,8 +178,8 @@ export default function WorkSlugModalClient({
         </div>
       </div>
 
-      {/* Image area */}
-      <div className="flex-1 relative min-h-0">
+      {/* Image area — top on mobile, below controls on desktop */}
+      <div className="order-1 lg:order-2 flex-1 relative min-h-0">
         <div className="absolute inset-4 flex items-center justify-center">
           {work.image_url && (
             <ProportionalWorkImage

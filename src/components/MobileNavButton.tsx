@@ -97,7 +97,7 @@ export default function NavButton() {
 
   return (
     <motion.button
-      className="fixed bottom-8 left-1/2 -translate-x-1/2 h-16 flex items-center justify-center z-[70] drop-shadow-lg lg:left-auto lg:right-8 lg:translate-x-0 lg:h-auto"
+      className="flex fixed bottom-4 right-4 h-16 lg:hidden items-center justify-center z-[70]"
       onClick={handleOpen}
       aria-label={open ? "Stäng meny" : "Öppna meny"}
       aria-expanded={open}

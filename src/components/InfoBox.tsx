@@ -1,22 +1,10 @@
-import React from "react";
 import { Work, Exhibition } from "../../lib/sanity";
 
-export function InfoRow({
-  label,
-  value,
-  children,
-}: {
-  label: string;
-  value?: string | number | React.ReactNode;
-  children?: React.ReactNode;
-}) {
-  if (!value && !children) return null;
+export function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-row items-baseline font-bookish border-b border-foreground/[0.06]">
-      <span className="text-left text-muted-foreground whitespace-nowrap py-1.5 px-2 font-bookish h3 border-r border-foreground/[0.06]">
-        {label}
-      </span>
-      <div className="h3 py-1.5 text-left px-3">{children ?? value}</div>
+    <div className="flex flex-row items-baseline gap-x-3 py-1.5">
+      <span className="font-universNextPro font-medium text-[13px] text-muted-foreground shrink-0">{label}</span>
+      {children}
     </div>
   );
 }
@@ -28,37 +16,40 @@ export default function InfoBox({
   work?: Work;
   exhibition?: Exhibition;
 }) {
-  return (
-    <div className="relative w-full mt-0 px-4 pb-2">
-      {work && (
-        <>
-          <InfoRow label="Title" value={work.title.rendered} />
-          <InfoRow label="Materials" value={work.acf.materials} />
-          <InfoRow label="Dimensions" value={work.acf.dimensions} />
-          <InfoRow label="Year" value={work.acf.year} />
-          <InfoRow label="Exhibition" value={work.acf.exhibition} />
-          {work.acf.status && (
-            <InfoRow label="Status">
-              <span className="flex items-center gap-2">
-                {work.acf.status === "sold" && (
-                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
-                )}
-                {work.acf.status === "on view" && (
-                  <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
-                )}
-              </span>
-            </InfoRow>
-          )}
-        </>
-      )}
-      {exhibition && (
-        <>
-          <InfoRow label="Title" value={exhibition.title.rendered} />
-          <InfoRow label="Year" value={exhibition.acf.year} />
-          <InfoRow label="Location" value={exhibition.acf.location} />
-          <InfoRow label="City" value={exhibition.acf.city} />
-        </>
-      )}
-    </div>
-  );
+  if (work) {
+    return (
+      <div className="flex flex-wrap items-baseline gap-x-2 px-0 pb-2 text-[14px] font-universNextPro">
+        <span className="font-bold tracking-wide font-timesNewRoman ">
+          {work.title.rendered}
+        </span>
+        <span className="hidden lg:inline font-timesNewRoman ">
+          {[work.acf.materials, work.acf.dimensions, work.acf.exhibition]
+            .filter(Boolean)
+            .join(", ")}
+          ,
+        </span>
+        <span className="text-muted-foreground font-timesNewRoman italic  ">
+          {work.acf.year}
+        </span>
+      </div>
+    );
+  }
+
+  if (exhibition) {
+    return (
+      <div className="flex flex-wrap items-baseline gap-x-2 px-0 pb-2 text-[15px] font-universNextPro">
+        <span className="font-extrabold font-universNextProExt">
+          {exhibition.title.rendered},
+        </span>
+        <span className="hidden lg:inline text-muted-foreground">
+          {[exhibition.acf.location, exhibition.acf.city]
+            .filter(Boolean)
+            .join(", ")}
+        </span>
+        <span className="text-muted-foreground">{exhibition.acf.year}</span>
+      </div>
+    );
+  }
+
+  return null;
 }

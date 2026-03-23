@@ -1,9 +1,11 @@
-import HomePageClient from "./HomePageClient";
+import { Suspense } from "react";
+import WorksPageClient from "./works/WorksPageClient";
+import Hero from "@/components/Hero";
 
 export default function Home() {
   return (
-    <div className="">
-      <HomePageClient />
-    </div>
+    <Suspense>
+      <WorksPageClient />
+    </Suspense>
   );
 }

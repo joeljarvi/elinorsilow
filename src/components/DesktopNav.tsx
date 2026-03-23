@@ -1,28 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-
 import { useUI } from "@/context/UIContext";
 import { usePathname } from "next/navigation";
-
 import NavSearch from "./NavSearch";
 import { DarkModeToggle } from "./DarkModeToggle";
-
-const navContainer: Variants = {
-  hidden: {
-    opacity: 0,
-    transition: { staggerChildren: 0.06, staggerDirection: -1 },
-  },
-  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
-};
-
-const navItemVariant: Variants = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0 },
-};
+import { useNav } from "@/context/NavContext";
+import { useInfo } from "@/context/InfoContext";
+import { useWorks } from "@/context/WorksContext";
+import { useExhibitions } from "@/context/ExhibitionsContext";
+import { OGubbeText } from "./OGubbeText";
 
 function NavItem({
   href,
@@ -36,12 +25,7 @@ function NavItem({
   onClick?: () => void;
 }) {
   return (
-    <Button
-      variant="ghost"
-      size="controls"
-      className={`h3 ${className}`}
-      asChild
-    >
+    <Button variant="link" size="controls" className={className} asChild>
       <Link href={href} onClick={onClick}>
         {children}
       </Link>
@@ -51,126 +35,91 @@ function NavItem({
 
 export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const lastScrollY = useRef(new Map<EventTarget, number>());
-  const isDesktopRef = useRef(false);
   const pathname = usePathname();
-  const { open, setOpen, navVisible, setNavVisible } = useUI();
+  const { setOpen } = useUI();
+  const { viewLoading } = useNav();
+  const { infoLoading } = useInfo();
+  const { workLoading } = useWorks();
+  const { exLoading } = useExhibitions();
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
   useEffect(() => {
-    const check = () => {
-      const desktop = window.innerWidth >= 1024;
-      setIsDesktop(desktop);
-      isDesktopRef.current = desktop;
-    };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+    if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
+      setInitialLoaded(true);
+    }
+    const fallback = setTimeout(() => setInitialLoaded(true), 2000);
+    return () => clearTimeout(fallback);
+  }, [initialLoaded, workLoading, exLoading, infoLoading]);
+
+  const loading = !initialLoaded || viewLoading;
 
   useEffect(() => {
     setOpen(true);
-    setNavVisible(true);
   }, [pathname, setOpen]);
 
-  useEffect(() => {
-    const handleScroll = (e: Event) => {
-      if (!isDesktopRef.current) return;
-      const target = e.target as HTMLElement;
-      const currentScrollY =
-        e.target === document || e.target === document.documentElement
-          ? window.scrollY
-          : target.scrollTop;
-      const prev = lastScrollY.current.get(e.target!) ?? 0;
-      if (currentScrollY < prev) {
-        setNavVisible(true);
-      } else if (currentScrollY > prev + 5) {
-        setNavVisible(false);
-      }
-      lastScrollY.current.set(e.target!, currentScrollY);
-    };
-    document.addEventListener("scroll", handleScroll, {
-      capture: true,
-      passive: true,
-    });
-    return () =>
-      document.removeEventListener("scroll", handleScroll, { capture: true });
-  }, []);
-
   return (
-    <motion.div
+    <div
       id="main-nav"
-      className="z-[55] fixed top-0 left-0 w-full flex flex-col items-start justify-start bg-background px-0 py-0"
-      animate={{ y: isDesktop && !navVisible ? "-100%" : 0 }}
-      transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+      className={` z-[80] fixed top-0 left-0 w-full bg-background shadow-[var(--shadow-ui)]`}
+      onClick={() => setOpen(false)}
     >
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
-      <AnimatePresence>
-        {(open || !isDesktop) && (
-          <motion.div
-            key="desktop-nav"
-            className="w-full"
-            exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+      <nav
+        aria-label="Site navigation"
+        className="relative flex justify-between items-center  lg:px-[18px] pt-[32px] pb-[9px] lg:pt-[18px] font-bookish no-hide-text bg-background"
+      >
+        <NavItem href="/">
+          <OGubbeText
+            className="text-[18px] "
+            text="Elinor Silow"
+            loading={loading}
+          />
+        </NavItem>
+
+        <span className="hidden lg:flex absolute left-1/2 -translate-x-1/2 flex-row items-baseline gap-x-0">
+          <NavItem href="/">
+            {pathname === "/" ? (
+              <OGubbeText text="Works" className="text-[18px]" />
+            ) : (
+              "Works"
+            )}
+          </NavItem>
+          <NavItem href="/exhibitions">
+            {pathname.startsWith("/exhibitions") ? (
+              <OGubbeText text="Exhibitions" className="text-[18px]" />
+            ) : (
+              "Exhibitions"
+            )}
+          </NavItem>
+          <NavItem href="/info">
+            {pathname.startsWith("/info") ? (
+              <OGubbeText text="Info" className="text-[18px]" />
+            ) : (
+              "Info"
+            )}
+          </NavItem>
+          <NavItem href="/contact">
+            {pathname.startsWith("/contact") ? (
+              <OGubbeText text="Contact" className="text-[18px]" />
+            ) : (
+              "Contact"
+            )}
+          </NavItem>
+        </span>
+
+        <span className="flex items-center gap-x-0">
+          <DarkModeToggle className="hidden lg:flex" />
+          <Button
+            className="hidden lg:flex"
+            variant="link"
+            size="controls"
+            onClick={() => setOpenSearch(true)}
           >
-            <motion.nav
-              variants={navContainer}
-              initial="hidden"
-              animate="visible"
-              aria-label="Site navigation"
-              className="relative flex justify-between no-hide-text font-bookish h-auto lg:h-16 items-center w-full bg-background shadow-[var(--shadow-nav)] lg:border-b lg:border-foreground/[0.06] lg:px-4"
-            >
-              {/* Left: ES logo (desktop) */}
-              <motion.div
-                variants={navItemVariant}
-                className="flex items-center"
-              >
-                <NavItem
-                  className="hidden lg:flex items-center justify-center font-bookish px-4"
-                  href="/"
-                >
-                  Elinor Silow
-                </NavItem>
-              </motion.div>
-
-              {/* Center: nav links (desktop) */}
-              <motion.span
-                variants={navItemVariant}
-                className="lg:absolute lg:left-1/2 lg:-translate-x-1/2"
-              >
-                <span className="hidden lg:flex flex-row items-baseline gap-x-0">
-                  <NavItem href="/works">Works</NavItem>
-                  <NavItem href="/exhibitions">Exhibitions</NavItem>
-                  <NavItem href="/info">Info</NavItem>
-                </span>
-              </motion.span>
-
-              {/* Right: Contact + dark mode + search */}
-              <motion.span
-                variants={navItemVariant}
-                className="flex items-center gap-x-0"
-              >
-                <NavItem
-                  className="hidden lg:flex font-bookish px-3"
-                  href="/contact"
-                >
-                  Contact
-                </NavItem>
-                <DarkModeToggle className="hidden lg:flex" />
-                <Button
-                  className="hidden lg:flex"
-                  variant="ghost"
-                  size="controls"
-                  onClick={() => setOpenSearch(true)}
-                >
-                  Search
-                </Button>
-              </motion.span>
-            </motion.nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            Search
+          </Button>
+        </span>
+      </nav>
       <div className="absolute bottom-0 left-0 w-full h-[10px] translate-y-full pointer-events-none bg-gradient-to-b from-background to-background/0" />
-    </motion.div>
+    </div>
   );
 }

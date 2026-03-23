@@ -1,20 +1,19 @@
 "use client";
 
+import Hero from "@/components/Hero";
 import { useWorks, CategoryFilter, WorkSort } from "@/context/WorksContext";
 import { useUI } from "@/context/UIContext";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Work } from "../../../lib/sanity";
-import { motion } from "framer-motion";
-import HDivider from "@/components/HDivider";
-import { WidthIcon, Cross1Icon, Half2Icon } from "@radix-ui/react-icons";
+import { motion, AnimatePresence } from "framer-motion";
+import { Cross1Icon, WidthIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
-import Staggered from "@/components/Staggered";
 import WorkModal from "@/app/works/WorkModal";
 import ProportionalWorkImage from "@/components/ProportionalWorkImage";
 import InfoBox from "@/components/InfoBox";
 import CornerFrame from "@/components/CornerFrame";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
+import WorksList from "@/components/WorksList";
 import {
   Select,
   SelectContent,
@@ -22,54 +21,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PageHeader } from "@/components/PageHeader";
+import HDivider from "@/components/HDivider";
 
-function TIcon({ active }: { active: boolean }) {
-  return (
-    <span className={`font-serif text-sm ${!active ? " " : "line-through"}`}>
-      T
-    </span>
-  );
-}
+type FilterKey =
+  | "year-latest"
+  | "year-oldest"
+  | "title"
+  | "painting"
+  | "drawing"
+  | "sculpture"
+  | "textile";
+
+const FILTER_OPTIONS: Record<
+  FilterKey,
+  { sort: WorkSort; filter: CategoryFilter; label: string }
+> = {
+  "year-latest": { sort: "year-latest", filter: "all", label: "Newest First" },
+  "year-oldest": { sort: "year-oldest", filter: "all", label: "Oldest First" },
+  title: { sort: "title", filter: "all", label: "Title A–Z" },
+  painting: { sort: "year-latest", filter: "painting", label: "Painting" },
+  drawing: { sort: "year-latest", filter: "drawing", label: "Drawing" },
+  sculpture: { sort: "year-latest", filter: "sculpture", label: "Sculpture" },
+  textile: { sort: "year-latest", filter: "textile", label: "Textile" },
+};
 
 export default function WorksPageClient() {
-  const {
-    allWorks,
-    filteredWorks,
-    setActiveWorkSlug,
-    activeWorkSlug,
-    workSort,
-    setWorkSort,
-    categoryFilter,
-    setCategoryFilter,
-  } = useWorks();
+  const { allWorks, setActiveWorkSlug, activeWorkSlug, workLoading } =
+    useWorks();
 
-  const [col2Filter, setCol2Filter] = useState<CategoryFilter>("all");
-  const [col1Sort, setCol1Sort] = useState<WorkSort>("year-latest");
-  const [col1Min, setCol1Min] = useState(false);
-  const [col2Min, setCol2Min] = useState(false);
-  const [col1Dark, setCol1Dark] = useState(false);
-  const [col2Dark, setCol2Dark] = useState(false);
+  const [filterKey, setFilterKey] = useState<FilterKey>("year-latest");
+  const [showFilter, setShowFilter] = useState(false);
   const [col1AsList, setCol1AsList] = useState(false);
   const [col2AsList, setCol2AsList] = useState(false);
-  const [mobileAsList, setMobileAsList] = useState(false);
-  const [mobileHeaderVisible, setMobileHeaderVisible] = useState(true);
-
-  const col1Ref = useRef<HTMLDivElement>(null);
-  const col2Ref = useRef<HTMLDivElement>(null);
-  const lastScrollY = useRef(0);
+  const [col1Hidden, setCol1Hidden] = useState(false);
+  const [col2Hidden, setCol2Hidden] = useState(false);
 
   const searchParams = useSearchParams();
   useEffect(() => {
     const cat = searchParams.get("category");
-    if (cat && ["painting", "drawing", "sculpture", "textile"].includes(cat)) {
-      setCategoryFilter(cat as CategoryFilter);
-    }
+    if (cat && cat in FILTER_OPTIONS) setFilterKey(cat as FilterKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const { workLoading } = useWorks();
   const {
     setOpen,
     proportionalImages,
@@ -84,20 +80,6 @@ export default function WorksPageClient() {
   }, [workLoading]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY.current) {
-        setMobileHeaderVisible(true);
-      } else if (currentScrollY > lastScrollY.current + 5) {
-        setMobileHeaderVisible(false);
-      }
-      lastScrollY.current = currentScrollY;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
     if (dataLoaded) {
       const t = setTimeout(() => setInitialAnimDone(true), 600);
       return () => clearTimeout(t);
@@ -106,7 +88,15 @@ export default function WorksPageClient() {
 
   const loading = !initialAnimDone || !dataLoaded;
 
-  function filterAndSort(filter: CategoryFilter, sort: WorkSort): Work[] {
+  const { sort, filter, label: activeLabel } = FILTER_OPTIONS[filterKey];
+
+  const FILTER_KEYS = Object.keys(FILTER_OPTIONS) as FilterKey[];
+  function cycleFilter() {
+    const idx = FILTER_KEYS.indexOf(filterKey);
+    setFilterKey(FILTER_KEYS[(idx + 1) % FILTER_KEYS.length]);
+  }
+
+  function getSortedWorks(): Work[] {
     const filtered =
       filter === "all"
         ? allWorks
@@ -134,25 +124,9 @@ export default function WorksPageClient() {
     }
   }
 
-  const col1Works = filterAndSort("all", col1Sort);
-  const col2Works = filterAndSort(col2Filter, "category");
-
-  function colStyle(active: boolean) {
-    return {
-      column: active
-        ? "bg-red-600 text-background"
-        : "bg-background text-foreground",
-      header: active ? "bg-red-600" : "bg-background",
-      headerRow: active
-        ? "[&>*+*]:border-l [&>*+*]:border-background/20"
-        : "[&>*+*]:border-l [&>*+*]:border-foreground/8",
-      trigger: `border-0 shadow-none px-2 h-auto font-bookish text-sm focus:ring-0 rounded-none gap-2 py-1.5 w-full ${active ? "bg-red-600 text-background" : "bg-background text-neutral-600 dark:text-neutral-400"}`,
-      content: `${active ? "bg-red-600 text-background" : "bg-background text-neutral-600 dark:text-neutral-400"} font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)] shadow-[var(--shadow-md)]`,
-      item: `rounded-none ${active ? "text-background focus:bg-background/20 focus:text-background" : "text-foreground focus:bg-foreground/10 focus:text-foreground"}`,
-    };
-  }
-  const c1 = colStyle(col1Dark);
-  const c2 = colStyle(col2Dark);
+  const works = getSortedWorks();
+  const col1Works = works.filter((_, i) => i % 2 === 0);
+  const col2Works = works.filter((_, i) => i % 2 === 1);
 
   function openWork(work: Work) {
     setActiveWorkSlug(work.slug);
@@ -164,13 +138,13 @@ export default function WorksPageClient() {
     return (
       <button
         onClick={() => openWork(work)}
-        className="group relative cursor-pointer w-full flex flex-col "
+        className="group relative cursor-pointer w-full flex flex-col gap-y-[18px] mb-[32px]"
         aria-label={`Show work: ${work.title.rendered}`}
       >
-        <div className="relative h-[75vh] w-full overflow-hidden p-4 pb-0">
+        <div className="relative h-[75vh]  w-full overflow-hidden">
           <CornerFrame />
           {work.image_url && (
-            <div className="absolute inset-4 flex items-end">
+            <div className="absolute inset-0 flex items-start lg:items-end">
               <ProportionalWorkImage
                 src={work.image_url}
                 alt={work.title.rendered}
@@ -185,325 +159,190 @@ export default function WorksPageClient() {
     );
   }
 
+  const filterSelect = (
+    <Select
+      value={filterKey}
+      onValueChange={(v) => {
+        setFilterKey(v as FilterKey);
+        setShowFilter(false);
+      }}
+    >
+      <SelectTrigger className="border-0 shadow-none bg-secondary text-neutral-600 dark:text-neutral-400 w-full">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="year-latest">Newest First</SelectItem>
+        <SelectItem value="year-oldest">Oldest First</SelectItem>
+        <SelectItem value="title">Title A–Z</SelectItem>
+        <SelectItem value="painting">Painting</SelectItem>
+        <SelectItem value="drawing">Drawing</SelectItem>
+        <SelectItem value="sculpture">Sculpture</SelectItem>
+        <SelectItem value="textile">Textile</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+
+  const bothCols = !col1Hidden && !col2Hidden;
+
   return (
-    <section className="relative w-full mt-0">
-      {/* Mobile: single scroll */}
-      <div className="lg:hidden relative z-40 bg-background">
-        {/* Mobile fixed header — hide on scroll down, show on scroll up */}
-        <motion.div
-          className="fixed top-0 left-0 right-0 z-50 bg-background shadow-[var(--shadow-nav)]"
-          style={{ paddingTop: "var(--nav-height, 0px)" }}
-          animate={{ y: mobileHeaderVisible ? 0 : "-100%" }}
-          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-        >
-          <div className="flex items-center p-4 font-bookish text-sm">
-            <Select
-              value={workSort}
-              onValueChange={(v) => setWorkSort(v as WorkSort)}
-            >
-              <SelectTrigger className="shadow-[var(--shadow-ui)] px-3 h-auto font-bookish focus:ring-0 rounded-none gap-2 py-1.5 bg-background text-neutral-600 dark:text-neutral-400 w-full text-base">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-background text-foreground font-bookish rounded-none text-sm w-[var(--radix-select-trigger-width)]">
-                <SelectItem
-                  value="year-latest"
-                  className="text-foreground focus:bg-foreground/10 focus:text-foreground rounded-none"
-                >
-                  Works — Newest First
-                </SelectItem>
-                <SelectItem
-                  value="year-oldest"
-                  className="text-foreground focus:bg-foreground/10 focus:text-foreground"
-                >
-                  Works — Oldest First
-                </SelectItem>
-                <SelectItem
-                  value="title"
-                  className="text-foreground focus:bg-foreground/10 focus:text-foreground"
-                >
-                  Works — Title A–Z
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="ghost"
-              size="controls"
-              onClick={() => setMobileAsList((v) => !v)}
-              className="shrink-0 shadow-[var(--shadow-ui)]"
-            >
-              {mobileAsList ? "Thumbnails" : "List"}
-            </Button>
-          </div>
-        </motion.div>
-        {/* Spacer so content doesn't sit under fixed header */}
-        <motion.div
-          animate={{
-            height: mobileHeaderVisible
-              ? "calc(var(--nav-height, 0px) + 52px)"
-              : 0,
-          }}
-          transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-        />
-        {mobileAsList ? (
-          <div className="p-4">
-            <div className="border-t border-x border-border">
-              {filteredWorks.map((work: Work) => (
-                <button
-                  key={work.id}
-                  onClick={() => openWork(work)}
-                  className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left hover:bg-foreground/10 transition-colors"
-                  aria-label={`Show work: ${work.title.rendered}`}
-                >
-                  {work.title.rendered}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <Staggered
-            items={filteredWorks}
-            getKey={(w) => w.id}
-            loading={loading}
-            className="min-h-screen flex flex-col gap-y-0"
-            renderItem={(work: Work) => (
-              <div className="">{renderWorkItem(work)}</div>
+    <section
+      className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
+      style={{ paddingTop: navVisible ? "var(--nav-height, 0px)" : "0px" }}
+    >
+      {/* Mobile: Hero + divider + controls */}
+      <div className="lg:hidden">
+        <Hero />
+        <HDivider />
+        <div className="fixed bottom-0 left-0 z-20 flex items-center gap-x-8 px-[18px] py-[12px] bg-transparent">
+          <Button
+            variant="link"
+            size="controls"
+            className="px-0"
+            onClick={() => setShowFilter((v) => !v)}
+          >
+            {showFilter ? (
+              <>
+                <Cross1Icon className="mr-1" />
+                Filter
+              </>
+            ) : (
+              "Filter"
             )}
-          />
-        )}
+          </Button>
+          <Button
+            variant="link"
+            size="controls"
+            className="px-0"
+            onClick={() => {
+              setCol1AsList((v) => !v);
+              setCol2AsList((v) => !v);
+            }}
+          >
+            {col1AsList ? "Back to Thumbnails" : "List"}
+          </Button>
+        </div>
       </div>
 
-      {/* Desktop: three independently scrolling columns */}
+      <PageHeader
+        title="Works"
+        count={works.length}
+        sortLabel={activeLabel}
+        onSortClick={cycleFilter}
+        loading={loading}
+        controls={
+          <div className="flex items-center gap-x-4 pr-[18px] w-full">
+            <Button
+              variant="link"
+              size="controls"
+              onClick={() => setShowFilter((v) => !v)}
+            >
+              {showFilter ? (
+                <>
+                  <Cross1Icon className="mr-1" />
+                  Filter
+                </>
+              ) : (
+                "Filter"
+              )}
+            </Button>
+            <AnimatePresence>
+              {showFilter && (
+                <motion.div
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="overflow-hidden min-w-[180px]"
+                >
+                  {filterSelect}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <Button
+              variant="link"
+              size="controls"
+              onClick={() => {
+                setCol1AsList((v) => !v);
+                setCol2AsList((v) => !v);
+              }}
+            >
+              {col1AsList ? "Thumbnails" : "List"}
+            </Button>
+            <Button variant="link" onClick={() => setShowInfo(!showInfo)}>
+              {showInfo ? "Hide text" : "Show text"}
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => setProportionalImages(!proportionalImages)}
+            >
+              {proportionalImages ? "Full width" : "Proportional"}
+            </Button>
+          </div>
+        }
+      />
+
+      {/* Columns */}
       <div
-        className="hidden lg:flex lg:fixed lg:left-0 lg:right-0 lg:bottom-0 transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-        style={{ top: navVisible ? "var(--nav-height, 0px)" : "0px" }}
+        className={`relative grid grid-cols-1 ${bothCols ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}
       >
-        {/* Global controls + restore pills */}
-        <div className="absolute right-2 top-12 flex items-center gap-x-2 z-50">
-          {col1Min && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCol1Min(false)}
-              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm shadow-[var(--shadow-ui)]"
+        <div
+          className={`px-[18px] pt-[18px] lg:px-[32px] lg:pt-[18px] ${col1Hidden ? "hidden" : ""}`}
+        >
+          {col1AsList ? (
+            <WorksList works={col1Works} onSelect={openWork} />
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: loading ? 0 : 1 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col"
             >
-              + Works
-            </Button>
-          )}
-          {col2Min && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCol2Min(false)}
-              className="rounded-none px-3 h-auto py-1.5 bg-background hover:bg-foreground/10 font-bookish text-sm shadow-[var(--shadow-ui)]"
-            >
-              +{" "}
-              {col2Filter === "all"
-                ? "All"
-                : col2Filter.charAt(0).toUpperCase() + col2Filter.slice(1)}
-            </Button>
+              {col1Works.map((work) => (
+                <div key={work.id}>{renderWorkItem(work)}</div>
+              ))}
+            </motion.div>
           )}
         </div>
 
-        {!col1Min && (
-          <div
-            ref={col1Ref}
-            className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-left)] ${c1.column}`}
-          >
-            <div className={`sticky top-0 z-10 shadow-[var(--shadow-col-left)] ${c1.header}`}>
-              <div
-                className={`mx-4 flex items-center gap-x-0 font-bookish text-sm shadow-[var(--shadow-ui)] ${c1.headerRow}`}
-              >
-                <Select
-                  value={col1Sort}
-                  onValueChange={(v) => setCol1Sort(v as WorkSort)}
-                >
-                  <SelectTrigger className={c1.trigger}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className={c1.content}>
-                    <SelectItem value="year-latest" className={c1.item}>
-                      Works — Newest First
-                    </SelectItem>
-                    <SelectItem value="year-oldest" className={c1.item}>
-                      Works — Oldest First
-                    </SelectItem>
-                    <SelectItem value="title" className={c1.item}>
-                      Works — Title A–Z
-                    </SelectItem>
-                    <SelectItem value="category" className={c1.item}>
-                      Works — Category A–Z
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="ghost"
-                  size="controls"
-                  onClick={() => setCol1AsList((v) => !v)}
-                >
-                  {col1AsList ? "Thumbnails" : "List"}
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="hidden"
-                  size="controlsIcon"
-                  onClick={() => setCol1Dark((d) => !d)}
-                  aria-label="Toggle color mode"
-                >
-                  <Half2Icon />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="controlsIcon"
-                  onClick={() => setCol1Min(true)}
-                  className="no-hide-text"
-                >
-                  <Cross1Icon />
-                </Button>
-              </div>
-            </div>
-            {col1AsList ? (
-              <div className="p-4">
-                <div className="shadow-[var(--shadow-md)]">
-                  {col1Works.map((work) => (
-                    <button
-                      key={work.id}
-                      onClick={() => openWork(work)}
-                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left hover:bg-foreground/10 transition-colors"
-                      aria-label={`Show work: ${work.title.rendered}`}
-                    >
-                      {work.title.rendered}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: loading ? 0 : 1 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-col"
-              >
-                {col1Works.map((work) => (
-                  <div key={work.id}>{renderWorkItem(work)}</div>
-                ))}
-              </motion.div>
-            )}
-          </div>
-        )}
-        {(!col1Min && !col2Min) && <div className="w-px bg-foreground/10 self-stretch flex-none" />}
-        {!col2Min && (
-          <div
-            ref={col2Ref}
-            className={`flex-1 overflow-y-auto h-full flex flex-col shadow-[var(--shadow-col-right)] ${c2.column}`}
-          >
-            <div className={`sticky top-0 z-10 shadow-[var(--shadow-col-right)] ${c2.header}`}>
-              <div className="mx-4 flex items-center gap-x-4 font-bookish text-sm ">
-                <div
-                  className={`flex w-full items-center gap-0 shadow-[var(--shadow-ui)] ${c2.headerRow}`}
-                >
-                  <Select
-                    value={col2Filter}
-                    onValueChange={(v) => setCol2Filter(v as CategoryFilter)}
-                  >
-                    <SelectTrigger className={c2.trigger}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className={c2.content}>
-                      <SelectItem value="all" className={c2.item}>
-                        Works — All Categories
-                      </SelectItem>
-                      <SelectItem value="painting" className={c2.item}>
-                        Works — Categories — Painting
-                      </SelectItem>
-                      <SelectItem value="drawing" className={c2.item}>
-                        Works — Categories — Drawing
-                      </SelectItem>
-                      <SelectItem value="sculpture" className={c2.item}>
-                        Works — Categories — Sculpture
-                      </SelectItem>
-                      <SelectItem value="textile" className={c2.item}>
-                        Works — Categories — Textile
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="ghost"
-                    size="controlsIcon"
-                    className="hidden"
-                    onClick={() => setCol2Dark((d) => !d)}
-                    aria-label="Toggle color mode"
-                  >
-                    <Half2Icon />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="controlsIcon"
-                    onClick={() => setCol2Min(true)}
-                    className="no-hide-text"
-                  >
-                    <Cross1Icon />
-                  </Button>
-                </div>
-                <div className="flex items-center gap-0 shadow-[var(--shadow-ui)] [&>*+*]:border-l [&>*+*]:border-foreground/8">
-                  <Button
-                    variant="ghost"
-                    size="controls"
-                    onClick={() => setCol2AsList((v) => !v)}
-                  >
-                    {col2AsList ? "Thumbnails" : "List"}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="controlsIcon"
-                    onClick={() => setShowInfo(!showInfo)}
-                    className={showInfo ? "line-through decoration-1" : ""}
-                    aria-label={showInfo ? "Hide text" : "Show text"}
-                  >
-                    T
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="controlsIcon"
-                    onClick={() => setProportionalImages(!proportionalImages)}
-                    aria-label={
-                      proportionalImages ? "Full width" : "Proportional"
-                    }
-                  >
-                    <WidthIcon />
-                  </Button>
-                </div>
-              </div>
-            </div>
-            {col2AsList ? (
-              <div className="p-4">
-                <div className="shadow-[var(--shadow-md)]">
-                  {col2Works.map((work) => (
-                    <button
-                      key={work.id}
-                      onClick={() => openWork(work)}
-                      className="w-full flex items-baseline font-bookish h3 py-1.5 px-3 text-left hover:bg-foreground/10 transition-colors"
-                      aria-label={`Show work: ${work.title.rendered}`}
-                    >
-                      {work.title.rendered}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: loading ? 0 : 1 }}
-                transition={{ duration: 0.5, delay: 0.06 }}
-                className="flex flex-col"
-              >
-                {col2Works.map((work) => (
-                  <div key={work.id}>{renderWorkItem(work)}</div>
-                ))}
-              </motion.div>
-            )}
-          </div>
-        )}
+        <div
+          className={`px-[18px] pt-[18px] lg:px-[32px] lg:pt-[18px] ${col2Hidden ? "hidden" : "hidden lg:block"}`}
+        >
+          {col2AsList ? (
+            <WorksList works={col2Works} onSelect={openWork} />
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: loading ? 0 : 1 }}
+              transition={{ duration: 0.5, delay: 0.06 }}
+              className="flex flex-col"
+            >
+              {col2Works.map((work) => (
+                <div key={work.id}>{renderWorkItem(work)}</div>
+              ))}
+            </motion.div>
+          )}
+        </div>
       </div>
+
+      {/* Mobile: filter select slide-up */}
+      <AnimatePresence>
+        {showFilter && (
+          <>
+            <div
+              className="lg:hidden fixed inset-0 z-[59]"
+              onClick={() => setShowFilter(false)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+              className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] p-4 bg-background border-t border-foreground/[0.06] [&>*]:w-full"
+            >
+              {filterSelect}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {activeWorkSlug && (
         <WorkModal

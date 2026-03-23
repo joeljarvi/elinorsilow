@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { DarkModeToggle } from "./DarkModeToggle";
+import NavSearch from "./NavSearch";
 
 export default function Hero() {
+  const [openSearch, setOpenSearch] = useState(false);
+
   return (
-    <div className="p-4 lg:p-8 relative z-10">
-      <p className="font-bookish text-xl leading-snug max-w-2xl lg:max-w-2xl">
+    <div className=" px-0  relative z-10 mb-[18px] ">
+      <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
+
+      <p className="p text-[18px] pl-[18px] pr-[32px] leading-snug  lg:max-w-xl lg:px-0 no-hide-text">
         <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
         Sweden) is a Stockholm-based artist working with painting, sculpture,
         and textile. Her work explores raw emotion through material, gesture,
-        and form. Discover her works, or see exhibitions where the work has
-        been presented publicly.{" "}
-        <span className="indent-6 block">
+        and form.
+        <span className="indent-6 block ">
           For further information, including CV and background, visit the info
           page. For collaborations or inquiries:{" "}
           <Link
@@ -24,21 +31,32 @@ export default function Hero() {
         </span>
       </p>
 
-      <nav className="lg:hidden flex flex-wrap mt-8 font-bookish">
+      <nav className="grid grid-cols-2 items-start justify-start mt-8">
         {[
           { href: "/works", label: "Works" },
           { href: "/exhibitions", label: "Exhibitions" },
           { href: "/info", label: "Information" },
           { href: "/contact", label: "Contact" },
         ].map(({ href, label }) => (
-          <Link
+          <Button
             key={href}
-            href={href}
-            className="w-1/2 text-xl border-b border-foreground/[0.06] py-3 text-neutral-600 dark:text-neutral-400 hover:text-foreground transition-colors"
+            variant="link"
+            className="justify-start"
+            size="controls"
+            asChild
           >
-            {label}
-          </Link>
+            <Link href={href}>{label}</Link>
+          </Button>
         ))}
+        <Button
+          variant="link"
+          className="justify-start"
+          size="controls"
+          onClick={() => setOpenSearch(true)}
+        >
+          Search
+        </Button>
+        <DarkModeToggle className="justify-start" />
       </nav>
     </div>
   );

@@ -159,35 +159,17 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   function ControlsHeader() {
     return (
       <div className="fixed top-0 left-0 z-[50] lg:relative lg:z-auto pt-4 bg-background w-full">
-        <div className="mx-4 flex items-center font-bookish text-sm border border-border [&>*+*]:border-l [&>*+*]:border-border">
-          <Button
-            variant="ghost"
-            size="controlsIcon"
-            onClick={goPrev}
-            disabled={!hasPrev}
-            aria-label="Previous exhibition"
-          >
+        <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
+          <Button variant="link" size="controls" onClick={goPrev} disabled={!hasPrev} aria-label="Previous exhibition">
             <ArrowLeftIcon />
           </Button>
-          <Button
-            variant="ghost"
-            size="controlsIcon"
-            onClick={goNext}
-            disabled={!hasNext}
-            aria-label="Next exhibition"
-          >
+          <Button variant="link" size="controls" onClick={goNext} disabled={!hasNext} aria-label="Next exhibition">
             <ArrowRightIcon />
           </Button>
-          <span className="flex-1 px-3 py-1.5 text-sm truncate text-muted-foreground">
+          <span className="flex-1 px-1 text-sm truncate text-muted-foreground font-universNextPro">
             {exhibition.title.rendered}
           </span>
-          <Button
-            variant="ghost"
-            size="controlsIcon"
-            onClick={onClose ?? (() => router.push("/exhibitions"))}
-            aria-label="Close"
-            className="no-hide-text"
-          >
+          <Button variant="link" size="controls" onClick={onClose ?? (() => router.push("/exhibitions"))} aria-label="Close" className="no-hide-text">
             <Cross1Icon />
           </Button>
         </div>
@@ -219,7 +201,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               </div>
             )}
             {works.length > 0 && (
-              <div className="mx-4 mb-4 font-bookish flex flex-col border border-border [&>*+*]:border-t [&>*+*]:border-border">
+              <div className="mx-4 mb-4 font-universNextPro flex flex-col">
                 <div className="px-3 py-1.5 text-sm text-muted-foreground">
                   Featuring the works
                 </div>
@@ -241,7 +223,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               </div>
             )}
             {exhibition.acf.credits && (
-              <div className="px-4 pb-8 font-bookish text-sm text-muted-foreground">
+              <div className="px-4 pb-8 font-timesNewRoman text-sm text-muted-foreground">
                 {exhibition.acf.credits}
               </div>
             )}
@@ -311,7 +293,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           </div>
         )}
         {works.length > 0 && (
-          <div className="mx-4 mb-4 font-bookish flex flex-col border border-border [&>*+*]:border-t [&>*+*]:border-border">
+          <div className="mx-4 mb-4 font-timesNewRoman flex flex-col border border-border [&>*+*]:border-t [&>*+*]:border-border">
             {works.map((work: any, index: number) => (
               <Button
                 key={index}
@@ -330,7 +312,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           </div>
         )}
         {exhibition.acf.credits && (
-          <div className="px-4 indent-6 pb-8 font-bookish text-sm text-muted-foreground">
+          <div className="px-4 indent-6 pb-8 font-timesNewRoman text-sm text-muted-foreground">
             {exhibition.acf.credits}
           </div>
         )}
@@ -340,18 +322,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-[80] bg-background flex flex-col">
           <div className="sticky top-0 z-10 pt-4 bg-background">
-            <div className="mx-4 flex items-center font-bookish text-sm border border-border [&>*+*]:border-l [&>*+*]:border-border">
-              <span className="px-3 py-1.5 text-muted-foreground text-sm">
+            <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
+              <span className="px-1 text-muted-foreground text-sm">
                 {lightboxCarousel.index + 1} / {images.length}
               </span>
               <div className="flex-1" />
-              <Button
-                variant="ghost"
-                size="controlsIcon"
-                onClick={() => setLightboxIndex(null)}
-                aria-label="Close lightbox"
-                className="no-hide-text"
-              >
+              <Button variant="link" size="controls" onClick={() => setLightboxIndex(null)} aria-label="Close lightbox" className="no-hide-text">
                 <Cross1Icon />
               </Button>
             </div>
@@ -376,7 +352,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                     />
                   </div>
                   {img.desc && (
-                    <p className="text-muted-foreground text-sm text-center max-w-xl shrink-0 pb-4 font-bookish">
+                    <p className="text-muted-foreground text-sm text-center max-w-xl shrink-0 pb-4 font-timesNewRoman">
                       {img.desc}
                     </p>
                   )}
