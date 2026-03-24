@@ -44,20 +44,25 @@ export default function MobileNavOverlay() {
   }, [pathname, setOpen]);
 
   return (
-    <>
+    <div className="lg:hidden">
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <AnimatePresence>
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className={` fixed inset-0 z-[60] bg-background overflow-y-auto h-screen flex flex-col`}
+            className={` fixed inset-0 z-[90] bg-background overflow-y-auto h-screen flex flex-col items-start justify-center w-full`}
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <div className="pt-[18px] px-0 lg:p-8 relative z-10">
-              <Button variant="link" size="controls" className=" " asChild>
+            <div className="pt-[18px] px-0 lg:p-8 relative z-10 w-full">
+              <Button
+                variant="link"
+                size="controls"
+                className="hidden "
+                asChild
+              >
                 <Link href="/">
                   <OGubbeText text="Elinor Silow" loading={loading} />
                 </Link>
@@ -67,26 +72,7 @@ export default function MobileNavOverlay() {
                 onClose={() => setOpenSearch(false)}
               />
 
-              <p className="p text-[18px] leading-snug max-w-sm lg:max-w-xl  px-[18px] pt-[18px]">
-                <span className="font-medium">Elinor Silow</span> (b. 1993,
-                Malmö, Sweden) is a Stockholm-based artist working with
-                painting, sculpture, and textile. Her work explores raw emotion
-                through material, gesture, and form. Discover her works, or see
-                exhibitions where the work has been presented publicly.{" "}
-                <span className="indent-6 block mt-4">
-                  For further information, including CV and background, visit
-                  the info page. For collaborations or inquiries:{" "}
-                  <Link
-                    href="mailto:hej@elinorsilow.com"
-                    className="text-blue-600 hover:underline hover:underline-offset-4 hover:decoration-1"
-                  >
-                    hej@elinorsilow.com
-                  </Link>
-                  .
-                </span>
-              </p>
-
-              <nav className="grid grid-cols-2 items-start justify-start mt-8">
+              <nav className="grid grid-cols-2 items-start justify-start mt-8 w-full">
                 {[
                   { href: "/works", label: "Works" },
                   { href: "/exhibitions", label: "Exhibitions" },
@@ -126,6 +112,6 @@ export default function MobileNavOverlay() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

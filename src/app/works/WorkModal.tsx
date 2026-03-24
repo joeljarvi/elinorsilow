@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
-import { ReactLenis } from "lenis/react";
 
 type WorkModalProps = {
   slug: string;
@@ -12,6 +11,8 @@ type WorkModalProps = {
 
 export default function WorkModal({ slug, onClose }: WorkModalProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [cursorVisible, setCursorVisible] = useState(false);
 
   const handleClose = () => {
     window.history.replaceState(null, "", window.location.pathname);
@@ -22,38 +23,37 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
     <AnimatePresence onExitComplete={onClose}>
       {isOpen && (
         <motion.div
-          key="overlay"
-          className="fixed inset-0 z-[90] flex items-center justify-center"
+          key="backdrop"
+          className="fixed inset-0 z-[90] bg-background/70 backdrop-blur-sm cursor-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.3 }}
+          onClick={handleClose}
+          onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+          onMouseEnter={() => setCursorVisible(true)}
+          onMouseLeave={() => setCursorVisible(false)}
         >
-          {/* Modal panel */}
           <motion.div
-            key="modal"
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-screen h-screen bg-background flex flex-col overflow-hidden z-40"
-            initial={{ y: "4%", opacity: 0 }}
-            animate={{ y: "0%", opacity: 1 }}
-            exit={{ y: "4%", opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="work-modal-title"
+            key="content"
+            className="w-full h-full"
+            initial={{ scale: 0.96, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.94, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <ReactLenis
-              root={false}
-              className="h-full overflow-y-auto scrollbar-hide"
-              options={{
-                smoothWheel: true,
-                duration: 1.15,
-                easing: (t) => 1 - Math.pow(1 - t, 4),
-              }}
-            >
-              <WorkSlugModalClient onClose={handleClose} slug={slug} />
-            </ReactLenis>
+            <WorkSlugModalClient slug={slug} onClose={handleClose} />
           </motion.div>
+
+          {/* Custom cursor */}
+          {cursorVisible && (
+            <div
+              className="hidden lg:block fixed pointer-events-none z-[100] font-universNextPro text-[11px] tracking-wide"
+              style={{ left: mousePos.x + 14, top: mousePos.y, transform: "translateY(-50%)" }}
+            >
+              Close window
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

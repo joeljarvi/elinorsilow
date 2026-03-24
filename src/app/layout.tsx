@@ -101,7 +101,9 @@ export default function RootLayout({
                     <AnimationProvider>
                       <BodyClassManager />
                       {/* Column shadow overlay — fixed, covers full viewport */}
-                      <div className="fixed inset-0 pointer-events-none z-[5] hidden lg:grid lg:grid-cols-2">
+                      <div className="fixed inset-0 pointer-events-none z-[5] hidden lg:grid lg:grid-cols-4">
+                        <div className="shadow-[var(--shadow-col-left)]" />
+                        <div className="shadow-[var(--shadow-col-right)]" />
                         <div className="shadow-[var(--shadow-col-left)]" />
                         <div className="shadow-[var(--shadow-col-right)]" />
                       </div>

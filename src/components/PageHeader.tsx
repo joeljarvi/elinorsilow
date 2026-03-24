@@ -21,8 +21,8 @@ export function PageHeader({
   controls,
 }: PageHeaderProps) {
   return (
-    <div className="flex flex-col items-start lg:items-center">
-      <div className="flex flex-col px-[18px] pt-[18px] lg:pt-0 pb-[9px] lg:px-[32px] items-start lg:items-center gap-x-8">
+    <div className="flex flex-col items-center lg:items-start">
+      <div className="flex flex-col px-[18px] pt-[18px] lg:pt-0 pb-[9px] lg:px-0 items-center lg:items-start gap-x-8">
         <OGubbeText
           text={title}
           loading={loading}

@@ -1,21 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Work, getWorkBySlug } from "../../../lib/sanity";
 import { useWorks } from "@/context/WorksContext";
-import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
-import {
-  Cross1Icon,
-  WidthIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  EnterFullScreenIcon,
-  ExitFullScreenIcon,
-} from "@radix-ui/react-icons";
-import ProportionalWorkImage from "@/components/ProportionalWorkImage";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -26,7 +15,6 @@ export default function WorkSlugModalClient({
   slug,
   onClose,
 }: WorkSlugModalClientProps) {
-  const router = useRouter();
   const {
     filteredWorks,
     normalizeSlug,
@@ -34,18 +22,14 @@ export default function WorkSlugModalClient({
   } = useWorks();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [proportional, setProportional] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const loadWorkByIndex = useCallback(
-    async (index: number) => {
+    (index: number) => {
       if (!filteredWorks || index < 0 || index >= filteredWorks.length) return;
       const w = filteredWorks[index];
       setWork(w);
       setCurrentIndex(index);
-      setLoading(false);
       window.history.replaceState(null, "", `/works?work=${w.slug}`);
     },
     [filteredWorks],
@@ -90,107 +74,34 @@ export default function WorkSlugModalClient({
   });
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") goPrev();
       if (e.key === "ArrowRight") goNext();
       if (e.key === "Escape" && onClose) onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [goPrev, goNext, onClose]);
 
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", onChange);
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, []);
-
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  }
-
-  if (loading) return <div />;
-  if (!work) return <p>Work not found</p>;
-
-  const hasPrev = currentIndex > 0;
-  const hasNext = !!filteredWorks && currentIndex < filteredWorks.length - 1;
+  if (loading) return <div className="w-screen h-screen" />;
+  if (!work) return null;
 
   return (
+    // Outer container handles swipe; clicks pass through to backdrop
     <div
-      ref={containerRef}
       {...swipeHandlers}
-      className="flex flex-col w-full h-screen bg-background"
+      className="w-screen h-screen flex items-center justify-center p-[18px]"
     >
-      {/* Controls — bottom on mobile, top on desktop */}
-      <div className="order-2 lg:order-1 pb-4 lg:pb-0 lg:pt-4 bg-background">
-        <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
-          <Button
-            variant="link"
-            size="controls"
-            onClick={goPrev}
-            disabled={!hasPrev}
-            aria-label="Previous work"
-          >
-            <ArrowLeftIcon />
-          </Button>
-          <Button
-            variant="link"
-            size="controls"
-            onClick={goNext}
-            disabled={!hasNext}
-            aria-label="Next work"
-          >
-            <ArrowRightIcon />
-          </Button>
-          <span className="flex-1 px-1 text-sm truncate text-muted-foreground font-timesNewRoman font-bold">
-            {work.title.rendered}
-          </span>
-          <Button
-            variant="link"
-            size="controls"
-            onClick={() => setProportional((p) => !p)}
-            aria-label={proportional ? "Full width" : "Proportional"}
-          >
-            <WidthIcon />
-          </Button>
-          <Button
-            variant="link"
-            size="controls"
-            className="hidden lg:block"
-            onClick={toggleFullscreen}
-            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-          >
-            {isFullscreen ? <ExitFullScreenIcon /> : <EnterFullScreenIcon />}
-          </Button>
-          <Button
-            variant="link"
-            size="controls"
-            onClick={onClose ?? (() => router.push("/works"))}
-            aria-label="Close"
-            className="no-hide-text"
-          >
-            <Cross1Icon />
-          </Button>
-        </div>
-      </div>
-
-      {/* Image area — top on mobile, below controls on desktop */}
-      <div className="order-1 lg:order-2 flex-1 relative min-h-0">
-        <div className="absolute inset-4 flex items-center justify-center">
-          {work.image_url && (
-            <ProportionalWorkImage
-              src={work.image_url}
-              alt={work.title.rendered}
-              dimensions={work.acf.dimensions}
-              proportional={proportional}
-              className="max-w-full max-h-full"
-            />
-          )}
-        </div>
+      <div className="relative w-full h-full">
+        {work.image_url && (
+          <Image
+            src={work.image_url}
+            alt={work.title.rendered}
+            fill
+            className="object-contain"
+            priority
+          />
+        )}
       </div>
     </div>
   );
