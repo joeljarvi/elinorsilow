@@ -7,7 +7,6 @@ import { useUI } from "@/context/UIContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cross1Icon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import InfoBox from "@/components/InfoBox";
 import CornerFrame from "@/components/CornerFrame";
@@ -168,14 +167,6 @@ export default function ExhibitionsPageClient() {
 
       {/* Mobile bottom controls */}
       <div className="lg:hidden fixed bottom-0 left-0 z-20 flex items-center gap-x-8 px-[18px] py-[12px] bg-transparent">
-        <Button
-          variant="link"
-          size="controls"
-          className="px-0"
-          onClick={() => setShowFilter((v) => !v)}
-        >
-          {showFilter ? <><Cross1Icon className="mr-1" />Filter</> : "Filter"}
-        </Button>
         <Button
           variant="link"
           size="controls"
