@@ -11,9 +11,6 @@ import { Cross1Icon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import InfoBox from "@/components/InfoBox";
 import CornerFrame from "@/components/CornerFrame";
-import Hero from "@/components/Hero";
-import HDivider from "@/components/HDivider";
-import { PageHeader } from "@/components/PageHeader";
 import {
   Select,
   SelectContent,
@@ -22,20 +19,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type FilterKey = "year-latest" | "year-oldest" | "title" | "solo" | "group";
+type ExCategory = "all" | "solo" | "group";
+type ExSort = "year-latest" | "year-oldest" | "title";
 
-const FILTER_OPTIONS: Record<FilterKey, { sort: string; filter: string; label: string }> = {
-  "year-latest": { sort: "year-latest", filter: "all", label: "Newest First" },
-  "year-oldest": { sort: "year-oldest", filter: "all", label: "Oldest First" },
-  title: { sort: "title", filter: "all", label: "Title A–Z" },
-  solo: { sort: "year-latest", filter: "Solo", label: "Solo" },
-  group: { sort: "year-latest", filter: "Group", label: "Group" },
-};
-
-const FILTER_KEYS = Object.keys(FILTER_OPTIONS) as FilterKey[];
+const EX_CATEGORIES: ExCategory[] = ["all", "solo", "group"];
+const EX_SORTS: ExSort[] = ["year-latest", "year-oldest", "title"];
+const CATEGORY_LABELS: Record<ExCategory, string> = { all: "all exhibitions", solo: "solo", group: "group" };
+const SORT_LABELS: Record<ExSort, string> = { "year-latest": "latest", "year-oldest": "oldest", title: "A–Z" };
+const CAT_TO_TYPE: Record<ExCategory, string | null> = { all: null, solo: "Solo", group: "Group" };
 
 export default function ExhibitionsPageClient() {
-  const [filterKey, setFilterKey] = useState<FilterKey>("year-latest");
+  const [exCat, setExCat] = useState<ExCategory>("all");
+  const [exSort, setExSort] = useState<ExSort>("year-latest");
   const [showFilter, setShowFilter] = useState(false);
   const [asList, setAsList] = useState(false);
   const [initialAnimDone, setInitialAnimDone] = useState(false);
@@ -57,16 +52,18 @@ export default function ExhibitionsPageClient() {
 
   const loading = !initialAnimDone || !dataLoaded;
 
-  const { sort, filter, label: activeLabel } = FILTER_OPTIONS[filterKey];
+  const cycleCategory = () =>
+    setExCat((prev) => EX_CATEGORIES[(EX_CATEGORIES.indexOf(prev) + 1) % EX_CATEGORIES.length]);
 
-  function cycleFilter() {
-    const idx = FILTER_KEYS.indexOf(filterKey);
-    setFilterKey(FILTER_KEYS[(idx + 1) % FILTER_KEYS.length]);
-  }
+  const cycleSort = () =>
+    setExSort((prev) => EX_SORTS[(EX_SORTS.indexOf(prev) + 1) % EX_SORTS.length]);
 
   function getSortedExhibitions(): Exhibition[] {
-    const filtered = filter === "all" ? exhibitions : exhibitions.filter((e) => e.acf.exhibition_type === filter);
-    switch (sort) {
+    const typeFilter = CAT_TO_TYPE[exCat];
+    const filtered = typeFilter
+      ? exhibitions.filter((e) => e.acf.exhibition_type === typeFilter)
+      : exhibitions;
+    switch (exSort) {
       case "year-latest": return [...filtered].sort((a, b) => Number(b.acf.year) - Number(a.acf.year));
       case "year-oldest": return [...filtered].sort((a, b) => Number(a.acf.year) - Number(b.acf.year));
       case "title": return [...filtered].sort((a, b) => a.title.rendered.localeCompare(b.title.rendered, "sv"));
@@ -111,8 +108,21 @@ export default function ExhibitionsPageClient() {
     );
   }
 
-  const filterSelect = (
-    <Select value={filterKey} onValueChange={(v) => { setFilterKey(v as FilterKey); setShowFilter(false); }}>
+  const categorySelect = (
+    <Select value={exCat} onValueChange={(v) => setExCat(v as ExCategory)}>
+      <SelectTrigger className="border-0 shadow-none bg-secondary text-neutral-600 dark:text-neutral-400 w-full">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All</SelectItem>
+        <SelectItem value="solo">Solo</SelectItem>
+        <SelectItem value="group">Group</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+
+  const sortSelect = (
+    <Select value={exSort} onValueChange={(v) => setExSort(v as ExSort)}>
       <SelectTrigger className="border-0 shadow-none bg-secondary text-neutral-600 dark:text-neutral-400 w-full">
         <SelectValue />
       </SelectTrigger>
@@ -120,8 +130,6 @@ export default function ExhibitionsPageClient() {
         <SelectItem value="year-latest">Newest First</SelectItem>
         <SelectItem value="year-oldest">Oldest First</SelectItem>
         <SelectItem value="title">Title A–Z</SelectItem>
-        <SelectItem value="solo">Solo</SelectItem>
-        <SelectItem value="group">Group</SelectItem>
       </SelectContent>
     </Select>
   );
@@ -131,65 +139,65 @@ export default function ExhibitionsPageClient() {
       className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
       style={{ paddingTop: navVisible ? "var(--nav-height, 0px)" : "0px" }}
     >
-      {/* Mobile: Hero + divider + controls */}
-      <div className="lg:hidden">
-        <Hero />
-        <HDivider />
-        <div className="fixed bottom-0 left-0 z-20 flex items-center gap-x-8 px-[18px] py-[12px] bg-transparent">
-          <Button
-            variant="link"
-            size="controls"
-            className="px-0"
-            onClick={() => setShowFilter((v) => !v)}
+      {/* Fixed page header */}
+      <div
+        className="fixed z-[70] w-full pointer-events-none flex flex-col items-center lg:grid lg:grid-cols-4 lg:items-start px-[18px] lg:px-0 pt-[18px] lg:pt-[12px] gap-y-0.5 lg:gap-y-0"
+        style={{ top: "var(--nav-height, 64px)" }}
+      >
+        {/* Col 1 — category + count */}
+        <p className="lg:pl-[33px] text-[16px] font-timesNewRoman">
+          <button
+            className="font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+            onClick={cycleCategory}
           >
-            {showFilter ? <><Cross1Icon className="mr-1" />Filter</> : "Filter"}
-          </Button>
-          <Button
-            variant="link"
-            size="controls"
-            className="px-0"
-            onClick={() => setAsList((v) => !v)}
+            {CATEGORY_LABELS[exCat]}
+          </button>{" "}
+          ({loading ? "—" : items.length})
+        </p>
+        {/* Col 3 — sort */}
+        <p className="lg:col-start-3 lg:pl-[15px] text-[16px] font-timesNewRoman">
+          Sorted by{" "}
+          <button
+            className="font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+            onClick={cycleSort}
           >
-            {asList ? "Back to Thumbnails" : "List"}
-          </Button>
-        </div>
+            {SORT_LABELS[exSort]}
+          </button>
+        </p>
       </div>
 
-      <PageHeader
-        title="Exhibitions"
-        count={items.length}
-        sortLabel={activeLabel}
-        onSortClick={cycleFilter}
-        loading={loading}
-        controls={
-          <div className="flex items-center gap-x-4 pr-[18px] w-full">
-            <Button variant="link" size="controls" onClick={() => setShowFilter((v) => !v)}>
-              {showFilter ? <><Cross1Icon className="mr-1" />Filter</> : "Filter"}
-            </Button>
-            <AnimatePresence>
-              {showFilter && (
-                <motion.div
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: "auto" }}
-                  exit={{ opacity: 0, width: 0 }}
-                  className="overflow-hidden min-w-[180px]"
-                >
-                  {filterSelect}
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <Button variant="link" size="controls" onClick={() => setAsList((v) => !v)}>
-              {asList ? "Thumbnails" : "List"}
-            </Button>
-            <Button variant="link" onClick={() => setShowInfo(!showInfo)}>
-              {showInfo ? "Hide text" : "Show text"}
-            </Button>
-          </div>
-        }
-      />
+      {/* Mobile bottom controls */}
+      <div className="lg:hidden fixed bottom-0 left-0 z-20 flex items-center gap-x-8 px-[18px] py-[12px] bg-transparent">
+        <Button
+          variant="link"
+          size="controls"
+          className="px-0"
+          onClick={() => setShowFilter((v) => !v)}
+        >
+          {showFilter ? <><Cross1Icon className="mr-1" />Filter</> : "Filter"}
+        </Button>
+        <Button
+          variant="link"
+          size="controls"
+          className="px-0"
+          onClick={() => setAsList((v) => !v)}
+        >
+          {asList ? "Back to Thumbnails" : "List"}
+        </Button>
+      </div>
+
+      {/* Desktop bottom controls */}
+      <div className="hidden lg:flex fixed bottom-0 left-1/2 -translate-x-1/2 z-50 items-center gap-x-4 px-[32px] py-[12px] bg-transparent drop-shadow-[var(--shadow-ui)]">
+        <Button variant="link" size="controls" onClick={() => setAsList((v) => !v)}>
+          {asList ? "Thumbnails" : "List"}
+        </Button>
+        <Button variant="link" onClick={() => setShowInfo(!showInfo)}>
+          {showInfo ? "Hide text" : "Show text"}
+        </Button>
+      </div>
 
       {/* Columns */}
-      <div className="relative grid grid-cols-1 lg:grid-cols-2">
+      <div className="relative grid grid-cols-1 lg:grid-cols-2 pt-[48px] lg:pt-[36px]">
         <div className="px-[18px] pt-[18px] lg:px-[32px] lg:pt-[32px]">
           {asList ? (
             <div className="flex flex-col">
@@ -243,9 +251,10 @@ export default function ExhibitionsPageClient() {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-              className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] p-4 bg-background border-t border-foreground/[0.06] [&>*]:w-full"
+              className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] p-4 bg-background border-t border-foreground/[0.06] flex flex-col gap-y-2"
             >
-              {filterSelect}
+              {categorySelect}
+              {sortSelect}
             </motion.div>
           </>
         )}

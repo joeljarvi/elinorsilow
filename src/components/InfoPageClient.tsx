@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import { InfoRow } from "@/components/InfoBox";
-import { PageHeader } from "@/components/PageHeader";
 
 function groupByYear<T extends { acf: { year: number | string } }>(
   items: T[],
@@ -84,8 +83,16 @@ export default function InfoPageClient() {
       className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
       style={{ paddingTop: navVisible ? "var(--nav-height, 0px)" : "0px" }}
     >
-      <PageHeader title="Info" />
-      <div className="grid grid-cols-1 lg:grid-cols-2">
+      {/* Fixed page header */}
+      <div
+        className="fixed z-[70] w-full pointer-events-none flex flex-col items-center lg:grid lg:grid-cols-4 lg:items-start px-[18px] lg:px-0 pt-[18px] lg:pt-[12px]"
+        style={{ top: "var(--nav-height, 64px)" }}
+      >
+        <p className="lg:pl-[33px] text-[16px] font-timesNewRoman">
+          Information
+        </p>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 pt-[48px] lg:pt-[36px]">
         {/* Col 1: About + Solo Exhibitions */}
         <div className="flex flex-col">
           <SectionHeader>About</SectionHeader>
