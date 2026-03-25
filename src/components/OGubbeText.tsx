@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
-function OGubbeChar({ loading, char }: { loading: boolean; char: string }) {
+function OGubbeChar({ loading, char, o = "/ogubbe_frilagd.png", sizes = "20px" }: { loading: boolean; char: string; o?: string; sizes?: string }) {
   const [restAngle, setRestAngle] = useState(() => Math.random() * 360);
   const [hovered, setHovered] = useState(false);
   const prevLoading = useRef(loading);
@@ -19,7 +19,7 @@ function OGubbeChar({ loading, char }: { loading: boolean; char: string }) {
 
   return (
     <motion.span
-      className="inline-block w-[1.5em] h-[1.5em] relative align-[-0.15em] shrink-0 cursor-default"
+      className="inline-block w-[2em] h-[2em] relative align-[-0.4em] shrink-0 cursor-default"
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       animate={
@@ -36,10 +36,10 @@ function OGubbeChar({ loading, char }: { loading: boolean; char: string }) {
       }
     >
       <Image
-        src="/ogubbe_frilagd.png"
+        src={o}
         alt={char}
         fill
-        sizes="20px"
+        sizes={sizes}
         className="object-contain dark:invert"
       />
     </motion.span>
@@ -50,20 +50,26 @@ interface OGubbeTextProps {
   text: string;
   loading?: boolean;
   className?: string;
+  fontSize?: string;
+  o?: string;
+  sizes?: string;
 }
 
 export function OGubbeText({
   text,
   loading = false,
   className,
+  fontSize,
+  o,
+  sizes,
 }: OGubbeTextProps) {
   const segments = text.split(/(o|O)/g);
 
   return (
-    <span className={cn(className)}>
+    <span className={cn("inline-flex items-center", className)} style={fontSize ? { fontSize } : undefined}>
       {segments.map((seg, i) => {
         if (seg === "o" || seg === "O") {
-          return <OGubbeChar key={i} loading={loading} char={seg} />;
+          return <OGubbeChar key={i} loading={loading} char={seg} o={o} sizes={sizes} />;
         }
         return <span key={i}>{seg}</span>;
       })}

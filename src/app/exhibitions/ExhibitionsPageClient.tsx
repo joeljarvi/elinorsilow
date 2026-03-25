@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { RevealImage } from "@/components/RevealImage";
 import { useState, useEffect } from "react";
 import { Exhibition } from "../../../lib/sanity";
 import { useUI } from "@/context/UIContext";
@@ -80,29 +80,34 @@ export default function ExhibitionsPageClient() {
     window.history.pushState(null, "", `/exhibitions?exhibition=${ex.slug}`);
   }
 
-  function renderItem(ex: Exhibition) {
+  function renderItem(ex: Exhibition, index = 0) {
     return (
       <button
         key={ex.id}
         onClick={() => openExhibition(ex)}
-        className="group relative cursor-pointer w-full flex flex-col gap-y-[18px] mb-[32px]"
+        className="group relative cursor-pointer w-full flex flex-col mb-[32px]"
         aria-label={`Show exhibition: ${ex.title.rendered}`}
       >
-        <div className="relative h-[75vh] w-full overflow-hidden">
+        <div className="relative h-[75vh] w-full overflow-hidden p-4">
           <CornerFrame />
           {ex.acf.image_1 && (
-            <div className="absolute inset-0 flex items-end">
-              <Image
+            <div className="absolute inset-0">
+              <RevealImage
                 src={ex.acf.image_1.url}
                 alt={ex.title.rendered}
                 fill
                 sizes="50vw"
-                className="object-contain object-bottom-left"
+                revealIndex={index}
+                className="object-contain object-top"
               />
             </div>
           )}
+          {showInfo && (
+            <div className="absolute bottom-0 left-0 right-0 px-3">
+              <InfoBox exhibition={ex} />
+            </div>
+          )}
         </div>
-        {showInfo && <InfoBox exhibition={ex} />}
       </button>
     );
   }
@@ -205,7 +210,7 @@ export default function ExhibitionsPageClient() {
               transition={{ duration: 0.5 }}
               className="flex flex-col"
             >
-              {col1Items.map((ex) => <div key={ex.id}>{renderItem(ex)}</div>)}
+              {col1Items.map((ex, i) => <div key={ex.id}>{renderItem(ex, i * 2)}</div>)}
             </motion.div>
           )}
         </div>
@@ -226,7 +231,7 @@ export default function ExhibitionsPageClient() {
               transition={{ duration: 0.5, delay: 0.06 }}
               className="flex flex-col"
             >
-              {col2Items.map((ex) => <div key={ex.id}>{renderItem(ex)}</div>)}
+              {col2Items.map((ex, i) => <div key={ex.id}>{renderItem(ex, i * 2 + 1)}</div>)}
             </motion.div>
           )}
         </div>

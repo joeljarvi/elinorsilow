@@ -30,17 +30,19 @@ function StaggerRow({
 }) {
   return (
     <div
-      className={`flex gap-x-3 items-baseline transition-[opacity,transform] duration-150 ease-out ${
+      className={`flex flex-row gap-x-4 items-baseline transition-[opacity,transform] duration-150 ease-out ${
         revealed
           ? "opacity-100 translate-y-0"
           : "opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0"
       }`}
       style={{ transitionDelay: `${index * 40}ms` }}
     >
-      <span className="font-universNextPro font-medium text-[12px] text-muted-foreground shrink-0 w-[72px]">
+      <span className="font-timesNewRoman text-[16px] text-muted-foreground shrink-0">
         {label}
       </span>
-      <span className="font-bookish text-[12px] truncate">{value}</span>
+      <span className="font-timesNewRoman text-[16px] truncate lg:truncate-none">
+        {value}
+      </span>
     </div>
   );
 }
@@ -63,7 +65,7 @@ export default function InfoBox({
     ].filter((r) => r.value);
 
     return (
-      <div className="py-1.5 flex flex-col w-full">
+      <div className="py-1.5 flex flex-col w-full bg-background px-1.5">
         {rows.map((row, i) => (
           <StaggerRow
             key={row.label}

@@ -35,7 +35,7 @@ function NavItem({
 }
 
 const NAV_LINKS = [
-  { href: "/", label: "Works", match: (p: string) => p === "/" },
+  { href: "/", label: "Works", match: (p: string) => p === "/" || p.startsWith("/works") },
   {
     href: "/exhibitions",
     label: "Exhibitions",
@@ -50,7 +50,7 @@ const NAV_LINKS = [
 ];
 
 const PAGE_LOGO: { match: (p: string) => boolean; text: string }[] = [
-  { match: (p) => p === "/", text: "Works" },
+  { match: (p) => p === "/" || p.startsWith("/works"), text: "Works" },
   { match: (p) => p.startsWith("/exhibitions"), text: "Exhibitions" },
   { match: (p) => p.startsWith("/info"), text: "Information" },
   { match: (p) => p.startsWith("/contact"), text: "Contact" },
@@ -108,7 +108,7 @@ export default function DesktopNav() {
       element: (
         <NavItem href={item.href}>
           {item.match(pathname) ? (
-            <OGubbeText text={item.label} className="text-[18px]" />
+            <OGubbeText text={item.label} />
           ) : (
             item.label
           )}
@@ -144,7 +144,7 @@ export default function DesktopNav() {
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
         aria-label="Site navigation"
-        className="font-bookish no-hide-text pt-[32px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]
+        className="font-bookish no-hide-text pt-[32px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] text-foreground
           grid grid-cols-1 lg:grid-cols-4
           px-[18px] lg:px-0"
       >
@@ -160,7 +160,7 @@ export default function DesktopNav() {
                 transition={{ duration: 0.2 }}
               >
                 <OGubbeText
-                  className="text-[18px]"
+                  className="text-[24px] lg:text-[18px]"
                   text={visible ? getLogoText(pathname) : "Elinor Silow"}
                   loading={loading}
                 />

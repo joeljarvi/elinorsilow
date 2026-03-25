@@ -17,10 +17,14 @@ export function useCarouselAutoplay({
   );
 
   useEffect(() => {
-    if (!autoplay.current) return;
-
-    if (isPaused) autoplay.current.stop();
-    else autoplay.current.play();
+    const plugin = autoplay.current;
+    if (!plugin) return;
+    try {
+      if (isPaused) plugin.stop();
+      else plugin.play();
+    } catch {
+      // plugin not yet attached to an Embla instance — safe to ignore
+    }
   }, [isPaused]);
 
   return autoplay;

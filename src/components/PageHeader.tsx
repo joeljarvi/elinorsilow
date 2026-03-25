@@ -50,7 +50,7 @@ export function PageHeader({
         </span>
       </div>
       {controls && (
-        <div className="hidden lg:flex fixed bottom-0 left-1/2 -translate-x-1/2 z-50 items-center gap-x-4 px-[32px] py-[12px] bg-transparent drop-shadow-[var(--shadow-ui)]">
+        <div className="hidden lg:flex fixed bottom-0 left-1/2 -translate-x-1/2 z-50 items-center gap-x-4 px-[32px] py-[12px] bg-transparent ]">
           {controls}
         </div>
       )}

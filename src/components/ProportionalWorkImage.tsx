@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { RevealImage } from "./RevealImage";
 
 interface Props {
   src: string;
@@ -8,6 +8,7 @@ interface Props {
   dimensions: string;
   proportional?: boolean;
   className?: string;
+  revealIndex?: number;
 }
 
 /**
@@ -37,17 +38,19 @@ export default function ProportionalWorkImage({
   dimensions,
   proportional = true,
   className = "",
+  revealIndex = 0,
 }: Props) {
   const parsed = parseDimensions(dimensions);
 
   if (!proportional || !parsed) {
     return (
       <div className={`relative w-full h-full ${className}`}>
-        <Image
+        <RevealImage
           src={src}
           alt={alt}
           fill
-          className="object-contain object-center lg:object-left-top"
+          revealIndex={revealIndex}
+          className="object-contain object-top lg:object-left-top"
         />
       </div>
     );
@@ -66,10 +69,11 @@ export default function ProportionalWorkImage({
       }}
     >
       <div className="relative w-full h-full">
-        <Image
+        <RevealImage
           src={src}
           alt={alt}
           fill
+          revealIndex={revealIndex}
           className="object-contain object-top lg:object-left-top"
         />
       </div>

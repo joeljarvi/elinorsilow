@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import { RevealImage } from "@/components/RevealImage";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -20,8 +21,8 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
 } from "@radix-ui/react-icons";
-import InfoBox from "@/components/InfoBox";
 import CornerFrame from "@/components/CornerFrame";
+import { OGubbeText } from "@/components/OGubbeText";
 
 type Props = {
   slug: string;
@@ -37,8 +38,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
 
   const lightboxCarousel = useGalleryCarousel({
     enableKeyboard: lightboxIndex !== null,
@@ -57,8 +56,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       setExhibition(ex);
       setCurrentIndex(index);
       setLoading(false);
-      leftColRef.current?.scrollTo({ top: 0 });
-      rightColRef.current?.scrollTo({ top: 0 });
       window.history.replaceState(
         null,
         "",
@@ -117,6 +114,21 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goPrev, goNext, onClose, lightboxIndex]);
 
+  const [bgIndex, setBgIndex] = useState(0);
+  useEffect(() => {
+    if (!exhibition?.acf) return;
+    const count = [
+      exhibition.acf.image_1, exhibition.acf.image_2, exhibition.acf.image_3,
+      exhibition.acf.image_4, exhibition.acf.image_5, exhibition.acf.image_6,
+      exhibition.acf.image_7, exhibition.acf.image_8, exhibition.acf.image_9,
+      exhibition.acf.image_10,
+    ].filter(Boolean).length;
+    if (count <= 1) return;
+    setBgIndex(0);
+    const interval = setInterval(() => setBgIndex((i) => (i + 1) % count), 3000);
+    return () => clearInterval(interval);
+  }, [exhibition]);
+
   if (loading || !exhibition || !exhibition.acf) return <div />;
 
   const images = [
@@ -156,61 +168,101 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const hasNext =
     !!filteredExhibitions && currentIndex < filteredExhibitions.length - 1;
 
-  function ControlsHeader() {
-    return (
-      <div className="fixed top-0 left-0 z-[50] lg:relative lg:z-auto pt-4 bg-background w-full">
-        <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
-          <Button variant="link" size="controls" onClick={goPrev} disabled={!hasPrev} aria-label="Previous exhibition">
-            <ArrowLeftIcon />
-          </Button>
-          <Button variant="link" size="controls" onClick={goNext} disabled={!hasNext} aria-label="Next exhibition">
-            <ArrowRightIcon />
-          </Button>
-          <span className="flex-1 px-1 text-sm truncate text-muted-foreground font-universNextPro">
-            {exhibition.title.rendered}
-          </span>
-          <Button variant="link" size="controls" onClick={onClose ?? (() => router.push("/exhibitions"))} aria-label="Close" className="no-hide-text">
-            <Cross1Icon />
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const venue = [exhibition.acf.location, exhibition.acf.city]
+    .filter(Boolean)
+    .join(", ");
 
   return (
-    <>
-      {/* Desktop: two fixed scrolling columns */}
-      <div
-        {...swipeHandlers}
-        className="hidden lg:flex flex-col h-full bg-background"
-      >
-        {/* Shared header */}
-        <ControlsHeader />
+    <div {...swipeHandlers} className="flex flex-col bg-background">
 
-        {/* Columns */}
-        <div className="flex flex-1 min-h-0">
-          {/* Left: text */}
+      {/* Hero header */}
+      <div className="relative h-[80vh] w-full overflow-hidden shrink-0">
+        {/* Blurred crossfade background */}
+        {images.map((img, i) => (
           <div
-            ref={leftColRef}
-            className="flex-1 mt-4 min-h-0 overflow-y-auto border-r border-border flex flex-col"
+            key={img.id}
+            className={`absolute inset-0 transition-opacity duration-1000 ${i === bgIndex ? "opacity-100" : "opacity-0"}`}
           >
-            <InfoBox exhibition={exhibition} />
-            {exhibition.acf.description && (
-              <div className="px-4 py-6 indent-4 p">
-                {exhibition.acf.description}
-              </div>
-            )}
+            <Image
+              src={img.url}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover blur-xl"
+              priority={i === 0}
+            />
+          </div>
+        ))}
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-background/40" />
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent" />
+
+        {/* Close button */}
+        <button
+          onClick={onClose ?? (() => router.push("/exhibitions"))}
+          className="absolute top-4 right-4 z-10 p-2"
+          aria-label="Close"
+        >
+          <Cross1Icon />
+        </button>
+
+        {/* Exhibition info */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 lg:px-8 gap-y-2 text-center">
+          <OGubbeText text={exhibition.title.rendered} sizes="36px" className="font-universNextProExt font-extrabold leading-tight text-[18px] lg:text-[24px]" />
+          {venue && <OGubbeText text={venue} sizes="36px" className="font-universNextProExt font-extrabold flex-wrap justify-center text-[18px] lg:text-[24px]" />}
+          {exhibition.acf.exhibition_type && <OGubbeText text={`${exhibition.acf.exhibition_type} Exhibition`} sizes="36px" className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]" />}
+          {exhibition.acf.year && <OGubbeText text={String(exhibition.acf.year)} sizes="36px" className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]" />}
+        </div>
+      </div>
+
+      {/* Description */}
+      {exhibition.acf.description && (
+        <div className="mx-auto w-full max-w-3xl px-6 lg:px-8 pt-10 pb-4">
+          <p className="font-timesNewRoman text-[16px] indent-6 leading-relaxed">
+            {exhibition.acf.description}
+          </p>
+        </div>
+      )}
+
+      {/* Images — full-width two-column grid */}
+      {images.length > 0 && (
+        <div className="grid grid-cols-2 gap-4 px-4 lg:px-8 py-8">
+          {images.map((img, idx) => (
+            <button
+              key={img.id}
+              onClick={() => setLightboxIndex(idx)}
+              className="relative w-full overflow-hidden cursor-zoom-in block"
+              aria-label={`View image ${idx + 1}`}
+            >
+              <CornerFrame />
+              <RevealImage
+                src={img.url}
+                alt={img.alt || img.desc || `Image ${idx + 1}`}
+                width={800}
+                height={600}
+                sizes="50vw"
+                revealIndex={idx}
+                className="w-full h-auto object-top"
+                priority={idx === 0}
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Works + credits */}
+      {(works.length > 0 || exhibition.acf.credits) && (
+        <div className="mx-auto w-full max-w-3xl px-6 lg:px-8 pb-16">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 border-t border-border pt-8">
             {works.length > 0 && (
-              <div className="mx-4 mb-4 font-universNextPro flex flex-col">
-                <div className="px-3 py-1.5 text-sm text-muted-foreground">
-                  Featuring the works
-                </div>
+              <div className="flex-1 flex flex-col gap-y-1">
+                <p className="font-universNextPro text-[13px] text-muted-foreground mb-2">Featuring the works</p>
                 {works.map((work: any, index: number) => (
-                  <Button
+                  <button
                     key={index}
-                    variant="ghost"
-                    size="controls"
-                    className="justify-start w-full rounded-none"
+                    className="font-universNextPro text-[15px] text-left hover:underline underline-offset-2"
                     onClick={() => {
                       const s = normalizeSlug(work);
                       setActiveWorkSlug(s);
@@ -218,105 +270,21 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                     }}
                   >
                     {work}
-                  </Button>
+                  </button>
                 ))}
               </div>
             )}
             {exhibition.acf.credits && (
-              <div className="px-4 pb-8 font-timesNewRoman text-sm text-muted-foreground">
-                {exhibition.acf.credits}
+              <div className="flex-1">
+                <p className="font-universNextPro text-[13px] text-muted-foreground mb-2">Credits</p>
+                <p className="font-timesNewRoman text-[15px] text-muted-foreground leading-relaxed">
+                  {exhibition.acf.credits}
+                </p>
               </div>
             )}
           </div>
-
-          {/* Right: images */}
-          <div
-            ref={rightColRef}
-            className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-y-4"
-          >
-            {images.map((img, idx) => (
-              <button
-                key={img.id}
-                onClick={() => setLightboxIndex(idx)}
-                className="relative h-[75vh] w-full overflow-hidden p-4 pb-0 cursor-zoom-in shrink-0"
-                aria-label={`View image ${idx + 1}`}
-              >
-                <CornerFrame />
-                <div className="absolute inset-4 flex items-end">
-                  <Image
-                    src={img.url}
-                    alt={img.alt || img.desc || `Image ${idx + 1}`}
-                    fill
-                    sizes="50vw"
-                    className="object-top object-contain"
-                    priority={idx === 0}
-                  />
-                </div>
-              </button>
-            ))}
-          </div>
         </div>
-        {/* end columns */}
-      </div>
-
-      {/* Mobile: single column */}
-      <div
-        {...swipeHandlers}
-        className="lg:hidden flex flex-col bg-background pt-12"
-        id="modal-top"
-      >
-        <ControlsHeader />
-        {images.map((img, idx) => (
-          <button
-            key={img.id}
-            onClick={() => setLightboxIndex(idx)}
-            className="relative h-[50vh] w-full overflow-hidden p-4 pb-0 cursor-zoom-in"
-            aria-label={`View image ${idx + 1}`}
-          >
-            <CornerFrame />
-            <div className="absolute inset-4 flex items-end">
-              <Image
-                src={img.url}
-                alt={img.alt || img.desc || `Image ${idx + 1}`}
-                fill
-                sizes="100vw"
-                className="object-contain"
-                priority={idx === 0}
-              />
-            </div>
-          </button>
-        ))}
-        <InfoBox exhibition={exhibition} />
-        {exhibition.acf.description && (
-          <div className="px-4 py-6 p indent-6">
-            {exhibition.acf.description}
-          </div>
-        )}
-        {works.length > 0 && (
-          <div className="mx-4 mb-4 font-timesNewRoman flex flex-col border border-border [&>*+*]:border-t [&>*+*]:border-border">
-            {works.map((work: any, index: number) => (
-              <Button
-                key={index}
-                variant="ghost"
-                size="controls"
-                className="justify-start w-full rounded-none"
-                onClick={() => {
-                  const s = normalizeSlug(work);
-                  setActiveWorkSlug(s);
-                  window.history.pushState(null, "", `/works?work=${s}`);
-                }}
-              >
-                {work}
-              </Button>
-            ))}
-          </div>
-        )}
-        {exhibition.acf.credits && (
-          <div className="px-4 indent-6 pb-8 font-timesNewRoman text-sm text-muted-foreground">
-            {exhibition.acf.credits}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
@@ -327,7 +295,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                 {lightboxCarousel.index + 1} / {images.length}
               </span>
               <div className="flex-1" />
-              <Button variant="link" size="controls" onClick={() => setLightboxIndex(null)} aria-label="Close lightbox" className="no-hide-text">
+              <Button
+                variant="link"
+                size="controls"
+                onClick={() => setLightboxIndex(null)}
+                aria-label="Close lightbox"
+                className="no-hide-text"
+              >
                 <Cross1Icon />
               </Button>
             </div>
@@ -348,7 +322,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                       src={img.url}
                       alt={img.alt || img.desc || `Image ${idx + 1}`}
                       fill
-                      className="object-contain"
+                      className="object-contain object-top"
                     />
                   </div>
                   {img.desc && (
@@ -369,6 +343,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           onClose={() => setActiveWorkSlug(null)}
         />
       )}
-    </>
+    </div>
   );
 }
