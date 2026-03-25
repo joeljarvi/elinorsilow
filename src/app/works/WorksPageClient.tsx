@@ -310,12 +310,12 @@ export default function WorksPageClient() {
             {/* Category + count */}
             <p className="text-[14px] whitespace-nowrap ">
               <button
-                className="hidden font-universNextProExt font-extrabold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+                className=" font-universNextProExt font-extrabold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
                 onClick={cycleCategory}
               >
                 {CATEGORY_LABELS[currentCategory]}
               </button>{" "}
-              <span className="font-timesNewRomanWide font-bold ml-2">
+              <span className="hidden font-timesNewRomanWide font-bold ml-2">
                 ({loading ? "—" : works.length})
               </span>
             </p>

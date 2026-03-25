@@ -8,36 +8,13 @@ import { useUI } from "@/context/UIContext";
 import { Button } from "./ui/button";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { HideTextToggle } from "./HideTextToggle";
-import { WidthIcon } from "@radix-ui/react-icons";
 import NavSearch from "./NavSearch";
-import { useNav } from "@/context/NavContext";
-import { useInfo } from "@/context/InfoContext";
-import { useWorks } from "@/context/WorksContext";
-import { useExhibitions } from "@/context/ExhibitionsContext";
 import { OGubbeText } from "./OGubbeText";
-
-const rowClass =
-  "justify-start w-full px-6 py-4 font-bookish text-xl border-b border-foreground/[0.06] rounded-none h-auto";
 
 export default function MobileNavOverlay() {
   const pathname = usePathname();
   const { open, setOpen, proportionalImages, setProportionalImages } = useUI();
   const [openSearch, setOpenSearch] = useState(false);
-  const { viewLoading } = useNav();
-  const { infoLoading } = useInfo();
-  const { workLoading } = useWorks();
-  const { exLoading } = useExhibitions();
-  const [initialLoaded, setInitialLoaded] = useState(false);
-
-  useEffect(() => {
-    if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
-      setInitialLoaded(true);
-    }
-    const fallback = setTimeout(() => setInitialLoaded(true), 2000);
-    return () => clearTimeout(fallback);
-  }, [initialLoaded, workLoading, exLoading, infoLoading]);
-
-  const loading = !initialLoaded || viewLoading;
 
   useEffect(() => {
     setOpen(false);
@@ -50,35 +27,25 @@ export default function MobileNavOverlay() {
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className={` fixed inset-0 z-[90] bg-background overflow-y-auto h-screen flex flex-col items-start justify-center w-full`}
+            className={` fixed inset-0 z-[90] bg-background/10 backdrop-blur-3xl  overflow-y-auto h-screen flex flex-col items-start justify-center w-full`}
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
             <div className="pt-[18px] px-0 lg:p-8 relative z-10 w-full">
-              <Button
-                variant="link"
-                size="controls"
-                className="hidden "
-                asChild
-              >
-                <Link href="/">
-                  <OGubbeText text="Elinor Silow" loading={loading} />
-                </Link>
-              </Button>
               <NavSearch
                 open={openSearch}
                 onClose={() => setOpenSearch(false)}
               />
 
-              <nav className="grid grid-cols-2 items-start justify-start mt-8 w-full">
+              <nav className="flex flex-wrap items-center justify-center gap-4 mt-8 w-full">
                 {[
-                  { href: "/works", label: "Works" },
-                  { href: "/exhibitions", label: "Exhibitions" },
-                  { href: "/info", label: "Information" },
-                  { href: "/contact", label: "Contact" },
-                ].map(({ href, label }) => (
+                  { href: "/works", label: "Works", match: (p: string) => p === "/" || p.startsWith("/works") },
+                  { href: "/exhibitions", label: "Exhibitions", match: (p: string) => p.startsWith("/exhibitions") },
+                  { href: "/info", label: "Information", match: (p: string) => p.startsWith("/info") },
+                  { href: "/contact", label: "Contact", match: (p: string) => p.startsWith("/contact") },
+                ].map(({ href, label, match }) => (
                   <Button
                     key={href}
                     variant="link"
@@ -86,7 +53,11 @@ export default function MobileNavOverlay() {
                     size="controls"
                     asChild
                   >
-                    <Link href={href}>{label}</Link>
+                    <Link href={href}>
+                      {match(pathname)
+                        ? <OGubbeText text={label} o="/ogubbe_frilagd_new.png" />
+                        : label}
+                    </Link>
                   </Button>
                 ))}
                 <Button

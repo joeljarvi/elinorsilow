@@ -147,11 +147,10 @@ export default function DesktopNav() {
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
         aria-label="Site navigation"
-        className="font-bookish no-hide-text pt-[32px] pb-[18px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center px-[18px] lg:px-0 text-background"
+        className="font-bookish no-hide-text pt-[64px] lg:pt-[32px] pb-[18px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center px-[18px] lg:px-0 text-background"
       >
-        {/* Top row — logo + menu */}
-        <div className="flex items-center lg:w-full lg:px-[18px] lg:relative">
-          {/* Logo — left */}
+        {/* Top row — logo + menu, centered */}
+        <div className="flex items-center gap-x-4">
           <NavItem href="/">
             <AnimatePresence mode="wait">
               <motion.span
@@ -171,9 +170,8 @@ export default function DesktopNav() {
             </AnimatePresence>
           </NavItem>
 
-          {/* Menu — center on desktop */}
           <div
-            className="hidden lg:block lg:absolute lg:left-1/2 lg:-translate-x-1/2"
+            className="hidden lg:block"
             onMouseEnter={() => setMenuOpen(true)}
             onMouseLeave={() => setMenuOpen(false)}
           >
@@ -201,7 +199,11 @@ export default function DesktopNav() {
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.15, delay: index * 0.04, ease: "easeOut" }}
+                  transition={{
+                    duration: 0.15,
+                    delay: index * 0.04,
+                    ease: "easeOut",
+                  }}
                   className="flex items-center"
                 >
                   {element}

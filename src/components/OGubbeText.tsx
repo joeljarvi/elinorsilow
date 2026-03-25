@@ -46,7 +46,7 @@ function OGubbeChar({
 
   return (
     <motion.span
-      className="inline-block w-[2em] h-[2em] relative align-[-0.4em] shrink-0 cursor-default"
+      className="inline-block w-[1.5em] h-[1.5em] relative align-[-0.25em] shrink-0 cursor-default"
       onHoverStart={() => rotate && setHovered(true)}
       onHoverEnd={() => rotate && setHovered(false)}
       animate={
@@ -96,7 +96,7 @@ export function OGubbeText({
 
   return (
     <span
-      className={cn("inline-flex items-center  ", className)}
+      className={cn("inline-flex items-center font-universNextProExt font-extrabold", className)}
       style={{
         ...(fontSize ? { fontSize } : {}),
         ...(blend ? { mixBlendMode: "difference", color: "white" } : {}),
