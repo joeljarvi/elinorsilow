@@ -10,13 +10,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import InfoBox from "@/components/InfoBox";
 import CornerFrame from "@/components/CornerFrame";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 type ExCategory = "all" | "solo" | "group";
 type ExSort = "year-latest" | "year-oldest" | "title";
@@ -27,13 +20,69 @@ const CATEGORY_LABELS: Record<ExCategory, string> = { all: "all exhibitions", so
 const SORT_LABELS: Record<ExSort, string> = { "year-latest": "latest", "year-oldest": "oldest", title: "A–Z" };
 const CAT_TO_TYPE: Record<ExCategory, string | null> = { all: null, solo: "Solo", group: "Group" };
 
+function ExhibitionCard({
+  ex,
+  index,
+  onClick,
+}: {
+  ex: Exhibition;
+  index: number;
+  onClick: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+
+  return (
+    <div
+      className="group relative w-full flex flex-col mb-[32px]"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <button
+        onClick={onClick}
+        className="relative h-[75vh] w-full overflow-hidden p-4 cursor-pointer"
+        aria-label={`Show exhibition: ${ex.title.rendered}`}
+      >
+        <CornerFrame />
+        {ex.acf.image_1 && (
+          <div className="absolute inset-0">
+            <RevealImage
+              src={ex.acf.image_1.url}
+              alt={ex.title.rendered}
+              fill
+              sizes="50vw"
+              revealIndex={index}
+              className="object-contain object-top"
+            />
+          </div>
+        )}
+      </button>
+      <div
+        className={`overflow-hidden transition-[max-height] duration-300 ease-out px-3 ${
+          infoOpen ? "max-h-[120px]" : "max-h-0"
+        }`}
+      >
+        <InfoBox exhibition={ex} revealed={infoOpen} />
+      </div>
+      <div className="flex justify-center py-2">
+        <button
+          className={`font-timesNewRomanWide font-bold text-[14px] lg:text-[18px] text-foreground transition-opacity duration-300 pointer-events-auto ${hovered || infoOpen ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setInfoOpen((v) => !v)}
+        >
+          {infoOpen ? "(less)" : "(more info)"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ExhibitionsPageClient() {
   const [exCat, setExCat] = useState<ExCategory>("all");
   const [exSort, setExSort] = useState<ExSort>("year-latest");
-  const [showFilter, setShowFilter] = useState(false);
   const [asList, setAsList] = useState(false);
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [atExhibitions, setAtExhibitions] = useState(false);
 
   const { exhibitions, setActiveExhibitionSlug, activeExhibitionSlug, exLoading } = useExhibitions();
   const { setOpen, showInfo, setShowInfo, navVisible } = useUI();
@@ -48,6 +97,13 @@ export default function ExhibitionsPageClient() {
       return () => clearTimeout(t);
     }
   }, [dataLoaded]);
+
+  useEffect(() => {
+    const onScroll = () => setAtExhibitions(window.scrollY > 80);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const loading = !initialAnimDone || !dataLoaded;
 
@@ -80,125 +136,69 @@ export default function ExhibitionsPageClient() {
     window.history.pushState(null, "", `/exhibitions?exhibition=${ex.slug}`);
   }
 
-  function renderItem(ex: Exhibition, index = 0) {
-    return (
-      <button
-        key={ex.id}
-        onClick={() => openExhibition(ex)}
-        className="group relative cursor-pointer w-full flex flex-col mb-[32px]"
-        aria-label={`Show exhibition: ${ex.title.rendered}`}
-      >
-        <div className="relative h-[75vh] w-full overflow-hidden p-4">
-          <CornerFrame />
-          {ex.acf.image_1 && (
-            <div className="absolute inset-0">
-              <RevealImage
-                src={ex.acf.image_1.url}
-                alt={ex.title.rendered}
-                fill
-                sizes="50vw"
-                revealIndex={index}
-                className="object-contain object-top"
-              />
-            </div>
-          )}
-          {showInfo && (
-            <div className="absolute bottom-0 left-0 right-0 px-3">
-              <InfoBox exhibition={ex} />
-            </div>
-          )}
-        </div>
-      </button>
-    );
-  }
-
-  const categorySelect = (
-    <Select value={exCat} onValueChange={(v) => setExCat(v as ExCategory)}>
-      <SelectTrigger className="border-0 shadow-none bg-secondary text-neutral-600 dark:text-neutral-400 w-full">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">All</SelectItem>
-        <SelectItem value="solo">Solo</SelectItem>
-        <SelectItem value="group">Group</SelectItem>
-      </SelectContent>
-    </Select>
-  );
-
-  const sortSelect = (
-    <Select value={exSort} onValueChange={(v) => setExSort(v as ExSort)}>
-      <SelectTrigger className="border-0 shadow-none bg-secondary text-neutral-600 dark:text-neutral-400 w-full">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="year-latest">Newest First</SelectItem>
-        <SelectItem value="year-oldest">Oldest First</SelectItem>
-        <SelectItem value="title">Title A–Z</SelectItem>
-      </SelectContent>
-    </Select>
-  );
-
   return (
     <section
       className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
       style={{ paddingTop: navVisible ? "var(--nav-height, 0px)" : "0px" }}
     >
-      {/* Fixed page header */}
-      <div
-        className="fixed z-[70] w-full pointer-events-none flex flex-col items-center lg:grid lg:grid-cols-4 lg:items-start px-[18px] lg:px-0 pt-[18px] lg:pt-[12px] gap-y-0.5 lg:gap-y-0"
-        style={{ top: "var(--nav-height, 64px)" }}
-      >
-        {/* Col 1 — category + count */}
-        <p className="lg:pl-[33px] text-[16px] font-timesNewRoman">
-          <button
-            className="font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
-            onClick={cycleCategory}
+      {/* Page header — fixed bottom bar, same style as works page */}
+      <AnimatePresence>
+        {atExhibitions && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed z-[85] pointer-events-none flex flex-row flex-nowrap items-center gap-x-8 px-[18px] w-full justify-between top-0 lg:left-0 lg:bottom-0 lg:top-auto lg:justify-center lg:pb-[18px] mix-blend-difference text-background"
           >
-            {CATEGORY_LABELS[exCat]}
-          </button>{" "}
-          ({loading ? "—" : items.length})
-        </p>
-        {/* Col 3 — sort */}
-        <p className="lg:col-start-3 lg:pl-[15px] text-[16px] font-timesNewRoman">
-          Sorted by{" "}
-          <button
-            className="font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
-            onClick={cycleSort}
-          >
-            {SORT_LABELS[exSort]}
-          </button>
-        </p>
-      </div>
+            <p className="text-[14px] lg:text-[18px] whitespace-nowrap">
+              <button
+                className="hidden lg:block font-universNextProExt font-extrabold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+                onClick={cycleCategory}
+              >
+                {CATEGORY_LABELS[exCat]}
+              </button>{" "}
+              <span className="font-timesNewRomanWide font-bold lg:ml-2">
+                ({loading ? "—" : items.length})
+              </span>
+            </p>
 
-      {/* Mobile bottom controls */}
-      <div className="lg:hidden fixed bottom-0 left-0 z-20 flex items-center gap-x-8 px-[18px] py-[12px] bg-transparent">
-        <Button
-          variant="link"
-          size="controls"
-          className="px-0"
-          onClick={() => setAsList((v) => !v)}
-        >
-          {asList ? "Back to Thumbnails" : "List"}
-        </Button>
-      </div>
+            <p className="text-[14px] lg:text-[18px] whitespace-nowrap">
+              <span className="hidden lg:inline font-universNextProExt font-extrabold">
+                sorted by{" "}
+              </span>
+              <button
+                className="font-timesNewRomanWide font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto lg:ml-2"
+                onClick={cycleSort}
+              >
+                ({SORT_LABELS[exSort]})
+              </button>
+            </p>
 
-      {/* Desktop bottom controls */}
-      <div className="hidden lg:flex fixed bottom-0 left-1/2 -translate-x-1/2 z-50 items-center gap-x-4 px-[32px] py-[12px] bg-transparent drop-shadow-[var(--shadow-ui)]">
-        <Button variant="link" size="controls" onClick={() => setAsList((v) => !v)}>
-          {asList ? "Thumbnails" : "List"}
-        </Button>
-        <Button variant="link" onClick={() => setShowInfo(!showInfo)}>
-          {showInfo ? "Hide text" : "Show text"}
-        </Button>
-      </div>
+            <button
+              className="font-timesNewRomanWide font-bold text-[14px] lg:text-[18px] hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+              onClick={() => setAsList((v) => !v)}
+            >
+              {asList ? "(grid)" : "(list)"}
+            </button>
+
+            <button
+              className="font-timesNewRomanWide font-bold text-[14px] lg:text-[18px] hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+              onClick={() => setShowInfo(!showInfo)}
+            >
+              {showInfo ? "(hide text)" : "(show text)"}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Columns */}
-      <div className="relative grid grid-cols-1 lg:grid-cols-2 pt-[48px] lg:pt-[36px]">
+      <div className="relative grid grid-cols-1 lg:grid-cols-2 pt-[18px] lg:pt-[18px]">
         <div className="px-[18px] pt-[18px] lg:px-[32px] lg:pt-[32px]">
           {asList ? (
             <div className="flex flex-col">
               {col1Items.map((ex) => (
-                <Button key={ex.id} variant="ghost" size="controls" onClick={() => openExhibition(ex)} className="w-full rounded-none justify-start">
+                <Button key={ex.id} variant="ghost" size="controls" onClick={() => openExhibition(ex)} className="w-full rounded-none justify-center font-universNextProExt font-extrabold text-[14px] lg:text-[18px]">
                   {ex.title.rendered}
                 </Button>
               ))}
@@ -210,7 +210,9 @@ export default function ExhibitionsPageClient() {
               transition={{ duration: 0.5 }}
               className="flex flex-col"
             >
-              {col1Items.map((ex, i) => <div key={ex.id}>{renderItem(ex, i * 2)}</div>)}
+              {col1Items.map((ex, i) => (
+                <ExhibitionCard key={ex.id} ex={ex} index={i * 2} onClick={() => openExhibition(ex)} />
+              ))}
             </motion.div>
           )}
         </div>
@@ -219,7 +221,7 @@ export default function ExhibitionsPageClient() {
           {asList ? (
             <div className="flex flex-col">
               {col2Items.map((ex) => (
-                <Button key={ex.id} variant="ghost" size="controls" onClick={() => openExhibition(ex)} className="w-full rounded-none justify-start">
+                <Button key={ex.id} variant="ghost" size="controls" onClick={() => openExhibition(ex)} className="w-full rounded-none justify-center font-universNextProExt font-extrabold text-[14px] lg:text-[18px]">
                   {ex.title.rendered}
                 </Button>
               ))}
@@ -231,30 +233,13 @@ export default function ExhibitionsPageClient() {
               transition={{ duration: 0.5, delay: 0.06 }}
               className="flex flex-col"
             >
-              {col2Items.map((ex, i) => <div key={ex.id}>{renderItem(ex, i * 2 + 1)}</div>)}
+              {col2Items.map((ex, i) => (
+                <ExhibitionCard key={ex.id} ex={ex} index={i * 2 + 1} onClick={() => openExhibition(ex)} />
+              ))}
             </motion.div>
           )}
         </div>
       </div>
-
-      {/* Mobile filter slide-up */}
-      <AnimatePresence>
-        {showFilter && (
-          <>
-            <div className="lg:hidden fixed inset-0 z-[59]" onClick={() => setShowFilter(false)} />
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-              className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] p-4 bg-background border-t border-foreground/[0.06] flex flex-col gap-y-2"
-            >
-              {categorySelect}
-              {sortSelect}
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
       {activeExhibitionSlug && (
         <ExhibitionModal

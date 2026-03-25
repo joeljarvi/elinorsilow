@@ -26,22 +26,22 @@ export function PageHeader({
         <OGubbeText
           text={title}
           loading={loading}
-          className="block lg:hidden text-[18px] font-universNextProExt font-extrabold leading-none mb-[9px]"
+          className="block lg:hidden text-[18px] font-universNextProExt font-extrabold leading-none mb-[9px] font-timesNewRomanWide"
         />
         <span className="flex flex-col lg:flex-row items-start lg:items-center gap-x-4">
           {count !== undefined && (
-            <p className="text-[16px] font-timesNewRoman">
+            <p className="text-[14px] lg:text-[18px] font-timesNewRomanWide leading-relaxed">
               Now showing{" "}
               <span className="font-bold">({loading ? "—" : count})</span>{" "}
               {title.toLowerCase()}
             </p>
           )}
           {sortLabel && (
-            <p className="text-[16px] font-timesNewRoman">
+            <p className="text-[14px] lg:text-[18px] font-timesNewRomanWide leading-relaxed">
               sorted by{" "}
               <button
                 onClick={onSortClick}
-                className="font-bold hover:underline underline-offset-2 cursor-pointer"
+                className="font-timesNewRomanWide font-bold hover:underline underline-offset-2 cursor-pointer"
               >
                 ({sortLabel.toLowerCase()})
               </button>

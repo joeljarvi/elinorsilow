@@ -204,6 +204,12 @@ a {
     @apply font-bookish text-[13px] lg:text-[13px] text-muted-foreground leading-snug whitespace-normal;
   }
 }
+.font-timesNewRomanWide {
+  font-family: "Times New Roman", Times, serif;
+  display: inline-block;
+  transform: scaleX(1.5);
+  transform-origin: center center;
+}
 .text-trim {
   line-height: 1;
   vertical-align: middle;

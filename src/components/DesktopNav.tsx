@@ -35,7 +35,11 @@ function NavItem({
 }
 
 const NAV_LINKS = [
-  { href: "/", label: "Works", match: (p: string) => p === "/" || p.startsWith("/works") },
+  {
+    href: "/",
+    label: "Works",
+    match: (p: string) => p === "/" || p.startsWith("/works"),
+  },
   {
     href: "/exhibitions",
     label: "Exhibitions",
@@ -100,7 +104,6 @@ export default function DesktopNav() {
 
   const loading = !initialLoaded || viewLoading;
 
-
   const revealedItems = [
     ...NAV_LINKS.map((item, i) => ({
       key: item.href,
@@ -108,7 +111,7 @@ export default function DesktopNav() {
       element: (
         <NavItem href={item.href}>
           {item.match(pathname) ? (
-            <OGubbeText text={item.label} />
+            <OGubbeText text={item.label} o="/ogubbe_frilagd_new.png" blend />
           ) : (
             item.label
           )}
@@ -138,18 +141,17 @@ export default function DesktopNav() {
   return (
     <div
       id="main-nav"
-      className="z-[80] fixed top-0 left-0 w-full"
+      className="z-[80] fixed top-0 left-0 w-full mix-blend-difference text-background"
       onClick={() => setOpen(false)}
     >
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
         aria-label="Site navigation"
-        className="font-bookish no-hide-text pt-[32px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] text-foreground
-          grid grid-cols-1 lg:grid-cols-4
-          px-[18px] lg:px-0"
+        className="font-bookish no-hide-text pt-[32px] pb-[18px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center px-[18px] lg:px-0 text-background"
       >
-        {/* Col 1 — logo (always visible) */}
-        <div className="flex justify-center lg:justify-start lg:pl-[18px] items-center">
+        {/* Top row — logo + menu */}
+        <div className="flex items-center lg:w-full lg:px-[18px] lg:relative">
+          {/* Logo — left */}
           <NavItem href="/">
             <AnimatePresence mode="wait">
               <motion.span
@@ -163,52 +165,50 @@ export default function DesktopNav() {
                   className="text-[24px] lg:text-[18px]"
                   text={visible ? getLogoText(pathname) : "Elinor Silow"}
                   loading={loading}
+                  blend
                 />
               </motion.span>
             </AnimatePresence>
           </NavItem>
+
+          {/* Menu — center on desktop */}
+          <div
+            className="hidden lg:block lg:absolute lg:left-1/2 lg:-translate-x-1/2"
+            onMouseEnter={() => setMenuOpen(true)}
+            onMouseLeave={() => setMenuOpen(false)}
+          >
+            <Button variant="link" size="controls" style={{ color: "inherit" }}>
+              MENU
+            </Button>
+          </div>
         </div>
 
+        {/* Revealed nav items — below menu, centered, flex-wrap */}
         <AnimatePresence>
-          {visible && (<>
-
-            {/* Col 3 — Menu + stagger-reveal items (desktop only) */}
-            <div
-              className="hidden lg:flex items-start justify-start col-start-3"
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15 }}
+              className="flex flex-wrap justify-center items-center text-background [&_button]:text-background [&_a]:text-background"
               onMouseEnter={() => setMenuOpen(true)}
               onMouseLeave={() => setMenuOpen(false)}
             >
-              <Button variant="link" size="controls">
-                MENU
-              </Button>
-
-              <AnimatePresence>
-                {menuOpen &&
-                  revealedItems.map(({ key, index, element }) => (
-                    <motion.span
-                      key={key}
-                      initial={{ opacity: 0, x: -6 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -6 }}
-                      transition={{
-                        duration: 0.15,
-                        delay: index * 0.05,
-                        ease: "easeOut",
-                      }}
-                      className="flex items-center"
-                    >
-                      {element}
-                    </motion.span>
-                  ))}
-              </AnimatePresence>
-            </div>
-
-            {/* Col 3 — empty */}
-            <div className="hidden lg:block" />
-
-            {/* Col 4 — empty */}
-            <div className="hidden lg:block" />
-          </>)}
+              {revealedItems.map(({ key, index, element }) => (
+                <motion.span
+                  key={key}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15, delay: index * 0.04, ease: "easeOut" }}
+                  className="flex items-center"
+                >
+                  {element}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
         </AnimatePresence>
       </nav>
     </div>

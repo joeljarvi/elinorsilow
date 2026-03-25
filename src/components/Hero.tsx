@@ -1,27 +1,61 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useWorks } from "@/context/WorksContext";
 
 export default function Hero() {
+  const { allWorks } = useWorks();
+  const [bgIndex, setBgIndex] = useState(0);
+
+  const worksWithImages = allWorks.filter((w) => w.image_url).slice(0, 10);
+
+  useEffect(() => {
+    if (worksWithImages.length <= 1) return;
+    const interval = setInterval(
+      () => setBgIndex((i) => (i + 1) % worksWithImages.length),
+      3000,
+    );
+    return () => clearInterval(interval);
+  }, [worksWithImages.length]);
+
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-2 px-[32px] relative z-10 mb-[18px] items-center justify-center lg:h-screen">
-      <p className="p text-[18px] pl-[18px] pr-[32px] leading-snug lg:max-w-xl lg:px-0 no-hide-text font-timesNewRoman">
-        <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
-        Sweden) is a Stockholm-based artist working with painting, sculpture,
-        and textile. Her work explores raw emotion through material, gesture,
-        and form.
-        <span className="indent-6 block">
-          For further information, including CV and background, visit the info
-          page. For collaborations or inquiries:{" "}
-          <Link
-            href="mailto:hej@elinorsilow.com"
-            className="text-blue-600 hover:underline hover:underline-offset-4 hover:decoration-1"
-          >
-            hej@elinorsilow.com
-          </Link>
-          .
-        </span>
-      </p>
+    <div className="relative flex flex-col h-full min-h-screen lg:min-h-0 overflow-hidden">
+      {/* Blurred crossfade background */}
+      {worksWithImages.map((work, i) => (
+        <div
+          key={work.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === bgIndex ? "opacity-100" : "opacity-0"}`}
+        >
+          <Image
+            src={work.image_url!}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover blur-xl scale-110"
+            priority={i === 0}
+          />
+        </div>
+      ))}
+      <div className="absolute inset-0 bg-background/50" />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-[18px] lg:px-[32px] text-center gap-y-1">
+        <p className="text-[14px] lg:text-[18px] max-w-xl no-hide-text font-timesNewRoman">
+          <span className="font-medium">Elinor Silow</span> (b. 1993, Malmö,
+          Sweden) is a Stockholm-based artist working with painting, sculpture,
+          and textile. Her work explores raw emotion through material, gesture,
+          and form. For collaborations or inquiries:
+        </p>
+        <Link
+          href="mailto:elinor.silow@gmail.com"
+          className="text-blue-600 font-timesNewRomanWide font-bold"
+        >
+          (elinor.silow@gmail.com)
+        </Link>
+        .
+      </div>
     </div>
   );
 }

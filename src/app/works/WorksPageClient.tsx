@@ -107,7 +107,7 @@ function WorkCard({
             </div>
             <div className="flex justify-center py-2">
               <button
-                className={`font-timesNewRoman font-bold text-[16px] text-foreground transition-opacity duration-300 pointer-events-auto ${hovered || infoOpen ? "opacity-100" : "opacity-0"}`}
+                className={`font-timesNewRomanWide font-bold text-[14px] lg:text-[18px] text-foreground transition-opacity duration-300 pointer-events-auto ${hovered || infoOpen ? "opacity-100" : "opacity-0"}`}
                 onClick={() => setInfoOpen((v) => !v)}
               >
                 {infoOpen ? "(less)" : "(more info)"}
@@ -120,7 +120,7 @@ function WorkCard({
       {/* Custom cursor — desktop only */}
       {hovered && (
         <div
-          className="hidden lg:flex fixed pointer-events-none z-[100] font-timesNewRoman text-[16px] items-center"
+          className="hidden lg:flex fixed pointer-events-none z-[100] font-timesNewRomanWide text-[16px] items-center"
           style={{
             left: mousePos.x + 14,
             top: mousePos.y,
@@ -193,24 +193,30 @@ export default function WorksPageClient() {
     const el = pageHeaderRef.current;
     if (!el) return;
     const observer = new ResizeObserver(([entry]) => {
-      document.documentElement.style.setProperty("--page-header-height", `${entry.contentRect.height}px`);
+      document.documentElement.style.setProperty(
+        "--page-header-height",
+        `${entry.contentRect.height}px`,
+      );
     });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  // Enable snap scrolling on desktop only
+  // Enable snap scrolling on desktop only, disabled in list view
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
+    if (window.innerWidth >= 1024 && !asList) {
       document.documentElement.style.scrollSnapType = "y mandatory";
       document.documentElement.style.scrollPaddingTop =
         "var(--nav-height, 64px)";
+    } else {
+      document.documentElement.style.scrollSnapType = "";
+      document.documentElement.style.scrollPaddingTop = "";
     }
     return () => {
       document.documentElement.style.scrollSnapType = "";
       document.documentElement.style.scrollPaddingTop = "";
     };
-  }, []);
+  }, [asList]);
 
   const loading = !initialAnimDone || !dataLoaded;
 
@@ -285,7 +291,6 @@ export default function WorksPageClient() {
     window.history.pushState(null, "", `/works?work=${work.slug}`);
   }
 
-
   return (
     <section
       className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
@@ -300,30 +305,49 @@ export default function WorksPageClient() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             ref={pageHeaderRef}
-            className="fixed z-[70] pointer-events-none flex flex-row items-end gap-x-4 px-[18px] w-full justify-center top-[var(--nav-height,64px)] pt-[18px] lg:top-auto lg:bottom-0 lg:left-0 lg:justify-start lg:pt-0 lg:pb-[18px] lg:w-auto"
-
+            className="fixed z-[85] pointer-events-none flex flex-row flex-wrap lg:flex-nowrap items-center gap-x-8 gap-y-1 lg:gap-x-16 px-[18px] pt-[18px]  w-full justify-between top-0 lg:left-0  lg:bottom-0 lg:top-auto  lg:pt-0 lg:pb-[18px]  mix-blend-difference text-background"
           >
             {/* Category + count */}
-            <p className="text-[16px] font-timesNewRoman">
+            <p className="text-[14px] whitespace-nowrap ">
               <button
-                className="font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+                className="hidden font-universNextProExt font-extrabold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
                 onClick={cycleCategory}
               >
                 {CATEGORY_LABELS[currentCategory]}
               </button>{" "}
-              ({loading ? "—" : works.length})
+              <span className="font-timesNewRomanWide font-bold ml-2">
+                ({loading ? "—" : works.length})
+              </span>
             </p>
 
             {/* Sort */}
-            <p className="text-[16px] font-timesNewRoman">
-              Sorted by{" "}
+            <p className="text-[14px] whitespace-nowrap ">
+              <span className="hidden font-universNextProExt font-extrabold">
+                sorted by{" "}
+              </span>
               <button
-                className="font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
+                className="font-timesNewRomanWide font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto lg:ml-2"
                 onClick={cycleSort}
               >
                 ({SORT_LABELS[currentSort]})
               </button>
             </p>
+
+            {/* List toggle */}
+            <button
+              className="font-timesNewRomanWide font-bold text-[14px] hover:underline underline-offset-2 cursor-pointer pointer-events-auto lg:ml-2"
+              onClick={() => setAsList((v) => !v)}
+            >
+              {asList ? "(list)" : "(grid)"}
+            </button>
+
+            {/* Hide text toggle */}
+            <button
+              className="font-timesNewRomanWide font-bold text-[14px] hover:underline underline-offset-2 cursor-pointer pointer-events-auto ml-2"
+              onClick={() => setShowInfo(!showInfo)}
+            >
+              {showInfo ? "(show text)" : "(hide text)"}
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -333,20 +357,6 @@ export default function WorksPageClient() {
         <div className="flex-1 overflow-hidden">
           <Hero />
         </div>
-        <AnimatePresence>
-          {!atWorks && (
-            <motion.div
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="hidden lg:flex justify-start pb-6 animate-pulse px-[32px]"
-            >
-              <span className="font-timesNewRoman font-bold text-[18px] text-foreground">
-                (scroll down)
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Works grid */}
@@ -358,7 +368,13 @@ export default function WorksPageClient() {
         {asList ? (
           <div className="flex flex-col pt-4 px-[18px] lg:px-[32px]">
             {works.map((work) => (
-              <Button key={work.id} variant="ghost" size="controls" onClick={() => openWork(work)} className="w-full rounded-none justify-start">
+              <Button
+                key={work.id}
+                variant="ghost"
+                size="controls"
+                onClick={() => openWork(work)}
+                className="w-full rounded-none justify-center font-universNextProExt font-extrabold text-[14px] lg:text-[18px]"
+              >
                 {work.title.rendered}
               </Button>
             ))}
@@ -385,7 +401,6 @@ export default function WorksPageClient() {
           ))
         )}
       </motion.div>
-
 
       {activeWorkSlug && (
         <WorkModal

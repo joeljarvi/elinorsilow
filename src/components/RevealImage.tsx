@@ -15,10 +15,10 @@ export function RevealImage({
 }: RevealImageProps) {
   const [revealed, setRevealed] = useState(false);
   const randomDelay = useRef(Math.random() * 800);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = imgRef.current;
+    const el = wrapperRef.current;
     if (!el) return;
 
     const observer = new IntersectionObserver(
@@ -38,14 +38,15 @@ export function RevealImage({
   }, [revealIndex]);
 
   return (
-    <Image
-      ref={imgRef}
-      {...props}
+    <div
+      ref={wrapperRef}
       className={cn(
         "transition-[filter] duration-[1200ms] ease-in-out",
         revealed ? "blur-none" : "blur-md",
-        className
+        props.fill ? "absolute inset-0" : "relative"
       )}
-    />
+    >
+      <Image {...props} className={className} />
+    </div>
   );
 }

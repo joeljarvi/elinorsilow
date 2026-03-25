@@ -8,8 +8,8 @@ export function InfoRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-row items-baseline gap-x-3 py-1.5">
-      <span className="font-universNextPro font-medium text-[13px] text-muted-foreground shrink-0">
+    <div className="flex flex-row items-baseline gap-x-[32px] py-1.5">
+      <span className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground shrink-0">
         {label}
       </span>
       {children}
@@ -37,10 +37,10 @@ function StaggerRow({
       }`}
       style={{ transitionDelay: `${index * 40}ms` }}
     >
-      <span className="font-timesNewRoman text-[16px] text-muted-foreground shrink-0">
+      <span className="font-universNextProExt font-extrabold text-[12px] text-muted-foreground shrink-0">
         {label}
       </span>
-      <span className="font-timesNewRoman text-[16px] truncate lg:truncate-none">
+      <span className="font-timesNewRoman text-[16px] break-words min-w-0">
         {value}
       </span>
     </div>
@@ -65,7 +65,7 @@ export default function InfoBox({
     ].filter((r) => r.value);
 
     return (
-      <div className="py-1.5 flex flex-col w-full bg-background px-1.5">
+      <div className="py-1.5 flex flex-col w-full px-0 gap-y-0">
         {rows.map((row, i) => (
           <StaggerRow
             key={row.label}

@@ -5,10 +5,24 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
-function OGubbeChar({ loading, char, o = "/ogubbe_frilagd.png", sizes = "20px" }: { loading: boolean; char: string; o?: string; sizes?: string }) {
+function OGubbeChar({
+  loading,
+  char,
+  o = "/ogubbe_frilagd_new.png",
+  sizes = "20px",
+  rotate = true,
+}: {
+  loading: boolean;
+  char: string;
+  o?: string;
+  sizes?: string;
+  rotate?: boolean;
+}) {
   const [restAngle, setRestAngle] = useState(() => Math.random() * 360);
+  const [scrollAngle, setScrollAngle] = useState(0);
   const [hovered, setHovered] = useState(false);
   const prevLoading = useRef(loading);
+  const lastScrollY = useRef(typeof window !== "undefined" ? window.scrollY : 0);
 
   useEffect(() => {
     if (prevLoading.current && !loading) {
@@ -17,22 +31,35 @@ function OGubbeChar({ loading, char, o = "/ogubbe_frilagd.png", sizes = "20px" }
     prevLoading.current = loading;
   }, [loading]);
 
+  useEffect(() => {
+    if (!rotate) return;
+    const onScroll = () => {
+      const delta = window.scrollY - lastScrollY.current;
+      lastScrollY.current = window.scrollY;
+      setScrollAngle((prev) => prev + delta * 0.4);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [rotate]);
+
+  const angle = restAngle + scrollAngle + (hovered ? 180 : 0);
+
   return (
     <motion.span
       className="inline-block w-[2em] h-[2em] relative align-[-0.4em] shrink-0 cursor-default"
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
+      onHoverStart={() => rotate && setHovered(true)}
+      onHoverEnd={() => rotate && setHovered(false)}
       animate={
-        loading
-          ? { rotate: restAngle + 360 }
-          : hovered
-            ? { rotate: restAngle + 180 }
-            : { rotate: restAngle }
+        !rotate
+          ? { rotate: 0 }
+          : loading
+            ? { rotate: angle + 360 }
+            : { rotate: angle }
       }
       transition={
-        loading
+        rotate && loading
           ? { rotate: { repeat: Infinity, duration: 1.6, ease: "linear" } }
-          : { duration: 0.4, ease: "easeOut" }
+          : { duration: 0.15, ease: "easeOut" }
       }
     >
       <Image
@@ -40,7 +67,7 @@ function OGubbeChar({ loading, char, o = "/ogubbe_frilagd.png", sizes = "20px" }
         alt={char}
         fill
         sizes={sizes}
-        className="object-contain dark:invert"
+        className="object-contain invert"
       />
     </motion.span>
   );
@@ -53,6 +80,7 @@ interface OGubbeTextProps {
   fontSize?: string;
   o?: string;
   sizes?: string;
+  blend?: boolean;
 }
 
 export function OGubbeText({
@@ -62,14 +90,30 @@ export function OGubbeText({
   fontSize,
   o,
   sizes,
+  blend = false,
 }: OGubbeTextProps) {
   const segments = text.split(/(o|O)/g);
 
   return (
-    <span className={cn("inline-flex items-center", className)} style={fontSize ? { fontSize } : undefined}>
+    <span
+      className={cn("inline-flex items-center  ", className)}
+      style={{
+        ...(fontSize ? { fontSize } : {}),
+        ...(blend ? { mixBlendMode: "difference", color: "white" } : {}),
+      }}
+    >
       {segments.map((seg, i) => {
         if (seg === "o" || seg === "O") {
-          return <OGubbeChar key={i} loading={loading} char={seg} o={o} sizes={sizes} />;
+          return (
+            <OGubbeChar
+              key={i}
+              loading={loading}
+              char={seg}
+              o={o}
+              sizes={sizes}
+              rotate={true}
+            />
+          );
         }
         return <span key={i}>{seg}</span>;
       })}

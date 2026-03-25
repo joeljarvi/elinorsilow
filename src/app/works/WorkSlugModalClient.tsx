@@ -5,6 +5,7 @@ import { Work, getWorkBySlug } from "../../../lib/sanity";
 import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
+import InfoBox from "@/components/InfoBox";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -23,6 +24,7 @@ export default function WorkSlugModalClient({
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const loadWorkByIndex = useCallback(
     (index: number) => {
@@ -87,21 +89,43 @@ export default function WorkSlugModalClient({
   if (!work) return null;
 
   return (
-    // Outer container handles swipe; clicks pass through to backdrop
     <div
       {...swipeHandlers}
-      className="w-screen h-screen flex items-center justify-center p-[18px]"
+      className="w-screen h-screen flex flex-col lg:flex-row p-[18px] gap-x-4"
     >
-      <div className="relative w-full h-full">
-        {work.image_url && (
-          <Image
-            src={work.image_url}
-            alt={work.title.rendered}
-            fill
-            className="object-contain"
-            priority
-          />
-        )}
+      {/* Info panel — slides down from above on mobile, slides in from left on desktop */}
+      <div
+        className={`shrink-0 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col justify-start lg:justify-center pointer-events-auto w-full lg:w-auto ${infoOpen ? "max-h-[50vh] lg:max-h-screen lg:w-1/2" : "max-h-0 lg:max-h-screen lg:w-0"}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <InfoBox work={work} revealed={infoOpen} />
+      </div>
+
+      {/* Image + button */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="relative flex-1">
+          {work.image_url && (
+            <Image
+              src={work.image_url}
+              alt={work.title.rendered}
+              fill
+              className="object-contain"
+              priority
+            />
+          )}
+        </div>
+        <div
+          className="flex justify-center py-2 mt-[18px] pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="font-timesNewRomanWide font-bold text-[14px] lg:text-[18px]"
+            style={{ mixBlendMode: "difference", color: "white" }}
+            onClick={() => setInfoOpen((v) => !v)}
+          >
+            {infoOpen ? "(less)" : "(more info)"}
+          </button>
+        </div>
       </div>
     </div>
   );

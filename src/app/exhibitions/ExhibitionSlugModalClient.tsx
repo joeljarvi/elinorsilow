@@ -202,14 +202,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         {/* Close button */}
         <button
           onClick={onClose ?? (() => router.push("/exhibitions"))}
-          className="absolute top-4 right-4 z-10 p-2"
+          className="absolute top-4 right-4 z-20 p-2"
           aria-label="Close"
         >
           <Cross1Icon />
         </button>
 
         {/* Exhibition info */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 lg:px-8 gap-y-2 text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 lg:px-8 gap-y-2 text-center mix-blend-difference text-background [&_img]:invert">
           <OGubbeText text={exhibition.title.rendered} sizes="36px" className="font-universNextProExt font-extrabold leading-tight text-[18px] lg:text-[24px]" />
           {venue && <OGubbeText text={venue} sizes="36px" className="font-universNextProExt font-extrabold flex-wrap justify-center text-[18px] lg:text-[24px]" />}
           {exhibition.acf.exhibition_type && <OGubbeText text={`${exhibition.acf.exhibition_type} Exhibition`} sizes="36px" className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]" />}
@@ -258,11 +258,11 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 border-t border-border pt-8">
             {works.length > 0 && (
               <div className="flex-1 flex flex-col gap-y-1">
-                <p className="font-universNextPro text-[13px] text-muted-foreground mb-2">Featuring the works</p>
+                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">Featuring the works</p>
                 {works.map((work: any, index: number) => (
                   <button
                     key={index}
-                    className="font-universNextPro text-[15px] text-left hover:underline underline-offset-2"
+                    className="font-timesNewRoman text-[15px] text-left hover:underline underline-offset-2"
                     onClick={() => {
                       const s = normalizeSlug(work);
                       setActiveWorkSlug(s);
@@ -276,7 +276,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             )}
             {exhibition.acf.credits && (
               <div className="flex-1">
-                <p className="font-universNextPro text-[13px] text-muted-foreground mb-2">Credits</p>
+                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">Credits</p>
                 <p className="font-timesNewRoman text-[15px] text-muted-foreground leading-relaxed">
                   {exhibition.acf.credits}
                 </p>
@@ -315,7 +315,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="pl-0 flex flex-col items-center justify-center p-4 h-screen"
+                  className="pl-0 flex flex-col items-center justify-center py-[32px] px-4 h-screen"
                 >
                   <div className="relative w-full h-full">
                     <Image
