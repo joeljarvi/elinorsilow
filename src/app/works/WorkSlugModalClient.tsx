@@ -6,6 +6,7 @@ import { useWorks } from "@/context/WorksContext";
 import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
 import InfoBox from "@/components/InfoBox";
+import { Button } from "@/components/ui/button";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -92,39 +93,42 @@ export default function WorkSlugModalClient({
     <div
       {...swipeHandlers}
       className="w-screen h-screen flex flex-col lg:flex-row p-[18px] gap-x-4"
+      onClick={onClose}
     >
       {/* Info panel — slides down from above on mobile, slides in from left on desktop */}
       <div
-        className={`shrink-0 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col justify-start lg:justify-center pointer-events-auto w-full lg:w-auto ${infoOpen ? "max-h-[50vh] lg:max-h-screen lg:w-1/2" : "max-h-0 lg:max-h-screen lg:w-0"}`}
+        className={`shrink-0 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col justify-start lg:justify-center w-full lg:w-1/2 ${infoOpen ? "max-h-[50vh] lg:max-h-screen pointer-events-auto mb-[18px]" : "max-h-0 "}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <InfoBox work={work} revealed={infoOpen} />
+        <InfoBox work={work} />
       </div>
 
       {/* Image + button */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 " onClick={onClose}>
         <div className="relative flex-1">
           {work.image_url && (
             <Image
               src={work.image_url}
               alt={work.title.rendered}
               fill
-              className="object-contain"
+              className="object-contain object-center pointer-events-auto"
               priority
             />
           )}
         </div>
         <div
-          className="flex justify-center py-2 mt-[18px] pointer-events-auto"
+          className="lg:hidden flex justify-center py-2 mt-[18px] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          <button
-            className="font-timesNewRomanWide font-bold text-[14px] lg:text-[18px]"
+          <Button
+            variant="stretch"
+            size="controls"
+            className="lg:hidden "
             style={{ mixBlendMode: "difference", color: "white" }}
             onClick={() => setInfoOpen((v) => !v)}
           >
-            {infoOpen ? "(less)" : "(more info)"}
-          </button>
+            {infoOpen ? "(hide)" : "(show info)"}
+          </Button>
         </div>
       </div>
     </div>

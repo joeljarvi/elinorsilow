@@ -118,14 +118,23 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   useEffect(() => {
     if (!exhibition?.acf) return;
     const count = [
-      exhibition.acf.image_1, exhibition.acf.image_2, exhibition.acf.image_3,
-      exhibition.acf.image_4, exhibition.acf.image_5, exhibition.acf.image_6,
-      exhibition.acf.image_7, exhibition.acf.image_8, exhibition.acf.image_9,
+      exhibition.acf.image_1,
+      exhibition.acf.image_2,
+      exhibition.acf.image_3,
+      exhibition.acf.image_4,
+      exhibition.acf.image_5,
+      exhibition.acf.image_6,
+      exhibition.acf.image_7,
+      exhibition.acf.image_8,
+      exhibition.acf.image_9,
       exhibition.acf.image_10,
     ].filter(Boolean).length;
     if (count <= 1) return;
     setBgIndex(0);
-    const interval = setInterval(() => setBgIndex((i) => (i + 1) % count), 3000);
+    const interval = setInterval(
+      () => setBgIndex((i) => (i + 1) % count),
+      3000,
+    );
     return () => clearInterval(interval);
   }, [exhibition]);
 
@@ -174,7 +183,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
   return (
     <div {...swipeHandlers} className="flex flex-col bg-background">
-
       {/* Hero header */}
       <div className="relative h-[80vh] w-full overflow-hidden shrink-0">
         {/* Blurred crossfade background */}
@@ -210,10 +218,32 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
         {/* Exhibition info */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 lg:px-8 gap-y-2 text-center mix-blend-difference text-background [&_img]:invert">
-          <OGubbeText text={exhibition.title.rendered} sizes="36px" className="font-universNextProExt font-extrabold leading-tight text-[18px] lg:text-[24px]" />
-          {venue && <OGubbeText text={venue} sizes="36px" className="font-universNextProExt font-extrabold flex-wrap justify-center text-[18px] lg:text-[24px]" />}
-          {exhibition.acf.exhibition_type && <OGubbeText text={`${exhibition.acf.exhibition_type} Exhibition`} sizes="36px" className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]" />}
-          {exhibition.acf.year && <OGubbeText text={String(exhibition.acf.year)} sizes="36px" className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]" />}
+          <OGubbeText
+            text={exhibition.title.rendered}
+            sizes="36px"
+            className="font-universNextProExt font-extrabold leading-tight text-[18px] lg:text-[24px]"
+          />
+          {venue && (
+            <OGubbeText
+              text={venue}
+              sizes="36px"
+              className="font-universNextProExt font-extrabold flex-wrap justify-center text-[18px] lg:text-[24px]"
+            />
+          )}
+          {exhibition.acf.exhibition_type && (
+            <OGubbeText
+              text={`${exhibition.acf.exhibition_type} Exhibition`}
+              sizes="36px"
+              className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]"
+            />
+          )}
+          {exhibition.acf.year && (
+            <OGubbeText
+              text={String(exhibition.acf.year)}
+              sizes="36px"
+              className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]"
+            />
+          )}
         </div>
       </div>
 
@@ -228,7 +258,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Images — full-width two-column grid */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 px-4 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 lg:px-8 py-8">
           {images.map((img, idx) => (
             <button
               key={img.id}
@@ -258,7 +288,9 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 border-t border-border pt-8">
             {works.length > 0 && (
               <div className="flex-1 flex flex-col gap-y-1">
-                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">Featuring the works</p>
+                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">
+                  Featuring the works
+                </p>
                 {works.map((work: any, index: number) => (
                   <button
                     key={index}
@@ -276,7 +308,9 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             )}
             {exhibition.acf.credits && (
               <div className="flex-1">
-                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">Credits</p>
+                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">
+                  Credits
+                </p>
                 <p className="font-timesNewRoman text-[15px] text-muted-foreground leading-relaxed">
                   {exhibition.acf.credits}
                 </p>

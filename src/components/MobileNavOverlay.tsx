@@ -16,6 +16,33 @@ export default function MobileNavOverlay() {
   const { open, setOpen, proportionalImages, setProportionalImages } = useUI();
   const [openSearch, setOpenSearch] = useState(false);
 
+  const NAV_LINKS = [
+    {
+      href: "/",
+      label: "works",
+      description: "Paintings, drawings, sculpture, and textile.",
+      match: (p: string) => p === "/" || p.startsWith("/works"),
+    },
+    {
+      href: "/exhibitions",
+      label: "exhibitions",
+      description: "Solo and group exhibitions, 2015–present.",
+      match: (p: string) => p.startsWith("/exhibitions"),
+    },
+    {
+      href: "/info",
+      label: "info",
+      description: "Biography, education, and grants.",
+      match: (p: string) => p.startsWith("/info"),
+    },
+    {
+      href: "/contact",
+      label: "contact",
+      description: "For collaborations and inquiries.",
+      match: (p: string) => p.startsWith("/contact"),
+    },
+  ];
+
   useEffect(() => {
     setOpen(false);
   }, [pathname, setOpen]);
@@ -27,58 +54,37 @@ export default function MobileNavOverlay() {
         {open && (
           <motion.div
             key="mobile-nav-overlay"
-            className={` fixed inset-0 z-[90] bg-background/10 backdrop-blur-3xl  overflow-y-auto h-screen flex flex-col items-start justify-center w-full`}
+            className={` fixed inset-0 z-[70] bg-background/10 backdrop-blur-3xl  overflow-y-auto h-screen flex flex-col items-center justify-center w-full`}
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <div className="pt-[18px] px-0 lg:p-8 relative z-10 w-full">
-              <NavSearch
-                open={openSearch}
-                onClose={() => setOpenSearch(false)}
-              />
-
-              <nav className="flex flex-wrap items-center justify-center gap-4 mt-8 w-full">
-                {[
-                  { href: "/works", label: "Works", match: (p: string) => p === "/" || p.startsWith("/works") },
-                  { href: "/exhibitions", label: "Exhibitions", match: (p: string) => p.startsWith("/exhibitions") },
-                  { href: "/info", label: "Information", match: (p: string) => p.startsWith("/info") },
-                  { href: "/contact", label: "Contact", match: (p: string) => p.startsWith("/contact") },
-                ].map(({ href, label, match }) => (
+            <div className="flex flex-col justify-center items-center gap-6 w-full px-[18px]">
+              {NAV_LINKS.map(({ href, label, description }) => (
+                <div key={href} className="flex flex-col gap-0">
                   <Button
-                    key={href}
-                    variant="link"
-                    className="justify-start"
+                    variant="stretch"
                     size="controls"
                     asChild
+                    className=" text-[32px] lg:text-[15px] w-min px-0"
                   >
-                    <Link href={href}>
-                      {match(pathname)
-                        ? <OGubbeText text={label} o="/ogubbe_frilagd_new.png" />
-                        : label}
-                    </Link>
+                    <Link href={href}>{label}</Link>
                   </Button>
-                ))}
-                <Button
-                  variant="link"
-                  className="justify-start"
-                  size="controls"
-                  onClick={() => setOpenSearch(true)}
-                >
-                  Search
-                </Button>
-                <DarkModeToggle className="justify-start" />
-                <HideTextToggle className="justify-start" size="controls" />
-                <Button
-                  variant="link"
-                  size="controls"
-                  className="justify-start"
-                  onClick={() => setProportionalImages(!proportionalImages)}
-                >
-                  {proportionalImages ? "Full width" : "Proportional"}
-                </Button>
-              </nav>
+                </div>
+              ))}
+              <DarkModeToggle
+                className="text-[32px] lg:text-[15px] w-min px-0"
+                size="controls"
+              />
+              <Button
+                onClick={() => setOpenSearch(true)}
+                variant="link"
+                size="controls"
+                className="text-[32px] lg:text-[15px] w-min px-0"
+              >
+                (search)
+              </Button>
             </div>
           </motion.div>
         )}

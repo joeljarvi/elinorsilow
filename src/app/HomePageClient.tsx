@@ -127,7 +127,6 @@ type RightSection =
 export default function HomePageClient() {
   const {
     setOpen,
-    navVisible,
     showInfo,
     setShowInfo,
     proportionalImages,
@@ -157,8 +156,7 @@ export default function HomePageClient() {
 
       {/* Desktop: 2 fixed scrolling columns */}
       <div
-        className="hidden lg:flex fixed left-0 right-0 bottom-0 flex-col transition-[top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-        style={{ top: navVisible ? "var(--nav-height, 0px)" : "0px" }}
+        className="hidden lg:flex fixed top-0 left-0 right-0 bottom-0 flex-col"
       >
         {/* SubNavbar */}
         <div className="flex-none flex items-center bg-background border-b border-foreground/[0.06] shadow-[var(--shadow-ui)]">

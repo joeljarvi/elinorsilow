@@ -53,7 +53,7 @@ const UIContext = createContext<UIContextValue | undefined>(undefined);
 export function UIProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true);
   const [openDesktopNav, setOpenDesktopNav] = useState(true);
-  const [navVisible, setNavVisible] = useState(true);
+  const [navVisible, setNavVisible] = useState(false);
 
   const [showWorksMenu, setShowWorksMenu] = useState(false);
   const [showExhibitionsMenu, setShowExhibitionsMenu] = useState(false);

@@ -29,7 +29,6 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          onClick={handleClose}
           onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
           onMouseEnter={() => setCursorVisible(true)}
           onMouseLeave={() => setCursorVisible(false)}
@@ -48,8 +47,12 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
           {/* Custom cursor */}
           {cursorVisible && (
             <div
-              className="hidden lg:block fixed pointer-events-none z-[100] font-universNextPro text-[11px] tracking-wide"
-              style={{ left: mousePos.x + 14, top: mousePos.y, transform: "translateY(-50%)" }}
+              className="hidden lg:block fixed pointer-events-none z-[100] font-universNextProExt font-extrabold text-[11px] tracking-wide"
+              style={{
+                left: mousePos.x + 14,
+                top: mousePos.y,
+                transform: "translateY(-50%)",
+              }}
             >
               Close window
             </div>

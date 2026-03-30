@@ -44,13 +44,13 @@ export default function ProportionalWorkImage({
 
   if (!proportional || !parsed) {
     return (
-      <div className={`relative w-full h-full ${className}`}>
+      <div className={`relative w-full aspect-[4/3] ${className}`}>
         <RevealImage
           src={src}
           alt={alt}
           fill
           revealIndex={revealIndex}
-          className="object-contain object-top lg:object-left-top"
+          className="object-contain object-center"
         />
       </div>
     );
@@ -74,7 +74,7 @@ export default function ProportionalWorkImage({
           alt={alt}
           fill
           revealIndex={revealIndex}
-          className="object-contain object-top lg:object-left-top"
+          className="object-contain object-left-top"
         />
       </div>
     </div>

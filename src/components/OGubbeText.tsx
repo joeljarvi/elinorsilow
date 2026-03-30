@@ -67,7 +67,7 @@ function OGubbeChar({
         alt={char}
         fill
         sizes={sizes}
-        className="object-contain invert"
+        className="object-contain"
       />
     </motion.span>
   );
@@ -81,6 +81,7 @@ interface OGubbeTextProps {
   o?: string;
   sizes?: string;
   blend?: boolean;
+  vertical?: boolean;
 }
 
 export function OGubbeText({
@@ -91,16 +92,45 @@ export function OGubbeText({
   o,
   sizes,
   blend = false,
+  vertical = false,
 }: OGubbeTextProps) {
   const segments = text.split(/(o|O)/g);
+
+  const style = {
+    ...(fontSize ? { fontSize } : {}),
+    ...(blend ? { mixBlendMode: "difference" as const, color: "white" } : {}),
+  };
+
+  if (vertical) {
+    const chars = segments.flatMap((seg, i) => {
+      if (seg === "o" || seg === "O") {
+        return [{ isO: true, char: seg, key: `${i}` }];
+      }
+      return seg.split("").map((c, j) => ({ isO: false, char: c, key: `${i}-${j}` }));
+    });
+
+    return (
+      <span
+        className={cn("inline-flex flex-col items-center font-universNextProExt font-extrabold", className)}
+        style={style}
+      >
+        {chars.map(({ isO, char, key }) =>
+          isO ? (
+            <OGubbeChar key={key} loading={loading} char={char} o={o} sizes={sizes} rotate={true} />
+          ) : char === " " ? (
+            <span key={key} className="block h-[0.6em]" />
+          ) : (
+            <span key={key} className="leading-none block text-center">{char}</span>
+          )
+        )}
+      </span>
+    );
+  }
 
   return (
     <span
       className={cn("inline-flex items-center font-universNextProExt font-extrabold", className)}
-      style={{
-        ...(fontSize ? { fontSize } : {}),
-        ...(blend ? { mixBlendMode: "difference", color: "white" } : {}),
-      }}
+      style={style}
     >
       {segments.map((seg, i) => {
         if (seg === "o" || seg === "O") {

@@ -64,16 +64,16 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
+          className="fixed inset-0 z-[100] bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
         >
-          <div className="flex items-center shadow-[var(--shadow-nav)] [&>*+*]:border-l [&>*+*]:border-foreground/8">
+          <div className=" px-[18px] flex items-center ">
             <MagnifyingGlassIcon className="mx-2 text-muted-foreground shrink-0" />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-sm font-bookish py-1.5 px-2"
+              className="flex-1 outline-none bg-transparent text-[32px]  font-timesNewRoman py-[18px] px-2"
             />
             <Button
               variant="ghost"
@@ -90,13 +90,15 @@ export default function NavSearch({
               {results.slice(0, 8).map((item) => (
                 <button
                   key={item.id}
-                  className="flex flex-row items-baseline font-bookish border-b border-foreground/[0.06] w-full text-left hover:bg-foreground/10 transition-colors"
+                  className="flex flex-row items-baseline font-bookish  w-full text-left hover:bg-foreground/10 transition-colors"
                   onClick={() => handleResultClick(item)}
                 >
-                  <span className="h3 text-muted-foreground whitespace-nowrap py-1.5 px-2 border-r border-foreground/[0.06]">
+                  <span className=" text-muted-foreground font-timesNewRoman whitespace-nowrap py-[18px] px-[18px] ">
                     {item.type === "work" ? "Work" : "Exhibition"}
                   </span>
-                  <span className="h3 py-1.5 px-3">{item.title}</span>
+                  <span className=" font-universNextProExt font-extrabold  py-[18px] px-[18px]">
+                    {item.title}
+                  </span>
                 </button>
               ))}
             </div>

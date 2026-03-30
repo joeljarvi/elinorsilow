@@ -2,6 +2,7 @@
 
 import Image, { ImageProps } from "next/image";
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface RevealImageProps extends ImageProps {
@@ -14,7 +15,7 @@ export function RevealImage({
   ...props
 }: RevealImageProps) {
   const [revealed, setRevealed] = useState(false);
-  const randomDelay = useRef(Math.random() * 800);
+  const randomDelay = useRef(Math.random() * 600);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export function RevealImage({
           observer.disconnect();
         }
       },
-      { threshold: 0.05 }
+      { threshold: 0.05 },
     );
 
     observer.observe(el);
@@ -40,13 +41,16 @@ export function RevealImage({
   return (
     <div
       ref={wrapperRef}
-      className={cn(
-        "transition-[filter] duration-[1200ms] ease-in-out",
-        revealed ? "blur-none" : "blur-md",
-        props.fill ? "absolute inset-0" : "relative"
-      )}
+      className={cn(props.fill ? "absolute inset-0" : "relative")}
     >
-      <Image {...props} className={className} />
+      <motion.div
+        animate={revealed ? { scaleY: 1 } : { scaleY: 0 }}
+        transition={{ duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
+        style={{ originY: 0 }}
+        className={props.fill ? "absolute inset-0" : "relative w-full h-full"}
+      >
+        <Image {...props} className={className} />
+      </motion.div>
     </div>
   );
 }

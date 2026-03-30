@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import { InfoRow } from "@/components/InfoBox";
+import PagePaddingSync from "./PagePaddingSync";
 
 function groupByYear<T extends { acf: { year: number | string } }>(
   items: T[],
@@ -23,20 +24,22 @@ function groupByYear<T extends { acf: { year: number | string } }>(
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center px-[18px] lg:px-[32px] py-[9px]">
-      <span className="font-timesNewRoman italic text-[14px] text-muted-foreground">{children}</span>
+    <div className="flex items-center px-[18px] lg:pl-[64px] lg:pr-[32px] py-[9px]">
+      <span className="font-timesNewRoman italic text-[14px] text-muted-foreground">
+        {children}
+      </span>
     </div>
   );
 }
 
 export default function InfoPageClient() {
   const { educations, grants, soloExhibitions, groupExhibitions } = useInfo();
-  const { setOpen, navVisible } = useUI();
+  const { setOpen } = useUI();
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
   function ExhibitionList({ items }: { items: typeof soloExhibitions }) {
     return (
-      <div className="flex flex-col px-[18px] lg:px-[32px] mb-4">
+      <div className="flex flex-col px-[18px] lg:pl-[64px] lg:pr-[32px] mb-4">
         {groupByYear(items).map(([year, exs]) => (
           <div key={year}>
             <div className="flex flex-row items-baseline mt-2">
@@ -64,7 +67,9 @@ export default function InfoPageClient() {
                       {ex.title.rendered},
                     </Button>
                   ) : (
-                    <span className="font-timesNewRoman text-[16px]">{ex.title.rendered},</span>
+                    <span className="font-timesNewRoman text-[16px]">
+                      {ex.title.rendered},
+                    </span>
                   )}
                   <span className="font-timesNewRoman text-[16px]">
                     {ex.acf.venue}, {ex.acf.city}
@@ -79,27 +84,19 @@ export default function InfoPageClient() {
   }
 
   return (
-    <section
-      className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-      style={{ paddingTop: navVisible ? "var(--nav-height, 0px)" : "0px" }}
-    >
+    <section className="mt-[50vh] relative w-full">
       {/* Fixed page header */}
-      <div
-        className="fixed z-[70] w-full pointer-events-none flex flex-col items-center lg:grid lg:grid-cols-4 lg:items-start px-[18px] lg:px-0 pt-[18px] lg:pt-[12px]"
-        style={{ top: "var(--nav-height, 64px)" }}
-      >
-        <p className="lg:pl-[33px] text-[16px] font-timesNewRoman">
-          Information
-        </p>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 pt-[48px] lg:pt-[36px]">
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 pt-[48px] lg:pt-[36px]">
         {/* Col 1: About + Solo Exhibitions */}
+        <PagePaddingSync />
         <div className="flex flex-col">
           <SectionHeader>About</SectionHeader>
-          <div className="px-[18px] lg:px-[32px] py-4 flex flex-col gap-y-3 mb-4">
+          <div className="px-[18px] lg:pl-[64px] lg:pr-[32px] py-4 flex flex-col gap-y-3 mb-4">
             <p className="font-timesNewRoman text-[16px] leading-snug">
-              Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based artist
-              who explores raw emotion through painting, sculpture and textile.
+              Elinor Silow (b. 1993) in Malmö, Sweden, is a Stockholm based
+              artist who explores raw emotion through painting, sculpture and
+              textile.
             </p>
             <p className="font-timesNewRoman text-[16px] leading-snug">
               Please contact{" "}
@@ -132,10 +129,15 @@ export default function InfoPageClient() {
           {educations.length > 0 && (
             <>
               <SectionHeader>Education</SectionHeader>
-              <div className="flex flex-col px-[18px] lg:px-[32px] mb-4">
+              <div className="flex flex-col px-[18px] lg:pl-[64px] lg:pr-[32px] mb-4">
                 {educations.map((edu) => (
-                  <InfoRow key={edu.id} label={`${edu.acf.start_year}–${edu.acf.end_year}`}>
-                    <span className="font-timesNewRoman text-[16px]">{edu.acf.school}, {edu.acf.city}</span>
+                  <InfoRow
+                    key={edu.id}
+                    label={`${edu.acf.start_year}–${edu.acf.end_year}`}
+                  >
+                    <span className="font-timesNewRoman text-[16px]">
+                      {edu.acf.school}, {edu.acf.city}
+                    </span>
                   </InfoRow>
                 ))}
               </div>
@@ -145,11 +147,13 @@ export default function InfoPageClient() {
           {grants.length > 0 && (
             <>
               <SectionHeader>Grants</SectionHeader>
-              <div className="flex flex-col px-[18px] lg:px-[32px] mb-4">
+              <div className="flex flex-col px-[18px] lg:pl-[64px] lg:pr-[32px] mb-4">
                 {groupByYear(grants).map(([year, gs]) =>
                   gs.map((grant) => (
                     <InfoRow key={grant.id} label={year}>
-                      <span className="font-timesNewRoman text-[16px]">{grant.acf.title}</span>
+                      <span className="font-timesNewRoman text-[16px]">
+                        {grant.acf.title}
+                      </span>
                     </InfoRow>
                   )),
                 )}
@@ -158,12 +162,15 @@ export default function InfoPageClient() {
           )}
 
           <SectionHeader>Press</SectionHeader>
-          <div className="flex flex-col px-[18px] lg:px-[32px] mb-4">
+          <div className="flex flex-col px-[18px] lg:pl-[64px] lg:pr-[32px] mb-4">
             <InfoRow label="2022">
               <span className="font-timesNewRoman text-[16px] flex flex-wrap gap-x-1">
                 <span>Hjärtat,</span>
                 <span>Lappalainen Hjertström, L-E,</span>
-                <Link className="underline underline-offset-4 decoration-1 hover:no-underline" href="https://kunstkritikk.se/hjartats-energi/">
+                <Link
+                  className="underline underline-offset-4 decoration-1 hover:no-underline"
+                  href="https://kunstkritikk.se/hjartats-energi/"
+                >
                   kunstkritikk.se
                 </Link>
               </span>
@@ -172,7 +179,10 @@ export default function InfoPageClient() {
               <span className="font-timesNewRoman text-[16px] flex flex-wrap gap-x-1">
                 <span>Gameplay,</span>
                 <span>Slöör, S, Omkonst,</span>
-                <Link className="underline underline-offset-4 decoration-1 hover:no-underline" href="https://omkonst.se/25-gameplay.shtml">
+                <Link
+                  className="underline underline-offset-4 decoration-1 hover:no-underline"
+                  href="https://omkonst.se/25-gameplay.shtml"
+                >
                   omkonst.se
                 </Link>
               </span>
@@ -180,23 +190,29 @@ export default function InfoPageClient() {
           </div>
 
           <SectionHeader>Colophon</SectionHeader>
-          <div className="flex flex-col px-[18px] lg:px-[32px] mb-4">
+          <div className="flex flex-col px-[18px] lg:pl-[64px] lg:pr-[32px] mb-4">
             <InfoRow label="Design & code">
-              <Link className="font-timesNewRoman text-[16px] underline underline-offset-4 decoration-1 hover:no-underline" href="/">
+              <Link
+                className="font-timesNewRoman text-[16px] underline underline-offset-4 decoration-1 hover:no-underline"
+                href="/"
+              >
                 Joel Järvi
               </Link>
             </InfoRow>
             <InfoRow label="Typeface">
-              <span className="font-timesNewRoman text-[16px]">Bookish, Helsinki Type Studio</span>
+              <span className="font-timesNewRoman text-[16px]">
+                Bookish, Helsinki Type Studio
+              </span>
             </InfoRow>
           </div>
 
-          <div className="px-[18px] lg:px-[32px] py-4">
+          <div className="px-[18px] lg:pl-[64px] lg:pr-[32px] py-4">
             <p className="font-timesNewRoman text-[16px] text-muted-foreground leading-snug">
               All content on this site, including images, text, and design, is
               the intellectual property of Elinor Silow unless otherwise stated.
               No part of this website may be copied, reproduced, distributed, or
-              used without explicit written permission from the copyright holder.
+              used without explicit written permission from the copyright
+              holder.
             </p>
           </div>
         </div>

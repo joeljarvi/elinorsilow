@@ -37,39 +37,40 @@ function NavItem({
 const NAV_LINKS = [
   {
     href: "/",
-    label: "Works",
+    label: "works",
     match: (p: string) => p === "/" || p.startsWith("/works"),
   },
   {
     href: "/exhibitions",
-    label: "Exhibitions",
+    label: "exhibitions",
     match: (p: string) => p.startsWith("/exhibitions"),
   },
-  { href: "/info", label: "Info", match: (p: string) => p.startsWith("/info") },
+  { href: "/info", label: "info", match: (p: string) => p.startsWith("/info") },
   {
     href: "/contact",
-    label: "Contact",
+    label: "contact",
     match: (p: string) => p.startsWith("/contact"),
   },
 ];
 
 const PAGE_LOGO: { match: (p: string) => boolean; text: string }[] = [
-  { match: (p) => p === "/" || p.startsWith("/works"), text: "Works" },
-  { match: (p) => p.startsWith("/exhibitions"), text: "Exhibitions" },
-  { match: (p) => p.startsWith("/info"), text: "Information" },
-  { match: (p) => p.startsWith("/contact"), text: "Contact" },
+  { match: (p) => p === "/", text: "elinor silow" },
+  { match: (p) => p.startsWith("/works"), text: "works" },
+  { match: (p) => p.startsWith("/exhibitions"), text: "exhibitions" },
+  { match: (p) => p.startsWith("/info"), text: "information" },
+  { match: (p) => p.startsWith("/contact"), text: "contact" },
 ];
 
 function getLogoText(pathname: string): string {
-  return PAGE_LOGO.find((l) => l.match(pathname))?.text ?? "Works";
+  return PAGE_LOGO.find((l) => l.match(pathname))?.text ?? "works";
 }
 
 export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+
   const [visible, setVisible] = useState(false);
   const pathname = usePathname();
-  const { setOpen } = useUI();
+  const { setOpen, setNavVisible } = useUI();
   const { viewLoading } = useNav();
   const { infoLoading } = useInfo();
   const { workLoading } = useWorks();
@@ -88,19 +89,23 @@ export default function DesktopNav() {
   useEffect(() => {
     if (pathname !== "/") {
       setVisible(true);
+      setNavVisible(true);
       return;
     }
 
     setVisible(false);
+    setNavVisible(true);
 
     const onScroll = () => {
       const heroEnd = window.innerHeight * 0.85;
-      setVisible(window.scrollY >= heroEnd);
+      const isVisible = window.scrollY >= heroEnd;
+      setVisible(isVisible);
+      setNavVisible(isVisible);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [pathname]);
+  }, [pathname, setNavVisible]);
 
   const loading = !initialLoaded || viewLoading;
 
@@ -111,7 +116,7 @@ export default function DesktopNav() {
       element: (
         <NavItem href={item.href}>
           {item.match(pathname) ? (
-            <OGubbeText text={item.label} o="/ogubbe_frilagd_new.png" blend />
+            <OGubbeText text={item.label} o="/ogubbe_frilagd_new.png" />
           ) : (
             item.label
           )}
@@ -132,7 +137,7 @@ export default function DesktopNav() {
           size="controls"
           onClick={() => setOpenSearch(true)}
         >
-          Search
+          (search)
         </Button>
       ),
     },
@@ -141,77 +146,67 @@ export default function DesktopNav() {
   return (
     <div
       id="main-nav"
-      className="z-[80] fixed top-0 left-0 w-full mix-blend-difference text-background"
+      className="z-[20] fixed top-0 left-0 w-full"
       onClick={() => setOpen(false)}
     >
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
         aria-label="Site navigation"
-        className="font-bookish no-hide-text pt-[64px] lg:pt-[32px] pb-[18px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center px-[18px] lg:px-0 text-background"
+        className=" no-hide-text pt-[32px]  pb-[18px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] items-start flex flex-col lg:grid lg:grid-cols-12  px-0 text-background"
       >
-        {/* Top row — logo + menu, centered */}
-        <div className="flex items-center gap-x-4">
-          <NavItem href="/">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={visible ? "works" : "name"}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <OGubbeText
-                  className="text-[24px] lg:text-[18px]"
-                  text={visible ? getLogoText(pathname) : "Elinor Silow"}
-                  loading={loading}
-                  blend
-                />
-              </motion.span>
-            </AnimatePresence>
-          </NavItem>
+        {/* Page logo — desktop col 1, mobile top-right */}
+        {(() => {
+          const mobileText =
+            pathname === "/"
+              ? visible
+                ? "works"
+                : "elinor silow"
+              : getLogoText(pathname);
+          return (
+            <div className="lg:col-start-1 col-span-1 ">
+              <NavItem href="/">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={mobileText}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <OGubbeText
+                      className="px-[0px]  pr-[12px] text-[24px] lg:text-[18px]"
+                      text={mobileText}
+                      loading={loading}
+                      vertical
+                    />
+                  </motion.span>
+                </AnimatePresence>
+              </NavItem>
+            </div>
+          );
+        })()}
 
-          <div
-            className="hidden lg:block"
-            onMouseEnter={() => setMenuOpen(true)}
-            onMouseLeave={() => setMenuOpen(false)}
-          >
-            <Button variant="link" size="controls" style={{ color: "inherit" }}>
-              MENU
-            </Button>
-          </div>
-        </div>
-
-        {/* Revealed nav items — below menu, centered, flex-wrap */}
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div
+        {/* MENU — col 3 on desktop */}
+        <div
+          className={`hidden lg:flex lg:col-start-4 lg:col-span-8 lg:items-center transition-opacity duration-[400ms] ease-linear ${pathname === "/" && !visible ? "opacity-0 pointer-events-none" : ""}`}
+        >
+          {revealedItems.map(({ key, index, element }) => (
+            <motion.span
+              key={key}
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-center items-center text-background [&_button]:text-background [&_a]:text-background"
-              onMouseEnter={() => setMenuOpen(true)}
-              onMouseLeave={() => setMenuOpen(false)}
+              transition={{
+                duration: 0.15,
+                delay: index * 0.04,
+                ease: "easeOut",
+              }}
+              className="flex items-center"
             >
-              {revealedItems.map(({ key, index, element }) => (
-                <motion.span
-                  key={key}
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{
-                    duration: 0.15,
-                    delay: index * 0.04,
-                    ease: "easeOut",
-                  }}
-                  className="flex items-center"
-                >
-                  {element}
-                </motion.span>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              {element}
+            </motion.span>
+          ))}
+        </div>
       </nav>
     </div>
   );

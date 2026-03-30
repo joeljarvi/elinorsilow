@@ -32,7 +32,7 @@ export function DarkModeToggle({
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className={`no-hide-text ${className ?? ""}`}
     >
-      {isDark ? "Light" : "Dark"}
+      {isDark ? "(light)" : "(dark)"}
     </Button>
   );
 }

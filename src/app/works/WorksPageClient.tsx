@@ -6,12 +6,14 @@ import { useUI } from "@/context/UIContext";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Work } from "../../../lib/sanity";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import WorkModal from "@/app/works/WorkModal";
 import InfoBox from "@/components/InfoBox";
 import ProportionalWorkImage from "@/components/ProportionalWorkImage";
 import { Card, CardContent } from "@/components/ui/card";
+import { OGubbeText } from "@/components/OGubbeText";
+import RowSlide from "@/components/RowSlide";
 
 type FilterKey =
   | "year-latest"
@@ -35,58 +37,125 @@ const FILTER_OPTIONS: Record<
   textile: { sort: "year-latest", filter: "textile", label: "Textile" },
 };
 
-const WORKS_PER_SECTION = 8; // 4 cols × 2 rows
-
-function getWorkWidth(dimensions?: string): string {
-  if (!dimensions) return "100%";
-  const match = dimensions.match(/(\d+(?:[.,]\d+)?)\s*[x×X]/);
-  if (!match) return "100%";
-  const w = parseFloat(match[1].replace(",", "."));
-  return `${Math.max(0.2, Math.min(1.0, w / 200)) * 100}%`;
-}
-
 function WorkCard({
   work,
   onOpen,
   isMobile,
+  showInfo,
   revealIndex = 0,
+  proportional = true,
 }: {
   work: Work;
   onOpen: () => void;
   isMobile: boolean;
+  showInfo: boolean;
   revealIndex?: number;
+  proportional?: boolean;
 }) {
-  const { proportionalImages } = useUI();
   const [hovered, setHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [infoOpen, setInfoOpen] = useState(false);
 
-  const imageWidth =
-    isMobile || proportionalImages
-      ? "100%"
-      : hovered
-        ? "100%"
-        : getWorkWidth(work.acf.dimensions);
+  const cursor = hovered && !isMobile && (
+    <div
+      className="fixed pointer-events-none z-[100] font-universNextProExt font-extrabold text-[16px] flex items-center"
+      style={{
+        left: mousePos.x + 14,
+        top: mousePos.y,
+        transform: "translateY(-50%)",
+      }}
+    >
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25 }}
+      >
+        Click to enlarge
+      </motion.span>
+    </div>
+  );
 
+  // Desktop + showInfo: InfoBox at top, proportional image below
+  if (!isMobile && showInfo) {
+    return (
+      <div
+        className="flex flex-col py-[18px]"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+      >
+        <div className="px-0 pb-[9px]">
+          <InfoBox work={work} />
+        </div>
+        <button
+          onClick={onOpen}
+          className="block w-full cursor-none p-0 pt-0"
+          aria-label={`Show work: ${work.title.rendered}`}
+        >
+          {work.image_url && (
+            <ProportionalWorkImage
+              src={work.image_url}
+              alt={work.title.rendered}
+              revealIndex={revealIndex}
+              dimensions={work.acf.dimensions}
+              proportional={true}
+            />
+          )}
+        </button>
+        {cursor}
+      </div>
+    );
+  }
+
+  // Desktop + no showInfo: proportional image, click to open
+  if (!isMobile && !showInfo) {
+    return (
+      <div
+        className="w-full p-3"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+      >
+        <button
+          onClick={onOpen}
+          className="block w-full cursor-none"
+          aria-label={`Show work: ${work.title.rendered}`}
+        >
+          {work.image_url && (
+            <ProportionalWorkImage
+              src={work.image_url}
+              alt={work.title.rendered}
+              revealIndex={revealIndex}
+              dimensions={work.acf.dimensions}
+              proportional={proportional}
+            />
+          )}
+        </button>
+        {cursor}
+      </div>
+    );
+  }
+
+  // Mobile
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-      className="group block w-full lg:h-full text-left"
+      className="group block w-full text-left"
     >
-      <Card className="h-full rounded-none border-0 shadow-none bg-transparent">
-        <CardContent className="p-0 h-full">
-          <div className="h-[75vh] lg:h-full w-full flex flex-col overflow-hidden p-8 pb-0">
+      <Card className="rounded-none border-0 shadow-none bg-transparent">
+        <CardContent className="p-0">
+          <div className="w-full flex flex-col  pb-0">
+            {showInfo && (
+              <div className="px-0 pb-[9px]">
+                <InfoBox work={work} />
+              </div>
+            )}
             <button
               onClick={onOpen}
-              className="flex-1 relative cursor-none"
+              className="h-[75vh] relative cursor-none"
               aria-label={`Show work: ${work.title.rendered}`}
             >
-              <div
-                className="h-full relative transition-[width] duration-700 ease-in-out"
-                style={{ width: imageWidth }}
-              >
+              <div className="h-full relative">
                 {work.image_url && (
                   <ProportionalWorkImage
                     src={work.image_url}
@@ -98,44 +167,9 @@ function WorkCard({
                 )}
               </div>
             </button>
-            <div
-              className={`overflow-hidden transition-[max-height] duration-300 ease-out px-3 ${
-                infoOpen ? "max-h-[120px]" : "max-h-0"
-              }`}
-            >
-              <InfoBox work={work} revealed={infoOpen} />
-            </div>
-            <div className="flex justify-center py-2">
-              <button
-                className={`font-timesNewRomanWide font-bold text-[14px] lg:text-[18px] text-foreground transition-opacity duration-300 pointer-events-auto ${hovered || infoOpen ? "opacity-100" : "opacity-0"}`}
-                onClick={() => setInfoOpen((v) => !v)}
-              >
-                {infoOpen ? "(less)" : "(more info)"}
-              </button>
-            </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* Custom cursor — desktop only */}
-      {hovered && (
-        <div
-          className="hidden lg:flex fixed pointer-events-none z-[100] font-timesNewRomanWide text-[16px] items-center"
-          style={{
-            left: mousePos.x + 14,
-            top: mousePos.y,
-            transform: "translateY(-50%)",
-          }}
-        >
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.25 }}
-          >
-            Click to enlarge
-          </motion.span>
-        </div>
-      )}
     </div>
   );
 }
@@ -143,25 +177,35 @@ function WorkCard({
 export default function WorksPageClient() {
   const { allWorks, setActiveWorkSlug, activeWorkSlug, workLoading } =
     useWorks();
-  const { setOpen, navVisible, proportionalImages, showInfo, setShowInfo } =
-    useUI();
+  const { setOpen, showInfo, setShowInfo } = useUI();
   const [asList, setAsList] = useState(false);
+  const [gridCols, setGridCols] = useState(4);
+  const [proportional, setProportional] = useState(true);
+  const [showSettings, setShowSettings] = useState(true);
 
   const pageHeaderRef = useRef<HTMLDivElement>(null);
   const [filterKey, setFilterKey] = useState<FilterKey>("year-latest");
-  const [atWorks, setAtWorks] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
+  const [heroOpacity, setHeroOpacity] = useState(1);
+  const [worksOverlayOpacity, setWorksOverlayOpacity] = useState(0);
+  const [headerOpacity, setHeaderOpacity] = useState(0);
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024);
-    check();
-    window.addEventListener("resize", check, { passive: true });
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () =>
-      setAtWorks(window.scrollY >= window.innerHeight * 0.85);
+    const onScroll = () => {
+      const sy = window.scrollY;
+      const vh = window.innerHeight;
+      const worksStart = vh * 0.85;
+      setHeroOpacity(Math.max(0, 1 - sy / (vh * 0.4)));
+      setHeaderOpacity(
+        Math.min(1, Math.max(0, (sy - (worksStart - vh * 0.2)) / (vh * 0.2))),
+      );
+      // Works overlay: fade in as approaching works, fade out as scrolling through
+      if (sy < worksStart - vh * 0.15) {
+        setWorksOverlayOpacity(0);
+      } else if (sy < worksStart) {
+        setWorksOverlayOpacity((sy - (worksStart - vh * 0.15)) / (vh * 0.15));
+      } else {
+        setWorksOverlayOpacity(Math.max(0, 1 - (sy - worksStart) / (vh * 0.4)));
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -201,22 +245,6 @@ export default function WorksPageClient() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  // Enable snap scrolling on desktop only, disabled in list view
-  useEffect(() => {
-    if (window.innerWidth >= 1024 && !asList) {
-      document.documentElement.style.scrollSnapType = "y mandatory";
-      document.documentElement.style.scrollPaddingTop =
-        "var(--nav-height, 64px)";
-    } else {
-      document.documentElement.style.scrollSnapType = "";
-      document.documentElement.style.scrollPaddingTop = "";
-    }
-    return () => {
-      document.documentElement.style.scrollSnapType = "";
-      document.documentElement.style.scrollPaddingTop = "";
-    };
-  }, [asList]);
 
   const loading = !initialAnimDone || !dataLoaded;
 
@@ -280,11 +308,6 @@ export default function WorksPageClient() {
     setFilterKey(next as FilterKey);
   };
 
-  const chunks: Work[][] = [];
-  for (let i = 0; i < works.length; i += WORKS_PER_SECTION) {
-    chunks.push(works.slice(i, i + WORKS_PER_SECTION));
-  }
-
   function openWork(work: Work) {
     setActiveWorkSlug(work.slug);
     setOpen(false);
@@ -292,71 +315,124 @@ export default function WorksPageClient() {
   }
 
   return (
-    <section
-      className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]"
-      style={{ paddingTop: navVisible ? "var(--nav-height, 0px)" : "0px" }}
-    >
-      {/* Page header — fixed below nav, visible in works section */}
-      <AnimatePresence>
-        {atWorks && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            ref={pageHeaderRef}
-            className="fixed z-[85] pointer-events-none flex flex-row flex-wrap lg:flex-nowrap items-center gap-x-8 gap-y-1 lg:gap-x-16 px-[18px] pt-[18px]  w-full justify-between top-0 lg:left-0  lg:bottom-0 lg:top-auto  lg:pt-0 lg:pb-[18px]  mix-blend-difference text-background"
-          >
-            {/* Category + count */}
-            <p className="text-[14px] whitespace-nowrap ">
-              <button
-                className=" font-universNextProExt font-extrabold hover:underline underline-offset-2 cursor-pointer pointer-events-auto"
-                onClick={cycleCategory}
-              >
-                {CATEGORY_LABELS[currentCategory]}
-              </button>{" "}
-              <span className="hidden font-timesNewRomanWide font-bold ml-2">
-                ({loading ? "—" : works.length})
-              </span>
-            </p>
+    <section className="relative w-full transition-[padding-top] duration-[250ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
+      {/* "elinor silow" overlay — fades out as user scrolls */}
+      <div
+        className="fixed inset-0 z-[50] flex items-center justify-center pointer-events-none "
+        style={{ opacity: heroOpacity }}
+      >
+        <OGubbeText
+          text="elinor silow"
+          loading={loading}
+          className="text-[40px] lg:text-[96px] text-foreground/20"
+          sizes="144px"
+        />
+      </div>
 
-            {/* Sort */}
-            <p className="text-[14px] whitespace-nowrap ">
-              <span className="hidden font-universNextProExt font-extrabold">
-                sorted by{" "}
-              </span>
-              <button
-                className="font-timesNewRomanWide font-bold hover:underline underline-offset-2 cursor-pointer pointer-events-auto lg:ml-2"
-                onClick={cycleSort}
-              >
-                ({SORT_LABELS[currentSort]})
-              </button>
-            </p>
+      {/* "works" overlay — fades in approaching works, fades out scrolling through */}
+      <div
+        className="fixed hidden inset-0 z-[50] lg:flex items-center justify-center pointer-events-none "
+        style={{ opacity: worksOverlayOpacity }}
+      >
+        <OGubbeText
+          text="Works"
+          className="text-[40px] lg:text-[96px]"
+          sizes="144px"
+        />
+      </div>
 
-            {/* List toggle */}
-            <button
-              className="font-timesNewRomanWide font-bold text-[14px] hover:underline underline-offset-2 cursor-pointer pointer-events-auto lg:ml-2"
+      {/* Hero section */}
+      <div className="lg:snap-start h-screen">
+        <Hero />
+      </div>
+
+      {/* Page header — fixed at bottom, fades in as works grid enters */}
+      <div
+        ref={pageHeaderRef}
+        className="fixed bottom-0 left-0 z-[60] pointer-events-none flex flex-row flex-wrap items-center justify-start gap-x-4 gap-y-1 px-[18px] lg:pr-[64px] pl-[18px] pb-[9px] lg:pb-0 lg:pl-[9px] pt-[9px] w-full bg-gradient-to-t from-background to-background/0 "
+        style={{ opacity: loading ? 0 : headerOpacity }}
+      >
+        {showSettings && (
+          <>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0"
+              onClick={cycleSort}
+            >
+              ({SORT_LABELS[currentSort]})
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0"
+              onClick={cycleCategory}
+            >
+              ({CATEGORY_LABELS[currentCategory]})
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0"
               onClick={() => setAsList((v) => !v)}
             >
               {asList ? "(list)" : "(grid)"}
-            </button>
-
-            {/* Hide text toggle */}
-            <button
-              className="font-timesNewRomanWide font-bold text-[14px] hover:underline underline-offset-2 cursor-pointer pointer-events-auto ml-2"
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0 hidden lg:flex"
+              onClick={() => setProportional((v) => !v)}
+            >
+              {proportional ? "(proportional)" : "(fill)"}
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0 flex lg:hidden"
+              onClick={() => setShowInfo(!showInfo)}
+            >
+              {showInfo ? "(text)" : "(no text)"}
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0 hidden lg:flex"
+              onClick={() => setGridCols((c) => Math.max(2, c - 1))}
+            >
+              (−)
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="pointer-events-auto px-0 hidden lg:flex"
+              onClick={() => setGridCols((c) => Math.min(14, c + 1))}
+            >
+              (+)
+            </Button>
+            <Button
+              variant="link"
+              size="controls"
+              className="hidden lg:flex pointer-events-auto px-0"
               onClick={() => setShowInfo(!showInfo)}
             >
               {showInfo ? "(show text)" : "(hide text)"}
-            </button>
-          </motion.div>
+            </Button>
+          </>
         )}
-      </AnimatePresence>
-
-      {/* Hero snap section */}
-      <div className="lg:snap-start flex flex-col h-[75vh]">
-        <div className="flex-1 overflow-hidden">
-          <Hero />
-        </div>
+        <Button
+          variant="link"
+          size="controls"
+          className="pointer-events-auto px-0 text-muted-foreground"
+          onClick={() => setShowSettings((v) => !v)}
+        >
+          <span className="lg:hidden">
+            {showSettings ? "(close)" : "(settings)"}
+          </span>
+          <span className="hidden lg:inline">
+            {showSettings ? "(hide settings)" : "(settings)"}
+          </span>
+        </Button>
       </div>
 
       {/* Works grid */}
@@ -366,39 +442,72 @@ export default function WorksPageClient() {
         transition={{ duration: 0.5 }}
       >
         {asList ? (
-          <div className="flex flex-col pt-4 px-[18px] lg:px-[32px]">
+          <div className="flex flex-col pt-4">
             {works.map((work) => (
-              <Button
-                key={work.id}
-                variant="ghost"
-                size="controls"
-                onClick={() => openWork(work)}
-                className="w-full rounded-none justify-center font-universNextProExt font-extrabold text-[14px] lg:text-[18px]"
-              >
-                {work.title.rendered}
-              </Button>
+              <RowSlide key={work.id}>
+                <Button
+                  variant="ghost"
+                  size="controls"
+                  onClick={() => openWork(work)}
+                  className="w-full rounded-none justify-center font-universNextProExt font-extrabold text-[14px] lg:text-[18px]"
+                >
+                  {work.title.rendered}
+                </Button>
+              </RowSlide>
             ))}
           </div>
         ) : (
-          chunks.map((chunk, chunkIndex) => (
-            <div
-              key={chunkIndex}
-              className="lg:snap-start"
-              style={!isMobile ? { height: "150vh" } : undefined}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 lg:h-full place-items-center lg:place-items-start">
-                {chunk.map((work, workIndex) => (
+          <>
+            {/* Desktop grid — row-based for per-row slide animation */}
+            <div className="hidden lg:block pr-[64px] ">
+              {Array.from(
+                { length: Math.ceil(works.length / gridCols) },
+                (_, rowIndex) => {
+                  const rowWorks = works.slice(
+                    rowIndex * gridCols,
+                    (rowIndex + 1) * gridCols,
+                  );
+                  return (
+                    <RowSlide key={rowIndex} className="flex flex-row">
+                      {rowWorks.map((work, colIndex) => (
+                        <div
+                          key={work.id}
+                          style={{ width: `${100 / gridCols}%` }}
+                          className={
+                            showInfo ? "border-foreground/20 border-t-2" : ""
+                          }
+                        >
+                          <WorkCard
+                            work={work}
+                            isMobile={false}
+                            showInfo={showInfo}
+                            revealIndex={rowIndex * gridCols + colIndex}
+                            proportional={proportional}
+                            onOpen={() => openWork(work)}
+                          />
+                        </div>
+                      ))}
+                    </RowSlide>
+                  );
+                },
+              )}
+            </div>
+
+            {/* Mobile grid — per-card slide animation */}
+            <div className="lg:hidden flex flex-col">
+              {works.map((work, i) => (
+                <RowSlide key={work.id}>
                   <WorkCard
-                    key={work.id}
                     work={work}
-                    isMobile={isMobile}
-                    revealIndex={chunkIndex * 8 + workIndex}
+                    isMobile={true}
+                    showInfo={showInfo}
+                    revealIndex={i}
                     onOpen={() => openWork(work)}
                   />
-                ))}
-              </div>
+                </RowSlide>
+              ))}
             </div>
-          ))
+          </>
         )}
       </motion.div>
 
