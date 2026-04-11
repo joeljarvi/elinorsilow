@@ -8,6 +8,7 @@ import { useSiteSearch } from "@/lib/useSiteSearch";
 import { Button } from "@/components/ui/button";
 import { Cross1Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
+import WigglyButton from "./WigglyButton";
 
 export default function NavSearch({
   open,
@@ -64,7 +65,7 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[100] bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
+          className="fixed inset-0 z-[200] bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
         >
           <div className=" px-[18px] flex items-center ">
             <MagnifyingGlassIcon className="mx-2 text-muted-foreground shrink-0" />
@@ -73,7 +74,7 @@ export default function NavSearch({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-[32px]  font-timesNewRoman py-[18px] px-2"
+              className="flex-1 outline-none bg-transparent text-24 lg:text-[32px]  font-timesNewRoman font-normal py-[18px] tracking-wide px-[18px]"
             />
             <Button
               variant="ghost"
@@ -90,19 +91,24 @@ export default function NavSearch({
               {results.slice(0, 8).map((item) => (
                 <button
                   key={item.id}
-                  className="flex flex-row items-baseline font-bookish  w-full text-left hover:bg-foreground/10 transition-colors"
+                  className="flex flex-row items-baseline  w-full text-left hover:bg-foreground/10 transition-colors"
                   onClick={() => handleResultClick(item)}
                 >
-                  <span className=" text-muted-foreground font-timesNewRoman whitespace-nowrap py-[18px] px-[18px] ">
-                    {item.type === "work" ? "Work" : "Exhibition"}
+                  <span className=" text-muted-foreground font-timesNewRoman whitespace-nowrap tracking-wide py-[18px] px-[18px] ">
+                    {item.type === "work" ? "work" : "exhibition"}
                   </span>
-                  <span className=" font-universNextProExt font-extrabold  py-[18px] px-[18px]">
+                  <span className=" font-timesNewRoman tracking-wide  text-[24px] py-[18px] px-[18px]">
                     {item.title}
                   </span>
                 </button>
               ))}
             </div>
           )}
+
+          {/* Mobile close button — bottom center */}
+          <div className="lg:hidden mt-auto flex justify-center pb-[18px]">
+            <WigglyButton text="close" onClick={onClose} />
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

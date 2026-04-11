@@ -1,94 +1,87 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useUI } from "@/context/UIContext";
-import { Button } from "./ui/button";
 import { DarkModeToggle } from "./DarkModeToggle";
-import { HideTextToggle } from "./HideTextToggle";
-import NavSearch from "./NavSearch";
 import { OGubbeText } from "./OGubbeText";
 
-export default function MobileNavOverlay() {
-  const pathname = usePathname();
-  const { open, setOpen, proportionalImages, setProportionalImages } = useUI();
-  const [openSearch, setOpenSearch] = useState(false);
+interface Props {
+  setOpenSearch: (open: boolean) => void;
+}
 
-  const NAV_LINKS = [
-    {
-      href: "/",
-      label: "works",
-      description: "Paintings, drawings, sculpture, and textile.",
-      match: (p: string) => p === "/" || p.startsWith("/works"),
-    },
-    {
-      href: "/exhibitions",
-      label: "exhibitions",
-      description: "Solo and group exhibitions, 2015–present.",
-      match: (p: string) => p.startsWith("/exhibitions"),
-    },
-    {
-      href: "/info",
-      label: "info",
-      description: "Biography, education, and grants.",
-      match: (p: string) => p.startsWith("/info"),
-    },
-    {
-      href: "/contact",
-      label: "contact",
-      description: "For collaborations and inquiries.",
-      match: (p: string) => p.startsWith("/contact"),
-    },
-  ];
+const NAV_LINKS = [
+  { href: "/", label: "works" },
+  { href: "/exhibitions", label: "exhibitions" },
+  { href: "/info", label: "info" },
+  { href: "/contact", label: "contact" },
+];
+
+export default function MobileNavOverlay({ setOpenSearch }: Props) {
+  const pathname = usePathname();
+  const { open, setOpen } = useUI();
 
   useEffect(() => {
     setOpen(false);
   }, [pathname, setOpen]);
 
   return (
-    <div className="lg:hidden">
-      <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="mobile-nav-overlay"
-            className={` fixed inset-0 z-[70] bg-background/10 backdrop-blur-3xl  overflow-y-auto h-screen flex flex-col items-center justify-center w-full`}
-            initial={{ y: "-100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "-100%" }}
-            transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-          >
-            <div className="flex flex-col justify-center items-center gap-6 w-full px-[18px]">
-              {NAV_LINKS.map(({ href, label, description }) => (
-                <div key={href} className="flex flex-col gap-0">
-                  <Button
-                    variant="stretch"
-                    size="controls"
-                    asChild
-                    className=" text-[32px] lg:text-[15px] w-min px-0"
-                  >
-                    <Link href={href}>{label}</Link>
-                  </Button>
-                </div>
-              ))}
-              <DarkModeToggle
-                className="text-[32px] lg:text-[15px] w-min px-0"
-                size="controls"
+    <motion.div
+      className="fixed top-0 left-0 right-0 z-[69] lg:hidden pointer-events-auto flex flex-col"
+      animate={{ y: open ? 0 : "-90vh" }}
+      transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
+    >
+      {/* Panel content */}
+      <div className="h-[90vh] bg-background flex flex-col justify-center items-center px-[32px] pt-[64px] pb-[18px]">
+        <div className="flex flex-col gap-[0px] items-center">
+          {NAV_LINKS.map(({ href, label }) => (
+            <Link key={href} href={href} className="flex justify-center">
+              <OGubbeText
+                text={label}
+                lettersOnly
+                className="text-[32px]"
+                sizes="32px"
               />
-              <Button
-                onClick={() => setOpenSearch(true)}
-                variant="link"
-                size="controls"
-                className="text-[32px] lg:text-[15px] w-min px-0"
-              >
-                (search)
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            </Link>
+          ))}
+        </div>
+        <div className="flex flex-col gap-[0px] items-center">
+          <button
+            onClick={() => {
+              setOpenSearch(true);
+              setOpen(false);
+            }}
+          >
+            <OGubbeText
+              text="search"
+              lettersOnly
+              className="text-[32px]"
+              sizes="32px"
+            />
+          </button>
+          <DarkModeToggle textClassName="text-[32px]" sizes="32px" />
+        </div>
+      </div>
+
+      {/* Button — stuck to bottom of panel, visible at top when closed */}
+      <button
+        className="no-hide-text w-full flex justify-center py-[9px] pointer-events-auto bg-transparent"
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(!open);
+        }}
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+      >
+        <OGubbeText
+          text={open ? "close" : "menu"}
+          lettersOnly
+          className="text-[18px]"
+          sizes="18px"
+        />
+      </button>
+    </motion.div>
   );
 }

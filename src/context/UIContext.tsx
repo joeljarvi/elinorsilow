@@ -37,6 +37,17 @@ interface UIContextValue {
   setProportionalImages: Dispatch<boolean>;
   showAsList: boolean;
   setShowAsList: Dispatch<boolean>;
+  gridCols: number;
+  setGridCols: Dispatch<number>;
+  showTitles: boolean;
+  setShowTitles: Dispatch<boolean>;
+  showColorBg: boolean;
+  setShowColorBg: Dispatch<boolean>;
+  activePage: "home" | "works" | "exhibitions" | "info";
+  setActivePage: Dispatch<"home" | "works" | "exhibitions" | "info">;
+  filterOpen: boolean;
+  setFilterOpen: Dispatch<boolean>;
+  handleFilterOpen: () => void;
   handleShowSettings: () => void;
   handleOpen: () => void;
   handleOpenWorksMenu: () => void;
@@ -62,10 +73,21 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showAllExhibitionsList, setShowAllExhibitionsList] = useState(false);
   const [showWorksFilter, setShowWorksFilter] = useState(false);
   const [showExhibitionsFilter, setShowExhibitionsFilter] = useState(false);
-  const [showInfo, setShowInfo] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [proportionalImages, setProportionalImages] = useState(false);
   const [showAsList, setShowAsList] = useState(false);
+  const [gridCols, setGridCols] = useState(3);
+  const [showTitles, setShowTitles] = useState(false);
+  const [showColorBg, setShowColorBg] = useState(false);
+  const [activePage, setActivePage] = useState<
+    "home" | "works" | "exhibitions" | "info"
+  >("home");
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  function handleFilterOpen() {
+    setFilterOpen((prev) => !prev);
+  }
 
   function handleOpen() {
     setOpen((prev) => !prev);
@@ -128,6 +150,17 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setProportionalImages,
         showAsList,
         setShowAsList,
+        gridCols,
+        setGridCols,
+        showTitles,
+        setShowTitles,
+        showColorBg,
+        setShowColorBg,
+        activePage,
+        setActivePage,
+        filterOpen,
+        setFilterOpen,
+        handleFilterOpen,
         handleOpen,
         handleOpenWorksMenu,
         handleOpenAllWorksList,

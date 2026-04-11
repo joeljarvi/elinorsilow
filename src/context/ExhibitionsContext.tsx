@@ -20,6 +20,8 @@ import { useNav } from "./NavContext";
 import { useDebounce } from "use-debounce";
 
 export type ExhibitionSort = "year" | "year-oldest" | "title" | "type";
+export type ExCategory = "all" | "solo" | "group";
+export type ExSort = "year-latest" | "year-oldest" | "title";
 
 type ExhibitionsContextType = {
   exhibitions: Exhibition[];
@@ -52,6 +54,12 @@ type ExhibitionsContextType = {
   clearFilters: () => Promise<void>;
   isApplyingFilters: boolean;
 
+  exCat: ExCategory;
+  setExCat: React.Dispatch<React.SetStateAction<ExCategory>>;
+  exSort: ExSort;
+  setExSort: React.Dispatch<React.SetStateAction<ExSort>>;
+  exAsList: boolean;
+  setExAsList: React.Dispatch<React.SetStateAction<boolean>>;
   showDescription: boolean;
   setShowDescription: React.Dispatch<React.SetStateAction<boolean>>;
   uniqueExYears: string[];
@@ -79,13 +87,14 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
 
   const [isApplyingFilters, setIsApplyingFilters] = useState(false);
 
+  const [exCat, setExCat] = useState<ExCategory>("all");
+  const [exSort, setExSort] = useState<ExSort>("year-latest");
+  const [exAsList, setExAsList] = useState(false);
   const [showDescription, setShowDescription] = useState(true);
   const [activeExhibitionSlug, setActiveExhibitionSlug] = useState<
     string | null
   >(null);
-  const [debouncedSortBy] = useDebounce(exhibitionSort, 200);
   const [debouncedSelectedYear] = useDebounce(exSelectedYear, 200);
-  const [debouncedSelectedType] = useDebounce(selectedType, 200);
   const [open, setOpen] = useState(false);
 
   const applyFilters = async (
@@ -158,40 +167,32 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
     return Array.from(new Set(years)).sort((a, b) => Number(b) - Number(a));
   }, [exhibitions]);
 
-  const sortedExhibitions = useMemo(() => {
-    switch (debouncedSortBy) {
-      case "title":
-        return [...exhibitions].sort((a, b) =>
-          a.title.rendered.localeCompare(b.title.rendered)
-        );
-      case "type":
-        return [...exhibitions].sort((a, b) =>
-          (a.acf.exhibition_type ?? "").localeCompare(
-            b.acf.exhibition_type ?? ""
-          )
-        );
-      case "year-oldest":
-        return [...exhibitions].sort(
-          (a, b) => Number(a.acf.year) - Number(b.acf.year)
-        );
-      case "year":
-      default:
-        return [...exhibitions].sort(
-          (a, b) => Number(b.acf.year) - Number(a.acf.year)
-        );
-    }
-  }, [exhibitions, debouncedSortBy]);
+const CAT_TO_TYPE: Record<ExCategory, string | null> = {
+    all: null,
+    solo: "Solo",
+    group: "Group",
+  };
 
   const filteredExhibitions = useMemo(() => {
-    return sortedExhibitions.filter((e) => {
-      const yearMatch =
-        debouncedSelectedYear === "all" || e.acf.year === debouncedSelectedYear;
-      const typeMatch =
-        debouncedSelectedType === "all" ||
-        e.acf.exhibition_type === debouncedSelectedType;
-      return yearMatch && typeMatch;
-    });
-  }, [sortedExhibitions, debouncedSelectedYear, debouncedSelectedType]);
+    const typeFilter = CAT_TO_TYPE[exCat];
+    let result = typeFilter
+      ? exhibitions.filter((e) => e.acf.exhibition_type === typeFilter)
+      : [...exhibitions];
+    switch (exSort) {
+      case "year-latest":
+        result.sort((a, b) => Number(b.acf.year) - Number(a.acf.year));
+        break;
+      case "year-oldest":
+        result.sort((a, b) => Number(a.acf.year) - Number(b.acf.year));
+        break;
+      case "title":
+        result.sort((a, b) =>
+          a.title.rendered.localeCompare(b.title.rendered, "sv")
+        );
+        break;
+    }
+    return result;
+  }, [exhibitions, exCat, exSort]);
 
   const soloExhibitions = useMemo(
     () => exhibitions.filter((e) => e.acf.exhibition_type === "Solo"),
@@ -255,6 +256,12 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
         clearFilters,
         isApplyingFilters,
 
+        exCat,
+        setExCat,
+        exSort,
+        setExSort,
+        exAsList,
+        setExAsList,
         showDescription,
         setShowDescription,
         availableYears,

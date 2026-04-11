@@ -3,10 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { Work, getWorkBySlug } from "../../../lib/sanity";
 import { useWorks } from "@/context/WorksContext";
+import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
-import InfoBox from "@/components/InfoBox";
-import { Button } from "@/components/ui/button";
+import BlurredWorkBg from "@/components/BlurredWorkBg";
+import WigglyButton from "@/components/WigglyButton";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -22,10 +23,10 @@ export default function WorkSlugModalClient({
     normalizeSlug,
     workLoading: contextLoading,
   } = useWorks();
+  const { showColorBg } = useUI();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [infoOpen, setInfoOpen] = useState(false);
 
   const loadWorkByIndex = useCallback(
     (index: number) => {
@@ -92,19 +93,14 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className="w-screen h-screen flex flex-col lg:flex-row p-[18px] gap-x-4"
+      className="relative w-screen h-screen flex flex-col lg:flex-row p-[18px] gap-x-4"
       onClick={onClose}
     >
-      {/* Info panel — slides down from above on mobile, slides in from left on desktop */}
-      <div
-        className={`shrink-0 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col justify-start lg:justify-center w-full lg:w-1/2 ${infoOpen ? "max-h-[50vh] lg:max-h-screen pointer-events-auto mb-[18px]" : "max-h-0 "}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <InfoBox work={work} />
-      </div>
-
-      {/* Image + button */}
-      <div className="flex-1 flex flex-col min-w-0 " onClick={onClose}>
+      {showColorBg && work?.image_url && (
+        <BlurredWorkBg imageUrl={work.image_url} />
+      )}
+      {/* Image */}
+      <div className="flex-1 flex flex-col min-w-0" onClick={onClose}>
         <div className="relative flex-1">
           {work.image_url && (
             <Image
@@ -116,20 +112,11 @@ export default function WorkSlugModalClient({
             />
           )}
         </div>
-        <div
-          className="lg:hidden flex justify-center py-2 mt-[18px] pointer-events-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Button
-            variant="stretch"
-            size="controls"
-            className="lg:hidden "
-            style={{ mixBlendMode: "difference", color: "white" }}
-            onClick={() => setInfoOpen((v) => !v)}
-          >
-            {infoOpen ? "(hide)" : "(show info)"}
-          </Button>
-        </div>
+      </div>
+
+      {/* Mobile close button */}
+      <div className="lg:hidden flex justify-center pb-[8px]">
+        <WigglyButton text="close" onClick={onClose} />
       </div>
     </div>
   );

@@ -23,6 +23,8 @@ import {
 } from "@radix-ui/react-icons";
 import CornerFrame from "@/components/CornerFrame";
 import { OGubbeText } from "@/components/OGubbeText";
+import BlurredSlideshowBackground from "@/components/BlurredSlideshowBackground";
+import WigglyButton from "@/components/WigglyButton";
 
 type Props = {
   slug: string;
@@ -114,30 +116,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goPrev, goNext, onClose, lightboxIndex]);
 
-  const [bgIndex, setBgIndex] = useState(0);
-  useEffect(() => {
-    if (!exhibition?.acf) return;
-    const count = [
-      exhibition.acf.image_1,
-      exhibition.acf.image_2,
-      exhibition.acf.image_3,
-      exhibition.acf.image_4,
-      exhibition.acf.image_5,
-      exhibition.acf.image_6,
-      exhibition.acf.image_7,
-      exhibition.acf.image_8,
-      exhibition.acf.image_9,
-      exhibition.acf.image_10,
-    ].filter(Boolean).length;
-    if (count <= 1) return;
-    setBgIndex(0);
-    const interval = setInterval(
-      () => setBgIndex((i) => (i + 1) % count),
-      3000,
-    );
-    return () => clearInterval(interval);
-  }, [exhibition]);
-
   if (loading || !exhibition || !exhibition.acf) return <div />;
 
   const images = [
@@ -177,80 +155,81 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const hasNext =
     !!filteredExhibitions && currentIndex < filteredExhibitions.length - 1;
 
-  const venue = [exhibition.acf.location, exhibition.acf.city]
-    .filter(Boolean)
-    .join(", ");
+  const location = exhibition.acf.location ?? "";
+  const city = exhibition.acf.city ?? "";
 
   return (
-    <div {...swipeHandlers} className="flex flex-col bg-background">
+    <div {...swipeHandlers} className="flex flex-col bg-background w-full">
       {/* Hero header */}
-      <div className="relative h-[80vh] w-full overflow-hidden shrink-0">
+      <div className="relative h-[100vh] w-full overflow-hidden shrink-0">
         {/* Blurred crossfade background */}
-        {images.map((img, i) => (
-          <div
-            key={img.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${i === bgIndex ? "opacity-100" : "opacity-0"}`}
-          >
-            <Image
-              src={img.url}
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover blur-xl"
-              priority={i === 0}
-            />
-          </div>
-        ))}
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-background/40" />
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent" />
+        <BlurredSlideshowBackground urls={images.map((img) => img.url)} />
 
         {/* Close button */}
-        <button
-          onClick={onClose ?? (() => router.push("/exhibitions"))}
-          className="absolute top-4 right-4 z-20 p-2"
-          aria-label="Close"
-        >
-          <Cross1Icon />
-        </button>
+        <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center">
+          <WigglyButton
+            text="close"
+            onClick={onClose ?? (() => router.push("/exhibitions"))}
+            className="rotate-[-2deg]"
+          />
+        </div>
 
         {/* Exhibition info */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 lg:px-8 gap-y-2 text-center mix-blend-difference text-background [&_img]:invert">
-          <OGubbeText
-            text={exhibition.title.rendered}
-            sizes="36px"
-            className="font-universNextProExt font-extrabold leading-tight text-[18px] lg:text-[24px]"
-          />
-          {venue && (
+        <div className="relative z-10 grid grid-cols-5 lg:grid-cols-12 items-start justify-start h-full px-0 lg:px-[32px] gap-y-2 text-center pt-[32px]   [&_img]:invert">
+          <span className=" col-span-1">
             <OGubbeText
-              text={venue}
-              sizes="36px"
-              className="font-universNextProExt font-extrabold flex-wrap justify-center text-[18px] lg:text-[24px]"
+              text={exhibition.title.rendered}
+              sizes="24px"
+              className=" text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+              vertical
+              lettersOnly
             />
-          )}
-          {exhibition.acf.exhibition_type && (
-            <OGubbeText
-              text={`${exhibition.acf.exhibition_type} Exhibition`}
-              sizes="36px"
-              className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]"
-            />
-          )}
-          {exhibition.acf.year && (
-            <OGubbeText
-              text={String(exhibition.acf.year)}
-              sizes="36px"
-              className="font-universNextProExt font-extrabold text-[18px] lg:text-[24px]"
-            />
-          )}
+          </span>
+          <span className="col-span-4 lg:col-span-6 grid grid-cols-4 items-start">
+            {location && (
+              <OGubbeText
+                text={location}
+                sizes="24px"
+                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                vertical
+                lettersOnly
+              />
+            )}
+            {city && (
+              <OGubbeText
+                text={city}
+                sizes="24px"
+                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                vertical
+                lettersOnly
+              />
+            )}
+            {exhibition.acf.exhibition_type && (
+              <OGubbeText
+                text={`${exhibition.acf.exhibition_type} Exhibition`}
+                sizes="24px"
+                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                vertical
+                lettersOnly
+              />
+            )}
+            {exhibition.acf.year && (
+              <OGubbeText
+                text={String(exhibition.acf.year)}
+                sizes="24px"
+                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                vertical
+                lettersOnly
+              />
+            )}
+          </span>
         </div>
       </div>
 
       {/* Description */}
       {exhibition.acf.description && (
-        <div className="mx-auto w-full max-w-3xl px-6 lg:px-8 pt-10 pb-4">
-          <p className="font-timesNewRoman text-[16px] indent-6 leading-relaxed">
+        <div className="mx-auto w-full max-w-3xl px-6 lg:px-8 pt-10 pb-4 no-hide-text ">
+          <p className="font-timesNewRoman indent-6  text-[24px] lg:text-[21px] leading-[1.2]  px-[0px] no-hide-text text-foreground  tracking-wide ">
             {exhibition.acf.description}
           </p>
         </div>
@@ -284,25 +263,22 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Works + credits */}
       {(works.length > 0 || exhibition.acf.credits) && (
-        <div className="mx-auto w-full max-w-3xl px-6 lg:px-8 pb-16">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 border-t border-border pt-8">
+        <div className="col-span-12 mx-auto w-full  px-6 lg:px-8 pb-16">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12  pt-8 w-full">
             {works.length > 0 && (
-              <div className="flex-1 flex flex-col gap-y-1">
-                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">
-                  Featuring the works
-                </p>
+              <div className="flex-1 flex flex-col gap-y-0 no-hide-text justify-start items-center">
+                <WigglyButton className="" text="featuring the works" />
                 {works.map((work: any, index: number) => (
-                  <button
+                  <WigglyButton
                     key={index}
-                    className="font-timesNewRoman text-[15px] text-left hover:underline underline-offset-2"
+                    className="font-normal text-[18px]"
                     onClick={() => {
                       const s = normalizeSlug(work);
                       setActiveWorkSlug(s);
                       window.history.pushState(null, "", `/works?work=${s}`);
                     }}
-                  >
-                    {work}
-                  </button>
+                    text={work}
+                  />
                 ))}
               </div>
             )}
@@ -322,7 +298,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 z-[80] bg-background flex flex-col">
+        <div className="fixed inset-0 z-[110] bg-background flex flex-col">
           <div className="sticky top-0 z-10 pt-4 bg-background">
             <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
               <span className="px-1 text-muted-foreground text-sm">

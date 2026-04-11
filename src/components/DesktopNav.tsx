@@ -1,213 +1,179 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
 import { useUI } from "@/context/UIContext";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import NavSearch from "./NavSearch";
-import { DarkModeToggle } from "./DarkModeToggle";
-import { useNav } from "@/context/NavContext";
-import { useInfo } from "@/context/InfoContext";
-import { useWorks } from "@/context/WorksContext";
-import { useExhibitions } from "@/context/ExhibitionsContext";
+import Link from "next/link";
 import { OGubbeText } from "./OGubbeText";
-import { motion, AnimatePresence } from "framer-motion";
-
-function NavItem({
-  href,
-  children,
-  className = "",
-  onClick,
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) {
-  return (
-    <Button variant="link" size="controls" className={className} asChild>
-      <Link href={href} onClick={onClick}>
-        {children}
-      </Link>
-    </Button>
-  );
-}
+import WigglyButton from "./WigglyButton";
 
 const NAV_LINKS = [
-  {
-    href: "/",
-    label: "works",
-    match: (p: string) => p === "/" || p.startsWith("/works"),
-  },
-  {
-    href: "/exhibitions",
-    label: "exhibitions",
-    match: (p: string) => p.startsWith("/exhibitions"),
-  },
-  { href: "/info", label: "info", match: (p: string) => p.startsWith("/info") },
-  {
-    href: "/contact",
-    label: "contact",
-    match: (p: string) => p.startsWith("/contact"),
-  },
+  { href: "/works", label: "works" },
+  { href: "/exhibitions", label: "exhibitions" },
+  { href: "/info", label: "info" },
+  { href: "/contact", label: "contact" },
 ];
 
-const PAGE_LOGO: { match: (p: string) => boolean; text: string }[] = [
-  { match: (p) => p === "/", text: "elinor silow" },
-  { match: (p) => p.startsWith("/works"), text: "works" },
-  { match: (p) => p.startsWith("/exhibitions"), text: "exhibitions" },
-  { match: (p) => p.startsWith("/info"), text: "information" },
-  { match: (p) => p.startsWith("/contact"), text: "contact" },
-];
-
-function getLogoText(pathname: string): string {
-  return PAGE_LOGO.find((l) => l.match(pathname))?.text ?? "works";
-}
+const transition = { duration: 0.35, ease: [0.25, 1, 0.5, 1] as const };
 
 export default function DesktopNav() {
   const [openSearch, setOpenSearch] = useState(false);
-
-  const [visible, setVisible] = useState(false);
   const pathname = usePathname();
-  const { setOpen, setNavVisible } = useUI();
-  const { viewLoading } = useNav();
-  const { infoLoading } = useInfo();
-  const { workLoading } = useWorks();
-  const { exLoading } = useExhibitions();
-  const [initialLoaded, setInitialLoaded] = useState(false);
+  const { open, setOpen } = useUI();
 
   useEffect(() => {
-    if (!initialLoaded && !workLoading && !exLoading && !infoLoading) {
-      setInitialLoaded(true);
-    }
-    const fallback = setTimeout(() => setInitialLoaded(true), 2000);
-    return () => clearTimeout(fallback);
-  }, [initialLoaded, workLoading, exLoading, infoLoading]);
+    setOpen(false);
+  }, [pathname, setOpen]);
 
-  // On non-home pages always show nav; on home page show only after scrolling to works
-  useEffect(() => {
-    if (pathname !== "/") {
-      setVisible(true);
-      setNavVisible(true);
-      return;
-    }
-
-    setVisible(false);
-    setNavVisible(true);
-
-    const onScroll = () => {
-      const heroEnd = window.innerHeight * 0.85;
-      const isVisible = window.scrollY >= heroEnd;
-      setVisible(isVisible);
-      setNavVisible(isVisible);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [pathname, setNavVisible]);
-
-  const loading = !initialLoaded || viewLoading;
-
-  const revealedItems = [
-    ...NAV_LINKS.map((item, i) => ({
-      key: item.href,
-      index: i,
-      element: (
-        <NavItem href={item.href}>
-          {item.match(pathname) ? (
-            <OGubbeText text={item.label} o="/ogubbe_frilagd_new.png" />
-          ) : (
-            item.label
-          )}
-        </NavItem>
-      ),
-    })),
-    {
-      key: "dark",
-      index: NAV_LINKS.length,
-      element: <DarkModeToggle />,
-    },
-    {
-      key: "search",
-      index: NAV_LINKS.length + 1,
-      element: (
-        <Button
-          variant="link"
-          size="controls"
-          onClick={() => setOpenSearch(true)}
-        >
-          (search)
-        </Button>
-      ),
-    },
-  ];
+  if (pathname === "/") return null;
 
   return (
-    <div
-      id="main-nav"
-      className="z-[20] fixed top-0 left-0 w-full"
-      onClick={() => setOpen(false)}
-    >
+    <>
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
-      <nav
-        aria-label="Site navigation"
-        className=" no-hide-text pt-[32px]  pb-[18px] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] items-start flex flex-col lg:grid lg:grid-cols-12  px-0 text-background"
-      >
-        {/* Page logo — desktop col 1, mobile top-right */}
-        {(() => {
-          const mobileText =
-            pathname === "/"
-              ? visible
-                ? "works"
-                : "elinor silow"
-              : getLogoText(pathname);
-          return (
-            <div className="lg:col-start-1 col-span-1 ">
-              <NavItem href="/">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={mobileText}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <OGubbeText
-                      className="px-[0px]  pr-[12px] text-[24px] lg:text-[18px]"
-                      text={mobileText}
-                      loading={loading}
-                      vertical
-                    />
-                  </motion.span>
-                </AnimatePresence>
-              </NavItem>
-            </div>
-          );
-        })()}
 
-        {/* MENU — col 3 on desktop */}
+      {/* ── DESKTOP: handle + left-slide full-width drawer ── */}
+
+      {/* Handle — always visible, left edge */}
+      <WigglyButton
+        text={open ? "close" : "menu"}
+        onClick={() => setOpen(!open)}
+        vertical
+        className="hidden lg:flex fixed left-0 top-0 z-[130] px-[18px] py-[18px]"
+      />
+
+      {/* Drawer panel — slides in from left */}
+      <motion.div
+        className="hidden lg:block fixed top-0 left-0 z-[120] w-full pointer-events-none"
+        animate={{ x: open ? 0 : "-100%" }}
+        transition={transition}
+      >
         <div
-          className={`hidden lg:flex lg:col-start-4 lg:col-span-8 lg:items-center transition-opacity duration-[400ms] ease-linear ${pathname === "/" && !visible ? "opacity-0 pointer-events-none" : ""}`}
+          className={`h-screen w-full pointer-events-auto transition-[background-color,backdrop-filter] duration-300 ${open ? "bg-background/10 backdrop-blur-lg" : "bg-transparent backdrop-blur-none"}`}
+          onClick={() => setOpen(false)}
         >
-          {revealedItems.map(({ key, index, element }) => (
-            <motion.span
-              key={key}
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{
-                duration: 0.15,
-                delay: index * 0.04,
-                ease: "easeOut",
-              }}
-              className="flex items-center"
+          <nav
+            className="grid grid-cols-12 gap-x-[18px] px-[18px] pt-[18px] pb-[18px] h-full pointer-events-auto items-start justify-items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Link href="/" className="col-start-3">
+              <OGubbeText
+                className="text-[32px] font-timesNewRoman font-bold"
+                text="elinor silow"
+                vertical
+                lettersOnly
+              />
+            </Link>
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link key={href} href={href}>
+                <OGubbeText
+                  className="text-[32px] font-timesNewRoman font-bold"
+                  text={label}
+                  lettersOnly
+                  vertical
+                />
+              </Link>
+            ))}
+            <WigglyButton
+              text="search"
+              className="font-timesNewRoman font-bold"
+              onClick={() => setOpenSearch(true)}
+              vertical
+            />
+            <Link
+              href="https://www.instagram.com/elinorsilow"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              {element}
-            </motion.span>
-          ))}
+              <OGubbeText
+                className="text-[32px] font-timesNewRoman font-bold"
+                text="instagram"
+                lettersOnly
+                vertical
+              />
+            </Link>
+          </nav>
         </div>
-      </nav>
-    </div>
+      </motion.div>
+
+      {/* ── MOBILE: top-slide full-screen ── */}
+      <motion.div
+        className="lg:hidden fixed top-0 left-0 z-[120] w-full pointer-events-none"
+        animate={{ y: open ? 0 : "-100vh" }}
+        transition={transition}
+      >
+        <div
+          className={`relative h-screen w-full pointer-events-auto transition-[background-color,backdrop-filter] duration-300 ${open ? "bg-background/10 backdrop-blur-lg" : "bg-transparent backdrop-blur-none"}`}
+          onClick={() => setOpen(false)}
+        >
+          <nav
+            className="grid grid-cols-7 gap-x-[9px] px-[18px] pt-[18px] pb-[18px] h-full pointer-events-auto items-start justify-items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Link href="/">
+              <OGubbeText
+                className="text-[24px] font-timesNewRoman font-bold"
+                text="elinor silow"
+                vertical
+                lettersOnly
+              />
+            </Link>
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link key={href} href={href}>
+                <OGubbeText
+                  className="text-[24px] font-timesNewRoman font-bold"
+                  text={label}
+                  lettersOnly
+                  vertical
+                />
+              </Link>
+            ))}
+            <WigglyButton
+              text="search"
+              className="font-timesNewRoman font-bold text-[24px]"
+              onClick={() => setOpenSearch(true)}
+              vertical
+            />
+            <Link
+              href="https://www.instagram.com/elinorsilow"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <OGubbeText
+                className="text-[24px] font-timesNewRoman font-bold"
+                text="instagram"
+                lettersOnly
+                vertical
+              />
+            </Link>
+          </nav>
+
+          {/* Close button — bottom center */}
+          <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-[18px]">
+            <WigglyButton text="close" onClick={() => setOpen(false)} />
+          </div>
+        </div>
+
+        {/* Mobile menu tab — peeks at top of screen when closed */}
+        <div className="w-full flex justify-center pointer-events-auto">
+          <button
+            className="no-hide-text cursor-pointer px-[18px] py-[9px]"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpen(!open);
+            }}
+          >
+            <OGubbeText
+              text={open ? "close" : "menu"}
+              lettersOnly
+              vertical={false}
+              className="text-[24px] font-timesNewRoman font-bold"
+              sizes="18px"
+            />
+          </button>
+        </div>
+      </motion.div>
+    </>
   );
 }

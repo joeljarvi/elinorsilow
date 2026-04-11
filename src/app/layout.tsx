@@ -8,12 +8,16 @@ import { ThemeProvider } from "@/context/theme-provider";
 import { InfoProvider } from "@/context/InfoContext";
 import { NavProvider } from "@/context/NavContext";
 import { UIProvider } from "@/context/UIContext";
+import { NavSlotProvider } from "@/context/NavSlotContext";
 
 import BodyClassManager from "@/components/BodyClassManager";
 import NavWrapper from "@/components/NavWrapper";
 import NavSpacer from "@/components/NavSpacer";
+import { SiteLogo } from "@/components/SiteLogo";
+import { HeroText } from "@/components/HeroText";
 
 import { CarouselProvider } from "@/context/CarouselContext";
+import FixedFooter from "@/components/FixedFooter";
 
 const bookish = localFont({
   src: "assets/fonts/Bookish-Book-TRIAL.otf",
@@ -52,22 +56,126 @@ const EBGaramondAC = localFont({
 
 const universNextPro = localFont({
   src: [
-    { path: "assets/fonts/UniversNextPro-Regular.ttf", weight: "400", style: "normal" },
-    { path: "assets/fonts/UniversNextPro-Medium.ttf", weight: "500", style: "normal" },
+    {
+      path: "assets/fonts/UniversNextPro-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
   ],
   variable: "--font-universNextPro",
 });
 
 const universNextProExt = localFont({
   src: [
-    { path: "assets/fonts/UniversNextPro-Ext.ttf", weight: "400", style: "normal" },
-    { path: "assets/fonts/UniversNextPro-ExtItalic.ttf", weight: "400", style: "italic" },
-    { path: "assets/fonts/UniversNextPro-MediumExt.ttf", weight: "500", style: "normal" },
-    { path: "assets/fonts/UniversNextPro-MediumExtIt.ttf", weight: "500", style: "italic" },
-    { path: "assets/fonts/UniversNextPro-HeavyExt.ttf", weight: "800", style: "normal" },
-    { path: "assets/fonts/UniversNextPro-HeavyExtIt.ttf", weight: "800", style: "italic" },
+    {
+      path: "assets/fonts/UniversNextPro-Ext.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-ExtItalic.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-MediumExt.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-MediumExtIt.ttf",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-HeavyExt.ttf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-HeavyExtIt.ttf",
+      weight: "800",
+      style: "italic",
+    },
   ],
   variable: "--font-universNextProExt",
+});
+
+const universNextProCond = localFont({
+  src: [
+    {
+      path: "assets/fonts/UniversNextPro-ThinCond.ttf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-LightCond.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-Cond.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-MediumCond.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-MediumCondIt.ttf",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-BoldCond.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-HeavyCond.ttf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextPro-BlackCond.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-universCond",
+});
+
+const universNextTypewrtr = localFont({
+  src: [
+    {
+      path: "assets/fonts/UniversNextTypewrtrPro-Rg.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextTypewrtrPro-It.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "assets/fonts/UniversNextTypewrtrPro-Bd.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "assets/fonts/UniversNextTypewrtrPro-BdIt.ttf",
+      weight: "700",
+      style: "italic",
+    },
+  ],
+  variable: "--font-universType",
 });
 
 export const metadata: Metadata = {
@@ -85,7 +193,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable} ${universNextPro.variable} ${universNextProExt.variable} antialiased`}
+        className={`${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable} ${universNextPro.variable} ${universNextProExt.variable} ${universNextProCond.variable} ${universNextTypewrtr.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -98,24 +206,21 @@ export default function RootLayout({
               <InfoProvider>
                 <NavProvider>
                   <UIProvider>
-                    <AnimationProvider>
-                      <BodyClassManager />
-                      {/* Column shadow overlay — fixed, covers full viewport */}
-                      <div className="fixed inset-0 pointer-events-none z-[5] hidden lg:grid lg:grid-cols-4">
-                        <div className="shadow-[var(--shadow-col-left)]" />
-                        <div className="shadow-[var(--shadow-col-right)]" />
-                        <div className="shadow-[var(--shadow-col-left)]" />
-                        <div className="shadow-[var(--shadow-col-right)]" />
-                      </div>
-                      <NavWrapper />
+                    <NavSlotProvider>
+                      <AnimationProvider>
+                        <BodyClassManager />
+                        {/* Column shadow overlay — fixed, covers full viewport */}
+                        <FixedFooter />
+                        <NavWrapper />
 
-                      {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
+                        {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
                       <div className="fixed bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-background/0 z-50 pointer-events-none" /> */}
-                      <CarouselProvider>
-                        <NavSpacer />
-                        {children} {modal}
-                      </CarouselProvider>
-                    </AnimationProvider>
+                        <CarouselProvider>
+                          <NavSpacer />
+                          {children} {modal}
+                        </CarouselProvider>
+                      </AnimationProvider>
+                    </NavSlotProvider>
                   </UIProvider>
                 </NavProvider>
               </InfoProvider>

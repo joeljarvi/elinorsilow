@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-none gap-1 whitespace-nowrap font-universNextPro font-medium text-[15px] cursor-pointer  focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center rounded-none gap-1 whitespace-nowrap font-universNextPro font-medium  cursor-pointer  focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none pointer-events-auto disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -20,6 +20,8 @@ const buttonVariants = cva(
         ghost:
           "bg-background text-neutral-600 dark:text-neutral-400 hover:bg-foreground/10 hover:text-foreground justify-center",
         link: "text-primary hover:text-foreground/80 font-extrabold font-universNextProExt [transition:color_0.2s_ease]",
+        filter:
+          "text-primary hover:text-foreground/80 font-medium font-universNextProExt [transition:color_0.2s_ease]",
         stretch:
           "text-primary hover:text-foreground/80 font-extrabold font-universNextProExt hover:[transform:scaleX(1.5)] origin-center   duration-1200 ease-in-out ",
         stroke:
@@ -27,17 +29,20 @@ const buttonVariants = cva(
         nav: "text-primary transition-all w-full justify-between hover:text-primary/80",
       },
       size: {
-        default: "h-[34px] px-[18px]",
+        default: "h-[34px] px-[18px] text-[15px]",
         sm: "h-6 px-4 py-1",
         lg: "px-4 py-2",
         linkSize: "h-6 px-0 py-0 text-sm",
         linkSizeLg: "text-lg leading-tight",
         listSize: "h-auto px-0 py-0",
         linkIcon: "h-6 w-6 px-0 py-0",
-        controls: "h-[34px] tracking-wide px-[18px] py-[5px] [&_svg]:size-3  ",
+        controls:
+          "h-[34px] tracking-wide px-[18px] py-[4px] [&_svg]:size-3  text-[15px] ",
         controlsIcon:
           "h-[34px] tracking-wide px-0 aspect-square py-[5px] [&_svg]:size-3 rounded-full",
         icon: "h-9 w-9",
+        filterControls:
+          "h-[34px] tracking-wide px-[18px] py-[5px] [&_svg]:size-3 text-[21px]  ",
       },
     },
     defaultVariants: {

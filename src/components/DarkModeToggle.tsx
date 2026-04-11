@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { Button } from "./ui/button";
-import { Half2Icon } from "@radix-ui/react-icons";
+import { OGubbeText } from "./OGubbeText";
 
 export function DarkModeToggle({
   className = "",
-  size = "controls",
+  textClassName = "text-[18px]",
+  sizes = "18px",
 }: {
   className?: string;
-  size?: React.ComponentProps<typeof Button>["size"];
+  textClassName?: string;
+  sizes?: string;
 }) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -25,14 +25,17 @@ export function DarkModeToggle({
   const isDark = theme === "dark";
 
   return (
-    <Button
-      variant="link"
-      size={size}
+    <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className={`no-hide-text ${className ?? ""}`}
+      className={`no-hide-text cursor-pointer ${className}`}
     >
-      {isDark ? "(light)" : "(dark)"}
-    </Button>
+      <OGubbeText
+        text={isDark ? "light" : "dark"}
+        lettersOnly
+        className={textClassName}
+        sizes={sizes}
+      />
+    </button>
   );
 }

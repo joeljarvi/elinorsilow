@@ -2,17 +2,16 @@
 
 import { usePathname } from "next/navigation";
 import DesktopNav from "./DesktopNav";
-import MobileNavButton from "./MobileNavButton";
-import MobileNavOverlay from "./MobileNavOverlay";
+import FilterBox from "./FilterBox";
 
 export default function NavWrapper() {
   const pathname = usePathname();
   if (pathname.startsWith("/studio")) return null;
+  const hideFilter = pathname === "/" || pathname === "/info";
   return (
     <>
       <DesktopNav />
-      <MobileNavOverlay />
-      <MobileNavButton />
+      {!hideFilter && <FilterBox />}
     </>
   );
 }

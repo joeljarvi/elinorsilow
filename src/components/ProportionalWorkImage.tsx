@@ -7,8 +7,10 @@ interface Props {
   alt: string;
   dimensions: string;
   proportional?: boolean;
+  fillWidth?: boolean;
   className?: string;
   revealIndex?: number;
+  objectPosition?: string;
 }
 
 /**
@@ -23,9 +25,9 @@ function parseDimensions(dims: string): { w: number; h: number } | null {
   };
 }
 
-// 200 cm maps to 100% width, with a floor of 20% so tiny works are still visible
-const REF_CM = 200;
-const MIN_WIDTH = 0.2;
+// 150 cm maps to 100% width, with a floor of 55% so tiny works are still visible
+const REF_CM = 150;
+const MIN_WIDTH = 0.55;
 const MAX_WIDTH = 1.0;
 
 function proportionalWidth(widthCm: number): number {
@@ -37,10 +39,34 @@ export default function ProportionalWorkImage({
   alt,
   dimensions,
   proportional = true,
+  fillWidth = false,
   className = "",
   revealIndex = 0,
+  objectPosition = "center",
 }: Props) {
   const parsed = parseDimensions(dimensions);
+
+  // Fill full width, use aspect ratio for height
+  if (fillWidth && parsed) {
+    const { w, h } = parsed;
+    return (
+      <div
+        className={`w-full ${className}`}
+        style={{ aspectRatio: `${w} / ${h}` }}
+      >
+        <div className="relative w-full h-full">
+          <RevealImage
+            src={src}
+            alt={alt}
+            fill
+            revealIndex={revealIndex}
+            className="object-contain"
+            style={{ objectPosition }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (!proportional || !parsed) {
     return (
@@ -50,7 +76,8 @@ export default function ProportionalWorkImage({
           alt={alt}
           fill
           revealIndex={revealIndex}
-          className="object-contain object-center"
+          className="object-contain"
+            style={{ objectPosition }}
         />
       </div>
     );
@@ -62,7 +89,7 @@ export default function ProportionalWorkImage({
 
   return (
     <div
-      className={`max-h-[75vh] ${className}`}
+      className={`max-h-[85vh] ${className}`}
       style={{
         width: `${widthFraction * 100}%`,
         aspectRatio: `${aspectRatio}`,
@@ -74,7 +101,8 @@ export default function ProportionalWorkImage({
           alt={alt}
           fill
           revealIndex={revealIndex}
-          className="object-contain object-left-top"
+          className="object-contain"
+            style={{ objectPosition }}
         />
       </div>
     </div>

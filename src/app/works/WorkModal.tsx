@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
+import { useUI } from "@/context/UIContext";
 
 type WorkModalProps = {
   slug: string;
@@ -10,6 +11,7 @@ type WorkModalProps = {
 };
 
 export default function WorkModal({ slug, onClose }: WorkModalProps) {
+  const { showColorBg } = useUI();
   const [isOpen, setIsOpen] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [cursorVisible, setCursorVisible] = useState(false);
@@ -24,7 +26,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
       {isOpen && (
         <motion.div
           key="backdrop"
-          className="fixed inset-0 z-[90] bg-background/70 backdrop-blur-sm cursor-none"
+          className={`fixed inset-0 z-[110] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/70 backdrop-blur-sm"}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -47,7 +49,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
           {/* Custom cursor */}
           {cursorVisible && (
             <div
-              className="hidden lg:block fixed pointer-events-none z-[100] font-universNextProExt font-extrabold text-[11px] tracking-wide"
+              className="hidden lg:block fixed pointer-events-none z-[120] font-universNextProExt font-extrabold text-[11px] tracking-wide"
               style={{
                 left: mousePos.x + 14,
                 top: mousePos.y,
