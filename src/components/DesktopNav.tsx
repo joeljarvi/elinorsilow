@@ -145,7 +145,7 @@ export default function DesktopNav() {
           >
             <Link href="/">
               <OGubbeText
-                className="text-[18px] font-timesNewRoman font-bold"
+                className="text-[24px] lg:text-[21px]  font-timesNewRoman font-bold"
                 text="elinor silow"
                 vertical
                 lettersOnly
@@ -154,7 +154,7 @@ export default function DesktopNav() {
             {NAV_LINKS.map(({ href, label }) => (
               <Link key={href} href={href}>
                 <OGubbeText
-                  className="text-[18px] font-timesNewRoman font-bold"
+                  className="text-[24px] lg:text-[21px]  font-timesNewRoman font-bold"
                   text={label}
                   lettersOnly
                   vertical
@@ -163,8 +163,8 @@ export default function DesktopNav() {
             ))}
             <WigglyButton
               text="search"
-              className="font-timesNewRoman font-bold text-[18px]"
-              size="text-[18px]"
+              className="font-timesNewRoman font-bold "
+              size="text-[24px] lg:text-[21px] "
               onClick={() => setOpenSearch(true)}
               vertical
             />
@@ -174,7 +174,7 @@ export default function DesktopNav() {
               rel="noopener noreferrer"
             >
               <OGubbeText
-                className="text-[18px] font-timesNewRoman font-bold"
+                className="text-[24px] lg:text-[21px]  font-timesNewRoman font-bold"
                 text="instagram"
                 lettersOnly
                 vertical

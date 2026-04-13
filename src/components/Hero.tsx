@@ -24,15 +24,15 @@ export default function Hero() {
 
   return (
     <div className="relative h-dvh overflow-hidden flex flex-col justify-start">
-      <div className="  pointer-events-auto px-[18px] ">
+      <div className="  pointer-events-auto  bg-[#B3F7FE]  ">
+        {/* <div className=" w-[calc(100vw-0px)] lg:w-[33.3vw] lg:mx-auto relative aspect-video ">
+          <Image src="/ELLI_TEXT.png" alt="Elinor Silow" fill />
+        </div> */}
         <HeroText />
-        {/* <div className=" w-[calc(100vw-64px)] lg:w-[33.3vw] lg:mx-auto relative aspect-video ">
-            <Image src="/ELLI_TEXT.png" alt="Elinor Silow" fill />
-          </div> */}
       </div>
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
-        className=" flex flex-row justify-between lg:justify-start gap-16 lg:gap-16 px-[32px]  pt-[9px] pb-[18px] h-full pointer-events-auto items-start w-full "
+        className=" flex flex-wrap bg-[#41B97D] justify-startlg:justify-start  gap-12 lg:gap-16 px-[32px]  pt-[18px] pb-[18px] h-full pointer-events-auto items-start w-full "
         onClick={(e) => e.stopPropagation()}
       >
         <Link href="/">
@@ -48,7 +48,6 @@ export default function Hero() {
             <OGubbeText
               className="text-[24px] lg:text-[21px] font-timesNewRoman font-bold"
               text={label}
-              lettersOnly
               vertical
             />
           </Link>
@@ -62,7 +61,6 @@ export default function Hero() {
           <OGubbeText
             className="text-[24px] lg:text-[21px] font-timesNewRoman font-bold"
             text="instagram"
-            lettersOnly
             vertical
           />
         </Link>

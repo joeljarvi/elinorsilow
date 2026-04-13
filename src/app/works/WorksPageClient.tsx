@@ -35,7 +35,7 @@ function WorkCard({
 
   return (
     <div className="w-full">
-      <div className="w-full relative overflow-hidden min-h-[280px] lg:min-h-[200px]">
+      <div className="w-full relative overflow-hidden min-h-screen lg:min-h-[200px]">
         {/* InfoBox: slides up from the bottom */}
         <motion.div
           className="absolute inset-0 z-20 cursor-pointer bg-transparent"
@@ -262,7 +262,7 @@ export default function WorksPageClient() {
 
       {/* Desktop header — top left */}
       {!isHomePage && (
-        <div className="hidden lg:flex fixed top-0 left-0 z-[60] pt-[18px] px-[18px] items-center pointer-events-none">
+        <div className="hidden fixed top-0 left-0 z-[60] pt-[18px] px-[18px] items-center pointer-events-none">
           <WigglyButton
             text="works"
             size="text-[18px]"
@@ -285,7 +285,7 @@ export default function WorksPageClient() {
 
       {/* Mobile header — top center */}
       {!isHomePage && (
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-[60] flex justify-center items-center pointer-events-none pt-[9px]">
+        <div className="hidden top-0 left-0 right-0 z-[60]justify-center items-center pointer-events-none pt-[18px]">
           <div className="flex items-center pointer-events-auto">
             <WigglyButton
               text="works"
@@ -298,14 +298,14 @@ export default function WorksPageClient() {
             </span>
             {works[mobileHeaderIndex] && (
               <button
-                className="no-hide-text cursor-pointer px-[12px] py-[0px]"
+                className="no-hide-text cursor-pointer px-[9px] py-[0px]"
                 onClick={() => openWork(works[mobileHeaderIndex])}
               >
                 <OGubbeText
                   text={works[mobileHeaderIndex].title.rendered}
                   lettersOnly
                   vertical={false}
-                  className="text-[18px] font-timesNewRoman font-bold"
+                  className="text-[18px] font-timesNewRoman tracking-wider font-bold"
                   sizes="18px"
                   revealAnimation={false}
                   wrap
@@ -324,10 +324,10 @@ export default function WorksPageClient() {
       >
         <>
           {/* Desktop — row-based snap scroll, snaps to top-left card of each row */}
-          <div className="hidden lg:block relative h-dvh">
+          <div className="hidden lg:block relative h-dvh ">
             {/* Title list */}
             {showAsList && (
-              <div className="absolute inset-y-0 left-0 z-[40] flex flex-col justify-start items-start px-[18px] gap-y-[9px] overflow-y-auto pointer-events-auto">
+              <div className="fixed top-0 left-0 h-dvh z-[40] flex flex-col justify-start items-start px-[18px] gap-y-[9px] overflow-y-auto pointer-events-auto">
                 <WorkTitleListItems
                   works={works}
                   isActive={(i) =>
@@ -380,7 +380,7 @@ export default function WorksPageClient() {
           </div>
 
           {/* Mobile — snap scroll, each card fills viewport */}
-          <div className="lg:hidden relative z-[10] h-dvh overflow-y-scroll snap-y snap-mandatory">
+          <div className="lg:hidden relative z-[10] h-dvh overflow-y-scroll snap-y snap-mandatory ">
             {/* Blurred color background */}
             {showColorBg && (
               <div className="fixed inset-0 z-0 lg:hidden pointer-events-none">
@@ -415,7 +415,7 @@ export default function WorksPageClient() {
 
           {/* Mobile — fixed centered title list (behind works) */}
           {showAsList && (
-            <div className="lg:hidden fixed top-0 left-0 right-0 z-[5] h-dvh overflow-y-auto flex flex-col items-center gap-y-[9px] pt-[0px] pb-[0px] pointer-events-auto">
+            <div className="lg:hidden fixed top-0 left-0 right-0 z-[60] h-dvh overflow-y-auto flex flex-col items-center gap-y-[9px] pt-[0px] pb-[0px] pointer-events-auto">
               <WorkTitleListItems
                 works={works}
                 isActive={(i) => i === mobileHeaderIndex}

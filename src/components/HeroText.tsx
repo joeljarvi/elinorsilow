@@ -74,17 +74,12 @@ export function HeroText() {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={containerRef}
-      className=" text-[24px] lg:text-[21px] leading-[1.2]  px-[0px] no-hide-text font-timesNewRoman text-foreground  tracking-wide pt-[9px] pointer-events-none mb-[0px] max-w-3xl  "
+      className=" text-[24px] lg:text-[21px] leading-[1.2]  px-[18px] no-hide-text font-timesNewRoman text-foreground  tracking-wide pt-[18px] pb-[18px] pointer-events-none mb-[0px] max-w-3xl   "
     >
       {"Elinor Silow".split(" ").map((w, i) => (
         <Fragment key={`name-${i}`}>
           <Word className="font-timesNewRoman  text-[24px] lg:text-[21px] flex items-center ">
-            <OGubbeText
-              className="font-timesNewRoman font-bold text-[24px] lg:text-[21px] mb-[] "
-              text={w}
-              sizes="18px"
-              lettersOnly
-            />
+            {w}
           </Word>
           {"\u00A0"}
         </Fragment>
@@ -100,7 +95,7 @@ export function HeroText() {
         <Button
           variant="link"
           asChild
-          className="font-timesNewRoman  text-[24px] lg:text-[21px] px-0 pointer-events-auto underline"
+          className="font-timesNewRoman font-normal  text-[24px] lg:text-[21px] px-0 pointer-events-auto underline underline-offset-3 decoration-1 hover:no-underline"
         >
           <Link href="mailto:elinor.silow@gmail.com">
             elinor.silow@gmail.com

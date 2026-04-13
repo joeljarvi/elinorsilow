@@ -7,13 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 /* -------------------- IMAGE POOL -------------------- */
 
-const O_IMAGES = [
-  "/O/O_1.png",
-  "/O/O_2.png",
-  "/O/O_3.png",
-  "/O/O_4.png",
-  "/O/ogubbe_frilagd_new.png",
-];
+const O_IMAGES = ["/O/ogubbe_frilagd_new.png"];
 
 /* -------------------- SINGLE CHAR -------------------- */
 

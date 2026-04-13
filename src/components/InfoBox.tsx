@@ -33,7 +33,7 @@ export default function InfoBox({
       .join(", ");
 
     return (
-      <div className="no-hide-text max-h-dvh flex flex-row justify-start gap-x-[18px] gap-y-[9px] lg:gap-y-[18px] items-center bg-transparent  overflow-hidden">
+      <div className="no-hide-text max-h-dvh block gap-x-[18px] gap-y-[9px] lg:gap-y-[18px] items-center bg-transparent  overflow-hidden">
         {/* Title */}
         {/* <OGubbeText
           text={work.title.rendered}
@@ -50,7 +50,7 @@ export default function InfoBox({
 
         {/* Bottom: metadata */}
 
-        <div className="font-timesNewRoman  text-[18px] leading-snug tracking-wide mt-[18px] bg-transparent px-[9px] pb-[18px] w-full  ">
+        <div className="font-timesNewRoman  text-[24px] lg:text-[21px] leading-tight tracking-wide mt-[18px] bg-[#E7F8BE] px-[18px] pt-[18px] pb-[18px] w-full  ">
           {work.acf.materials && <div>{work.title.rendered}</div>}
           {yearDimensions && <div>{yearDimensions}</div>}
           {work.acf.materials && (
