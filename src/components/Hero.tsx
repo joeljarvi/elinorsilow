@@ -23,7 +23,7 @@ export default function Hero() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="relative h-screen overflow-hidden flex flex-col justify-start">
+    <div className="relative h-dvh overflow-hidden flex flex-col justify-start">
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
         className="grid grid-cols-7 lg:grid-cols-12 gap-x-[9px] lg:gap-x-[18px] px-[18px] pt-[18px] pb-[18px] pointer-events-auto items-start justify-items-center"

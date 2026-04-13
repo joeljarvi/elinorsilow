@@ -39,7 +39,7 @@ export default function SmoothScroll({
         duration: 1.15,
         easing: (t) => 1 - Math.pow(1 - t, 4),
       }}
-      className="h-screen overflow-y-scroll scrollbar-hide pointer-events-auto"
+      className="h-dvh overflow-y-scroll scrollbar-hide pointer-events-auto"
       id="lenis-root"
     >
       {children}

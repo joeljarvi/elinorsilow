@@ -87,13 +87,13 @@ export default function WorkSlugModalClient({
     return () => window.removeEventListener("keydown", onKey);
   }, [goPrev, goNext, onClose]);
 
-  if (loading) return <div className="w-screen h-screen" />;
+  if (loading) return <div className="w-full h-dvh" />;
   if (!work) return null;
 
   return (
     <div
       {...swipeHandlers}
-      className="relative w-screen h-screen flex flex-col lg:flex-row p-[18px] gap-x-4"
+      className="relative w-full h-dvh flex flex-col lg:flex-row p-[18px] gap-x-4"
       onClick={onClose}
     >
       {showColorBg && work?.image_url && (
@@ -115,8 +115,8 @@ export default function WorkSlugModalClient({
       </div>
 
       {/* Mobile close button */}
-      <div className="lg:hidden flex justify-center pb-[8px]">
-        <WigglyButton text="close" onClick={onClose} />
+      <div className="lg:hidden flex justify-center ">
+        <WigglyButton text="back" size="text-18px" onClick={onClose} />
       </div>
     </div>
   );

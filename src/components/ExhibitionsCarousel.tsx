@@ -125,7 +125,7 @@ export function ExhibitionsCarousel({ items }: { items: Exhibition[] }) {
 
   return (
     <section id="exhibitions-scroll" className="relative h-[300vh]">
-      <div className="sticky top-0 h-screen w-full overflow-hidden ">
+      <div className="sticky top-0 h-dvh w-full overflow-hidden ">
         {/* CAROUSEL */}
         <Carousel
           setApi={(embla) => {

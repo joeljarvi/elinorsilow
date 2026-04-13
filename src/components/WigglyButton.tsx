@@ -7,6 +7,8 @@ interface WigglyButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   vertical?: boolean;
   className?: string;
+  size?: string;
+  revealAnimation?: boolean;
 }
 
 export default function WigglyButton({
@@ -14,10 +16,12 @@ export default function WigglyButton({
   onClick,
   vertical = false,
   className,
+  size = "text-[24px] lg:text-[21px]",
+  revealAnimation = true,
 }: WigglyButtonProps) {
   return (
     <button
-      className={`no-hide-text pointer-events-auto cursor-pointer px-[12px] py-[8px] ${className ?? ""}`}
+      className={`no-hide-text pointer-events-auto cursor-pointer px-[9px]  ${className ?? ""}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick?.(e);
@@ -27,8 +31,9 @@ export default function WigglyButton({
         text={text}
         lettersOnly
         vertical={vertical}
-        className="text-[24px] lg:text-[32px] font-timesNewRoman font-bold"
+        className={`${size} font-timesNewRoman font-bold`}
         sizes="18px"
+        revealAnimation={revealAnimation}
       />
     </button>
   );

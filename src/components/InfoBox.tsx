@@ -33,22 +33,25 @@ export default function InfoBox({
       .join(", ");
 
     return (
-      <div className="no-hide-text h-full flex flex-col justify-start gap-y-[9px] lg:gap-y-[18px] items-start bg-transparent px-[18px] lg:px-[18px] pt-[32px] lg:pt-[32px] pb-[0px] lg:pb-[32px]">
-        {/* Top: title */}
-        <OGubbeText
+      <div className="no-hide-text max-h-dvh flex flex-row justify-start gap-x-[18px] gap-y-[9px] lg:gap-y-[18px] items-center bg-transparent  overflow-hidden">
+        {/* Title */}
+        {/* <OGubbeText
           text={work.title.rendered}
           lettersOnly
-          className="text-[24px] lg:text-[24px] tracking-wider font-timesNewRoman font-bold "
+          className="text-[24px] lg:text-[21px] tracking-wider font-timesNewRoman font-bold max-h-[calc(100dvh-64px)]"
           sizes="21px"
           wrap
+          vertical
           rotate={false}
-        />
+        /> */}
         {/* <span className="font-timesNewRoman font-bold  text-[18px] lg:text-[21px] leading-snug tracking-wider ">
           {work.title.rendered}
         </span> */}
 
         {/* Bottom: metadata */}
-        <div className="font-timesNewRoman  text-[18px] leading-snug tracking-wide lg:p">
+
+        <div className="font-timesNewRoman  text-[18px] leading-snug tracking-wide mt-[18px] bg-transparent px-[9px] pb-[18px] w-full  ">
+          {work.acf.materials && <div>{work.title.rendered}</div>}
           {yearDimensions && <div>{yearDimensions}</div>}
           {work.acf.materials && (
             <div>
@@ -71,7 +74,7 @@ export default function InfoBox({
       .join(", ");
 
     return (
-      <div className="no-hide-text h-full flex flex-col justify-start gap-y-[18px] bg-transparent px-[32px] pt-[64px] pb-[44px]">
+      <div className="no-hide-text max-h-dvh flex flex-col justify-start gap-y-[18px] bg-transparent px-[32px] pt-[64px] pb-[44px] overflow-auto">
         <OGubbeText
           text={exhibition.title.rendered}
           lettersOnly

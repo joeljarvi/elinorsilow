@@ -26,7 +26,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
       {isOpen && (
         <motion.div
           key="backdrop"
-          className={`fixed inset-0 z-[110] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/70 backdrop-blur-sm"}`}
+          className={`fixed inset-0 z-[200] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/70 backdrop-blur-sm"}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -47,18 +47,6 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
           </motion.div>
 
           {/* Custom cursor */}
-          {cursorVisible && (
-            <div
-              className="hidden lg:block fixed pointer-events-none z-[120] font-universNextProExt font-extrabold text-[11px] tracking-wide"
-              style={{
-                left: mousePos.x + 14,
-                top: mousePos.y,
-                transform: "translateY(-50%)",
-              }}
-            >
-              Close window
-            </div>
-          )}
         </motion.div>
       )}
     </AnimatePresence>

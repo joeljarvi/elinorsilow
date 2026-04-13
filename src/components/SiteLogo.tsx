@@ -53,7 +53,7 @@ export function SiteLogo() {
       layout
       transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={`pointer-events-none flex flex-col pl-[18px] pr-[18px] ${
-        isWorks && atTop ? "h-screen justify-center" : "pt-[18px] justify-start"
+        isWorks && atTop ? "h-dvh justify-center" : "pt-[18px] justify-start"
       }`}
     >
       <motion.div layout className="pointer-events-auto">

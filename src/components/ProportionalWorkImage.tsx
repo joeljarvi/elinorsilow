@@ -11,6 +11,7 @@ interface Props {
   className?: string;
   revealIndex?: number;
   objectPosition?: string;
+  noScaleY?: boolean;
 }
 
 /**
@@ -43,6 +44,7 @@ export default function ProportionalWorkImage({
   className = "",
   revealIndex = 0,
   objectPosition = "center",
+  noScaleY = false,
 }: Props) {
   const parsed = parseDimensions(dimensions);
 
@@ -60,6 +62,7 @@ export default function ProportionalWorkImage({
             alt={alt}
             fill
             revealIndex={revealIndex}
+            noScaleY={noScaleY}
             className="object-contain"
             style={{ objectPosition }}
           />

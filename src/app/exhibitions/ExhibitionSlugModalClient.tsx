@@ -161,14 +161,15 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   return (
     <div {...swipeHandlers} className="flex flex-col bg-background w-full">
       {/* Hero header */}
-      <div className="relative h-[100vh] w-full overflow-hidden shrink-0">
+      <div className="relative h-dvh w-full overflow-hidden shrink-0">
         {/* Blurred crossfade background */}
         <BlurredSlideshowBackground urls={images.map((img) => img.url)} />
 
         {/* Close button */}
-        <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center">
+        <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center lg:bottom-auto lg:top-4 lg:right-8 lg:left-auto">
           <WigglyButton
-            text="close"
+            text="back"
+            size="text-[21px] lg:[text-18px]"
             onClick={onClose ?? (() => router.push("/exhibitions"))}
             className="rotate-[-2deg]"
           />
@@ -325,7 +326,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="pl-0 flex flex-col items-center justify-center py-[32px] px-4 h-screen"
+                  className="pl-0 flex flex-col items-center justify-center py-[32px] px-4 h-dvh"
                 >
                   <div className="relative w-full h-full">
                     <Image

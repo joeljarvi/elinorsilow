@@ -25,7 +25,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal lowercase text-[18px] lg:text-[21px] text-muted-foreground tracking-widest mx-[32px] pb-[4px] px-[0px] block text-center lg:text-left ${className}`}
+      className={`font-timesNewRoman font-normal lowercase text-[18px] lg:text-[18px] text-muted-foreground tracking-widest mx-[32px] pb-[0px] px-[0px] block text-center lg:text-right ${className}`}
     >
       {children}
     </span>
@@ -76,30 +76,40 @@ function WorksControls() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:grid lg:grid-cols-3 lg:gap-y-0 w-full pt-[18px] pb-[18px] justify-center items-center lg:items-start">
+    <div className="flex flex-col gap-y-[44px] lg:gap-y-[18px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort by</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-start mt-[9px] px-[18px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[9px] px-[18px]">
           {WORK_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
               text={s.label}
+              size="text-[18px]"
               onClick={() => setWorkSort(s.value as WorkSort)}
-              className={workSort === s.value ? "text-foreground" : "text-muted-foreground"}
+              className={
+                workSort === s.value
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }
             />
           ))}
         </div>
       </div>
 
       <div>
-        <FilterLabel>Filter by category</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-start mt-[9px] px-[18px]">
+        <FilterLabel>Filter by </FilterLabel>
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[18px]">
           {WORK_CATS.map((c) => (
             <WigglyButton
               key={c.value}
               text={c.label}
+              size="text-[18px]"
               onClick={() => setCategoryFilter(c.value as CategoryFilter)}
-              className={categoryFilter === c.value ? "text-foreground" : "text-muted-foreground"}
+              className={
+                categoryFilter === c.value
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }
             />
           ))}
         </div>
@@ -107,40 +117,47 @@ function WorksControls() {
 
       <div>
         <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-start mt-[9px] px-[18px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[9px] px-[18px]">
           <WigglyButton
-            text="Grid"
-            onClick={() => setShowAsList(false)}
-            className={!showAsList ? "text-foreground" : "text-muted-foreground"}
-          />
-          <WigglyButton
-            text="List"
-            onClick={() => setShowAsList(true)}
+            text={showAsList ? "hide list" : "show list"}
+            size="text-[18px]"
+            onClick={() => setShowAsList(!showAsList)}
             className={showAsList ? "text-foreground" : "text-muted-foreground"}
           />
-          {!showAsList && (
-            <>
-              <WigglyButton text="Columns" className="text-muted-foreground" />
-              <WigglyButton
-                text="−"
-                onClick={() => setGridCols(Math.max(1, gridCols - 1))}
-                className="text-foreground"
-              />
-              <WigglyButton text={gridCols.toString()} className="text-foreground" />
-              <WigglyButton
-                text="+"
-                onClick={() => setGridCols(Math.min(8, gridCols + 1))}
-                className="text-foreground"
-              />
-            </>
-          )}
+          <span className="flex">
+            <WigglyButton
+              text="Columns"
+              size="text-[18px]"
+              className="text-muted-foreground"
+            />
+            <WigglyButton
+              text="−"
+              size="text-[18px]"
+              onClick={() => setGridCols(Math.max(1, gridCols - 1))}
+              className="text-foreground"
+            />
+            <WigglyButton
+              text={gridCols.toString()}
+              size="text-[18px]"
+              className="text-foreground"
+            />
+            <WigglyButton
+              text="+"
+              size="text-[18px]"
+              onClick={() => setGridCols(Math.min(8, gridCols + 1))}
+              className="text-foreground"
+            />
+          </span>
           <WigglyButton
             text={showColorBg ? "B/W" : "COLOR"}
+            size="text-[18px]"
             onClick={() => setShowColorBg(!showColorBg)}
-            className={showColorBg ? "text-foreground" : "text-muted-foreground"}
+            className={`flex lg:hidden
+              ${showColorBg ? "text-foreground" : "text-muted-foreground"}`}
           />
           <WigglyButton
             text={theme === "dark" ? "light" : "dark"}
+            size="text-[18px]"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="text-foreground"
           />
@@ -151,17 +168,19 @@ function WorksControls() {
 }
 
 function ExhibitionsControls() {
-  const { exCat, setExCat, exSort, setExSort } = useExhibitions();
+  const { exCat, setExCat, exSort, setExSort, exAsList, setExAsList } =
+    useExhibitions();
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:grid lg:grid-cols-3 lg:gap-y-0 w-full pt-[18px] pb-[18px] items-center lg:items-start">
+    <div className="flex flex-col gap-y-[44px] lg:gap-y-[18px] w-full pt-[18px] pb-[18px] items-center lg:items-end">
       <div>
         <FilterLabel>Sort</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-start mt-[9px] lg:mt-[18px] px-[18px]">
+        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px]">
           {EX_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
               text={s.label}
+              size="text-[18px]"
               onClick={() => setExSort(s.value as ExSort)}
               className={
                 exSort === s.value ? "text-foreground" : "text-muted-foreground"
@@ -173,17 +192,30 @@ function ExhibitionsControls() {
 
       <div>
         <FilterLabel>Type</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-start mt-[9px] lg:mt-[18px] px-[18px]">
+        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px]">
           {EX_CATS.map((c) => (
             <WigglyButton
               key={c.value}
               text={c.label}
+              size="text-[18px]"
               onClick={() => setExCat(c.value as ExCategory)}
               className={
                 exCat === c.value ? "text-foreground" : "text-muted-foreground"
               }
             />
           ))}
+        </div>
+      </div>
+
+      <div>
+        <FilterLabel>Settings</FilterLabel>
+        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px]">
+          <WigglyButton
+            text={exAsList ? "hide list" : "show list"}
+            size="text-[18px]"
+            onClick={() => setExAsList(!exAsList)}
+            className={exAsList ? "text-foreground" : "text-muted-foreground"}
+          />
         </div>
       </div>
     </div>
@@ -218,32 +250,22 @@ export default function FilterBox() {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center pointer-events-none px-[0px] lg:px-0">
+    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
       <motion.div
         animate={{ y: filterOpen ? 0 : drawerHeight }}
         transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
-        className="pointer-events-auto flex flex-col items-center  lg:items-end w-full lg:w-auto"
+        className="pointer-events-auto flex flex-col items-center lg:items-end w-full lg:w-auto"
       >
-        {/* External toggle button — visible when closed, slides off on mobile when open */}
-        <WigglyButton
-          text={filterOpen ? "close" : "filter"}
-          onClick={handleFilterOpen}
-          className="px-[18px] mb-[8px]"
-        />
+        {/* Toggle button hidden on all breakpoints — handled by nav tab */}
 
         {/* DRAWER */}
         <div
           ref={drawerRef}
-          className="bg-background shadow-lg w-full lg:max-w-6xl h-screen lg:h-auto flex flex-col lg:block overflow-hidden"
+          className="bg-background lg:bg-transparent w-full h-dvh flex flex-col justify-end overflow-hidden"
         >
           {/* Scrollable content */}
-          <div className="flex-1 min-h-0 overflow-y-auto lg:max-h-[75vh] flex flex-col justify-center lg:block pt-[32px] lg:pt-[32px] pb-[18px]">
+          <div className="flex-1 min-h-0 overflow-y-auto  flex flex-col justify-center lg:justify-end pt-[32px] lg:pt-[18px] pb-[18px]">
             <FilterContent />
-          </div>
-
-          {/* Mobile close button — bottom center */}
-          <div className="lg:hidden flex-shrink-0 flex justify-center pb-[18px]">
-            <WigglyButton text="close" onClick={handleFilterOpen} />
           </div>
         </div>
       </motion.div>

@@ -13,9 +13,13 @@ import WigglyButton from "./WigglyButton";
 export default function NavSearch({
   open,
   onClose,
+  inline = false,
+  filterType,
 }: {
   open: boolean;
   onClose: () => void;
+  inline?: boolean;
+  filterType?: "work" | "exhibition";
 }) {
   const { allWorks, setActiveWorkSlug, setOpen: setWorkModalOpen } = useWorks();
   const {
@@ -25,24 +29,31 @@ export default function NavSearch({
   } = useExhibitions();
 
   const index = buildSearchIndex({ works: allWorks, exhibitions });
-  const { query, setQuery, results } = useSiteSearch(index);
+  const { query, setQuery, results: allResults } = useSiteSearch(index);
+  const results = filterType ? allResults.filter((r) => r.type === filterType) : allResults;
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (open) {
-      inputRef.current?.focus();
+    if (!inline) {
+      if (open) {
+        inputRef.current?.focus();
+      } else {
+        setQuery("");
+      }
     } else {
-      setQuery("");
+      if (!open) setQuery("");
     }
-  }, [open, setQuery]);
+  }, [open, setQuery, inline]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) onClose();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+    if (!inline) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && open) onClose();
+      };
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [open, onClose, inline]);
 
   const handleResultClick = (item: (typeof results)[0]) => {
     if (item.type === "work") {
@@ -53,8 +64,45 @@ export default function NavSearch({
       setExModalOpen(false);
     }
     setQuery("");
-    onClose();
+    if (!inline) onClose();
   };
+
+  if (inline) {
+    return (
+      <div className="relative flex items-start self-start lg:pt-[32px] lg:px-[0px] w-full">
+        <div className="flex items-center w-full border-b border-border ">
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="search"
+            className="outline-none bg-transparent font-timesNewRoman font-bold text-[18px]  tracking-wide px-[12px] py-[9px] flex-1 placeholder:text-muted-foreground"
+          />
+          {query && (
+            <button
+              className="no-hide-text cursor-pointer shrink-0 px-[12px]"
+              onClick={() => setQuery("")}
+            ></button>
+          )}
+        </div>
+        {query && results.length > 0 && (
+          <div className="absolute top-full left-0 right-0 z-[125] flex flex-col bg-background border-b border-border ">
+            {results.slice(0, 8).map((item) => (
+              <button
+                key={item.id}
+                className="flex flex-row items-baseline w-full text-left hover:bg-foreground/10 transition-colors"
+                onClick={() => handleResultClick(item)}
+              >
+                <span className="font-timesNewRoman tracking-wide text-[18px] py-[9px] font-bold px-[0px]">
+                  {item.title}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence>

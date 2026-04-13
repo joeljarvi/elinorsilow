@@ -217,7 +217,8 @@ export function OGubbeText({
     return (
       <span
         className={cn(
-          "inline-flex flex-col items-center justify-center font-universNextProExt font-extrabold leading-0",
+          "inline-flex flex-col items-center justify-start font-universNextProExt font-extrabold leading-0",
+          wrap && "flex-wrap",
           className,
         )}
         style={{

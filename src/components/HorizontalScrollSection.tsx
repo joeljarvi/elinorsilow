@@ -31,7 +31,7 @@ export default function HorizontalScrollSection() {
       ref={sectionRef}
       className={`relative w-full ${isDesktop ? "h-[300vh]" : "h-auto"}`}
     >
-      <div className={`sticky top-0 h-screen w-full overflow-hidden`}>
+      <div className={`sticky top-0 h-dvh w-full overflow-hidden`}>
         <motion.div
           ref={trackRef}
           style={isDesktop ? { x } : undefined}
@@ -40,7 +40,7 @@ export default function HorizontalScrollSection() {
           {panels.map((_, i) => (
             <div
               key={i}
-              className={`w-full h-screen flex items-center justify-center text-6xl font-bold ${
+              className={`w-full h-dvh flex items-center justify-center text-6xl font-bold ${
                 isDesktop ? "border-r" : "border-b"
               }`}
             >
