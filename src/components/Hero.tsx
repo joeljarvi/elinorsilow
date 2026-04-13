@@ -32,12 +32,12 @@ export default function Hero() {
       </div>
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
       <nav
-        className=" flex flex-row justify-start  gap-16 px-[32px]  pt-[9px] pb-[18px] h-full pointer-events-auto items-start "
+        className=" flex flex-row justify-between lg:justify-start gap-16 lg:gap-16 px-[32px]  pt-[9px] pb-[18px] h-full pointer-events-auto items-start w-full "
         onClick={(e) => e.stopPropagation()}
       >
         <Link href="/">
           <OGubbeText
-            className="text-[32px] font-timesNewRoman font-bold"
+            className="text-[24px] lg:text-[21px] font-timesNewRoman font-bold"
             text="elinor silow"
             vertical
             lettersOnly
@@ -46,7 +46,7 @@ export default function Hero() {
         {NAV_LINKS.map(({ href, label }) => (
           <Link key={href} href={href}>
             <OGubbeText
-              className="text-[32px] font-timesNewRoman font-bold"
+              className="text-[24px] lg:text-[21px] font-timesNewRoman font-bold"
               text={label}
               lettersOnly
               vertical
@@ -60,7 +60,7 @@ export default function Hero() {
           rel="noopener noreferrer"
         >
           <OGubbeText
-            className="text-[32px] font-timesNewRoman font-bold"
+            className="text-[24px] lg:text-[21px] font-timesNewRoman font-bold"
             text="instagram"
             lettersOnly
             vertical

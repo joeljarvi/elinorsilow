@@ -67,7 +67,7 @@ export default function InfoPageClient() {
               return (
                 <div
                   key={ex.id}
-                  className="flex flex-wrap items-baseline gap-x-1 text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman  px-[9px] pt-[9px] mb-[9px] no-hide-text   "
+                  className="flex flex-wrap items-baseline gap-x-1 text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman  px-[9px] pt-[9px] mb-[9px] no-hide-text whitespace-normal   "
                 >
                   {slug ? (
                     <Button
