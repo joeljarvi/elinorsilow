@@ -308,6 +308,7 @@ export default function WorksPageClient() {
                   className="text-[18px] font-timesNewRoman font-bold"
                   sizes="18px"
                   revealAnimation={false}
+                  wrap
                 />
               </button>
             )}

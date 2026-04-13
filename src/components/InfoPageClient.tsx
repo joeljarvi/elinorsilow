@@ -99,7 +99,7 @@ export default function InfoPageClient() {
   }
 
   return (
-    <section className="mt-[66.6vh] lg:mt-[50vh] relative w-full">
+    <section className="mt-[48px] relative w-full">
       <ScrollHint />
       {/* Fixed page header */}
 
@@ -191,7 +191,7 @@ export default function InfoPageClient() {
             text="Press"
             lettersOnly
             sizes="21px"
-            className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman"
+            className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman justify-center"
           />
           <div className="flex flex-col mt-[18px] mb-4">
             <InfoRow label="2022">
@@ -225,7 +225,7 @@ export default function InfoPageClient() {
             text="Colophon"
             lettersOnly
             sizes="21px"
-            className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman"
+            className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman justify-center"
           />
           <div className="flex flex-col mt-[18px] mb-4">
             <InfoRow label="Design & code">

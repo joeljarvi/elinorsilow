@@ -34,7 +34,6 @@ function ExhibitionCard({
           width={1200}
           height={900}
           revealIndex={index}
-          blurUntilCentered
           className="w-full h-auto object-centered max-w-xl mx-auto"
         />
       )}
@@ -129,7 +128,7 @@ export default function ExhibitionsPageClient() {
       </div>
 
       {/* Mobile fixed header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-[100] flex justify-center items-center pointer-events-none pt-[9px]">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-[100] flex justify-center items-center pointer-events-none pt-[9px] ">
         <div className="flex items-center pointer-events-auto">
           <WigglyButton
             text="exhibitions"
@@ -143,14 +142,14 @@ export default function ExhibitionsPageClient() {
           </span>
           {centeredExhibition && (
             <button
-              className="no-hide-text cursor-pointer px-"
+              className="no-hide-text cursor-pointer px-[9px]"
               onClick={() => openExhibition(centeredExhibition)}
             >
               <OGubbeText
                 text={centeredExhibition.title.rendered}
                 lettersOnly
                 vertical={false}
-                className="text-[18px] font-timesNewRoman font-normal "
+                className="text-[18px] font-timesNewRoman font-bold "
                 sizes="18px"
                 revealAnimation={false}
               />

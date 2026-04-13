@@ -181,7 +181,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             <OGubbeText
               text={exhibition.title.rendered}
               sizes="24px"
-              className=" text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+              className=" text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
               vertical
               lettersOnly
             />
@@ -191,7 +191,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               <OGubbeText
                 text={location}
                 sizes="24px"
-                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
                 vertical
                 lettersOnly
               />
@@ -200,7 +200,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               <OGubbeText
                 text={city}
                 sizes="24px"
-                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
                 vertical
                 lettersOnly
               />
@@ -209,7 +209,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               <OGubbeText
                 text={`${exhibition.acf.exhibition_type} Exhibition`}
                 sizes="24px"
-                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
                 vertical
                 lettersOnly
               />
@@ -218,7 +218,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               <OGubbeText
                 text={String(exhibition.acf.year)}
                 sizes="24px"
-                className="text-[24px] lg:text-[32px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                className="text-[21px] lg:text-[18px]text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
                 vertical
                 lettersOnly
               />
@@ -333,7 +333,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                       src={img.url}
                       alt={img.alt || img.desc || `Image ${idx + 1}`}
                       fill
-                      className="object-contain object-top"
+                      className="object-contain object-center"
                     />
                   </div>
                   {img.desc && (
