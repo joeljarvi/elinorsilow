@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import { InfoRow } from "@/components/InfoBox";
-import { HeroText } from "./HeroText";
-import { OGubbeText } from "./OGubbeText";
+import { HeroText } from "@/components/HeroText";
+import { OGubbeText } from "@/components/OGubbeText";
 import { useEffect, useState } from "react";
 
 function ScrollHint() {
@@ -24,7 +24,7 @@ function ScrollHint() {
 
   return (
     <p
-      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-[24px] bg-transparent"
+      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-[16px] lg:text-[19px] bg-transparent"
       style={{ opacity: visible ? 0.3 : 0, transition: "opacity 0.7s ease" }}
     >
       scroll
@@ -58,7 +58,7 @@ export default function InfoPageClient() {
         {groupByYear(items).map(([year, exs]) => (
           <div key={year}>
             <div className="flex flex-row items-baseline mt-[18px]">
-              <span className="text-[24px] lg:text-[21px] leading-[1.2]  px-[0px] no-hide-text  tracking-wide font-timesNewRoman  text-muted-foreground italic">
+              <span className="text-[16px] lg:text-[19px] leading-[1.2]  px-[0px] no-hide-text  tracking-wide font-timesNewRoman  text-muted-foreground italic">
                 {year}
               </span>
             </div>
@@ -67,13 +67,13 @@ export default function InfoPageClient() {
               return (
                 <div
                   key={ex.id}
-                  className="flex flex-wrap items-baseline gap-x-1 text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman  px-[9px] pt-[9px] mb-[9px] no-hide-text whitespace-normal   "
+                  className="flex flex-wrap items-baseline gap-x-1 text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman  px-[9px] pt-[9px] mb-[9px] no-hide-text whitespace-normal   "
                 >
                   {slug ? (
                     <Button
                       variant="link"
                       size="controls"
-                      className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman  p-0 h-auto underline underline-offset-4 decoration-1 hover:no-underline justify-start"
+                      className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman  p-0 h-auto underline underline-offset-4 decoration-1 hover:no-underline justify-start"
                       onClick={() => {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
@@ -82,11 +82,11 @@ export default function InfoPageClient() {
                       {ex.title.rendered},
                     </Button>
                   ) : (
-                    <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman ">
+                    <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman ">
                       {ex.title.rendered},
                     </span>
                   )}
-                  <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman ">
+                  <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman ">
                     {ex.acf.venue}, {ex.acf.city}
                   </span>
                 </div>
@@ -103,10 +103,10 @@ export default function InfoPageClient() {
       <ScrollHint />
       {/* Fixed page header */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 pt-[32px] lg:gap-x-[32px] px-[18px] lg:px-[64px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 pt-[32px] lg:gap-x-[18px] px-[18px] lg:px-[18px]">
         {/* Col 1: About + Solo Exhibitions */}
 
-        <div className="flex flex-col lg:col-start-3 lg:col-span-10 mb-[32px] ">
+        <div className="flex flex-col lg:col-start-3 lg:col-span-10 mb-[18px] ">
           <HeroText />
         </div>
         <div className="flex flex-col col-start-1 lg:col-span-4">
@@ -115,8 +115,8 @@ export default function InfoPageClient() {
               <OGubbeText
                 text="Group Exhibitions"
                 lettersOnly
-                sizes="24px"
-                className="text-[24px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                sizes="19px"
+                className="text-[16px] lg:text-[19px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
               />
               <ExhibitionList items={groupExhibitions} />
             </>
@@ -128,8 +128,8 @@ export default function InfoPageClient() {
               <OGubbeText
                 text="Solo Exhibitions"
                 lettersOnly
-                sizes="24px"
-                className="text-[24px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                sizes="16px"
+                className="text-[16px] lg:text-[19px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
               />
 
               <ExhibitionList items={soloExhibitions} />
@@ -139,14 +139,14 @@ export default function InfoPageClient() {
 
         {/* Col 2: Group Exhibitions + Education + Grants + Press + Colophon */}
 
-        <div className="flex flex-col lg:col-span-4 mb-[32px]">
+        <div className="flex flex-col lg:col-span-4 mb-[18px]">
           {educations.length > 0 && (
             <>
               <OGubbeText
                 text="Education"
                 lettersOnly
                 sizes="24px"
-                className="text-[24px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                className="text-[16px] lg:text-[19px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
               />
               <div className="flex flex-col mt-[18px] mb-4">
                 {educations.map((edu) => (
@@ -154,7 +154,7 @@ export default function InfoPageClient() {
                     key={edu.id}
                     label={`${edu.acf.start_year}–${edu.acf.end_year}`}
                   >
-                    <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman">
+                    <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
                       {edu.acf.school}, {edu.acf.city}
                     </span>
                   </InfoRow>
@@ -170,13 +170,13 @@ export default function InfoPageClient() {
                 text="Grants"
                 lettersOnly
                 sizes="24px"
-                className="text-[24px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
+                className="text-[16px] lg:text-[19px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
               />
               <div className="flex flex-col mt-[18px] mb-4">
                 {groupByYear(grants).map(([year, gs]) =>
                   gs.map((grant) => (
                     <InfoRow key={grant.id} label={year}>
-                      <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman">
+                      <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
                         {grant.acf.title}
                       </span>
                     </InfoRow>
@@ -191,11 +191,11 @@ export default function InfoPageClient() {
             text="Press"
             lettersOnly
             sizes="21px"
-            className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman justify-center"
+            className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman justify-center"
           />
           <div className="flex flex-col mt-[18px] mb-4">
             <InfoRow label="2022">
-              <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
+              <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
                 <span>Hjärtat,</span>
                 <span>Lappalainen Hjertström, L-E,</span>
                 <Link
@@ -207,7 +207,7 @@ export default function InfoPageClient() {
               </span>
             </InfoRow>
             <InfoRow label="2025">
-              <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
+              <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
                 <span>Gameplay,</span>
                 <span>Slöör, S, Omkonst,</span>
                 <Link
@@ -225,19 +225,19 @@ export default function InfoPageClient() {
             text="Colophon"
             lettersOnly
             sizes="21px"
-            className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman justify-center"
+            className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman justify-center"
           />
           <div className="flex flex-col mt-[18px] mb-4">
             <InfoRow label="Design & code">
               <Link
-                className=" underline underline-offset-4 decoration-1 hover:no-underline text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman"
+                className=" underline underline-offset-4 decoration-1 hover:no-underline text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman"
                 href="/"
               >
                 Joel Järvi
               </Link>
             </InfoRow>
             <InfoRow label="Typefaces">
-              <span className="text-[24px] lg:text-[21px] leading-[1.2] tracking-wide font-timesNewRoman">
+              <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
                 Times New Roman, Univers Next 75 Extended
               </span>
             </InfoRow>
@@ -245,7 +245,7 @@ export default function InfoPageClient() {
         </div>
 
         <div className="px-[18px] lg:pl-[64px] lg:pr-[32px] py-4">
-          <p className="font-timesNewRoman text-[16px] text-muted-foreground leading-snug">
+          <p className="font-timesNewRoman text-[16px] lg:text-[19px] text-muted-foreground leading-snug">
             All content on this site, including images, text, and design, is the
             intellectual property of Elinor Silow unless otherwise stated. No
             part of this website may be copied, reproduced, distributed, or used

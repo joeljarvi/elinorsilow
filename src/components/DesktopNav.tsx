@@ -2,15 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useUI } from "@/context/UIContext";
-import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import NavSearch from "./NavSearch";
 import Link from "next/link";
 import { OGubbeText } from "./OGubbeText";
 import WigglyButton from "./WigglyButton";
+import { Cross1Icon } from "@radix-ui/react-icons";
+import { HeroText } from "./HeroText";
+import { StretchLetters } from "./StretchLetters";
 
 const NAV_LINKS = [
-  { href: "/works", label: "works" },
+  { href: "/", label: "works" },
   { href: "/exhibitions", label: "exhibitions" },
   { href: "/info", label: "info" },
   { href: "/contact", label: "contact" },
@@ -19,56 +22,107 @@ const NAV_LINKS = [
 const transition = { duration: 0.35, ease: [0.25, 1, 0.5, 1] as const };
 
 export default function DesktopNav() {
-  const [openSearch, setOpenSearch] = useState(false);
+  const [heroOverlayOpen, setHeroOverlayOpen] = useState(false);
+
   const pathname = usePathname();
-  const { open, setOpen, filterOpen, handleFilterOpen } = useUI();
+  const {
+    open,
+    setOpen,
+    filterOpen,
+    handleFilterOpen,
+    activePage,
+    openSearch,
+    setOpenSearch,
+  } = useUI();
+  const router = useRouter();
+
+  const pageLabel =
+    activePage === "home" || activePage === "works"
+      ? "works"
+      : activePage === "exhibitions"
+        ? "exhibitions"
+        : activePage;
+
+  const isExhibitions = pathname.startsWith("/exhibitions");
+  const isInfo = pathname.startsWith("/info");
+  const logoText = isExhibitions
+    ? "Exhibitions"
+    : isInfo
+      ? "info"
+      : "Elinor Silow";
+  const logoTarget = isExhibitions
+    ? "/info"
+    : isInfo
+      ? "/works"
+      : "/exhibitions";
+  const handleLogoClick = () => router.push(logoTarget);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname, setOpen]);
 
-  if (pathname === "/") return null;
-
   return (
     <>
+      {/* Full-screen search overlay — all screen sizes */}
       <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
 
-      {/* ── DESKTOP: top-slide full-width drawer ── */}
+      {/* HeroText overlay — mobile, opened by tapping "elinor silow" */}
+      <AnimatePresence>
+        {heroOverlayOpen && (
+          <motion.div
+            key="hero-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={transition}
+            className="lg:hidden fixed inset-0 z-[130] bg-background/90 backdrop-blur-sm flex flex-col"
+            onClick={() => setHeroOverlayOpen(false)}
+          >
+            <button
+              className="absolute top-[18px] right-[18px] no-hide-text p-[6px] text-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                setHeroOverlayOpen(false);
+              }}
+              aria-label="Close"
+            >
+              <Cross1Icon className="w-[18px] h-[18px]" />
+            </button>
+            <div
+              className="flex flex-col justify-center flex-1 px-[18px]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <HeroText />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Drawer panel — slides in from top */}
+      {/* ── DESKTOP: top-slide full-width drawer ── */}
       <motion.div
-        className="hidden lg:block fixed top-0 left-0 z-[80] w-full pointer-events-none"
+        className="hidden lg:block fixed top-0 left-0 z-[80] w-full pointer-events-none mix-blend pt-[18px] px-[18px]"
         animate={{ y: open ? 0 : "-100dvh" }}
         transition={transition}
       >
-        <div
-          className={`h-dvh w-full pointer-events-auto flex justify-center transition-[background-color,backdrop-filter] duration-300 bg-background`}
-        >
+        <div className={`h-dvh w-full pointer-events-auto flex justify-center`}>
           <nav
-            className=" flex flex-row  gap-16 px-[64px]  pt-[18px] pb-[18px] h-full pointer-events-auto items-start "
+            className="flex flex-row gap-16 px-[64px] pt-[0px] pb-[18px] h-full pointer-events-auto items-start justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="">
               <WigglyButton
                 text="close menu"
                 size="text-[32px]"
-                className="font-timesNewRoman font-bold "
+                className="font-timesNewRoman font-normal"
                 onClick={() => setOpen(false)}
                 vertical
               />
             </div>
-            <Link href="/">
-              <OGubbeText
-                className="text-[32px] font-timesNewRoman font-bold"
-                text="elinor silow"
-                vertical
-                lettersOnly
-              />
-            </Link>
+
             {NAV_LINKS.map(({ href, label }) => (
               <Link key={href} href={href}>
                 <OGubbeText
-                  className="text-[32px] font-timesNewRoman font-bold"
+                  className="text-[32px] font-timesNewRoman font-normal"
                   text={label}
                   lettersOnly
                   vertical
@@ -82,7 +136,7 @@ export default function DesktopNav() {
               rel="noopener noreferrer"
             >
               <OGubbeText
-                className="text-[32px] font-timesNewRoman font-bold"
+                className="text-[32px] font-timesNewRoman font-normal"
                 text="instagram"
                 lettersOnly
                 vertical
@@ -92,40 +146,67 @@ export default function DesktopNav() {
         </div>
 
         {/* Menu + filter tab — peeks at top of screen when closed */}
-        <div className="w-full flex justify-center items-center pointer-events-auto mt-[18px]">
-          <button
-            className="no-hide-text cursor-pointer px-[9px] "
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(!open);
-            }}
-          >
-            <OGubbeText
+        <div className="w-full flex flex-row items-baseline justify-end pointer-events-auto mix-blend-difference">
+          <div className="flex items-center pointer-events-auto px-[9px] group">
+            {/* Nav links — hidden, slide in to the left of menu on hover */}
+            <div className="flex items-center overflow-hidden max-w-0 group-hover:max-w-[600px] transition-all duration-500 ease-in-out">
+              {NAV_LINKS.map(({ href, label }) => (
+                <Link key={href} href={href}>
+                  <WigglyButton
+                    text={label}
+                    size="text-[18px]"
+                    bold={false}
+                    revealAnimation={false}
+                    active={pageLabel === label}
+                    className={
+                      pageLabel === label
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    }
+                  />
+                </Link>
+              ))}
+              <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
+                /
+              </span>
+            </div>
+            <WigglyButton
               text="menu"
-              lettersOnly
-              vertical={false}
-              className="text-[18px] font-timesNewRoman font-bold"
-              sizes="21px"
+              size="text-[18px]"
+              bold={false}
+              revealAnimation={false}
+              className="text-foreground"
+              onClick={() => setOpen(true)}
             />
-          </button>
-          <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-bold text-[18px] select-none">
-            /
-          </span>
-          <button
-            className="no-hide-text cursor-pointer px-[9px] "
-            onClick={(e) => {
-              e.stopPropagation();
-              handleFilterOpen();
-            }}
-          >
-            <OGubbeText
+            <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
+              /
+            </span>
+            <WigglyButton
               text={filterOpen ? "close filter" : "filter"}
-              lettersOnly
-              vertical={false}
-              className="text-[18px] font-timesNewRoman font-bold"
-              sizes="18px"
+              size="text-[18px]"
+              bold={false}
+              revealAnimation={false}
+              active={filterOpen}
+              className={
+                filterOpen ? "text-foreground" : "text-muted-foreground"
+              }
+              onClick={() => handleFilterOpen()}
             />
-          </button>
+            <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
+              /
+            </span>
+            <WigglyButton
+              text={openSearch ? "close search" : "search"}
+              size="text-[18px]"
+              bold={false}
+              revealAnimation={false}
+              active={openSearch}
+              className={
+                openSearch ? "text-foreground" : "text-muted-foreground"
+              }
+              onClick={() => setOpenSearch(!openSearch)}
+            />
+          </div>
         </div>
       </motion.div>
 
@@ -140,85 +221,112 @@ export default function DesktopNav() {
           onClick={() => setOpen(false)}
         >
           <nav
-            className="grid grid-cols-7 gap-x-[9px] px-[18px] pt-[18px] pb-[18px] h-full pointer-events-auto items-start justify-items-center"
+            className="flex flex-row justify-between gap-x-[32px] px-[9px] pt-[9px] pb-[18px] h-full pointer-events-auto items-start justify-items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <Link href="/">
-              <OGubbeText
-                className="text-[24px] lg:text-[21px]  font-timesNewRoman font-bold"
-                text="elinor silow"
-                vertical
-                lettersOnly
-              />
-            </Link>
+            {/* "elinor silow" → button that opens HeroText overlay */}
+            <WigglyButton
+              className="no-hide-text cursor-pointer "
+              onClick={() => {
+                setOpen(false);
+                setHeroOverlayOpen(true);
+              }}
+              text="elinor silow"
+              bold={true}
+              size="text-[18px]"
+              vertical
+              active={open}
+            />
+
             {NAV_LINKS.map(({ href, label }) => (
               <Link key={href} href={href}>
-                <OGubbeText
-                  className="text-[24px] lg:text-[21px]  font-timesNewRoman font-bold"
+                <WigglyButton
+                  className="no-hide-text cursor-pointer "
+                  onClick={() => {
+                    setOpen(false);
+                    setHeroOverlayOpen(true);
+                  }}
                   text={label}
-                  lettersOnly
+                  bold={true}
+                  size="text-[18px]"
                   vertical
+                  active={open}
+                  revealAnimation={true}
                 />
               </Link>
             ))}
             <WigglyButton
+              className="no-hide-text cursor-pointer"
+              onClick={() => {
+                setOpen(false);
+                setOpenSearch(true);
+              }}
               text="search"
-              className="font-timesNewRoman font-bold "
-              size="text-[24px] lg:text-[21px] "
-              onClick={() => setOpenSearch(true)}
+              bold={true}
+              size="text-[18px]"
               vertical
+              active={open}
             />
             <Link
               href="https://www.instagram.com/elinorsilow"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <OGubbeText
-                className="text-[24px] lg:text-[21px]  font-timesNewRoman font-bold"
+              <WigglyButton
+                className="no-hide-text cursor-pointer"
                 text="instagram"
-                lettersOnly
+                bold={true}
+                size="text-[18px]"
                 vertical
+                active={open}
               />
             </Link>
           </nav>
         </div>
       </motion.div>
 
+      <div className="hidden fixed top-0 left-0 right-0 z-[75] items-center justify-center w-full pointer-events-none">
+        <StretchLetters
+          className="whitespace-nowrap shrink-0 w-full"
+          body={logoText}
+          onClick={handleLogoClick}
+          defaultVariant={isExhibitions ? 3 : 0}
+        />
+      </div>
+
       {/* ── MOBILE: fixed bottom menu/filter tab ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[18px] pointer-events-auto">
-        <button
-          className="no-hide-text cursor-pointer px-[12px] py-[0px]"
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto">
+        <WigglyButton
+          text={open ? "close" : "menu"}
+          className="no-hide-text cursor-pointer px-[9px]  tracking-wider"
+          active={open}
           onClick={(e) => {
             e.stopPropagation();
             setOpen(!open);
           }}
-        >
-          <OGubbeText
-            text={open ? "close menu" : "menu"}
-            lettersOnly
-            vertical={false}
-            className="text-[18px] font-timesNewRoman font-bold"
-            sizes="18px"
-          />
-        </button>
-        <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-bold text-[18px] select-none">
-          /
-        </span>
-        <button
-          className="no-hide-text cursor-pointer px-[12px] py-[0px]"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleFilterOpen();
-          }}
-        >
-          <OGubbeText
-            text={filterOpen ? "close filter" : "filter"}
-            lettersOnly
-            vertical={false}
-            className="text-[18px] font-timesNewRoman font-bold"
-            sizes="18px"
-          />
-        </button>
+          bold={true}
+          size="text-[18px]"
+        />
+
+        {!open && (
+          <>
+            <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal text-[16px] select-none text-foreground ">
+              /
+            </span>
+
+            <WigglyButton
+              text={filterOpen ? "close" : "filter"}
+              active={filterOpen}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFilterOpen();
+              }}
+              bold={false}
+              size="text-[18px]"
+              className="pl-[9px]"
+            />
+          </>
+        )}
       </div>
     </>
   );

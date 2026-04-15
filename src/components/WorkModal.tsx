@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import WorkSlugModalClient from "@/app/works/WorkSlugModalClient";
+import WorkSlugModalClient from "@/components/WorkSlugModalClient";
 import { useUI } from "@/context/UIContext";
 
 type WorkModalProps = {

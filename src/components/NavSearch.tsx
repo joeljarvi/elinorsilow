@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Cross1Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import WigglyButton from "./WigglyButton";
+import { OGubbeText } from "./OGubbeText";
 
 export default function NavSearch({
   open,
@@ -30,7 +31,9 @@ export default function NavSearch({
 
   const index = buildSearchIndex({ works: allWorks, exhibitions });
   const { query, setQuery, results: allResults } = useSiteSearch(index);
-  const results = filterType ? allResults.filter((r) => r.type === filterType) : allResults;
+  const results = filterType
+    ? allResults.filter((r) => r.type === filterType)
+    : allResults;
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ export default function NavSearch({
         setQuery("");
       }
     } else {
+      inputRef.current?.focus();
       if (!open) setQuery("");
     }
   }, [open, setQuery, inline]);
@@ -69,37 +73,22 @@ export default function NavSearch({
 
   if (inline) {
     return (
-      <div className="relative flex items-start self-start lg:pt-[32px] lg:px-[0px] w-full">
-        <div className="flex items-center w-full border-b border-border ">
+      <div className="relative flex items-start self-start lg:pt-[32px] lg:px-[18px] w-full bg-blue-500">
+        <div className="flex items-center w-full">
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="search"
-            className="outline-none bg-transparent font-timesNewRoman font-bold text-[18px]  tracking-wide px-[12px] py-[9px] flex-1 placeholder:text-muted-foreground"
+            className="outline-none bg-transparent font-timesNewRoman font-bold text-[18px] tracking-wide px-[12px] py-[0px] flex-1 placeholder:text-muted-foreground"
           />
           {query && (
             <button
               className="no-hide-text cursor-pointer shrink-0 px-[12px]"
               onClick={() => setQuery("")}
-            ></button>
+            />
           )}
         </div>
-        {query && results.length > 0 && (
-          <div className="absolute top-full left-0 right-0 z-[125] flex flex-col bg-background border-b border-border ">
-            {results.slice(0, 8).map((item) => (
-              <button
-                key={item.id}
-                className="flex flex-row items-baseline w-full text-left hover:bg-foreground/10 transition-colors"
-                onClick={() => handleResultClick(item)}
-              >
-                <span className="font-timesNewRoman tracking-wide text-[18px] py-[9px] font-bold px-[0px]">
-                  {item.title}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     );
   }
@@ -113,49 +102,70 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[200] bg-background flex flex-col lg:inset-auto lg:top-0 lg:left-0 lg:right-0 lg:bottom-auto"
+          className="fixed  inset-0 z-[100] lg:z-[50]   flex flex-col bg-background/10 backdrop-blur-2xl lg:bg-background p-[32px] lg:pt-[64px] lg:px-[18px]  "
         >
-          <div className=" px-[18px] flex items-center ">
-            <MagnifyingGlassIcon className="mx-2 text-muted-foreground shrink-0" />
+          {/* Search input row */}
+
+          <div className="px-[18px] flex items-center border-b border-border shrink-0 border bg-background rounded-full lg:border-b lg:border-x-transparent lg:border-t-transparent lg:rounded-none">
+            <MagnifyingGlassIcon className="mr-2 text-muted-foreground shrink-0 w-[16px] h-[16px]   " />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-24 lg:text-[32px]  font-timesNewRoman font-normal py-[18px] tracking-wide px-[18px]"
+              className="flex-1 outline-none bg-transparent text-[18px] lg:text-[19px] font-timesNewRoman font-normal py-[9px] lg:py-[18px] tracking-wide px-[9px]"
             />
-            <Button
-              variant="ghost"
-              size="controlsIcon"
-              onClick={onClose}
-              aria-label="Close search"
+            <button
+              className=" no-hide-text cursor-pointer p-[6px] text-foreground hover:opacity-70 transition-opacity "
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              aria-label="Close info"
             >
-              <Cross1Icon />
-            </Button>
+              <Cross1Icon className="w-[16px] h-[16px]  " />
+            </button>
           </div>
 
-          {query && results.length > 0 && (
-            <div className="flex flex-col">
-              {results.slice(0, 8).map((item) => (
-                <button
-                  key={item.id}
-                  className="flex flex-row items-baseline  w-full text-left hover:bg-foreground/10 transition-colors"
-                  onClick={() => handleResultClick(item)}
-                >
-                  <span className=" text-muted-foreground font-timesNewRoman whitespace-nowrap tracking-wide py-[18px] px-[18px] ">
-                    {item.type === "work" ? "work" : "exhibition"}
-                  </span>
-                  <span className=" font-timesNewRoman tracking-wide  text-[24px] py-[18px] px-[18px]">
-                    {item.title}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Results */}
+          <div className="flex-1 overflow-y-auto pt-[9px] lg:pt-[18px]">
+            {query && results.length > 0 ? (
+              <div className="flex flex-col">
+                {results.slice(0, 20).map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleResultClick(item)}
+                    className="no-hide-text flex items-baseline gap-x-[9px] px-[18px] py-[9px] text-left  "
+                  >
+                    <span className="font-timesNewRoman font-normal text-[16px]  text-muted-foreground whitespace-nowrap  shrink-0 px-[9px]">
+                      {item.type}
+                    </span>
+                    <OGubbeText
+                      text={item.title}
+                      className="font-timesNewRoman font-normal text-[18px] lg:text-[19px] "
+                      revealAnimation={false}
+                      lettersOnly
+                      wrap
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : query && results.length === 0 ? (
+              <div className="px-[18px] py-[24px] font-timesNewRoman text-[18px] lg:text-[19px] text-muted-foreground">
+                No results for &ldquo;{query}&rdquo;
+              </div>
+            ) : null}
+          </div>
 
-          {/* Mobile close button — bottom center */}
-          <div className="lg:hidden mt-auto flex justify-center pb-[18px]">
-            <WigglyButton text="close" onClick={onClose} />
+          {/* Mobile close button */}
+          <div className="absolute bottom-0 left-0 right-0 lg:hidden  flex justify-center pb-[9px] shrink-0">
+            <WigglyButton
+              text="close"
+              size="text-[18px]"
+              bold={true}
+              onClick={onClose}
+              active={open}
+            />
           </div>
         </motion.div>
       )}

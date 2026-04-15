@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Work, getWorkBySlug } from "../../../lib/sanity";
+import { Work, getWorkBySlug } from "../../lib/sanity";
 import { useWorks } from "@/context/WorksContext";
 import { useUI } from "@/context/UIContext";
 import Image from "next/image";
@@ -115,8 +115,8 @@ export default function WorkSlugModalClient({
       </div>
 
       {/* Mobile close button */}
-      <div className="lg:hidden flex justify-center ">
-        <WigglyButton text="back" size="text-18px" onClick={onClose} />
+      <div className="hidden  justify-center ">
+        <WigglyButton text="close" size="text-18px" onClick={onClose} />
       </div>
     </div>
   );

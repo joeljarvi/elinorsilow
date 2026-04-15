@@ -10,14 +10,12 @@ import { NavProvider } from "@/context/NavContext";
 import { UIProvider } from "@/context/UIContext";
 import { NavSlotProvider } from "@/context/NavSlotContext";
 
-import BodyClassManager from "@/components/BodyClassManager";
+import BlurTextManager from "@/components/BlurTextManager";
 import NavWrapper from "@/components/NavWrapper";
 import NavSpacer from "@/components/NavSpacer";
-import { SiteLogo } from "@/components/SiteLogo";
-import { HeroText } from "@/components/HeroText";
 
 import { CarouselProvider } from "@/context/CarouselContext";
-import FixedFooter from "@/components/FixedFooter";
+import FixedFooter from "@/components/FixedCookieAccept";
 
 const bookish = localFont({
   src: "assets/fonts/Bookish-Book-TRIAL.otf",
@@ -208,7 +206,7 @@ export default function RootLayout({
                   <UIProvider>
                     <NavSlotProvider>
                       <AnimationProvider>
-                        <BodyClassManager />
+                        <BlurTextManager />
                         {/* Column shadow overlay — fixed, covers full viewport */}
                         <FixedFooter />
                         <NavWrapper />

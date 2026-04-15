@@ -1,4 +1,4 @@
-import WorkSlugModalClient from "../WorkSlugModalClient";
+import WorkSlugModalClient from "@/components/WorkSlugModalClient";
 
 type Props = {
   params: Promise<{ slug: string }>;

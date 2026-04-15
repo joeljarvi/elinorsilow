@@ -64,12 +64,12 @@ export function RevealImage({
       className={cn(props.fill ? "absolute inset-0" : "relative")}
     >
       <motion.div
-        animate={{ scaleY: noScaleY || revealed ? 1 : 0 }}
-        initial={{ scaleY: noScaleY ? 1 : 0 }}
+        animate={{ scale: noScaleY || revealed ? 1 : 0 }}
+        initial={{ scale: noScaleY ? 1 : 0 }}
         transition={
           noScaleY ? {} : { duration: 0.9, ease: [0.25, 1, 0.5, 1] }
         }
-        style={{ originY: 0 }}
+        style={{ originX: 0.5, originY: 0.5 }}
         className={props.fill ? "absolute inset-0" : "relative w-full h-full"}
       >
         <Image

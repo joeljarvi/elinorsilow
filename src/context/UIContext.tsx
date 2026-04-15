@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
   Dispatch,
 } from "react";
@@ -39,15 +40,31 @@ interface UIContextValue {
   setShowAsList: Dispatch<boolean>;
   gridCols: number;
   setGridCols: Dispatch<number>;
+  gridRows: number;
+  setGridRows: Dispatch<number>;
+  visibleWorkIndex: number;
+  setVisibleWorkIndex: Dispatch<number>;
+  visibleExhibitionIndex: number;
+  setVisibleExhibitionIndex: Dispatch<number>;
+  hoveredItemTitle: string | null;
+  setHoveredItemTitle: Dispatch<string | null>;
+  exGridCols: number;
+  setExGridCols: Dispatch<number>;
+  exGridRows: number;
+  setExGridRows: Dispatch<number>;
   showTitles: boolean;
   setShowTitles: Dispatch<boolean>;
   showColorBg: boolean;
   setShowColorBg: Dispatch<boolean>;
+  textBlurred: boolean;
+  setTextBlurred: Dispatch<boolean>;
   activePage: "home" | "works" | "exhibitions" | "info";
   setActivePage: Dispatch<"home" | "works" | "exhibitions" | "info">;
   filterOpen: boolean;
   setFilterOpen: Dispatch<boolean>;
   handleFilterOpen: () => void;
+  openSearch: boolean;
+  setOpenSearch: Dispatch<boolean>;
   handleShowSettings: () => void;
   handleOpen: () => void;
   handleOpenWorksMenu: () => void;
@@ -78,12 +95,26 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [proportionalImages, setProportionalImages] = useState(false);
   const [showAsList, setShowAsList] = useState(false);
   const [gridCols, setGridCols] = useState(3);
+  const [gridRows, setGridRows] = useState(1);
+  const [visibleWorkIndex, setVisibleWorkIndex] = useState(0);
+  const [visibleExhibitionIndex, setVisibleExhibitionIndex] = useState(0);
+  const [hoveredItemTitle, setHoveredItemTitle] = useState<string | null>(null);
+  const [exGridCols, setExGridCols] = useState(1);
+  const [exGridRows, setExGridRows] = useState(1);
   const [showTitles, setShowTitles] = useState(false);
   const [showColorBg, setShowColorBg] = useState(false);
+  const [textBlurred, setTextBlurred] = useState(false);
   const [activePage, setActivePage] = useState<
     "home" | "works" | "exhibitions" | "info"
   >("home");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [openSearch, setOpenSearch] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      setFilterOpen(true);
+    }
+  }, []);
 
   function handleFilterOpen() {
     setFilterOpen((prev) => !prev);
@@ -152,15 +183,31 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setShowAsList,
         gridCols,
         setGridCols,
+        gridRows,
+        setGridRows,
+        visibleWorkIndex,
+        setVisibleWorkIndex,
+        visibleExhibitionIndex,
+        setVisibleExhibitionIndex,
+        hoveredItemTitle,
+        setHoveredItemTitle,
+        exGridCols,
+        setExGridCols,
+        exGridRows,
+        setExGridRows,
         showTitles,
         setShowTitles,
         showColorBg,
         setShowColorBg,
+        textBlurred,
+        setTextBlurred,
         activePage,
         setActivePage,
         filterOpen,
         setFilterOpen,
         handleFilterOpen,
+        openSearch,
+        setOpenSearch,
         handleOpen,
         handleOpenWorksMenu,
         handleOpenAllWorksList,

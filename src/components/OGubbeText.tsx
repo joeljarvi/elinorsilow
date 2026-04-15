@@ -59,13 +59,9 @@ function OGubbeChar({
   return (
     <motion.span
       className="inline-block w-[1em] h-[1em] relative align-middle shrink-0 cursor-default"
-      animate={
-        !rotate
-          ? { rotate: 0 }
-          : containerHovered
-            ? { rotate: 0 }
-            : { rotate: angle }
-      }
+      animate={{
+        rotate: containerHovered ? restAngle : angle,
+      }}
       transition={{ duration: 0.15, ease: "easeOut" }}
     >
       <Image
@@ -91,7 +87,7 @@ interface OGubbeTextProps {
   vertical?: boolean;
   lettersOnly?: boolean;
   wrap?: boolean;
-
+  bold?: boolean;
   rotate?: boolean;
   revealAnimation?: boolean;
 }
@@ -105,6 +101,7 @@ export function OGubbeText({
   vertical = false,
   lettersOnly = false,
   wrap = false,
+  bold = true,
   rotate = true,
   revealAnimation = true,
 }: OGubbeTextProps) {
@@ -156,17 +153,7 @@ export function OGubbeText({
       });
   }, [text]);
 
-  const [tilts, setTilts] = useState<number[]>([]);
-  useEffect(() => {
-    setTilts(chars.map(() => Math.random() * 3 - 1.5));
-  }, [chars.length]);
-
   const [containerHovered, setContainerHovered] = useState(false);
-  const [containerRotation, setContainerRotation] = useState(0);
-
-  useEffect(() => {
-    setContainerRotation(Math.random() * 4 - 2);
-  }, []);
 
   /* ---------- WORD GROUPING ---------- */
 
@@ -211,7 +198,7 @@ export function OGubbeText({
     return (
       <span
         className={cn(
-          "inline-flex flex-col items-center justify-start font-universNextProExt font-extrabold leading-0",
+          `inline-flex flex-col items-center justify-start font-universNextProExt ${bold ? "font-extrabold" : "font-normal"} leading-0`,
           wrap && "flex-wrap",
           className,
         )}
@@ -219,7 +206,6 @@ export function OGubbeText({
           ...style,
           gap: containerHovered ? "0.2em" : "0.06em",
           transition: "gap 0.2s ease",
-          rotate: `${containerRotation}deg`,
         }}
         onMouseEnter={() => setContainerHovered(true)}
         onMouseLeave={() => setContainerHovered(false)}
@@ -227,7 +213,6 @@ export function OGubbeText({
         {chars.map(({ isO, char, key }, i) =>
           isO && !lettersOnly ? (
             <OGubbeChar
-              key={key}
               char={char}
               o={o}
               sizes={sizes}
@@ -244,7 +229,7 @@ export function OGubbeText({
               initial={revealAnimation ? { scaleY: 0 } : false}
               animate={{
                 scaleY: 1,
-                rotate: containerHovered ? 0 : (tilts[i] ?? 0),
+                rotate: 0,
               }}
               transition={{
                 scaleY: { delay: i * 0.3, duration: 0.35, ease: "easeOut" },
@@ -266,7 +251,7 @@ export function OGubbeText({
       <span
         ref={containerRef}
         className={cn(
-          "inline-flex flex-wrap items-center font-universNextProExt font-extrabold overflow-visible",
+          `inline-flex flex-wrap items-center font-universNextProExt ${bold ? "font-extrabold" : "font-normal"} overflow-visible`,
           className,
         )}
         style={{ ...style, rowGap: "0.2em" }}
@@ -295,7 +280,6 @@ export function OGubbeText({
                   initial={revealAnimation ? { scaleX: 0 } : false}
                   animate={{
                     scaleX: 1,
-                    rotate: containerHovered ? 0 : (tilts[globalIndex] ?? 0),
                   }}
                   transition={{
                     scaleX: {
@@ -303,7 +287,6 @@ export function OGubbeText({
                       duration: 0.35,
                       ease: "easeOut",
                     },
-                    rotate: { duration: 0.15, ease: "easeOut" },
                   }}
                 >
                   {isO && !lettersOnly ? (
@@ -311,7 +294,6 @@ export function OGubbeText({
                       char={char}
                       o={o}
                       sizes={sizes}
-                      rotate={rotate}
                       containerHovered={containerHovered}
                     />
                   ) : (
@@ -339,7 +321,7 @@ export function OGubbeText({
     <span
       ref={containerRef}
       className={cn(
-        "inline-flex items-center font-universNextProExt font-extrabold overflow-visible",
+        `inline-flex items-center font-universNextProExt ${bold ? "font-extrabold" : "font-normal"} overflow-visible`,
         className,
       )}
       style={{
@@ -364,11 +346,9 @@ export function OGubbeText({
           initial={revealAnimation ? { scaleX: 0 } : false}
           animate={{
             scaleX: 1,
-            rotate: containerHovered ? 0 : (tilts[i] ?? 0),
           }}
           transition={{
             scaleX: { delay: i * 0.3, duration: 0.35, ease: "easeOut" },
-            rotate: { duration: 0.15, ease: "easeOut" },
           }}
         >
           {isO && !lettersOnly ? (

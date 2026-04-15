@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useWorks, normalizeSlug } from "@/context/WorksContext";
-import WorkModal from "@/app/works/WorkModal";
+import WorkModal from "@/components/WorkModal";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 import { Exhibition } from "../../../lib/sanity";
 import useSwipe from "@/hooks/use-swipe";
@@ -25,6 +25,7 @@ import CornerFrame from "@/components/CornerFrame";
 import { OGubbeText } from "@/components/OGubbeText";
 import BlurredSlideshowBackground from "@/components/BlurredSlideshowBackground";
 import WigglyButton from "@/components/WigglyButton";
+import DynamicGrid from "@/components/DynamicGrid";
 
 type Props = {
   slug: string;
@@ -105,16 +106,19 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
-      if (e.key === "Escape") {
-        if (lightboxIndex !== null) setLightboxIndex(null);
-        else if (onClose) onClose();
+      if (lightboxIndex !== null) {
+        if (e.key === "ArrowLeft") lightboxCarousel.api?.scrollPrev();
+        if (e.key === "ArrowRight") lightboxCarousel.api?.scrollNext();
+        if (e.key === "Escape") setLightboxIndex(null);
+      } else {
+        if (e.key === "ArrowLeft") goPrev();
+        if (e.key === "ArrowRight") goNext();
+        if (e.key === "Escape" && onClose) onClose();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goPrev, goNext, onClose, lightboxIndex]);
+  }, [goPrev, goNext, onClose, lightboxIndex, lightboxCarousel.api]);
 
   if (loading || !exhibition || !exhibition.acf) return <div />;
 
@@ -161,7 +165,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   return (
     <div {...swipeHandlers} className="flex flex-col bg-background w-full">
       {/* Hero header */}
-      <div className="relative h-dvh w-full overflow-hidden shrink-0">
+      <div className="relative h-[50dvh] w-full overflow-hidden shrink-0">
         {/* Blurred crossfade background */}
         <BlurredSlideshowBackground urls={images.map((img) => img.url)} />
 
@@ -169,7 +173,8 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center lg:bottom-auto lg:top-4 lg:right-8 lg:left-auto">
           <WigglyButton
             text="back"
-            size="text-[21px] lg:[text-18px]"
+            size="text-[16px] lg:text-[19px]"
+            font-bold={false}
             onClick={onClose ?? (() => router.push("/exhibitions"))}
             className="rotate-[-2deg]"
           />
@@ -182,8 +187,8 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               text={exhibition.title.rendered}
               sizes="24px"
               className=" text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-              vertical
               lettersOnly
+              vertical
             />
           </span>
           <span className="col-span-4 lg:col-span-6 grid grid-cols-4 items-start">
@@ -192,8 +197,8 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                 text={location}
                 sizes="24px"
                 className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                vertical
                 lettersOnly
+                vertical
               />
             )}
             {city && (
@@ -201,8 +206,8 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                 text={city}
                 sizes="24px"
                 className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                vertical
                 lettersOnly
+                vertical
               />
             )}
             {exhibition.acf.exhibition_type && (
@@ -210,17 +215,17 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                 text={`${exhibition.acf.exhibition_type} Exhibition`}
                 sizes="24px"
                 className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                vertical
                 lettersOnly
+                vertical
               />
             )}
             {exhibition.acf.year && (
               <OGubbeText
                 text={String(exhibition.acf.year)}
                 sizes="24px"
-                className="text-[21px] lg:text-[18px]text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                vertical
+                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
                 lettersOnly
+                vertical
               />
             )}
           </span>
@@ -236,30 +241,33 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         </div>
       )}
 
-      {/* Images — full-width two-column grid */}
+      {/* Images — DynamicGrid */}
       {images.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 lg:px-8 py-8">
-          {images.map((img, idx) => (
-            <button
-              key={img.id}
-              onClick={() => setLightboxIndex(idx)}
-              className="relative w-full overflow-hidden cursor-zoom-in block"
-              aria-label={`View image ${idx + 1}`}
-            >
-              <CornerFrame />
-              <RevealImage
-                src={img.url}
-                alt={img.alt || img.desc || `Image ${idx + 1}`}
-                width={800}
-                height={600}
-                sizes="50vw"
-                revealIndex={idx}
-                className="w-full h-auto object-top"
-                priority={idx === 0}
-              />
-            </button>
-          ))}
-        </div>
+        <DynamicGrid
+          items={images.map((img, idx) => ({
+            id: String(img.id),
+            node: (
+              <button
+                onClick={() => setLightboxIndex(idx)}
+                className="relative w-full overflow-hidden cursor-zoom-in block"
+                aria-label={`View image ${idx + 1}`}
+              >
+                <CornerFrame />
+                <RevealImage
+                  src={img.url}
+                  alt={img.alt || img.desc || `Image ${idx + 1}`}
+                  width={800}
+                  height={600}
+                  sizes="50vw"
+                  revealIndex={idx}
+                  className="w-full h-auto object-top"
+                />
+              </button>
+            ),
+          }))}
+          gridCols={1}
+          gridRows={1}
+        />
       )}
 
       {/* Works + credits */}

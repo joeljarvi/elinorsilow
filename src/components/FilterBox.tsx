@@ -25,7 +25,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal lowercase text-[18px] lg:text-[18px] text-muted-foreground tracking-widest mx-[32px] pb-[0px] px-[0px] block text-center lg:text-right ${className}`}
+      className={`font-timesNewRoman font-normal lowercase text-[16px] lg:text-[18px] text-muted-foreground tracking-widest mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right ${className}`}
     >
       {children}
     </span>
@@ -62,7 +62,7 @@ const EX_CATS = [
 
 /* -------------------- CONTROLS -------------------- */
 
-function WorksControls() {
+function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
   const { workSort, setWorkSort, categoryFilter, setCategoryFilter } =
     useWorks();
   const {
@@ -70,22 +70,30 @@ function WorksControls() {
     setShowAsList,
     gridCols,
     setGridCols,
+    gridRows,
+    setGridRows,
     showColorBg,
     setShowColorBg,
+    textBlurred,
+    setTextBlurred,
   } = useUI();
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:gap-y-[18px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
+    <div className="flex flex-col gap-y-[44px] lg:gap-y-[64px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort by</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[9px] px-[18px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[0px] px-[9px]">
           {WORK_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
               text={s.label}
-              size="text-[18px]"
-              onClick={() => setWorkSort(s.value as WorkSort)}
+              size="text-[16px] lg:text-[18px]"
+              active={workSort === s.value}
+              onClick={() => {
+                setWorkSort(s.value as WorkSort);
+                onMobileSelect();
+              }}
               className={
                 workSort === s.value
                   ? "text-foreground"
@@ -97,14 +105,18 @@ function WorksControls() {
       </div>
 
       <div>
-        <FilterLabel>Filter by </FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[18px]">
+        <FilterLabel>Filter by</FilterLabel>
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
           {WORK_CATS.map((c) => (
             <WigglyButton
               key={c.value}
               text={c.label}
-              size="text-[18px]"
-              onClick={() => setCategoryFilter(c.value as CategoryFilter)}
+              size="text-[16px] lg:text-[18px]"
+              active={categoryFilter === c.value}
+              onClick={() => {
+                setCategoryFilter(c.value as CategoryFilter);
+                onMobileSelect();
+              }}
               className={
                 categoryFilter === c.value
                   ? "text-foreground"
@@ -117,48 +129,92 @@ function WorksControls() {
 
       <div>
         <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[9px] px-[18px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
           <WigglyButton
             text={showAsList ? "hide list" : "show list"}
-            size="text-[18px]"
-            onClick={() => setShowAsList(!showAsList)}
+            size="text-[16px] lg:text-[18px]"
+            active={showAsList}
+            onClick={() => {
+              setShowAsList(!showAsList);
+              onMobileSelect();
+            }}
             className={showAsList ? "text-foreground" : "text-muted-foreground"}
           />
           <span className="flex">
             <WigglyButton
-              text="Columns"
-              size="text-[18px]"
+              text="Cols"
+              size="text-[16px] lg:text-[18px]"
               className="text-muted-foreground"
             />
             <WigglyButton
               text="−"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               onClick={() => setGridCols(Math.max(1, gridCols - 1))}
               className="text-foreground"
             />
             <WigglyButton
               text={gridCols.toString()}
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               className="text-foreground"
             />
             <WigglyButton
               text="+"
-              size="text-[18px]"
-              onClick={() => setGridCols(Math.min(8, gridCols + 1))}
+              size="text-[16px] lg:text-[18px]"
+              onClick={() => setGridCols(Math.min(4, gridCols + 1))}
+              className="text-foreground"
+            />
+          </span>
+          <span className="flex">
+            <WigglyButton
+              text="Rows"
+              size="text-[16px] lg:text-[18px]"
+              className="text-muted-foreground"
+            />
+            <WigglyButton
+              text="−"
+              size="text-[16px] lg:text-[18px]"
+              onClick={() => setGridRows(Math.max(1, gridRows - 1))}
+              className="text-foreground"
+            />
+            <WigglyButton
+              text={gridRows.toString()}
+              size="text-[16px] lg:text-[18px]"
+              className="text-foreground"
+            />
+            <WigglyButton
+              text="+"
+              size="text-[16px] lg:text-[18px]"
+              onClick={() => setGridRows(Math.min(4, gridRows + 1))}
               className="text-foreground"
             />
           </span>
           <WigglyButton
             text={showColorBg ? "B/W" : "COLOR"}
-            size="text-[18px]"
-            onClick={() => setShowColorBg(!showColorBg)}
-            className={`flex lg:hidden
-              ${showColorBg ? "text-foreground" : "text-muted-foreground"}`}
+            size="text-[16px] lg:text-[18px]"
+            active={showColorBg}
+            onClick={() => {
+              setShowColorBg(!showColorBg);
+              onMobileSelect();
+            }}
+            className={showColorBg ? "text-foreground" : "text-muted-foreground"}
+          />
+          <WigglyButton
+            text={textBlurred ? "unblur" : "blur text"}
+            size="text-[16px] lg:text-[18px]"
+            active={textBlurred}
+            onClick={() => {
+              setTextBlurred(!textBlurred);
+              onMobileSelect();
+            }}
+            className={textBlurred ? "text-foreground" : "text-muted-foreground"}
           />
           <WigglyButton
             text={theme === "dark" ? "light" : "dark"}
-            size="text-[18px]"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            size="text-[16px] lg:text-[18px]"
+            onClick={() => {
+              setTheme(theme === "dark" ? "light" : "dark");
+              onMobileSelect();
+            }}
             className="text-foreground"
           />
         </div>
@@ -167,21 +223,26 @@ function WorksControls() {
   );
 }
 
-function ExhibitionsControls() {
+function ExhibitionsControls({ onMobileSelect }: { onMobileSelect: () => void }) {
   const { exCat, setExCat, exSort, setExSort, exAsList, setExAsList } =
     useExhibitions();
+  const { exGridCols, setExGridCols, exGridRows, setExGridRows } = useUI();
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:gap-y-[18px] w-full pt-[18px] pb-[18px] items-center lg:items-end">
+    <div className="flex flex-col gap-y-[44px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] items-center lg:items-end">
       <div>
         <FilterLabel>Sort</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px]">
+        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px] lg:px-[9px]">
           {EX_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
               text={s.label}
               size="text-[18px]"
-              onClick={() => setExSort(s.value as ExSort)}
+              active={exSort === s.value}
+              onClick={() => {
+                setExSort(s.value as ExSort);
+                onMobileSelect();
+              }}
               className={
                 exSort === s.value ? "text-foreground" : "text-muted-foreground"
               }
@@ -192,13 +253,17 @@ function ExhibitionsControls() {
 
       <div>
         <FilterLabel>Type</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px]">
+        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px] lg:px-[9px]">
           {EX_CATS.map((c) => (
             <WigglyButton
               key={c.value}
               text={c.label}
               size="text-[18px]"
-              onClick={() => setExCat(c.value as ExCategory)}
+              active={exCat === c.value}
+              onClick={() => {
+                setExCat(c.value as ExCategory);
+                onMobileSelect();
+              }}
               className={
                 exCat === c.value ? "text-foreground" : "text-muted-foreground"
               }
@@ -209,25 +274,41 @@ function ExhibitionsControls() {
 
       <div>
         <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px]">
+        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[0px] lg:px-[9px]">
           <WigglyButton
             text={exAsList ? "hide list" : "show list"}
             size="text-[18px]"
-            onClick={() => setExAsList(!exAsList)}
+            active={exAsList}
+            onClick={() => {
+              setExAsList(!exAsList);
+              onMobileSelect();
+            }}
             className={exAsList ? "text-foreground" : "text-muted-foreground"}
           />
+          <span className="flex">
+            <WigglyButton text="Cols" size="text-[18px]" className="text-muted-foreground" />
+            <WigglyButton text="−" size="text-[18px]" onClick={() => setExGridCols(Math.max(1, exGridCols - 1))} className="text-foreground" />
+            <WigglyButton text={exGridCols.toString()} size="text-[18px]" className="text-foreground" />
+            <WigglyButton text="+" size="text-[18px]" onClick={() => setExGridCols(Math.min(4, exGridCols + 1))} className="text-foreground" />
+          </span>
+          <span className="flex">
+            <WigglyButton text="Rows" size="text-[18px]" className="text-muted-foreground" />
+            <WigglyButton text="−" size="text-[18px]" onClick={() => setExGridRows(Math.max(1, exGridRows - 1))} className="text-foreground" />
+            <WigglyButton text={exGridRows.toString()} size="text-[18px]" className="text-foreground" />
+            <WigglyButton text="+" size="text-[18px]" onClick={() => setExGridRows(Math.min(4, exGridRows + 1))} className="text-foreground" />
+          </span>
         </div>
       </div>
     </div>
   );
 }
 
-function FilterContent() {
+function FilterContent({ onMobileSelect }: { onMobileSelect: () => void }) {
   const { activePage } = useUI();
   return activePage === "exhibitions" ? (
-    <ExhibitionsControls />
+    <ExhibitionsControls onMobileSelect={onMobileSelect} />
   ) : (
-    <WorksControls />
+    <WorksControls onMobileSelect={onMobileSelect} />
   );
 }
 
@@ -249,6 +330,13 @@ export default function FilterBox() {
     return () => ro.disconnect();
   }, []);
 
+  // On mobile, close the filter drawer after any selection
+  function handleMobileSelect() {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      handleFilterOpen();
+    }
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
       <motion.div
@@ -256,16 +344,14 @@ export default function FilterBox() {
         transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
         className="pointer-events-auto flex flex-col items-center lg:items-end w-full lg:w-auto"
       >
-        {/* Toggle button hidden on all breakpoints — handled by nav tab */}
-
         {/* DRAWER */}
         <div
           ref={drawerRef}
           className="bg-background lg:bg-transparent w-full h-dvh flex flex-col justify-end overflow-hidden"
         >
           {/* Scrollable content */}
-          <div className="flex-1 min-h-0 overflow-y-auto  flex flex-col justify-center lg:justify-end pt-[32px] lg:pt-[18px] pb-[18px]">
-            <FilterContent />
+          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center lg:justify-end pt-[32px] lg:pt-[18px] pb-[18px]">
+            <FilterContent onMobileSelect={handleMobileSelect} />
           </div>
         </div>
       </motion.div>

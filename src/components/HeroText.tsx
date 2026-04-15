@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, Fragment } from "react";
 import { useUI } from "@/context/UIContext";
-import { OGubbeText } from "./OGubbeText";
+import { useInfo } from "@/context/InfoContext";
 
 const container = {
   hidden: { opacity: 0 },
@@ -31,7 +31,7 @@ const wordAnim = {
   },
 };
 
-const BODY =
+const FALLBACK_BODY =
   "(b. 1993, Malmö, Sweden) is a Stockholm-based artist working with painting, sculpture, and textile. Her work explores raw emotion through material, gesture, and form. For collaborations or inquiries:";
 
 function Word({
@@ -53,6 +53,7 @@ function Word({
 
 export function HeroText() {
   const { showInfo } = useUI();
+  const { longBio } = useInfo();
   const prevShowInfo = useRef(showInfo);
   const [animKey, setAnimKey] = useState(0);
   const containerRef = useRef<HTMLParagraphElement>(null);
@@ -65,7 +66,8 @@ export function HeroText() {
     prevShowInfo.current = showInfo;
   }, [showInfo]);
 
-  const bodyWords = BODY.split(" ");
+  const body = longBio || FALLBACK_BODY;
+  const bodyWords = body.split(" ");
 
   return (
     <motion.p
@@ -74,11 +76,11 @@ export function HeroText() {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={containerRef}
-      className=" text-[24px] lg:text-[21px] leading-[1.2]  px-[18px] no-hide-text font-timesNewRoman text-foreground  tracking-wide pt-[18px] pb-[18px] pointer-events-none mb-[0px] max-w-3xl   "
+      className=" text-[16px] lg:text-[19px] leading-[1.2]  px-[18px] no-hide-text font-timesNewRoman text-foreground  tracking-wide pt-[18px] pb-[18px] pointer-events-none mb-[0px] max-w-3xl   "
     >
       {"Elinor Silow".split(" ").map((w, i) => (
         <Fragment key={`name-${i}`}>
-          <Word className="font-timesNewRoman  text-[24px] lg:text-[21px] flex items-center ">
+          <Word className="font-timesNewRoman  text-[16px] lg:text-[19px] flex items-center ">
             {w}
           </Word>
           {"\u00A0"}
@@ -95,7 +97,7 @@ export function HeroText() {
         <Button
           variant="link"
           asChild
-          className="font-timesNewRoman font-normal  text-[24px] lg:text-[21px] px-0 pointer-events-auto underline underline-offset-3 decoration-1 hover:no-underline"
+          className="font-timesNewRoman font-normal  text-[16px] lg:text-[19px] px-0 pointer-events-auto underline underline-offset-3 decoration-1 hover:no-underline"
         >
           <Link href="mailto:elinor.silow@gmail.com">
             elinor.silow@gmail.com

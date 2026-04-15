@@ -186,6 +186,30 @@ a {
   box-shadow: none !important;
 }
 
+/* Blur all text except WigglyButton (no-hide-text) elements */
+[data-blur-text="true"]
+  :where(p, h1, h2, h3, h4, h5, h6, span, a, li):not(.no-hide-text):not(
+    .no-hide-text *
+  ) {
+  filter: blur(4px) !important;
+  transition: filter 0.4s ease;
+}
+
+/* Never blur images */
+[data-blur-text="true"] img {
+  filter: none !important;
+}
+
+/* Slow background zoom animation */
+@keyframes bg-zoom-in {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+.bg-zoom-in {
+  animation: bg-zoom-in 18s ease-in-out infinite alternate;
+}
+
 @layer components {
   .h1 {
     @apply font-bookish text-xl leading-snug whitespace-normal;

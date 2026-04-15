@@ -1,59 +1,88 @@
 "use client";
 
-import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { useUI } from "@/context/UIContext";
+import { useWorks } from "@/context/WorksContext";
+import { useExhibitions } from "@/context/ExhibitionsContext";
 import { OGubbeText } from "./OGubbeText";
+import WigglyButton from "./WigglyButton";
 
-interface PageHeaderProps {
-  title: string;
-  count?: number;
-  sortLabel?: string;
-  onSortClick?: () => void;
-  loading?: boolean;
-  controls?: ReactNode;
-}
+export default function PageHeader() {
+  const pathname = usePathname();
+  const {
+    activePage,
+    visibleWorkIndex,
+    visibleExhibitionIndex,
+    hoveredItemTitle,
+  } = useUI();
+  const { filteredWorks } = useWorks();
+  const { filteredExhibitions, exAsList } = useExhibitions();
 
-export function PageHeader({
-  title,
-  count,
-  sortLabel,
-  onSortClick,
-  loading,
-  controls,
-}: PageHeaderProps) {
+  if (pathname.startsWith("/studio")) return null;
+
+  const pageLabel =
+    activePage === "home" || activePage === "works"
+      ? "works"
+      : activePage === "exhibitions"
+        ? "Exhibitions"
+        : activePage;
+
+  const breadcrumb = `elinor silow / ${pageLabel}`;
+
+  // Mobile: topmost visible item via IntersectionObserver
+  let mobileTitle: string | null = null;
+  if (activePage === "works" || activePage === "home") {
+    mobileTitle = filteredWorks[visibleWorkIndex]?.title.rendered ?? null;
+  } else if (activePage === "exhibitions") {
+    mobileTitle =
+      filteredExhibitions[visibleExhibitionIndex]?.title.rendered ?? null;
+  }
+
+  // Desktop: whichever item is currently hovered
+  const desktopTitle = hoveredItemTitle;
+
   return (
-    <div className="flex flex-col items-center lg:items-start ">
-      <div className="flex flex-col px-[18px] pt-[18px] lg:pt-0 pb-[9px] lg:px-0 items-center lg:items-start gap-x-8 ">
-        <OGubbeText
-          text={title}
-          loading={loading}
-          className="block lg:hidden text-[18px] font-universNextProExt font-extrabold leading-none mb-[9px] font-timesNewRomanWide"
-        />
-        <span className="flex flex-col lg:flex-row items-start lg:items-center gap-x-4">
-          {count !== undefined && (
-            <p className="text-[14px] lg:text-[18px] font-timesNewRomanWide leading-relaxed">
-              Now showing{" "}
-              <span className="font-bold">({loading ? "—" : count})</span>{" "}
-              {title.toLowerCase()}
-            </p>
-          )}
-          {sortLabel && (
-            <p className="text-[14px] lg:text-[18px] font-timesNewRomanWide leading-relaxed">
-              sorted by{" "}
-              <button
-                onClick={onSortClick}
-                className="font-timesNewRomanWide font-bold hover:underline underline-offset-2 cursor-pointer"
-              >
-                ({sortLabel.toLowerCase()})
-              </button>
-            </p>
-          )}
-        </span>
+    <>
+      {/* Mobile: fixed top-center */}
+
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-[70] flex flex-col items-start  px-[9px] pt-[9px] gap-y-0">
+        {/* <div className="fixed top-0 h-[48px] w-full shrink-0 bg-gradient-to-b from-background to-transparent pointer-events-none -mb-[48px] z-[80]" /> */}
+        <WigglyButton text={breadcrumb} size="text-[16px]" className="" />
+
+        {mobileTitle && !exAsList && (
+          <div className="overflow-hidden flex items-center justify-center w-full  -mt-[4px]  ">
+            <OGubbeText
+              key={mobileTitle}
+              text={mobileTitle}
+              lettersOnly
+              revealAnimation
+              className=" text-[16px] font-timesNewRoman font-normal text-foreground justify-center max-w-[70vw]"
+              sizes="16px"
+            />
+          </div>
+        )}
       </div>
-      {controls && (
-        <div className="hidden lg:flex fixed bottom-0 left-1/2 -translate-x-1/2 z-50 items-center gap-x-4 px-[32px] py-[12px] bg-transparent ]">
-          {controls}
-        </div>
-      )}
-    </div>
+
+      {/* Desktop: fixed top-left, title shown on hover */}
+      <div className="hidden lg:flex fixed top-0 left-0 z-[70] items-baseline gap-x-[6px] pt-[9px] lg:pt-[18px] px-[18px] pointer-events-none">
+        <WigglyButton
+          text={breadcrumb}
+          size="text-[16px] lg:text-[19px]"
+          className="text-muted-foreground pointer-events-none"
+        />
+        {desktopTitle && (
+          <div className="overflow-hidden max-w-[40vw]">
+            <OGubbeText
+              key={desktopTitle}
+              text={desktopTitle}
+              lettersOnly
+              revealAnimation
+              className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal text-foreground"
+              sizes="16px"
+            />
+          </div>
+        )}
+      </div>
+    </>
   );
 }

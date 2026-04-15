@@ -111,6 +111,10 @@ export type Biography = {
   };
 };
 
+export type LongBio = {
+  bio: string;
+};
+
 export type Exhibition_list = {
   id: string;
   slug: string;
@@ -323,6 +327,24 @@ export async function getAllGrants(): Promise<Grant[]> {
         },
       }))
     : [];
+}
+
+export async function getShortBio(): Promise<string> {
+  const data = await client.fetch(
+    `*[_type == "short_bio"][0] { bio }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return data?.bio ?? "";
+}
+
+export async function getLongBio(): Promise<string> {
+  const data = await client.fetch(
+    `*[_type == "long_bio"][0] { bio }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return data?.bio ?? "";
 }
 
 export async function getExhibitionList(): Promise<Exhibition_list[]> {

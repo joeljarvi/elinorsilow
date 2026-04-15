@@ -11,6 +11,8 @@ import {
   getAllEducations,
   getAllGrants,
   getExhibitionList,
+  getLongBio,
+  getShortBio,
   Education,
   Grant,
   Exhibition_list,
@@ -20,6 +22,8 @@ interface InfoContextProps {
   educations: Education[];
   grants: Grant[];
   exhibitionList: Exhibition_list[];
+  longBio: string;
+  shortBio: string;
   infoLoading: boolean;
   refresh: () => void;
   soloExhibitions: Exhibition_list[];
@@ -32,20 +36,26 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
   const [educations, setEducations] = useState<Education[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [exhibitionList, setExhibitionList] = useState<Exhibition_list[]>([]);
+  const [longBio, setLongBio] = useState<string>("");
+  const [shortBio, setShortBio] = useState<string>("");
   const [infoLoading, setInfoLoading] = useState(true);
 
   const fetchData = async () => {
     setInfoLoading(true);
     try {
-      const [edu, gr, exhibitions] = await Promise.all([
+      const [edu, gr, exhibitions, bio, short] = await Promise.all([
         getAllEducations(),
         getAllGrants(),
         getExhibitionList(),
+        getLongBio(),
+        getShortBio(),
       ]);
 
       setEducations(edu);
       setGrants(gr);
       setExhibitionList(exhibitions);
+      setLongBio(bio);
+      setShortBio(short);
     } catch (err) {
       console.error("Error fetching info:", err);
     } finally {
@@ -71,6 +81,8 @@ export const InfoProvider = ({ children }: { children: ReactNode }) => {
         educations,
         grants,
         exhibitionList,
+        longBio,
+        shortBio,
         soloExhibitions,
         groupExhibitions,
         infoLoading,
