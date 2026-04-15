@@ -6,6 +6,7 @@ import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { OGubbeText } from "./OGubbeText";
 import WigglyButton from "./WigglyButton";
+import work from "../../schemas/work";
 
 export default function PageHeader() {
   const pathname = usePathname();
@@ -14,6 +15,7 @@ export default function PageHeader() {
     visibleWorkIndex,
     visibleExhibitionIndex,
     hoveredItemTitle,
+    showAsList,
   } = useUI();
   const { filteredWorks } = useWorks();
   const { filteredExhibitions, exAsList } = useExhibitions();
@@ -24,7 +26,7 @@ export default function PageHeader() {
     activePage === "home" || activePage === "works"
       ? "works"
       : activePage === "exhibitions"
-        ? "Exhibitions"
+        ? "exhibitions"
         : activePage;
 
   const breadcrumb = `elinor silow / ${pageLabel}`;
@@ -49,14 +51,13 @@ export default function PageHeader() {
         {/* <div className="fixed top-0 h-[48px] w-full shrink-0 bg-gradient-to-b from-background to-transparent pointer-events-none -mb-[48px] z-[80]" /> */}
         <WigglyButton text={breadcrumb} size="text-[16px]" className="" />
 
-        {mobileTitle && !exAsList && (
-          <div className="overflow-hidden flex items-center justify-center w-full  -mt-[4px]  ">
+        {mobileTitle && !exAsList && !showAsList && (
+          <div className="overflow-hidden flex items-center justify-start w-full ml-[132px]  -mt-[9px]  ">
             <OGubbeText
               key={mobileTitle}
               text={mobileTitle}
               lettersOnly
-              revealAnimation
-              className=" text-[16px] font-timesNewRoman font-normal text-foreground justify-center max-w-[70vw]"
+              className="no-hide-text text-[16px] font-timesNewRoman font-normal text-foreground justify-center max-w-[70vw]"
               sizes="16px"
             />
           </div>
@@ -64,17 +65,23 @@ export default function PageHeader() {
       </div>
 
       {/* Desktop: fixed top-left, title shown on hover */}
-      <div className="hidden lg:flex fixed top-0 left-0 z-[70] items-baseline gap-x-[6px] pt-[9px] lg:pt-[18px] px-[18px] pointer-events-none">
+      <div className="hidden lg:flex fixed top-0 left-0 z-[70] items-baseline gap-x-[0px] pt-[9px] lg:pt-[9px] px-[9px] pointer-events-none">
         <WigglyButton
           text={breadcrumb}
           size="text-[16px] lg:text-[19px]"
-          className="text-muted-foreground pointer-events-none"
+          className="text-muted-foreground pointer-events-none "
         />
-        {desktopTitle && (
+        <WigglyButton
+          text="/"
+          size="text-[16px] lg:text-[19px]"
+          className="text-muted-foreground pointer-events-none pl-0"
+        />
+
+        {(desktopTitle || mobileTitle) && (
           <div className="overflow-hidden max-w-[40vw]">
             <OGubbeText
-              key={desktopTitle}
-              text={desktopTitle}
+              key={desktopTitle ?? mobileTitle ?? ""}
+              text={desktopTitle ?? mobileTitle ?? ""}
               lettersOnly
               revealAnimation
               className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal text-foreground"

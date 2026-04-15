@@ -213,6 +213,7 @@ export function OGubbeText({
         {chars.map(({ isO, char, key }, i) =>
           isO && !lettersOnly ? (
             <OGubbeChar
+              key={key}
               char={char}
               o={o}
               sizes={sizes}

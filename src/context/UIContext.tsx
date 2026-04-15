@@ -94,7 +94,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showSettings, setShowSettings] = useState(false);
   const [proportionalImages, setProportionalImages] = useState(false);
   const [showAsList, setShowAsList] = useState(false);
-  const [gridCols, setGridCols] = useState(3);
+  const [gridCols, setGridCols] = useState(2);
   const [gridRows, setGridRows] = useState(1);
   const [visibleWorkIndex, setVisibleWorkIndex] = useState(0);
   const [visibleExhibitionIndex, setVisibleExhibitionIndex] = useState(0);

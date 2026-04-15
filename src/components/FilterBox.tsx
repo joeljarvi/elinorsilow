@@ -196,7 +196,9 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               setShowColorBg(!showColorBg);
               onMobileSelect();
             }}
-            className={showColorBg ? "text-foreground" : "text-muted-foreground"}
+            className={
+              showColorBg ? "text-foreground" : "text-muted-foreground"
+            }
           />
           <WigglyButton
             text={textBlurred ? "unblur" : "blur text"}
@@ -206,7 +208,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               setTextBlurred(!textBlurred);
               onMobileSelect();
             }}
-            className={textBlurred ? "text-foreground" : "text-muted-foreground"}
+            className={`no-hide-text ${textBlurred ? "text-foreground" : "text-muted-foreground"}`}
           />
           <WigglyButton
             text={theme === "dark" ? "light" : "dark"}
@@ -223,13 +225,17 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
   );
 }
 
-function ExhibitionsControls({ onMobileSelect }: { onMobileSelect: () => void }) {
+function ExhibitionsControls({
+  onMobileSelect,
+}: {
+  onMobileSelect: () => void;
+}) {
   const { exCat, setExCat, exSort, setExSort, exAsList, setExAsList } =
     useExhibitions();
   const { exGridCols, setExGridCols, exGridRows, setExGridRows } = useUI();
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] items-center lg:items-end">
+    <div className="flex flex-col gap-y-[44px] lg:gap-y-[9px] w-full   items-center lg:items-end">
       <div>
         <FilterLabel>Sort</FilterLabel>
         <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px] lg:px-[9px]">
@@ -286,16 +292,52 @@ function ExhibitionsControls({ onMobileSelect }: { onMobileSelect: () => void })
             className={exAsList ? "text-foreground" : "text-muted-foreground"}
           />
           <span className="flex">
-            <WigglyButton text="Cols" size="text-[18px]" className="text-muted-foreground" />
-            <WigglyButton text="−" size="text-[18px]" onClick={() => setExGridCols(Math.max(1, exGridCols - 1))} className="text-foreground" />
-            <WigglyButton text={exGridCols.toString()} size="text-[18px]" className="text-foreground" />
-            <WigglyButton text="+" size="text-[18px]" onClick={() => setExGridCols(Math.min(4, exGridCols + 1))} className="text-foreground" />
+            <WigglyButton
+              text="Cols"
+              size="text-[18px]"
+              className="text-muted-foreground"
+            />
+            <WigglyButton
+              text="−"
+              size="text-[18px]"
+              onClick={() => setExGridCols(Math.max(1, exGridCols - 1))}
+              className="text-foreground"
+            />
+            <WigglyButton
+              text={exGridCols.toString()}
+              size="text-[18px]"
+              className="text-foreground"
+            />
+            <WigglyButton
+              text="+"
+              size="text-[18px]"
+              onClick={() => setExGridCols(Math.min(4, exGridCols + 1))}
+              className="text-foreground"
+            />
           </span>
           <span className="flex">
-            <WigglyButton text="Rows" size="text-[18px]" className="text-muted-foreground" />
-            <WigglyButton text="−" size="text-[18px]" onClick={() => setExGridRows(Math.max(1, exGridRows - 1))} className="text-foreground" />
-            <WigglyButton text={exGridRows.toString()} size="text-[18px]" className="text-foreground" />
-            <WigglyButton text="+" size="text-[18px]" onClick={() => setExGridRows(Math.min(4, exGridRows + 1))} className="text-foreground" />
+            <WigglyButton
+              text="Rows"
+              size="text-[18px]"
+              className="text-muted-foreground"
+            />
+            <WigglyButton
+              text="−"
+              size="text-[18px]"
+              onClick={() => setExGridRows(Math.max(1, exGridRows - 1))}
+              className="text-foreground"
+            />
+            <WigglyButton
+              text={exGridRows.toString()}
+              size="text-[18px]"
+              className="text-foreground"
+            />
+            <WigglyButton
+              text="+"
+              size="text-[18px]"
+              onClick={() => setExGridRows(Math.min(4, exGridRows + 1))}
+              className="text-foreground"
+            />
           </span>
         </div>
       </div>
@@ -350,7 +392,7 @@ export default function FilterBox() {
           className="bg-background lg:bg-transparent w-full h-dvh flex flex-col justify-end overflow-hidden"
         >
           {/* Scrollable content */}
-          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center lg:justify-end pt-[32px] lg:pt-[18px] pb-[18px]">
+          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center lg:justify-end pt-[32px] lg:pt-[18px] pb-[18px] lg:pb-[18px] lg:px-0">
             <FilterContent onMobileSelect={handleMobileSelect} />
           </div>
         </div>

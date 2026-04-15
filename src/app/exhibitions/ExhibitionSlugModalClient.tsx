@@ -170,72 +170,74 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         <BlurredSlideshowBackground urls={images.map((img) => img.url)} />
 
         {/* Close button */}
-        <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center lg:bottom-auto lg:top-4 lg:right-8 lg:left-auto">
+        <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center lg:bottom-auto lg:top-4 lg:right-[64px] lg:left-auto">
           <WigglyButton
             text="back"
-            size="text-[16px] lg:text-[19px]"
-            font-bold={false}
+            size="text-[18px] lg:text-[19px]"
+            bold={true}
             onClick={onClose ?? (() => router.push("/exhibitions"))}
-            className="rotate-[-2deg]"
+            className=""
           />
         </div>
 
         {/* Exhibition info */}
-        <div className="relative z-10 grid grid-cols-5 lg:grid-cols-12 items-start justify-start h-full px-0 lg:px-[32px] gap-y-2 text-center pt-[32px]   [&_img]:invert">
-          <span className=" col-span-1">
-            <OGubbeText
-              text={exhibition.title.rendered}
-              sizes="24px"
-              className=" text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-              lettersOnly
+        <div className="relative flex flex-row justify-between gap-x-[32px] px-[9px] lg:px-[18px] pt-[9px] lg:pt-[18px] pb-[18px] h-[100dvh] pointer-events-auto items-start justify-items-center z-10 w-full">
+          <WigglyButton
+            text={exhibition.title.rendered}
+            size="text-[16px] lg:text-[19px]"
+            className="  text-center justify-center  font-timesNewRoman font-bold tracking-wider  "
+            vertical
+            bold={true}
+          />
+
+          {location && (
+            <WigglyButton
+              text={location}
+              size="text-[16px] lg:text-[19px]"
+              className="  text-center justify-center  font-timesNewRoman font-bold tracking-wider"
               vertical
+              bold={true}
             />
-          </span>
-          <span className="col-span-4 lg:col-span-6 grid grid-cols-4 items-start">
-            {location && (
-              <OGubbeText
-                text={location}
-                sizes="24px"
-                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                lettersOnly
-                vertical
-              />
-            )}
-            {city && (
-              <OGubbeText
-                text={city}
-                sizes="24px"
-                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                lettersOnly
-                vertical
-              />
-            )}
-            {exhibition.acf.exhibition_type && (
-              <OGubbeText
-                text={`${exhibition.acf.exhibition_type} Exhibition`}
-                sizes="24px"
-                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                lettersOnly
-                vertical
-              />
-            )}
-            {exhibition.acf.year && (
-              <OGubbeText
-                text={String(exhibition.acf.year)}
-                sizes="24px"
-                className="text-[21px] lg:text-[18px] text-center justify-center w-full font-timesNewRoman font-bold tracking-wider"
-                lettersOnly
-                vertical
-              />
-            )}
-          </span>
+          )}
+          {city && (
+            <WigglyButton
+              text={city}
+              size="text-[16px] lg:text-[19px]"
+              className="  text-center justify-center  font-timesNewRoman font-bold tracking-wider"
+              vertical
+              bold={true}
+            />
+          )}
+          {exhibition.acf.exhibition_type && (
+            <WigglyButton
+              text={`${exhibition.acf.exhibition_type} Exhibition`}
+              size="text-[16px] lg:text-[19px]"
+              className="  text-center justify-center font-timesNewRoman font-bold tracking-wider"
+              vertical
+              bold={true}
+            />
+          )}
+          {exhibition.acf.year && (
+            <WigglyButton
+              text={exhibition.acf.year}
+              size="text-[16px] lg:text-[19px]"
+              className="  text-center justify-center font-timesNewRoman font-bold tracking-wider "
+              vertical
+              bold={true}
+            />
+          )}
         </div>
       </div>
 
       {/* Description */}
       {exhibition.acf.description && (
-        <div className="mx-auto w-full max-w-3xl px-6 lg:px-8 pt-10 pb-4 no-hide-text ">
-          <p className="font-timesNewRoman indent-6  text-[24px] lg:text-[21px] leading-[1.2]  px-[0px] no-hide-text text-foreground  tracking-wide ">
+        <div className="flex flex-col items-center justify-start mx-auto w-full max-w-3xl px-[0px] lg:px-[18px] pt-[64px] pb-4 no-hide-text ">
+          <OGubbeText
+            className="font-timesNewRoman font-bold text-[16px] lg:text-[19px]"
+            text={exhibition.title.rendered}
+          />
+
+          <p className="font-timesNewRoman indent-6  text-[16px] lg:text-[19px] leading-[1.2]  px-[0px] no-hide-text text-foreground  tracking-wide ">
             {exhibition.acf.description}
           </p>
         </div>
@@ -272,11 +274,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Works + credits */}
       {(works.length > 0 || exhibition.acf.credits) && (
-        <div className="col-span-12 mx-auto w-full  px-6 lg:px-8 pb-16">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12  pt-8 w-full">
+        <div className="  w-full ">
+          <div className="flex flex-col gap-8  pt-0 w-full">
             {works.length > 0 && (
-              <div className="flex-1 flex flex-col gap-y-0 no-hide-text justify-start items-center">
-                <WigglyButton className="" text="featuring the works" />
+              <div className=" flex flex-col gap-y-0 no-hide-text justify-start items-center">
+                <WigglyButton
+                  className="text-muted-foreground"
+                  text="featuring the works"
+                />
                 {works.map((work: any, index: number) => (
                   <WigglyButton
                     key={index}
@@ -292,7 +297,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               </div>
             )}
             {exhibition.acf.credits && (
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">
                   Credits
                 </p>
@@ -307,12 +312,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 z-[110] bg-background flex flex-col">
-          <div className="sticky top-0 z-10 pt-4 bg-background">
-            <div className="mx-4 flex items-center gap-x-2 font-universNextPro text-sm">
-              <span className="px-1 text-muted-foreground text-sm">
-                {lightboxCarousel.index + 1} / {images.length}
-              </span>
+        <div className="fixed inset-0 z-[110] bg-background flex flex-col h-dvh">
+          <div className="absolute top-0 right-0 w-full z-[120]  bg-background">
+            <div className="mx-4 flex items-center gap-x-2 pt-[18px] ">
+              <WigglyButton
+                className="text-muted-foreground"
+                text={`${lightboxCarousel.index + 1} / ${images.length}`}
+              />
               <div className="flex-1" />
               <Button
                 variant="link"
@@ -328,13 +334,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           <Carousel
             setApi={lightboxCarousel.setApi}
             opts={{ startIndex: lightboxIndex, align: "center", loop: true }}
-            className="flex-1 min-h-0 overflow-hidden"
+            className="flex-1  overflow-hidden"
           >
             <CarouselContent className="-ml-0 h-full">
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="pl-0 flex flex-col items-center justify-center py-[32px] px-4 h-dvh"
+                  className="pl-0 flex flex-col items-center justify-center py-[0px] px-4 h-dvh"
                 >
                   <div className="relative w-full h-full">
                     <Image

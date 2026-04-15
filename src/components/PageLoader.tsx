@@ -21,16 +21,15 @@ export default function PageLoader({ text, loading }: PageLoaderProps) {
           {/* Mobile: vertical */}
           <OGubbeText
             text={text}
-            lettersOnly
             vertical
-            className="lg:hidden text-[24px] lg:text-[32px] font-timesNewRoman font-bold text-foreground/20"
+            className="lg:hidden text-[16px] lg:text-[19px] font-timesNewRoman font-bold text-foreground/20"
             sizes="40px"
           />
           {/* Desktop: horizontal */}
           <OGubbeText
             text={text}
             lettersOnly
-            className="hidden lg:inline-flex text-[96px] font-timesNewRoman font-bold  text-foreground/20"
+            className="hidden lg:inline-flex text-[19px] font-timesNewRoman font-bold  text-foreground/20"
             sizes="144px"
           />
         </motion.div>

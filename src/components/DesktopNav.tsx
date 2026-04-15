@@ -100,7 +100,7 @@ export default function DesktopNav() {
 
       {/* ── DESKTOP: top-slide full-width drawer ── */}
       <motion.div
-        className="hidden lg:block fixed top-0 left-0 z-[80] w-full pointer-events-none mix-blend pt-[18px] px-[18px]"
+        className="hidden lg:block fixed top-0 left-0 z-[80] w-full pointer-events-none mix-blend pt-[9px] px-[9px]"
         animate={{ y: open ? 0 : "-100dvh" }}
         transition={transition}
       >
@@ -226,7 +226,7 @@ export default function DesktopNav() {
           >
             {/* "elinor silow" → button that opens HeroText overlay */}
             <WigglyButton
-              className="no-hide-text cursor-pointer "
+              className=" cursor-pointer "
               onClick={() => {
                 setOpen(false);
                 setHeroOverlayOpen(true);
@@ -241,7 +241,7 @@ export default function DesktopNav() {
             {NAV_LINKS.map(({ href, label }) => (
               <Link key={href} href={href}>
                 <WigglyButton
-                  className="no-hide-text cursor-pointer "
+                  className=" cursor-pointer "
                   onClick={() => {
                     setOpen(false);
                     setHeroOverlayOpen(true);
@@ -256,7 +256,7 @@ export default function DesktopNav() {
               </Link>
             ))}
             <WigglyButton
-              className="no-hide-text cursor-pointer"
+              className=" cursor-pointer"
               onClick={() => {
                 setOpen(false);
                 setOpenSearch(true);
@@ -273,7 +273,7 @@ export default function DesktopNav() {
               rel="noopener noreferrer"
             >
               <WigglyButton
-                className="no-hide-text cursor-pointer"
+                className=" cursor-pointer"
                 text="instagram"
                 bold={true}
                 size="text-[18px]"
@@ -298,7 +298,7 @@ export default function DesktopNav() {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto">
         <WigglyButton
           text={open ? "close" : "menu"}
-          className="no-hide-text cursor-pointer px-[9px]  tracking-wider"
+          className="no-hide-text cursor-pointer pl-[9px] pr-[6px] tracking-wider"
           active={open}
           onClick={(e) => {
             e.stopPropagation();
@@ -323,7 +323,7 @@ export default function DesktopNav() {
               }}
               bold={false}
               size="text-[18px]"
-              className="pl-[9px]"
+              className="pl-[6px] no-hide-text"
             />
           </>
         )}

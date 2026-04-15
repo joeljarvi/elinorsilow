@@ -90,7 +90,7 @@ export default function WigglyButton({
   return (
     <button
       className={cn(
-        "no-hide-text pointer-events-auto cursor-pointer px-[9px] inline-flex items-baseline text-[16px] lg:text-[19px]",
+        " pointer-events-auto cursor-pointer px-[9px] inline-flex items-baseline text-[16px] lg:text-[19px]",
         className,
       )}
       onClick={(e) => {

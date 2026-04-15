@@ -38,7 +38,7 @@ function ExhibitionCard({
           width={1200}
           height={900}
           revealIndex={index}
-          className="w-full h-auto object-centered max-w-xl mx-auto"
+          className="w-full h-auto object-centered mx-auto"
         />
       )}
     </button>
@@ -136,6 +136,7 @@ export default function ExhibitionsPageClient() {
           onTopVisibleChange={setVisibleExhibitionIndex}
           gridCols={Math.min(4, Math.max(1, exGridCols))}
           gridRows={Math.min(4, Math.max(1, exGridRows))}
+          className="lg:max-w-4xl lg:mx-auto"
         />
       </motion.div>
 
