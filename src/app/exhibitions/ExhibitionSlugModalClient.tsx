@@ -181,7 +181,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         </div>
 
         {/* Exhibition info */}
-        <div className="relative flex flex-row justify-between gap-x-[32px] px-[9px] lg:px-[18px] pt-[9px] lg:pt-[18px] pb-[18px] h-[100dvh] pointer-events-auto items-start justify-items-center z-10 w-full">
+        <div className="relative flex flex-row justify-between gap-x-[32px] px-[9px] lg:px-[18px] pt-[9px] lg:pt-[18px] pb-[18px] h-screen pointer-events-auto items-start justify-items-center z-10 w-full">
           <WigglyButton
             text={exhibition.title.rendered}
             size="text-[16px] lg:text-[19px]"
@@ -233,11 +233,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       {exhibition.acf.description && (
         <div className="flex flex-col items-center justify-start mx-auto w-full max-w-3xl px-[0px] lg:px-[18px] pt-[64px] pb-4 no-hide-text ">
           <OGubbeText
-            className="font-timesNewRoman font-bold text-[16px] lg:text-[19px]"
+            className="font-timesNewRoman font-bold text-[16px] lg:text-[19px] pb-[18px]"
             text={exhibition.title.rendered}
+            revealAnimation={false}
           />
 
-          <p className="font-timesNewRoman indent-6  text-[16px] lg:text-[19px] leading-[1.2]  px-[0px] no-hide-text text-foreground  tracking-wide ">
+          <p className="font-timesNewRoman indent-6  text-[16px] lg:text-[19px] leading-[1.2]   no-hide-text text-foreground  tracking-wide px-[9px] ">
             {exhibition.acf.description}
           </p>
         </div>
@@ -251,7 +252,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             node: (
               <button
                 onClick={() => setLightboxIndex(idx)}
-                className="relative w-full overflow-hidden cursor-zoom-in block"
+                className="relative w-full overflow-hidden cursor-zoom-in block lg:max-h-screen"
                 aria-label={`View image ${idx + 1}`}
               >
                 <CornerFrame />
@@ -262,7 +263,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                   height={600}
                   sizes="50vw"
                   revealIndex={idx}
-                  className="w-full h-auto object-top"
+                  className="w-full h-auto object-top lg:max-h-screen"
                 />
               </button>
             ),
@@ -274,18 +275,22 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Works + credits */}
       {(works.length > 0 || exhibition.acf.credits) && (
-        <div className="  w-full ">
-          <div className="flex flex-col gap-8  pt-0 w-full">
+        <div className="w-full px-[18px] lg:px-[32px] pb-[80px] lg:pb-[48px]">
+          <div className="flex flex-col gap-8 pt-0 w-full">
             {works.length > 0 && (
-              <div className=" flex flex-col gap-y-0 no-hide-text justify-start items-center">
+              <div className="flex flex-col gap-y-0 no-hide-text justify-start items-center">
                 <WigglyButton
-                  className="text-muted-foreground"
+                  size="text-[16px] lg:text-[19px]"
+                  bold={true}
+                  className="text-[16px] lg:text-[19px] text-muted-foreground"
                   text="featuring the works"
                 />
                 {works.map((work: any, index: number) => (
                   <WigglyButton
                     key={index}
-                    className="font-normal text-[18px]"
+                    bold={true}
+                    size="text-[16px] lg:text-[19px]"
+                    className="font-normal text-[16px] lg:text-[19px]"
                     onClick={() => {
                       const s = normalizeSlug(work);
                       setActiveWorkSlug(s);
@@ -297,11 +302,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               </div>
             )}
             {exhibition.acf.credits && (
-              <div className="flex-1 w-full">
-                <p className="font-universNextProExt font-extrabold text-[13px] text-muted-foreground mb-2">
-                  Credits
-                </p>
-                <p className="font-timesNewRoman text-[15px] text-muted-foreground leading-relaxed">
+              <div className="w-full flex flex-col items-center justify-center">
+                <WigglyButton
+                  size="text-[16px] lg:text-[19px]"
+                  bold={true}
+                  className="text-[16px] lg:text-[19px] text-muted-foreground"
+                  text="Credits"
+                />
+                <p className="font-timesNewRoman text-[16px] lg:text-[19px] text-center font-bold ">
                   {exhibition.acf.credits}
                 </p>
               </div>

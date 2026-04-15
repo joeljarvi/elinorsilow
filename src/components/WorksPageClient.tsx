@@ -151,7 +151,7 @@ export default function WorksPageClient() {
       <WorkCard
         work={work}
         revealIndex={i}
-        objectPosition="left"
+        objectPosition="center"
         imageClassName="max-h-[100dvh] lg:max-h-[calc(100dvh-64px)]"
         onOpen={() => openWork(work)}
         showTitles={showTitles}

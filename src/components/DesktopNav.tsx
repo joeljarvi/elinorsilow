@@ -175,8 +175,8 @@ export default function DesktopNav() {
               size="text-[18px]"
               bold={false}
               revealAnimation={false}
-              className="text-foreground"
-              onClick={() => setOpen(true)}
+              active={open}
+              className="text-muted-foreground"
             />
             <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
               /

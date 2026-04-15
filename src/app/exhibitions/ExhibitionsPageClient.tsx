@@ -38,7 +38,7 @@ function ExhibitionCard({
           width={1200}
           height={900}
           revealIndex={index}
-          className="w-full h-auto object-centered mx-auto"
+          className="w-full h-auto object-contain mx-auto"
         />
       )}
     </button>
