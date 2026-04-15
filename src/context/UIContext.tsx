@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   ReactNode,
   Dispatch,
 } from "react";
@@ -79,8 +78,8 @@ interface UIContextValue {
 const UIContext = createContext<UIContextValue | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(true);
-  const [openDesktopNav, setOpenDesktopNav] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [openDesktopNav, setOpenDesktopNav] = useState(false);
   const [navVisible, setNavVisible] = useState(false);
 
   const [showWorksMenu, setShowWorksMenu] = useState(false);
@@ -109,12 +108,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   >("home");
   const [filterOpen, setFilterOpen] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-      setFilterOpen(true);
-    }
-  }, []);
 
   function handleFilterOpen() {
     setFilterOpen((prev) => !prev);

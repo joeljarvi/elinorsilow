@@ -6,7 +6,6 @@ import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { OGubbeText } from "./OGubbeText";
 import WigglyButton from "./WigglyButton";
-import work from "../../schemas/work";
 
 export default function PageHeader() {
   const pathname = usePathname();
@@ -22,14 +21,19 @@ export default function PageHeader() {
 
   if (pathname.startsWith("/studio")) return null;
 
-  const pageLabel =
-    activePage === "home" || activePage === "works"
+  const pageLabel = pathname.startsWith("/info")
+    ? "info"
+    : activePage === "home" || activePage === "works"
       ? "works"
       : activePage === "exhibitions"
         ? "exhibitions"
         : activePage;
 
-  const breadcrumb = `elinor silow / ${pageLabel}`;
+  const pageLabelHref = pathname.startsWith("/info")
+    ? "/info"
+    : pathname.startsWith("/exhibitions")
+      ? "/exhibitions"
+      : "/";
 
   // Mobile: topmost visible item via IntersectionObserver
   let mobileTitle: string | null = null;
@@ -49,45 +53,63 @@ export default function PageHeader() {
 
       <div className="lg:hidden fixed top-0 left-0 right-0 z-[70] flex flex-col items-start  px-[9px] pt-[9px] gap-y-0">
         {/* <div className="fixed top-0 h-[48px] w-full shrink-0 bg-gradient-to-b from-background to-transparent pointer-events-none -mb-[48px] z-[80]" /> */}
-        <WigglyButton text={breadcrumb} size="text-[16px]" className="" />
-
-        {mobileTitle && !exAsList && !showAsList && (
-          <div className="overflow-hidden flex items-center justify-start w-full ml-[132px]  -mt-[9px]  ">
-            <OGubbeText
-              key={mobileTitle}
-              text={mobileTitle}
-              lettersOnly
-              className="no-hide-text text-[16px] font-timesNewRoman font-normal text-foreground justify-center max-w-[70vw]"
-              sizes="16px"
-            />
-          </div>
-        )}
+        <span className="flex">
+          <WigglyButton
+            text="elinor silow"
+            size="text-[16px]"
+            className="pr-0"
+            href="/"
+          />
+          <WigglyButton
+            text={`/ ${pageLabel}`}
+            size="text-[16px]"
+            className=""
+            href={pageLabelHref}
+          />
+        </span>
+        {mobileTitle &&
+          !exAsList &&
+          !showAsList &&
+          !pathname.startsWith("/info") && (
+            <div className="overflow-hidden flex items-center justify-start w-full ml-[132px]  -mt-[9px]  ">
+              <OGubbeText
+                key={mobileTitle}
+                text={mobileTitle}
+                lettersOnly
+                className="no-hide-text text-[16px] font-timesNewRoman font-normal text-foreground justify-center max-w-[70vw]"
+                sizes="16px"
+              />
+            </div>
+          )}
       </div>
 
       {/* Desktop: fixed top-left, title shown on hover */}
-      <div className="hidden lg:flex fixed top-0 left-0 z-[70] items-baseline gap-x-[0px] pt-[9px] lg:pt-[9px] px-[9px] pointer-events-none">
+      <div className="hidden lg:flex fixed top-0 left-0 z-[70] items-center gap-x-[0px] pt-[9px] lg:pt-[9px] px-[9px] pointer-events-none">
         <WigglyButton
-          text={breadcrumb}
+          text="elinor silow"
           size="text-[16px] lg:text-[19px]"
-          className="text-muted-foreground pointer-events-none "
-        />
-        <WigglyButton
-          text="/"
-          size="text-[16px] lg:text-[19px]"
-          className="text-muted-foreground pointer-events-none pl-0"
+          className="text-muted-foreground pr-0"
+          href="/"
         />
 
-        {(desktopTitle || mobileTitle) && (
-          <div className="overflow-hidden max-w-[40vw]">
-            <OGubbeText
-              key={desktopTitle ?? mobileTitle ?? ""}
-              text={desktopTitle ?? mobileTitle ?? ""}
-              lettersOnly
-              revealAnimation
-              className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal text-foreground"
-              sizes="16px"
+        {(desktopTitle || mobileTitle) && !pathname.startsWith("/info") && (
+          <>
+            <WigglyButton
+              text="/"
+              size="text-[16px] lg:text-[19px]"
+              className="text-muted-foreground pointer-events-none "
             />
-          </div>
+            <div className="overflow-hidden  max-w-[40vw]">
+              <OGubbeText
+                key={desktopTitle ?? mobileTitle ?? ""}
+                text={desktopTitle ?? mobileTitle ?? ""}
+                lettersOnly
+                revealAnimation
+                className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal text-foreground -mt-[9px]"
+                sizes="16px"
+              />
+            </div>
+          </>
         )}
       </div>
     </>

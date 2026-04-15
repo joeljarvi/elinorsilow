@@ -107,7 +107,7 @@ export default function WorkSlugModalClient({
               src={work.image_url}
               alt={work.title.rendered}
               fill
-              className="object-contain object-top lg:object-left pointer-events-auto"
+              className="object-contain object-center pointer-events-auto"
               priority
             />
           )}

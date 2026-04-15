@@ -76,7 +76,7 @@ export function HeroText() {
       initial="hidden"
       animate={inView ? "show" : "hidden"}
       ref={containerRef}
-      className=" text-[16px] lg:text-[19px] leading-[1.2]  px-[18px] no-hide-text font-timesNewRoman text-foreground  tracking-wide pt-[18px] pb-[18px] pointer-events-none mb-[0px] max-w-3xl   "
+      className=" text-[16px] lg:text-[19px] leading-[1.2]  px-[9px] no-hide-text font-timesNewRoman text-foreground  tracking-wide pt-[18px] pb-[18px] pointer-events-none mb-[0px] max-w-3xl   "
     >
       {"Elinor Silow".split(" ").map((w, i) => (
         <Fragment key={`name-${i}`}>
@@ -97,7 +97,7 @@ export function HeroText() {
         <Button
           variant="link"
           asChild
-          className="font-timesNewRoman font-normal  text-[16px] lg:text-[19px] px-0 pointer-events-auto underline underline-offset-3 decoration-1 hover:no-underline"
+          className="font-timesNewRoman font-normal  text-[16px] lg:text-[19px] px-0 pointer-events-auto underline underline-offset-3 decoration-1 hover:no-underline leading-[1.2] "
         >
           <Link href="mailto:elinor.silow@gmail.com">
             elinor.silow@gmail.com

@@ -235,15 +235,15 @@ function ExhibitionsControls({
   const { exGridCols, setExGridCols, exGridRows, setExGridRows } = useUI();
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:gap-y-[9px] w-full   items-center lg:items-end">
+    <div className="flex flex-col gap-y-[44px] lg:gap-y-[64px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px] lg:px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[0px] px-[9px]">
           {EX_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
               text={s.label}
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               active={exSort === s.value}
               onClick={() => {
                 setExSort(s.value as ExSort);
@@ -259,12 +259,12 @@ function ExhibitionsControls({
 
       <div>
         <FilterLabel>Type</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[18px] lg:px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
           {EX_CATS.map((c) => (
             <WigglyButton
               key={c.value}
               text={c.label}
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               active={exCat === c.value}
               onClick={() => {
                 setExCat(c.value as ExCategory);
@@ -280,10 +280,10 @@ function ExhibitionsControls({
 
       <div>
         <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap justify-center lg:justify-end mt-[9px] px-[0px] lg:px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
           <WigglyButton
             text={exAsList ? "hide list" : "show list"}
-            size="text-[18px]"
+            size="text-[16px] lg:text-[18px]"
             active={exAsList}
             onClick={() => {
               setExAsList(!exAsList);
@@ -294,23 +294,23 @@ function ExhibitionsControls({
           <span className="flex">
             <WigglyButton
               text="Cols"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               className="text-muted-foreground"
             />
             <WigglyButton
               text="−"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridCols(Math.max(1, exGridCols - 1))}
               className="text-foreground"
             />
             <WigglyButton
               text={exGridCols.toString()}
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               className="text-foreground"
             />
             <WigglyButton
               text="+"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridCols(Math.min(4, exGridCols + 1))}
               className="text-foreground"
             />
@@ -318,23 +318,23 @@ function ExhibitionsControls({
           <span className="flex">
             <WigglyButton
               text="Rows"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               className="text-muted-foreground"
             />
             <WigglyButton
               text="−"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridRows(Math.max(1, exGridRows - 1))}
               className="text-foreground"
             />
             <WigglyButton
               text={exGridRows.toString()}
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               className="text-foreground"
             />
             <WigglyButton
               text="+"
-              size="text-[18px]"
+              size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridRows(Math.min(4, exGridRows + 1))}
               className="text-foreground"
             />

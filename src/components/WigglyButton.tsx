@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface WigglyButtonProps {
   text: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  href?: string;
   vertical?: boolean;
   className?: string;
   size?: string;
@@ -20,6 +22,7 @@ type LetterDistortion = { rotate: number; y: number };
 export default function WigglyButton({
   text,
   onClick,
+  href,
   vertical = false,
   className,
   size = "text-[16px] lg:text-[19px]",
@@ -43,6 +46,49 @@ export default function WigglyButton({
   const letters = text.split("");
 
   const transition = { duration: 0.18, ease: "easeOut" as const };
+
+  const letterSpans = vertical
+    ? letters.map((char, i) =>
+        char === " " ? (
+          <span key={i} className="block h-[0.4em]" />
+        ) : (
+          <motion.span
+            key={i}
+            className={cn("inline-block leading-none font-timesNewRoman", size, bold ? "font-bold" : "font-normal")}
+            animate={distorted ? { rotate: distortions.current[i]?.rotate ?? 0, y: distortions.current[i]?.y ?? 0 } : { rotate: 0, y: 0 }}
+            transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
+          >{char}</motion.span>
+        ),
+      )
+    : letters.map((char, i) =>
+        char === " " ? (
+          <span key={i} className="inline-block w-[0.3em]" />
+        ) : (
+          <motion.span
+            key={i}
+            className={cn("inline-block leading-none font-timesNewRoman tracking-wider", size, bold ? "font-bold" : "font-normal")}
+            animate={distorted ? { rotate: distortions.current[i]?.rotate ?? 0, y: distortions.current[i]?.y ?? 0 } : { rotate: 0, y: 0 }}
+            transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
+          >{char}</motion.span>
+        ),
+      );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "no-hide-text pointer-events-auto px-[9px]",
+          vertical ? "inline-flex flex-col items-center" : "inline-flex items-baseline text-[16px] lg:text-[19px]",
+          className,
+        )}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {letterSpans}
+      </Link>
+    );
+  }
 
   if (vertical) {
     return (

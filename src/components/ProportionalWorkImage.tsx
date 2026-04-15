@@ -26,14 +26,12 @@ function parseDimensions(dims: string): { w: number; h: number } | null {
   };
 }
 
-// 150 cm maps to 100% width, with a floor of 55% so tiny works are still visible
+// A REF_CM-wide artwork targets TARGET_VH of viewport width.
+// Height is derived via aspect-ratio, so both dimensions scale together.
+// When the resulting height exceeds the max-height passed via className,
+// the browser reduces width proportionally — making taller works appear smaller.
 const REF_CM = 150;
-const MIN_WIDTH = 0.55;
-const MAX_WIDTH = 1.0;
-
-function proportionalWidth(widthCm: number): number {
-  return Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, widthCm / REF_CM));
-}
+const TARGET_VH = 65;
 
 export default function ProportionalWorkImage({
   src,
@@ -80,22 +78,27 @@ export default function ProportionalWorkImage({
           fill
           revealIndex={revealIndex}
           className="object-contain"
-            style={{ objectPosition }}
+          style={{ objectPosition }}
         />
       </div>
     );
   }
 
   const { w, h } = parsed;
-  const widthFraction = proportionalWidth(w);
-  const aspectRatio = w / h;
+
+  // Target width in vh: a REF_CM-wide work → TARGET_VH vw.
+  // Using vh (not %) means the size is absolute relative to the viewport,
+  // so aspect-ratio + maxHeight from className can clamp both axes together.
+  const wVh = (w / REF_CM) * TARGET_VH;
 
   return (
     <div
-      className={`max-h-[85vh] ${className}`}
+      className={`relative ${className}`}
       style={{
-        width: `${widthFraction * 100}%`,
-        aspectRatio: `${aspectRatio}`,
+        aspectRatio: `${w} / ${h}`,
+        width: "100%",
+        maxWidth: `min(${wVh}vh, 95%)`,
+        minWidth: `min(20rem, 90%)`,
       }}
     >
       <div className="relative w-full h-full">
@@ -104,8 +107,9 @@ export default function ProportionalWorkImage({
           alt={alt}
           fill
           revealIndex={revealIndex}
+          noScaleY={noScaleY}
           className="object-contain"
-            style={{ objectPosition }}
+          style={{ objectPosition }}
         />
       </div>
     </div>

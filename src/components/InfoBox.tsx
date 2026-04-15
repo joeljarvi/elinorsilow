@@ -9,13 +9,15 @@ import { useUI } from "@/context/UIContext";
 export function InfoRow({
   label,
   children,
+  labelClassName = "text-muted-foreground italic",
 }: {
   label: string;
   children: React.ReactNode;
+  labelClassName?: string;
 }) {
   return (
     <div className="flex flex-row items-baseline gap-x-[16px]">
-      <span className="text-[16px] lg:text-[19px] leading-[1.3]  px-[0px] no-hide-text  tracking-wide font-timesNewRoman  text-muted-foreground italic">
+      <span className={`text-[16px] lg:text-[19px] leading-[1.3] px-[0px] no-hide-text tracking-wide font-timesNewRoman ${labelClassName}`}>
         {label}
       </span>
       {children}

@@ -21,11 +21,11 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
 } from "@radix-ui/react-icons";
-import CornerFrame from "@/components/CornerFrame";
 import { OGubbeText } from "@/components/OGubbeText";
 import BlurredSlideshowBackground from "@/components/BlurredSlideshowBackground";
 import WigglyButton from "@/components/WigglyButton";
 import DynamicGrid from "@/components/DynamicGrid";
+import { TruckElectric } from "lucide-react";
 
 type Props = {
   slug: string;
@@ -164,156 +164,153 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
   return (
     <div {...swipeHandlers} className="flex flex-col bg-background w-full">
-      {/* Hero header */}
-      <div className="relative h-[50dvh] w-full overflow-hidden shrink-0">
-        {/* Blurred crossfade background */}
-        <BlurredSlideshowBackground urls={images.map((img) => img.url)} />
-
-        {/* Close button */}
-        <div className="fixed bottom-4 left-0 right-0 z-20 flex justify-center lg:bottom-auto lg:top-4 lg:right-[64px] lg:left-auto">
+      {/* Back / prev / next */}
+      <div className="fixed bottom-[9px] top-auto left-0 right-0 z-20 flex justify-center gap-x-0 lg:bottom-auto lg:top-4 lg:right-[64px] lg:left-auto">
+        <WigglyButton
+          text="back"
+          size="text-[18px] lg:text-[19px]"
+          bold={true}
+          active={false}
+          onClick={onClose ?? (() => router.push("/exhibitions"))}
+        />
+        {hasPrev && (
           <WigglyButton
-            text="back"
+            text="prev"
             size="text-[18px] lg:text-[19px]"
             bold={true}
-            onClick={onClose ?? (() => router.push("/exhibitions"))}
-            className=""
+            active={false}
+            onClick={goPrev}
           />
-        </div>
-
-        {/* Exhibition info */}
-        <div className="relative flex flex-row justify-between gap-x-[32px] px-[9px] lg:px-[18px] pt-[9px] lg:pt-[18px] pb-[18px] h-screen pointer-events-auto items-start justify-items-center z-10 w-full">
+        )}
+        {hasNext && (
           <WigglyButton
-            text={exhibition.title.rendered}
-            size="text-[16px] lg:text-[19px]"
-            className="  text-center justify-center  font-timesNewRoman font-bold tracking-wider  "
-            vertical
+            text="next"
+            size="text-[18px] lg:text-[19px]"
             bold={true}
+            active={true}
+            onClick={goNext}
           />
-
-          {location && (
-            <WigglyButton
-              text={location}
-              size="text-[16px] lg:text-[19px]"
-              className="  text-center justify-center  font-timesNewRoman font-bold tracking-wider"
-              vertical
-              bold={true}
-            />
-          )}
-          {city && (
-            <WigglyButton
-              text={city}
-              size="text-[16px] lg:text-[19px]"
-              className="  text-center justify-center  font-timesNewRoman font-bold tracking-wider"
-              vertical
-              bold={true}
-            />
-          )}
-          {exhibition.acf.exhibition_type && (
-            <WigglyButton
-              text={`${exhibition.acf.exhibition_type} Exhibition`}
-              size="text-[16px] lg:text-[19px]"
-              className="  text-center justify-center font-timesNewRoman font-bold tracking-wider"
-              vertical
-              bold={true}
-            />
-          )}
-          {exhibition.acf.year && (
-            <WigglyButton
-              text={exhibition.acf.year}
-              size="text-[16px] lg:text-[19px]"
-              className="  text-center justify-center font-timesNewRoman font-bold tracking-wider "
-              vertical
-              bold={true}
-            />
-          )}
-        </div>
+        )}
       </div>
 
-      {/* Description */}
-      {exhibition.acf.description && (
-        <div className="flex flex-col items-center justify-start mx-auto w-full max-w-3xl px-[0px] lg:px-[18px] pt-[64px] pb-4 no-hide-text ">
-          <OGubbeText
-            className="font-timesNewRoman font-bold text-[16px] lg:text-[19px] pb-[18px]"
-            text={exhibition.title.rendered}
-            revealAnimation={false}
+      {/* Slideshow + info overlay */}
+      {images.length > 0 && (
+        <div className="relative w-full h-screen aspect-auto lg:aspect-video">
+          <BlurredSlideshowBackground
+            urls={images.map((img) => img.url)}
+            onImageClick={(index) => setLightboxIndex(index)}
           />
 
-          <p className="font-timesNewRoman indent-6  text-[16px] lg:text-[19px] leading-[1.2]   no-hide-text text-foreground  tracking-wide px-[9px] ">
-            {exhibition.acf.description}
-          </p>
+          {/* Exhibition info overlay + image grid */}
+          <div className="absolute top-0 left-0 z-10 flex flex-col w-full lg:w-1/2 overflow-y-auto h-full">
+            {/* Info panel */}
+            <div className="flex flex-col items-center justify-start pb-[18px] w-full bg-[#41B97D]">
+              <div className="pt-[9px] flex justify-between w-full items-center px-[9px]">
+                <WigglyButton
+                  text={`${exhibition.acf.exhibition_type} Exhibition`}
+                  size="text-[16px] lg:text-[19px]"
+                  className="text-center justify-start font-timesNewRoman font-bold tracking-widest px-[4px]"
+                  bold={false}
+                />
+                <WigglyButton
+                  text={exhibition.title.rendered}
+                  size="text-[14px] lg:text-[19px]"
+                  className="text-center justify-center font-timesNewRoman font-bold tracking-widest px-[4px]"
+                  bold={true}
+                  active={true}
+                />
+                <WigglyButton
+                  text={exhibition.acf.year}
+                  size="text-[16px] lg:text-[19px]"
+                  className="text-center justify-end font-timesNewRoman font-bold tracking-widest px-[4px]"
+                  bold={false}
+                />
+              </div>
+              <div className="flex w-full justify-between items-center px-[9px]">
+                <WigglyButton
+                  text={exhibition.acf.location}
+                  size="text-[16px] lg:text-[19px]"
+                  className="text-center justify-center font-timesNewRoman font-bold tracking-widest px-[4px] -mt-[4px]"
+                  bold={false}
+                />
+                <WigglyButton
+                  text={exhibition.acf.city}
+                  size="text-[16px] lg:text-[19px]"
+                  className="text-center justify-center font-timesNewRoman font-bold tracking-widest -mt-[4px] px-[4px]"
+                  bold={false}
+                />
+              </div>
+              <p className="font-timesNewRoman pt-[32px] text-[16px] lg:text-[19px] leading-[1.2] no-hide-text text-foreground tracking-wider text-center px-[9px]">
+                {exhibition.acf.description}
+              </p>
+            </div>
+
+            {/* Image grid */}
+            <div className="hidden  flex-wrap w-full p-[9px] gap-x-[9px] gap-y-[9px] overflow-y-auto bg-background ">
+              {images.map((img, idx) => (
+                <button
+                  key={img.id}
+                  className="relative  h-[10vh] aspect-video overflow-hidden"
+                  onClick={() => setLightboxIndex(idx)}
+                >
+                  <Image
+                    src={img.url}
+                    alt={img.alt || img.desc || `Image ${idx + 1}`}
+                    fill
+                    sizes="(min-width: 1024px) 16vw, 33vw"
+                    className="object-cover object-center"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Images — DynamicGrid */}
-      {images.length > 0 && (
-        <DynamicGrid
-          items={images.map((img, idx) => ({
-            id: String(img.id),
-            node: (
-              <button
-                onClick={() => setLightboxIndex(idx)}
-                className="relative w-full overflow-hidden cursor-zoom-in block lg:max-h-screen"
-                aria-label={`View image ${idx + 1}`}
-              >
-                <CornerFrame />
-                <RevealImage
-                  src={img.url}
-                  alt={img.alt || img.desc || `Image ${idx + 1}`}
-                  width={800}
-                  height={600}
-                  sizes="50vw"
-                  revealIndex={idx}
-                  className="w-full h-auto object-top lg:max-h-screen"
-                />
-              </button>
-            ),
-          }))}
-          gridCols={1}
-          gridRows={1}
-        />
+      {/* Works circle */}
+      {works.length > 0 && (
+        <div className=" bg-[#B3F7FE] w-full flex flex-col justify-center rounded-full aspect-square lg:max-w-1/3 h-full">
+          <div className="flex flex-col gap-y-0 no-hide-text justify-start items-center">
+            <WigglyButton
+              size="text-[16px] lg:text-[19px]"
+              bold={true}
+              className="text-[16px] lg:text-[19px] mb-[9px]"
+              text="featuring the works"
+              active={false}
+            />
+            {works.map((work: any, index: number) => (
+              <WigglyButton
+                key={index}
+                bold={false}
+                size="text-[16px] lg:text-[19px]"
+                className="font-normal text-[16px] lg:text-[19px]"
+                active={true}
+                onClick={() => {
+                  const s = normalizeSlug(work);
+                  setActiveWorkSlug(s);
+                  window.history.pushState(null, "", `/works?work=${s}`);
+                }}
+                text={work}
+              />
+            ))}
+          </div>
+        </div>
       )}
 
-      {/* Works + credits */}
-      {(works.length > 0 || exhibition.acf.credits) && (
-        <div className="w-full px-[18px] lg:px-[32px] pb-[80px] lg:pb-[48px]">
-          <div className="flex flex-col gap-8 pt-0 w-full">
-            {works.length > 0 && (
-              <div className="flex flex-col gap-y-0 no-hide-text justify-start items-center">
-                <WigglyButton
-                  size="text-[16px] lg:text-[19px]"
-                  bold={true}
-                  className="text-[16px] lg:text-[19px] text-muted-foreground"
-                  text="featuring the works"
-                />
-                {works.map((work: any, index: number) => (
-                  <WigglyButton
-                    key={index}
-                    bold={true}
-                    size="text-[16px] lg:text-[19px]"
-                    className="font-normal text-[16px] lg:text-[19px]"
-                    onClick={() => {
-                      const s = normalizeSlug(work);
-                      setActiveWorkSlug(s);
-                      window.history.pushState(null, "", `/works?work=${s}`);
-                    }}
-                    text={work}
-                  />
-                ))}
-              </div>
-            )}
-            {exhibition.acf.credits && (
-              <div className="w-full flex flex-col items-center justify-center">
-                <WigglyButton
-                  size="text-[16px] lg:text-[19px]"
-                  bold={true}
-                  className="text-[16px] lg:text-[19px] text-muted-foreground"
-                  text="Credits"
-                />
-                <p className="font-timesNewRoman text-[16px] lg:text-[19px] text-center font-bold ">
-                  {exhibition.acf.credits}
-                </p>
-              </div>
-            )}
+      {/* Credits */}
+      {exhibition.acf.credits && (
+        <div className="w-full px-[9px] pt-[18px] lg:px-[18px] pb-[44px] lg:pb-[18px] lg:max-w-1/2">
+          <div className="w-full flex flex-col items-center justify-center lg:items-start">
+            <WigglyButton
+              size="text-[16px] lg:text-[19px]"
+              bold={true}
+              className="text-[16px] lg:text-[19px] mb-[9px]"
+              text="Credits"
+              active={true}
+            />
+            <p className="font-timesNewRoman text-[16px] lg:text-[19px] text-center lg:text-left leading-[1.3] tracking-wider">
+              {exhibition.acf.credits}
+            </p>
           </div>
         </div>
       )}
@@ -321,11 +318,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-[110] bg-background flex flex-col h-dvh">
-          <div className="absolute top-0 right-0 w-full z-[120]  bg-background">
+          <div className="absolute top-0 right-0 w-full z-[120]  bg-transparent">
             <div className="mx-4 flex items-center gap-x-2 pt-[18px] ">
               <WigglyButton
                 className="text-muted-foreground"
                 text={`${lightboxCarousel.index + 1} / ${images.length}`}
+                active={true}
               />
               <div className="flex-1" />
               <Button
@@ -348,9 +346,9 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               {images.map((img, idx) => (
                 <CarouselItem
                   key={img.id}
-                  className="pl-0 flex flex-col items-center justify-center py-[0px] px-4 h-dvh"
+                  className="pl-0 flex flex-col items-center justify-center h-dvh"
                 >
-                  <div className="relative w-full h-full">
+                  <div className="relative w-full flex-1 min-h-0">
                     <Image
                       src={img.url}
                       alt={img.alt || img.desc || `Image ${idx + 1}`}

@@ -25,7 +25,7 @@ export default function ExhibitionModal({
       {isOpen && (
         <motion.div
           key="overlay"
-          className="fixed inset-0 z-[200] h-dvh bg-background w-full overflow-hidden"
+          className="fixed inset-0 z-[200] h-dvh bg-background/10 backdrop-blur-xs w-full overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -34,7 +34,7 @@ export default function ExhibitionModal({
           <motion.div
             key="modal"
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full h-full overflow-y-auto scrollbar-hide z-40"
+            className="relative w-full h-full overflow-y-auto scrollbar-hide z-40 "
             initial={{ y: "4%", opacity: 0 }}
             animate={{ y: "0%", opacity: 1 }}
             exit={{ y: "4%", opacity: 0 }}

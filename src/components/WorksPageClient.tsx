@@ -41,39 +41,36 @@ function WorkCard({
       onMouseEnter={() => setHoveredItemTitle(work.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      <div className="w-full relative overflow-hidden lg:min-h-[200px]">
-        {/* InfoBox: slides up from the bottom */}
+      {/* Image */}
+      <button
+        className={`flex justify-center w-full lg:min-h-[200px] ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
+        onClick={() => infoOpen ? onOpen() : setInfoOpen(true)}
+        aria-label={infoOpen ? `Open ${work.title.rendered}` : `Show info: ${work.title.rendered}`}
+      >
+        {work.image_url && (
+          <ProportionalWorkImage
+            src={work.image_url}
+            alt={work.title.rendered}
+            revealIndex={revealIndex}
+            noScaleY
+            dimensions={work.acf.dimensions}
+            objectPosition={objectPosition}
+            className={imageClassName}
+          />
+        )}
+      </button>
+
+      {/* InfoBox: slides down from top, below the image */}
+      <div className="w-full overflow-hidden">
         <motion.div
-          className="absolute inset-0 z-20 cursor-zoom-in bg-transparent"
-          animate={{ y: infoOpen ? "0%" : "100%" }}
+          animate={{ y: infoOpen ? "0%" : "-100%" }}
+          initial={{ y: "-100%" }}
           transition={transition}
-          initial={false}
+          className="cursor-zoom-in"
           onClick={() => onOpen()}
         >
           <InfoBox work={work} onClose={() => setInfoOpen(false)} />
         </motion.div>
-
-        {/* Image */}
-        <motion.button
-          className="relative z-30 flex justify-center w-full cursor-pointer"
-          animate={{ scaleY: infoOpen ? 0.05 : 1 }}
-          style={{ transformOrigin: "top center" }}
-          transition={transition}
-          onClick={() => setInfoOpen((v) => !v)}
-          aria-label={`Show info: ${work.title.rendered}`}
-        >
-          {work.image_url && (
-            <ProportionalWorkImage
-              src={work.image_url}
-              alt={work.title.rendered}
-              revealIndex={revealIndex}
-              noScaleY
-              dimensions={work.acf.dimensions}
-              objectPosition={objectPosition}
-              className={imageClassName}
-            />
-          )}
-        </motion.button>
       </div>
 
       {showTitles && (
@@ -103,6 +100,7 @@ export default function WorksPageClient() {
     setActivePage,
     setVisibleWorkIndex,
     visibleWorkIndex,
+    hoveredItemTitle,
   } = useUI();
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -142,8 +140,11 @@ export default function WorksPageClient() {
     window.history.pushState(null, "", `/works?work=${work.slug}`);
   }
 
-  // Mobile color bg: track visible index
-  const [activeMobileIndex, setActiveMobileIndex] = useState(0);
+  // Desktop: hovered work; mobile: topmost visible work
+  const desktopBgIndex = hoveredItemTitle
+    ? filteredWorks.findIndex((w) => w.title.rendered === hoveredItemTitle)
+    : -1;
+  const activeBgIndex = desktopBgIndex >= 0 ? desktopBgIndex : visibleWorkIndex;
 
   const gridItems = filteredWorks.map((work, i) => ({
     id: work.id,
@@ -169,14 +170,14 @@ export default function WorksPageClient() {
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Color bg layer — mobile */}
+        {/* Color bg layer */}
         {showColorBg && (
-          <div className="lg:hidden fixed inset-0 z-[5] pointer-events-none">
+          <div className="fixed inset-0 z-[5] pointer-events-none">
             {filteredWorks.map((work, i) =>
               work.image_url ? (
                 <div
                   key={work.id}
-                  className={`absolute inset-0 transition-opacity duration-700 ${i === activeMobileIndex ? "opacity-100" : "opacity-0"}`}
+                  className={`absolute inset-0 transition-opacity duration-700 ${i === activeBgIndex ? "opacity-100" : "opacity-0"}`}
                 >
                   <BlurredWorkBg imageUrl={work.image_url} />
                 </div>
