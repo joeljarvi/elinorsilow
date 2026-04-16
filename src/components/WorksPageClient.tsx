@@ -60,17 +60,23 @@ function WorkCard({
         )}
       </button>
 
-      {/* InfoBox: slides down from top, below the image */}
-      <div className="w-full overflow-hidden">
-        <motion.div
-          animate={{ y: infoOpen ? "0%" : "-100%" }}
-          initial={{ y: "-100%" }}
-          transition={transition}
-          className="cursor-zoom-in"
-          onClick={() => onOpen()}
-        >
-          <InfoBox work={work} onClose={() => setInfoOpen(false)} />
-        </motion.div>
+      {/* InfoBox: absolutely positioned below image, does not affect card layout height */}
+      <div className="relative w-full h-0">
+        <div className="absolute top-0 left-0 right-0 overflow-hidden z-10">
+          <motion.div
+            animate={{
+              y: infoOpen ? "0%" : "-100%",
+              opacity: infoOpen ? 1 : 0,
+              filter: infoOpen ? "blur(0px)" : "blur(8px)",
+            }}
+            initial={{ y: "-100%", opacity: 0, filter: "blur(8px)" }}
+            transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+            className="cursor-zoom-in"
+            onClick={() => onOpen()}
+          >
+            <InfoBox work={work} onClose={() => setInfoOpen(false)} />
+          </motion.div>
+        </div>
       </div>
 
       {showTitles && (
@@ -165,26 +171,27 @@ export default function WorksPageClient() {
       <PageLoader text="elinor silow" loading={loading} />
       <FixedCookieAccept />
 
+      {/* Color bg layer — outside motion.div to avoid stacking context issues */}
+      {showColorBg && (
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          {filteredWorks.map((work, i) =>
+            work.image_url ? (
+              <div
+                key={work.id}
+                className={`absolute inset-0 transition-opacity duration-700 ${i === activeBgIndex ? "opacity-100" : "opacity-0"}`}
+              >
+                <BlurredWorkBg imageUrl={work.image_url} />
+              </div>
+            ) : null,
+          )}
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Color bg layer */}
-        {showColorBg && (
-          <div className="fixed inset-0 z-[5] pointer-events-none">
-            {filteredWorks.map((work, i) =>
-              work.image_url ? (
-                <div
-                  key={work.id}
-                  className={`absolute inset-0 transition-opacity duration-700 ${i === activeBgIndex ? "opacity-100" : "opacity-0"}`}
-                >
-                  <BlurredWorkBg imageUrl={work.image_url} />
-                </div>
-              ) : null,
-            )}
-          </div>
-        )}
 
         {/* Title list — behind cards, z-[5] */}
         {showAsList && (

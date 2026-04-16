@@ -99,7 +99,7 @@ export default function InfoPageClient() {
       <ScrollHint />
       {/* Fixed page header */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 pt-[32px] lg:gap-x-[18px] px-[18px] lg:px-[18px]">
+      <div className="flex flex-col w-full lg:grid lg:grid-cols-12 pt-[32px] lg:gap-x-[18px] px-[18px] lg:px-[18px]">
         {/* Col 1: About + Solo Exhibitions */}
 
         <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] ">

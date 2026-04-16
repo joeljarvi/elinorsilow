@@ -1,3 +1,9 @@
+import ContactClient from "@/components/ContactClient";
+
 export default function ContactPage() {
-  return <div>Contact</div>;
+  return (
+    <div>
+      <ContactClient />
+    </div>
+  );
 }

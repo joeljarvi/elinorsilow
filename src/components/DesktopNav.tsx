@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useUI } from "@/context/UIContext";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import NavSearch from "./NavSearch";
 import Link from "next/link";
-import { OGubbeText } from "./OGubbeText";
 import WigglyButton from "./WigglyButton";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { HeroText } from "./HeroText";
-import { StretchLetters } from "./StretchLetters";
 
 const NAV_LINKS = [
   { href: "/", label: "works" },
@@ -34,8 +32,8 @@ export default function DesktopNav() {
     activePage,
     openSearch,
     setOpenSearch,
+    showColorBg,
   } = useUI();
-  const router = useRouter();
 
   const pageLabel =
     activePage === "home" || activePage === "works"
@@ -46,18 +44,6 @@ export default function DesktopNav() {
 
   const isExhibitions = pathname.startsWith("/exhibitions");
   const isInfo = pathname.startsWith("/info");
-  const logoText = isExhibitions
-    ? "Exhibitions"
-    : isInfo
-      ? "info"
-      : "Elinor Silow";
-  const logoTarget = isExhibitions
-    ? "/info"
-    : isInfo
-      ? "/works"
-      : "/exhibitions";
-  const handleLogoClick = () => router.push(logoTarget);
-
   useEffect(() => {
     setOpen(false);
   }, [pathname, setOpen]);
@@ -99,130 +85,95 @@ export default function DesktopNav() {
         )}
       </AnimatePresence>
 
-      {/* ── DESKTOP: top-slide full-width drawer ── */}
-      <motion.div
-        className="hidden lg:block fixed top-0 left-0 z-[80] w-full pointer-events-none mix-blend pt-[9px] px-[9px]"
-        animate={{ y: open ? 0 : "-100dvh" }}
-        transition={transition}
+      {/* ── DESKTOP: horizontal tab bar (always visible) ── */}
+      <div
+        className={`hidden lg:flex fixed top-0 right-0 z-[80] pointer-events-none pt-[9px] px-[9px]${showColorBg ? " mix-blend-difference" : ""}`}
       >
-        <div className={`h-dvh w-full pointer-events-auto flex justify-center`}>
-          <nav
-            className="flex flex-row gap-16 px-[64px] pt-[0px] pb-[18px] h-full pointer-events-auto items-start justify-center"
-            onClick={(e) => e.stopPropagation()}
+        <div className="flex items-center pointer-events-auto px-[9px] group">
+          {/* Nav links — shown on hover or when navExpanded */}
+          <div
+            className={`flex items-center overflow-hidden transition-all duration-500 ease-in-out ${navExpanded ? "max-w-[600px]" : "max-w-0 group-hover:max-w-[600px]"}`}
           >
-            <div className="">
-              <WigglyButton
-                text="close menu"
-                size="text-[32px]"
-                className="font-timesNewRoman font-normal"
-                onClick={() => setOpen(false)}
-                vertical
-              />
-            </div>
-
             {NAV_LINKS.map(({ href, label }) => (
               <Link key={href} href={href}>
-                <OGubbeText
-                  className="text-[32px] font-timesNewRoman font-normal"
-                  text={label}
-                  lettersOnly
-                  vertical
-                />
-              </Link>
-            ))}
-
-            <Link
-              href="https://www.instagram.com/elinorsilow"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <OGubbeText
-                className="text-[32px] font-timesNewRoman font-normal"
-                text="instagram"
-                lettersOnly
-                vertical
-              />
-            </Link>
-          </nav>
-        </div>
-
-        {/* Menu + filter tab — peeks at top of screen when closed */}
-        <div className="w-full flex flex-row items-baseline justify-end pointer-events-auto">
-          <div className="flex items-center pointer-events-auto px-[9px] group">
-            {/* Nav links — shown on hover or when navExpanded */}
-            <div
-              className={`flex items-center overflow-hidden transition-all duration-500 ease-in-out ${navExpanded ? "max-w-[600px]" : "max-w-0 group-hover:max-w-[600px]"}`}
-            >
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link key={href} href={href}>
-                  <WigglyButton
-                    text={label}
-                    size="text-[19px]"
-                    bold={false}
-                    revealAnimation={false}
-                    active={pageLabel === label}
-                    className={`tracking-wide ${
-                      pageLabel === label
-                        ? "text-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  />
-                </Link>
-              ))}
-              <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
-                /
-              </span>
-            </div>
-            <WigglyButton
-              text={navExpanded ? "close menu" : "menu"}
-              size="text-[19px]"
-              bold={false}
-              revealAnimation={false}
-              active={navExpanded}
-              className={` tracking-wide ${
-                navExpanded ? "text-foreground" : "text-muted-foreground"
-              }`}
-              onClick={() => setNavExpanded((v) => !v)}
-            />
-            {!isInfo && (
-              <>
-                <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
-                  /
-                </span>
                 <WigglyButton
-                  text={filterOpen ? "close filter" : "filter"}
+                  text={label}
                   size="text-[19px]"
                   bold={false}
                   revealAnimation={false}
-                  active={filterOpen}
-                  className={` tracking-wide ${
-                    filterOpen ? "text-foreground" : "text-muted-foreground"
+                  active={pageLabel === label}
+                  className={`tracking-wide ${
+                    pageLabel === label
+                      ? "text-foreground"
+                      : "text-muted-foreground"
                   }`}
-                  onClick={() => handleFilterOpen()}
                 />
-              </>
-            )}
+              </Link>
+            ))}
             <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
               /
             </span>
-            <WigglyButton
-              text={openSearch ? "close search" : "search"}
-              size="text-[19px]"
-              bold={false}
-              revealAnimation={false}
-              active={openSearch}
-              className={`tracking-wide ${
-                openSearch ? "text-foreground" : "text-muted-foreground"
-              }`}
-              onClick={() => setOpenSearch(!openSearch)}
-            />
           </div>
+          <WigglyButton
+            text={navExpanded ? "close menu" : "menu"}
+            size="text-[19px]"
+            bold={false}
+            revealAnimation={false}
+            active={navExpanded}
+            className={`tracking-wide ${
+              navExpanded ? "text-foreground" : "text-muted-foreground"
+            }`}
+            onClick={() => setNavExpanded((v) => !v)}
+          />
+          {!isInfo && (
+            <>
+              <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
+                /
+              </span>
+              <WigglyButton
+                text={filterOpen ? "close filter" : "filter"}
+                size="text-[19px]"
+                bold={false}
+                revealAnimation={false}
+                active={filterOpen}
+                className={`tracking-wide ${
+                  filterOpen ? "text-foreground" : "text-muted-foreground"
+                }`}
+                onClick={() => handleFilterOpen()}
+              />
+            </>
+          )}
+          <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+            /
+          </span>
+          <WigglyButton
+            text={openSearch ? "close search" : "search"}
+            size="text-[19px]"
+            bold={false}
+            revealAnimation={false}
+            active={openSearch}
+            className={`tracking-wide ${
+              openSearch ? "text-foreground" : "text-muted-foreground"
+            }`}
+            onClick={() => setOpenSearch(!openSearch)}
+          />
+          <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+            /
+          </span>
+          <WigglyButton
+            text="instagram"
+            size="text-[19px]"
+            bold={false}
+            revealAnimation={false}
+            href="https://www.instagram.com/elinorsilow"
+            className="tracking-wide text-muted-foreground"
+          />
         </div>
-      </motion.div>
+      </div>
 
       {/* ── MOBILE: top-slide full-screen ── */}
       <motion.div
-        className="lg:hidden fixed top-0 left-0 z-[120] w-full pointer-events-none"
+        className={`lg:hidden fixed top-0 left-0 z-[120] w-full pointer-events-none${showColorBg ? " mix-blend-difference" : ""}`}
         animate={{ y: open ? 0 : "-100dvh" }}
         transition={transition}
       >
@@ -230,81 +181,79 @@ export default function DesktopNav() {
           className={`relative h-dvh w-full pointer-events-auto transition-[background-color,backdrop-filter] bg-[#E7F8BE] duration-300 ${open ? "bg-background/10 backdrop-blur-lg" : "bg-transparent backdrop-blur-none"}`}
           onClick={() => setOpen(false)}
         >
-          <nav
-            className="flex flex-row justify-between gap-x-[32px] px-[9px] pt-[9px] pb-[18px] h-full pointer-events-auto items-start justify-items-center"
+          <motion.nav
+            className="flex flex-row px-[9px] pt-[9px] pb-[18px] h-full pointer-events-auto items-start"
+            animate={{ justifyContent: open ? "space-between" : "flex-start" }}
+            transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* "elinor silow" → button that opens HeroText overlay */}
-            <WigglyButton
-              className=" cursor-pointer "
-              onClick={() => {
-                setOpen(false);
-                setHeroOverlayOpen(true);
-              }}
-              text="elinor silow"
-              bold={true}
-              size="text-[18px]"
-              vertical
-              active={open}
-            />
-
-            {NAV_LINKS.map(({ href, label }) => (
-              <Link key={href} href={href}>
-                <WigglyButton
-                  className=" cursor-pointer "
-                  onClick={() => {
-                    setOpen(false);
-                    setHeroOverlayOpen(true);
-                  }}
-                  text={label}
-                  bold={true}
-                  size="text-[18px]"
-                  vertical
-                  active={open}
-                  revealAnimation={true}
-                />
-              </Link>
-            ))}
-            <WigglyButton
-              className=" cursor-pointer"
-              onClick={() => {
-                setOpen(false);
-                setOpenSearch(true);
-              }}
-              text="search"
-              bold={true}
-              size="text-[18px]"
-              vertical
-              active={open}
-            />
-            <Link
-              href="https://www.instagram.com/elinorsilow"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <motion.div layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
               <WigglyButton
-                className=" cursor-pointer"
-                text="instagram"
+                className="cursor-pointer"
+                onClick={() => {
+                  setOpen(false);
+                  setHeroOverlayOpen(true);
+                }}
+                text="elinor silow"
                 bold={true}
                 size="text-[18px]"
                 vertical
                 active={open}
               />
-            </Link>
-          </nav>
+            </motion.div>
+
+            {NAV_LINKS.map(({ href, label }) => (
+              <motion.div key={href} layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+                <Link href={href}>
+                  <WigglyButton
+                    className="cursor-pointer"
+                    onClick={() => setOpen(false)}
+                    text={label}
+                    bold={true}
+                    size="text-[18px]"
+                    vertical
+                    active={open}
+                    revealAnimation={true}
+                  />
+                </Link>
+              </motion.div>
+            ))}
+            <motion.div layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+              <WigglyButton
+                className="cursor-pointer"
+                onClick={() => {
+                  setOpen(false);
+                  setOpenSearch(true);
+                }}
+                text="search"
+                bold={true}
+                size="text-[18px]"
+                vertical
+                active={open}
+              />
+            </motion.div>
+            <motion.div layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+              <Link
+                href="https://www.instagram.com/elinorsilow"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <WigglyButton
+                  className="cursor-pointer"
+                  text="instagram"
+                  bold={true}
+                  size="text-[18px]"
+                  vertical
+                  active={open}
+                />
+              </Link>
+            </motion.div>
+          </motion.nav>
         </div>
       </motion.div>
 
-      <div className="hidden fixed top-0 left-0 right-0 z-[75] items-center justify-center w-full pointer-events-none">
-        <StretchLetters
-          className="whitespace-nowrap shrink-0 w-full"
-          body={logoText}
-          onClick={handleLogoClick}
-          defaultVariant={isExhibitions ? 3 : 0}
-        />
-      </div>
-
-      {/* ── MOBILE: fixed bottom menu/filter tab ── */}
+{/* ── MOBILE: fixed bottom menu/filter tab ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto">
         <WigglyButton
           text={open ? "close" : "menu"}

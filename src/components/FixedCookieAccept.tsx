@@ -14,7 +14,7 @@ export default function FixedCookieAccept() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[200] flex items-start justify-start bg-background py-[9px] px-[9px]">
+    <div className="fixed bottom-0 left-0 right-0 z-[200] flex items-start justify-start bg-background p-[9px]">
       <p className="p-small text-foreground w-full flex flex-wrap gap-x-2">
         This website uses cookies. By using this website you consent to the use
         of these cookies. Read more in{" "}

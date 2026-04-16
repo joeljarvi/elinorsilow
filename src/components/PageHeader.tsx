@@ -15,6 +15,7 @@ export default function PageHeader() {
     visibleExhibitionIndex,
     hoveredItemTitle,
     showAsList,
+    showColorBg,
   } = useUI();
   const { filteredWorks } = useWorks();
   const { filteredExhibitions, exAsList } = useExhibitions();
@@ -51,7 +52,7 @@ export default function PageHeader() {
     <>
       {/* Mobile: fixed top-center */}
 
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-[70] flex flex-col items-start  px-[9px] pt-[9px] gap-y-0">
+      <div className={`lg:hidden fixed top-0 left-0 right-0 z-[70] flex flex-col items-start px-[9px] pt-[9px] gap-y-0${showColorBg ? " mix-blend-difference" : ""}`}>
         {/* <div className="fixed top-0 h-[48px] w-full shrink-0 bg-gradient-to-b from-background to-transparent pointer-events-none -mb-[48px] z-[80]" /> */}
         <span className="flex">
           <WigglyButton
@@ -60,8 +61,9 @@ export default function PageHeader() {
             className="pr-0"
             href="/"
           />
+          <span className="text-[16px] font-timesNewRoman px-[2px]">/</span>
           <WigglyButton
-            text={`/ ${pageLabel}`}
+            text={pageLabel}
             size="text-[16px]"
             className=""
             href={pageLabelHref}
@@ -84,7 +86,7 @@ export default function PageHeader() {
       </div>
 
       {/* Desktop: fixed top-left, title shown on hover */}
-      <div className="hidden lg:flex fixed top-0 left-0 z-[70] items-center gap-x-[0px] pt-[9px] lg:pt-[9px] px-[9px] pointer-events-none">
+      <div className={`hidden lg:flex fixed top-0 left-0 z-[70] items-center gap-x-[0px] pt-[9px] lg:pt-[9px] px-[9px] pointer-events-none${showColorBg ? " mix-blend-difference" : ""}`}>
         <WigglyButton
           text="elinor silow"
           size="text-[16px] lg:text-[19px]"
@@ -92,17 +94,13 @@ export default function PageHeader() {
           href="/"
         />
 
-        {(desktopTitle || mobileTitle) && !pathname.startsWith("/info") && (
+        {desktopTitle && !pathname.startsWith("/info") && (
           <>
-            <WigglyButton
-              text="/"
-              size="text-[16px] lg:text-[19px]"
-              className="text-muted-foreground pointer-events-none "
-            />
-            <div className="overflow-hidden  max-w-[40vw]">
+            <span className="text-[16px] lg:text-[19px] font-timesNewRoman text-muted-foreground px-[2px]">/</span>
+            <div className="overflow-hidden max-w-[40vw]">
               <OGubbeText
-                key={desktopTitle ?? mobileTitle ?? ""}
-                text={desktopTitle ?? mobileTitle ?? ""}
+                key={desktopTitle}
+                text={desktopTitle}
                 lettersOnly
                 revealAnimation
                 className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal text-foreground -mt-[9px]"

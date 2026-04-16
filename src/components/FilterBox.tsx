@@ -357,7 +357,7 @@ function FilterContent({ onMobileSelect }: { onMobileSelect: () => void }) {
 /* -------------------- MAIN -------------------- */
 
 export default function FilterBox() {
-  const { filterOpen, handleFilterOpen } = useUI();
+  const { filterOpen, handleFilterOpen, showColorBg } = useUI();
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const [drawerHeight, setDrawerHeight] = useState(0);
@@ -380,7 +380,7 @@ export default function FilterBox() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
+    <div className={`fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0${showColorBg ? " mix-blend-difference" : ""}`}>
       <motion.div
         animate={{ y: filterOpen ? 0 : drawerHeight }}
         transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
