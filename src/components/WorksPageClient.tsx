@@ -7,92 +7,12 @@ import BlurredWorkBg from "@/components/BlurredWorkBg";
 import { Work } from "../../lib/sanity";
 import { motion } from "framer-motion";
 import WorkModal from "@/components/WorkModal";
-import InfoBox from "@/components/InfoBox";
 import { OGubbeText } from "@/components/OGubbeText";
-import ProportionalWorkImage from "@/components/ProportionalWorkImage";
 import PageLoader from "@/components/PageLoader";
-import WigglyButton from "@/components/WigglyButton";
 import FixedCookieAccept from "@/components/FixedCookieAccept";
 import CopyrightFooter from "@/components/CopyrightFooter";
 import DynamicGrid from "@/components/DynamicGrid";
-
-function WorkCard({
-  work,
-  onOpen,
-  revealIndex = 0,
-  objectPosition = "center",
-  showTitles = false,
-  imageClassName = "max-h-dvh",
-}: {
-  work: Work;
-  onOpen: () => void;
-  revealIndex?: number;
-  objectPosition?: string;
-  showTitles?: boolean;
-  imageClassName?: string;
-}) {
-  const [infoOpen, setInfoOpen] = useState(false);
-  const { setHoveredItemTitle } = useUI();
-  const transition = { duration: 0.5, ease: [0.25, 1, 0.5, 1] as const };
-
-  return (
-    <div
-      className="w-full flex flex-col items-center justify-center"
-      onMouseEnter={() => setHoveredItemTitle(work.title.rendered)}
-      onMouseLeave={() => setHoveredItemTitle(null)}
-    >
-      {/* Image */}
-      <button
-        className={`flex justify-center w-full lg:min-h-[200px] ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
-        onClick={() => infoOpen ? onOpen() : setInfoOpen(true)}
-        aria-label={infoOpen ? `Open ${work.title.rendered}` : `Show info: ${work.title.rendered}`}
-      >
-        {work.image_url && (
-          <ProportionalWorkImage
-            src={work.image_url}
-            alt={work.title.rendered}
-            revealIndex={revealIndex}
-            noScaleY
-            dimensions={work.acf.dimensions}
-            objectPosition={objectPosition}
-            className={imageClassName}
-          />
-        )}
-      </button>
-
-      {/* InfoBox: absolutely positioned below image, does not affect card layout height */}
-      <div className="relative w-full h-0">
-        <div className="absolute top-0 left-0 right-0 overflow-hidden z-10">
-          <motion.div
-            animate={{
-              y: infoOpen ? "0%" : "-100%",
-              opacity: infoOpen ? 1 : 0,
-              filter: infoOpen ? "blur(0px)" : "blur(8px)",
-            }}
-            initial={{ y: "-100%", opacity: 0, filter: "blur(8px)" }}
-            transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-            className="cursor-zoom-in"
-            onClick={() => onOpen()}
-          >
-            <InfoBox work={work} onClose={() => setInfoOpen(false)} />
-          </motion.div>
-        </div>
-      </div>
-
-      {showTitles && (
-        <div className="flex justify-center pt-[9px]">
-          <OGubbeText
-            text={work.title.rendered}
-            lettersOnly
-            wrap
-            className="text-[15px] lg:text-[18px]"
-            sizes="18px"
-          />
-        </div>
-      )}
-    </div>
-  );
-}
+import WorkCard from "@/components/WorkCard";
 
 export default function WorksPageClient() {
   const { filteredWorks, setActiveWorkSlug, activeWorkSlug, workLoading } =
@@ -152,23 +72,8 @@ export default function WorksPageClient() {
     : -1;
   const activeBgIndex = desktopBgIndex >= 0 ? desktopBgIndex : visibleWorkIndex;
 
-  const gridItems = filteredWorks.map((work, i) => ({
-    id: work.id,
-    node: (
-      <WorkCard
-        work={work}
-        revealIndex={i}
-        objectPosition="center"
-        imageClassName="max-h-[100dvh] lg:max-h-[calc(100dvh-64px)]"
-        onOpen={() => openWork(work)}
-        showTitles={showTitles}
-      />
-    ),
-  }));
-
   return (
-    <section ref={sectionRef} className="relative w-full">
-      <PageLoader text="elinor silow" loading={loading} />
+    <section ref={sectionRef} className="relative w-full  ">
       <FixedCookieAccept />
 
       {/* Color bg layer — outside motion.div to avoid stacking context issues */}
@@ -192,7 +97,6 @@ export default function WorksPageClient() {
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.5 }}
       >
-
         {/* Title list — behind cards, z-[5] */}
         {showAsList && (
           <div className="fixed top-[0px] left-0 right-0 -z-[10]  h-dvh overflow-y-auto flex flex-col items-center gap-y-[0px] pt-[32px] pb-[18px] pointer-events-auto">
@@ -216,7 +120,17 @@ export default function WorksPageClient() {
         )}
 
         <DynamicGrid
-          items={gridItems}
+          items={filteredWorks}
+          renderItem={(work, i) => (
+            <WorkCard
+              work={work}
+              revealIndex={i}
+              objectPosition="center"
+              imageClassName="max-h-[100dvh] lg:max-h-[calc(100dvh-64px)]"
+              onOpen={() => openWork(work)}
+              showTitles={showTitles}
+            />
+          )}
           onTopVisibleChange={setVisibleWorkIndex}
           gridCols={Math.min(4, Math.max(1, gridCols))}
           gridRows={Math.min(4, Math.max(1, gridRows))}

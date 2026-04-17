@@ -66,7 +66,7 @@ export default function DesktopNav() {
             onClick={() => setHeroOverlayOpen(false)}
           >
             <button
-              className="absolute top-[18px] right-[18px] no-hide-text p-[6px] text-foreground"
+              className="absolute top-[18px] right-[18px] no-hide-text p-[6px] text-muted-foreground"
               onClick={(e) => {
                 e.stopPropagation();
                 setHeroOverlayOpen(false);
@@ -86,64 +86,42 @@ export default function DesktopNav() {
       </AnimatePresence>
 
       {/* ── DESKTOP: horizontal tab bar (always visible) ── */}
-      <div
-        className={`hidden lg:flex fixed top-0 right-0 z-[80] pointer-events-none pt-[9px] px-[9px]${showColorBg ? " mix-blend-difference" : ""}`}
-      >
-        <div className="flex items-center pointer-events-auto px-[9px] group">
-          {/* Nav links — shown on hover or when navExpanded */}
-          <div
-            className={`flex items-center overflow-hidden transition-all duration-500 ease-in-out ${navExpanded ? "max-w-[600px]" : "max-w-0 group-hover:max-w-[600px]"}`}
-          >
-            {NAV_LINKS.map(({ href, label }) => (
-              <Link key={href} href={href}>
+      <div className="hidden lg:flex items-start justify-end fixed top-0 right-0 bottom-0 left-0 z-[80] pointer-events-none pt-[9px] px-[9px] h-min w-auto">
+        {/* Nav links — shown when navExpanded */}
+        <div
+          className={`flex items-center transition-opacity duration-300 ${navExpanded ? "opacity-100 max-w-[600px]" : "opacity-0 max-w-0 pointer-events-none"}`}
+        >
+          {NAV_LINKS.map(({ href, label }) => (
+            <div key={href} className="flex items-center">
+              <Link href={href}>
                 <WigglyButton
                   text={label}
                   size="text-[19px]"
                   bold={false}
                   revealAnimation={false}
                   active={pageLabel === label}
-                  className={`tracking-wide ${
+                  className={`tracking-wide no-hide-text ${
                     pageLabel === label
                       ? "text-foreground"
                       : "text-muted-foreground"
                   }`}
                 />
               </Link>
-            ))}
-            <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
-              /
-            </span>
-          </div>
+              <span className="items-center font-timesNewRoman font-normal text-[19px]  text-muted-foreground">
+                /
+              </span>
+            </div>
+          ))}
           <WigglyButton
-            text={navExpanded ? "close menu" : "menu"}
+            text="instagram"
             size="text-[19px]"
             bold={false}
             revealAnimation={false}
-            active={navExpanded}
-            className={`tracking-wide ${
-              navExpanded ? "text-foreground" : "text-muted-foreground"
-            }`}
-            onClick={() => setNavExpanded((v) => !v)}
+            href="https://www.instagram.com/elinorsilow"
+            className="tracking-wide text-muted-foreground"
           />
-          {!isInfo && (
-            <>
-              <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
-                /
-              </span>
-              <WigglyButton
-                text={filterOpen ? "close filter" : "filter"}
-                size="text-[19px]"
-                bold={false}
-                revealAnimation={false}
-                active={filterOpen}
-                className={`tracking-wide ${
-                  filterOpen ? "text-foreground" : "text-muted-foreground"
-                }`}
-                onClick={() => handleFilterOpen()}
-              />
-            </>
-          )}
-          <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+
+          <span className="inline-flex items-center font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
             /
           </span>
           <WigglyButton
@@ -157,23 +135,45 @@ export default function DesktopNav() {
             }`}
             onClick={() => setOpenSearch(!openSearch)}
           />
-          <span className="inline-flex items-center mt-[9px] font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+          <span className="items-center font-timesNewRoman font-normal text-[19px]  text-muted-foreground">
             /
           </span>
-          <WigglyButton
-            text="instagram"
-            size="text-[19px]"
-            bold={false}
-            revealAnimation={false}
-            href="https://www.instagram.com/elinorsilow"
-            className="tracking-wide text-muted-foreground"
-          />
         </div>
+        <WigglyButton
+          text={navExpanded ? "close menu" : "menu"}
+          size="text-[19px]"
+          bold={false}
+          revealAnimation={false}
+          active={navExpanded}
+          className={`tracking-wide ${
+            navExpanded ? "text-foreground" : "text-muted-foreground"
+          }`}
+          onClick={() => setNavExpanded((v) => !v)}
+        />
+        {!isInfo && (
+          <>
+            <span className="inline-flex items-center  font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
+              /
+            </span>
+            <WigglyButton
+              text={filterOpen ? "close filter" : "filter"}
+              size="text-[19px]"
+              bold={false}
+              revealAnimation={false}
+              active={filterOpen}
+              className={`tracking-wide ${
+                filterOpen ? "text-foreground" : "text-muted-foreground"
+              }`}
+              onClick={() => handleFilterOpen()}
+            />
+          </>
+        )}
       </div>
 
       {/* ── MOBILE: top-slide full-screen ── */}
       <motion.div
-        className={`lg:hidden fixed top-0 left-0 z-[120] w-full pointer-events-none${showColorBg ? " mix-blend-difference" : ""}`}
+        className={`lg:hidden fixed top-0 left-0 z-[120] w-full pointer-events-none `}
+        initial={{ y: "-100dvh" }}
         animate={{ y: open ? 0 : "-100dvh" }}
         transition={transition}
       >
@@ -188,7 +188,10 @@ export default function DesktopNav() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* "elinor silow" → button that opens HeroText overlay */}
-            <motion.div layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+            <motion.div
+              layout
+              transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+            >
               <WigglyButton
                 className="cursor-pointer"
                 onClick={() => {
@@ -204,7 +207,11 @@ export default function DesktopNav() {
             </motion.div>
 
             {NAV_LINKS.map(({ href, label }) => (
-              <motion.div key={href} layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+              <motion.div
+                key={href}
+                layout
+                transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+              >
                 <Link href={href}>
                   <WigglyButton
                     className="cursor-pointer"
@@ -219,7 +226,10 @@ export default function DesktopNav() {
                 </Link>
               </motion.div>
             ))}
-            <motion.div layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+            <motion.div
+              layout
+              transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+            >
               <WigglyButton
                 className="cursor-pointer"
                 onClick={() => {
@@ -233,7 +243,10 @@ export default function DesktopNav() {
                 active={open}
               />
             </motion.div>
-            <motion.div layout transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}>
+            <motion.div
+              layout
+              transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+            >
               <Link
                 href="https://www.instagram.com/elinorsilow"
                 target="_blank"
@@ -253,23 +266,23 @@ export default function DesktopNav() {
         </div>
       </motion.div>
 
-{/* ── MOBILE: fixed bottom menu/filter tab ── */}
+      {/* ── MOBILE: fixed bottom menu/filter tab ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto">
         <WigglyButton
           text={open ? "close" : "menu"}
-          className="no-hide-text cursor-pointer pl-[9px] pr-[6px] tracking-wider"
+          className={` ${open ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
           active={open}
           onClick={(e) => {
             e.stopPropagation();
             setOpen(!open);
           }}
           bold={true}
-          size="text-[18px]"
+          size="text-[16px]"
         />
 
         {!open && (
           <>
-            <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal text-[16px] select-none text-foreground ">
+            <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-muted-foreground ">
               /
             </span>
 
@@ -281,8 +294,8 @@ export default function DesktopNav() {
                 handleFilterOpen();
               }}
               bold={false}
-              size="text-[18px]"
-              className="pl-[6px] no-hide-text"
+              size="text-[16px]"
+              className={` ${filterOpen ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
             />
           </>
         )}

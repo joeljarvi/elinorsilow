@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { Work, Exhibition } from "../../lib/sanity";
 import { OGubbeText } from "@/components/OGubbeText";
 import CornerFrame from "@/components/CornerFrame";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { useUI } from "@/context/UIContext";
+import WigglyButton from "./WigglyButton";
 
 export function InfoRow({
   label,
@@ -18,7 +18,9 @@ export function InfoRow({
 }) {
   return (
     <div className="flex flex-row items-baseline gap-x-[16px]">
-      <span className={`text-[16px] lg:text-[19px] leading-[1.3] px-[0px] no-hide-text tracking-wide font-timesNewRoman ${labelClassName}`}>
+      <span
+        className={`text-[16px] lg:text-[19px] leading-[1.3] px-[0px] no-hide-text tracking-wide font-timesNewRoman ${labelClassName}`}
+      >
         {label}
       </span>
       {children}
@@ -45,13 +47,13 @@ export default function InfoBox({
       .join(", ");
 
     return (
-      <div className="no-hide-text relative group max-h-dvh block gap-x-[18px] gap-y-[9px] lg:gap-y-[18px] items-center bg-transparent overflow-hidden pt-[9px] px-[9px] pb-[9px]">
-        {/* Corner frame background — hidden when color bg is active */}
-
+      <div
+        className={`text-muted-foreground mt-[18px] mb-[18px] relative group max-h-dvh block gap-x-[18px] gap-y-[9px] lg:gap-y-[18px] items-center bg-transparent overflow-hidden pt-[9px] px-[9px] pb-[9px]`}
+      >
         {/* Close button */}
         {onClose && (
           <button
-            className="absolute top-[9px] right-[9px] z-30 no-hide-text cursor-pointer p-[6px] text-foreground hover:opacity-70 transition-opacity mt-[20px] mr-[18px]"
+            className="absolute top-[9px] right-[9px] z-30 no-hide-text cursor-pointer p-[6px] text-muted-foreground hover:opacity-70 transition-opacity mt-[20px] mr-[18px]"
             onClick={(e) => {
               e.stopPropagation();
               onClose();
@@ -63,23 +65,20 @@ export default function InfoBox({
         )}
 
         {/* Metadata */}
-        <div className="font-timesNewRoman text-[16px] lg:text-[19px] leading-tight tracking-wide px-[18px] pt-[18px] pb-[18px] w-full">
+        <div className="font-timesNewRoman text-[16px] lg:text-[19px] leading-tight tracking-wider px-[18px] pt-[18px] pb-[18px] w-full">
           {/* Title using OGubbeText */}
-          <div className="mb-[6px]">
-            <OGubbeText
-              text={work.title.rendered}
-              lettersOnly
-              className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal"
-              sizes="19px"
-              revealAnimation={false}
-            />
-          </div>
+
+          <WigglyButton
+            text={work.title.rendered}
+            className="text-[16px] px-0 mb-[9px] lg:mb-[18px] lg:text-[19px] font-timesNewRoman font-normal"
+            size="text-[16px] lg:text-[19px]"
+            revealAnimation={false}
+            active={true}
+            bold={true}
+          />
+
           {yearDimensions && <div>{yearDimensions}</div>}
-          {work.acf.materials && (
-            <div>
-              <em>{work.acf.materials}</em>
-            </div>
-          )}
+          {work.acf.materials && <div>{work.acf.materials}</div>}
           {work.acf.exhibition && (
             <div>
               part of exhibition: <em>{work.acf.exhibition}</em>
@@ -105,11 +104,11 @@ export default function InfoBox({
     ].filter(Boolean) as string[];
 
     return (
-      <div className="no-hide-text relative group bg-transparent pt-[9px] px-[9px] pb-[9px]">
+      <div className="text-muted-foreground no-hide-text relative group bg-transparent pt-[18px] px-[18px] pb-[18px] w-full max-w-5xl mx-auto mt-[18px] mb-[18px]">
         {/* Close button */}
         {onClose && (
           <button
-            className="absolute top-[9px] right-[9px] z-30 no-hide-text cursor-pointer p-[6px] text-foreground hover:opacity-70 transition-opacity mt-[20px] mr-[18px]"
+            className="absolute top-[18px] right-[18px] z-30 no-hide-text cursor-pointer p-[6px] text-muted-foreground hover:opacity-70 transition-opacity "
             onClick={(e) => {
               e.stopPropagation();
               onClose();
@@ -120,64 +119,82 @@ export default function InfoBox({
           </button>
         )}
 
-        <div className="font-timesNewRoman text-[16px] lg:text-[19px] leading-tight tracking-wide px-[18px] pt-[18px] pb-[18px] w-full">
-          {/* Image — clicking opens modal */}
-          {exhibition.acf.image_1?.url && onImageClick && (
-            <button
-              className="block w-full mb-[12px] cursor-zoom-in"
-              onClick={onImageClick}
-              aria-label={`Open ${exhibition.title.rendered}`}
-            >
-              <div className="relative w-full max-h-[40vh] overflow-hidden">
-                <Image
-                  src={exhibition.acf.image_1.url}
-                  alt={exhibition.acf.image_1.alt || exhibition.title.rendered}
-                  width={800}
-                  height={600}
-                  className="w-full h-auto object-contain max-h-[40vh]"
-                />
-              </div>
-            </button>
-          )}
-
-          {/* Title */}
-          <div className="mb-[6px]">
-            <OGubbeText
+        <div className="flex flex-col lg:grid lg:grid-cols-11 justify-start items-start gap-x-[64px] gap-y-[32px] font-timesNewRoman text-[16px] lg:text-[19px] leading-tight tracking-wide w-full pt-[0px] pb-[18px]">
+          <div className="col-start-1 col-span-3 flex-col items-start justify-start">
+            <WigglyButton
               text={exhibition.title.rendered}
-              lettersOnly
-              className="text-[16px] lg:text-[19px] font-timesNewRoman font-normal"
-              sizes="19px"
+              className=" px-0 mb-[9px] lg:mb-[18px] font-timesNewRoman "
+              size="text-[16px] lg:text-[19px]"
+              bold={true}
               revealAnimation={false}
+              active={true}
             />
+            {exhibition.acf.exhibition_type && (
+              <div className="whitespace-nowrap tracking-wider">
+                {exhibition.acf.exhibition_type} exhibition
+              </div>
+            )}
+            {exhibition.acf.location && (
+              <div className="tracking-wider">{exhibition.acf.location}</div>
+            )}
+            {exhibition.acf.city && (
+              <div className="whitespace-nowrap tracking-wider">
+                {exhibition.acf.city}
+              </div>
+            )}
+            {exhibition.acf.year && (
+              <div className="tracking-wider">{exhibition.acf.year}</div>
+            )}
           </div>
-
-          {/* Year */}
-          {exhibition.acf.year && <div>{exhibition.acf.year}</div>}
-
-          {/* Type */}
-          {exhibition.acf.exhibition_type && (
-            <div><em>{exhibition.acf.exhibition_type} exhibition</em></div>
-          )}
-
-          {/* Venue / city */}
-          {exhibition.acf.location && <div>{exhibition.acf.location}</div>}
-          {exhibition.acf.city && <div>{exhibition.acf.city}</div>}
-
-          {/* Featured works */}
+          <div className="flex flex-col col-start-4 col-span-5 gap-y-[32px] lg:gap-y-[44px] ">
+            {exhibition.acf.description && (
+              <div className="  tracking-wider ">
+                <WigglyButton
+                  text="description"
+                  size="text-[16px] lg:text-[19px]"
+                  className="mb-[9px] lg:mb-[18px] px-0 "
+                  active={true}
+                  bold={true}
+                  revealAnimation={false}
+                />
+                {exhibition.acf.description}
+              </div>
+            )}
+            {exhibition.acf.credits && (
+              <div className="max-w-lg mx-0 tracking-wider">
+                <WigglyButton
+                  text="credits"
+                  size="text-[16px] lg:text-[19px]"
+                  className="mb-[9px] lg:mb-[18px] pl-0 "
+                  active={true}
+                  bold={true}
+                  revealAnimation={false}
+                />
+                <div>{exhibition.acf.credits}</div>
+              </div>
+            )}
+          </div>
           {works.length > 0 && (
-            <div className="mt-[9px]">
-              <div className="text-muted-foreground italic mb-[2px]">featuring</div>
+            <div className="px-0 col-start-9 col-span-3">
+              <WigglyButton
+                text="featuring the works"
+                size="text-[16px] lg:text-[19px]"
+                className="mb-[9px] lg:mb-[18px] px-0 "
+                active={true}
+                bold={true}
+                revealAnimation={false}
+              />
               {works.map((w, i) => (
-                <div key={i}>{w}</div>
+                <WigglyButton
+                  size="text-[16px] lg:text-[19px]"
+                  bold={false}
+                  className="pl-0"
+                  revealAnimation={false}
+                  active={false}
+                  text={w}
+                  key={i}
+                />
               ))}
-            </div>
-          )}
-
-          {/* Credits */}
-          {exhibition.acf.credits && (
-            <div className="mt-[9px]">
-              <div className="text-muted-foreground italic mb-[2px]">credits</div>
-              <div>{exhibition.acf.credits}</div>
             </div>
           )}
         </div>

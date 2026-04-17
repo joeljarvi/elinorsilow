@@ -161,13 +161,13 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       </Carousel>
 
       {/* Metadata overlay — mobile: top-center, desktop: bottom-center */}
-      <div className="absolute top-[9px] left-0 right-0 flex justify-center z-10 pointer-events-none lg:top-auto lg:bottom-[9px]">
+      <div className="absolute hidden top-[9px] left-0 right-0  justify-center z-10 pointer-events-none  ">
         <div className="flex flex-wrap justify-center gap-x-[9px] gap-y-0 px-[9px]">
           {metadataLines.map((line, i) => (
             <WigglyButton
               key={i}
               text={line}
-              size="text-[14px] lg:text-[16px]"
+              size="text-[16px] lg:text-[19px]"
               className="pointer-events-none font-timesNewRoman"
             />
           ))}
@@ -175,44 +175,56 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       </div>
 
       {/* Controls — mobile: bottom-center, desktop: top-right */}
-      <div className="absolute bottom-[9px] left-0 right-0 flex justify-center z-10 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end">
+      <div className="absolute bottom-[9px] left-0 right-0 flex justify-center z-10 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end bg-transparent">
         <div className="flex gap-x-0">
           <WigglyButton
-            text="back"
-            size="text-[18px] lg:text-[19px]"
-            bold={true}
+            text="close"
+            className="text-muted-foreground"
+            size="text-[16px] lg:text-[19px]"
             active={false}
             onClick={onClose ?? (() => router.push("/exhibitions"))}
           />
+
           {hasPrev && (
-            <WigglyButton
-              text="prev"
-              size="text-[18px] lg:text-[19px]"
-              bold={true}
-              active={false}
-              onClick={goPrev}
-            />
+            <>
+              <span className="inline-flex items-center font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+                /
+              </span>
+              <WigglyButton
+                text="prev"
+                className="text-muted-foreground"
+                size="text-[16px] lg:text-[19px]"
+                active={false}
+                onClick={goPrev}
+              />
+            </>
           )}
+
           {hasNext && (
-            <WigglyButton
-              text="next"
-              size="text-[18px] lg:text-[19px]"
-              bold={true}
-              active={true}
-              onClick={goNext}
-            />
+            <>
+              <span className="inline-flex items-center font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+                /
+              </span>
+              <WigglyButton
+                text="next"
+                size="text-[16px] lg:text-[19px]"
+                className="text-muted-foreground"
+                active={true}
+                onClick={goNext}
+              />
+            </>
           )}
         </div>
       </div>
 
       {/* Image counter */}
       {images.length > 1 && (
-        <div className="absolute top-[9px] left-[9px] z-10 pointer-events-none">
+        <div className="absolute top-[9px] left-[9px]  z-10 pointer-events-none">
           <WigglyButton
             text={`${galleryCarousel.index + 1} / ${images.length}`}
-            size="text-[14px]"
+            size="text-[16px] lg:text-[19px]"
             className="text-muted-foreground"
-            active={true}
+            active={false}
           />
         </div>
       )}

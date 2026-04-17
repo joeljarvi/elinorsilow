@@ -78,6 +78,8 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
     setTextBlurred,
   } = useUI();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="flex flex-col gap-y-[44px] lg:gap-y-[64px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
@@ -210,15 +212,17 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
             }}
             className={`no-hide-text ${textBlurred ? "text-foreground" : "text-muted-foreground"}`}
           />
-          <WigglyButton
-            text={theme === "dark" ? "light" : "dark"}
-            size="text-[16px] lg:text-[18px]"
-            onClick={() => {
-              setTheme(theme === "dark" ? "light" : "dark");
-              onMobileSelect();
-            }}
-            className="text-foreground"
-          />
+          {mounted && (
+            <WigglyButton
+              text={theme === "dark" ? "light" : "dark"}
+              size="text-[16px] lg:text-[18px]"
+              onClick={() => {
+                setTheme(theme === "dark" ? "light" : "dark");
+                onMobileSelect();
+              }}
+              className="text-foreground"
+            />
+          )}
         </div>
       </div>
     </div>
@@ -380,7 +384,7 @@ export default function FilterBox() {
   }
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0${showColorBg ? " mix-blend-difference" : ""}`}>
+    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
       <motion.div
         animate={{ y: filterOpen ? 0 : drawerHeight }}
         transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}

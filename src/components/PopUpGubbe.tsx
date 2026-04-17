@@ -53,7 +53,7 @@ export default function PopUpGubbe() {
             <div className="flex flex-col items-end justify-start">
               <button
                 onClick={() => setVisible(!visible)}
-                className=" rounded-full p-1 cursor-pointer text-foreground hover:text-foreground/60"
+                className=" rounded-full p-1 cursor-pointer text-muted-foreground hover:text-muted-foreground/60"
               >
                 <Cross1Icon />
               </button>

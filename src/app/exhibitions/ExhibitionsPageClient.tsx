@@ -1,81 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Exhibition } from "../../../lib/sanity";
 import { useUI } from "@/context/UIContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import { motion } from "framer-motion";
-import { RevealImage } from "@/components/RevealImage";
 import PageLoader from "@/components/PageLoader";
-import WigglyButton from "@/components/WigglyButton";
 import DynamicGrid from "@/components/DynamicGrid";
-import InfoBox from "@/components/InfoBox";
+import ExhibitionCard from "@/components/ExhibitionCard";
 import { OGubbeText } from "@/components/OGubbeText";
-
-function ExhibitionCard({
-  ex,
-  index,
-  onOpen,
-  infoOpen,
-  onInfoToggle,
-}: {
-  ex: Exhibition;
-  index: number;
-  onOpen: () => void;
-  infoOpen: boolean;
-  onInfoToggle: () => void;
-}) {
-  const { setHoveredItemTitle } = useUI();
-  const transition = { duration: 0.5, ease: [0.25, 1, 0.5, 1] as const };
-
-  return (
-    <div
-      className="w-full flex flex-col items-center justify-center"
-      onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
-      onMouseLeave={() => setHoveredItemTitle(null)}
-    >
-      {/* Image — first click reveals InfoBox */}
-      <button
-        className="block w-full text-left cursor-pointer"
-        onClick={onInfoToggle}
-        aria-label={`Show info: ${ex.title.rendered}`}
-      >
-        {ex.acf.image_1 && (
-          <RevealImage
-            src={ex.acf.image_1.url}
-            alt={ex.title.rendered}
-            width={1200}
-            height={900}
-            revealIndex={index}
-            className="w-full h-auto object-contain mx-auto max-h-[50vh] lg:max-h-[75vh]"
-          />
-        )}
-      </button>
-
-      {/* InfoBox: absolutely positioned below image, does not affect card layout height */}
-      <div className="relative w-full h-0">
-        <div className="absolute top-0 left-0 right-0 overflow-hidden z-10">
-          <motion.div
-            animate={{
-              y: infoOpen ? "0%" : "-100%",
-              opacity: infoOpen ? 1 : 0,
-              filter: infoOpen ? "blur(0px)" : "blur(8px)",
-            }}
-            initial={{ y: "-100%", opacity: 0, filter: "blur(8px)" }}
-            transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-          >
-            <InfoBox
-              exhibition={ex}
-              onClose={onInfoToggle}
-              onImageClick={onOpen}
-            />
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function ExhibitionsPageClient() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -95,9 +28,6 @@ export default function ExhibitionsPageClient() {
     visibleExhibitionIndex,
   } = useUI();
 
-  // Only one InfoBox active at a time
-  const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
-
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -111,6 +41,7 @@ export default function ExhibitionsPageClient() {
     return () => observer.disconnect();
   }, [setActivePage]);
 
+  const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   useEffect(() => {
@@ -124,31 +55,14 @@ export default function ExhibitionsPageClient() {
   }, [dataLoaded]);
   const loading = !initialAnimDone || !dataLoaded;
 
-  function openExhibition(ex: Exhibition) {
+  function openExhibition(ex: { slug: string }) {
     setActiveExhibitionSlug(ex.slug);
     setOpen(false);
     window.history.pushState(null, "", `/exhibitions?exhibition=${ex.slug}`);
   }
 
-  const gridItems = filteredExhibitions.map((ex, i) => ({
-    id: ex.id,
-    node: (
-      <ExhibitionCard
-        ex={ex}
-        index={i}
-        onOpen={() => openExhibition(ex)}
-        infoOpen={activeInfoId === ex.id}
-        onInfoToggle={() =>
-          setActiveInfoId(activeInfoId === ex.id ? null : ex.id)
-        }
-      />
-    ),
-  }));
-
   return (
-    <section ref={sectionRef} className="relative w-full">
-      <PageLoader text="exhibitions" loading={loading} />
-
+    <section ref={sectionRef} className="relative w-full pt-[64px]">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
@@ -175,11 +89,19 @@ export default function ExhibitionsPageClient() {
         )}
 
         <DynamicGrid
-          items={gridItems}
+          items={filteredExhibitions}
+          renderItem={(ex, i) => (
+            <ExhibitionCard
+              ex={ex}
+              index={i}
+              onOpen={() => openExhibition(ex)}
+              activeInfoId={activeInfoId}
+              onInfoOpen={(id) => setActiveInfoId(id)}
+            />
+          )}
           onTopVisibleChange={setVisibleExhibitionIndex}
           gridCols={Math.min(4, Math.max(1, exGridCols))}
           gridRows={Math.min(4, Math.max(1, exGridRows))}
-          className="lg:max-w-4xl lg:mx-auto"
         />
       </motion.div>
 

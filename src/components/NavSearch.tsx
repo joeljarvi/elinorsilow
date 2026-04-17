@@ -116,7 +116,7 @@ export default function NavSearch({
               className="flex-1 outline-none bg-transparent text-[18px] lg:text-[19px] font-timesNewRoman font-normal py-[9px] lg:py-[18px] tracking-wide px-[9px]"
             />
             <button
-              className=" no-hide-text cursor-pointer p-[6px] text-foreground hover:opacity-70 transition-opacity "
+              className=" no-hide-text cursor-pointer p-[6px] text-muted-foreground hover:opacity-70 transition-opacity "
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();

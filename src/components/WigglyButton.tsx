@@ -54,10 +54,23 @@ export default function WigglyButton({
         ) : (
           <motion.span
             key={i}
-            className={cn("inline-block leading-none font-timesNewRoman", size, bold ? "font-bold" : "font-normal")}
-            animate={distorted ? { rotate: distortions.current[i]?.rotate ?? 0, y: distortions.current[i]?.y ?? 0 } : { rotate: 0, y: 0 }}
+            className={cn(
+              "inline-block leading-none font-timesNewRoman tracking-wider",
+              size,
+              bold ? "font-bold" : "font-normal",
+            )}
+            animate={
+              distorted
+                ? {
+                    rotate: distortions.current[i]?.rotate ?? 0,
+                    y: distortions.current[i]?.y ?? 0,
+                  }
+                : { rotate: 0, y: 0 }
+            }
             transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
-          >{char}</motion.span>
+          >
+            {char}
+          </motion.span>
         ),
       )
     : letters.map((char, i) =>
@@ -66,10 +79,23 @@ export default function WigglyButton({
         ) : (
           <motion.span
             key={i}
-            className={cn("inline-block leading-none font-timesNewRoman tracking-wider", size, bold ? "font-bold" : "font-normal")}
-            animate={distorted ? { rotate: distortions.current[i]?.rotate ?? 0, y: distortions.current[i]?.y ?? 0 } : { rotate: 0, y: 0 }}
+            className={cn(
+              "inline-block leading-none font-timesNewRoman tracking-wider",
+              size,
+              bold ? "font-bold" : "font-normal",
+            )}
+            animate={
+              distorted
+                ? {
+                    rotate: distortions.current[i]?.rotate ?? 0,
+                    y: distortions.current[i]?.y ?? 0,
+                  }
+                : { rotate: 0, y: 0 }
+            }
             transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
-          >{char}</motion.span>
+          >
+            {char}
+          </motion.span>
         ),
       );
 
@@ -77,9 +103,12 @@ export default function WigglyButton({
     return (
       <Link
         href={href}
+        data-no-reveal
         className={cn(
-          "no-hide-text pointer-events-auto px-[9px]",
-          vertical ? "inline-flex flex-col items-center" : "inline-flex items-baseline text-[16px] lg:text-[19px]",
+          "no-hide-text pointer-events-auto px-[9px] tracking-wider",
+          vertical
+            ? "inline-flex flex-col items-center"
+            : "inline-flex items-baseline text-[16px] lg:text-[19px]",
           className,
         )}
         onMouseEnter={() => setHovered(true)}
@@ -93,8 +122,9 @@ export default function WigglyButton({
   if (vertical) {
     return (
       <button
+        data-no-reveal
         className={cn(
-          "no-hide-text pointer-events-auto cursor-pointer px-[9px] inline-flex flex-col items-center",
+          "no-hide-text pointer-events-auto cursor-pointer px-[9px] inline-flex flex-col items-center tracking-wider",
           className,
         )}
         onClick={(e) => {
@@ -111,7 +141,7 @@ export default function WigglyButton({
             <motion.span
               key={i}
               className={cn(
-                "inline-block leading-none font-timesNewRoman",
+                "inline-block leading-none font-timesNewRoman tracking-wider",
                 size,
                 bold ? "font-bold" : "font-normal",
               )}
@@ -135,8 +165,9 @@ export default function WigglyButton({
 
   return (
     <button
+      data-no-reveal
       className={cn(
-        " pointer-events-auto cursor-pointer px-[9px] inline-flex items-baseline text-[16px] lg:text-[19px]",
+        " pointer-events-auto cursor-pointer px-[9px] flex flex-wrap items-baseline text-[16px] lg:text-[19px] tracking-wider",
         className,
       )}
       onClick={(e) => {

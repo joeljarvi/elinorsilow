@@ -1,9 +1,11 @@
 "use client";
 
 import { ReactNode, useEffect, useRef } from "react";
+import { motion, LayoutGroup } from "framer-motion";
 
-interface DynamicGridProps {
-  items: { id: string | number; node: ReactNode }[];
+interface DynamicGridProps<T extends { id: string | number }> {
+  items: T[];
+  renderItem: (item: T, index: number) => ReactNode;
   gridCols: number;
   gridRows: number;
   className?: string;
@@ -11,13 +13,14 @@ interface DynamicGridProps {
   onTopVisibleChange?: (index: number) => void;
 }
 
-export default function DynamicGrid({
+export default function DynamicGrid<T extends { id: string | number }>({
   items,
+  renderItem,
   gridCols,
   gridRows,
   className = "",
   onTopVisibleChange,
-}: DynamicGridProps) {
+}: DynamicGridProps<T>) {
   // Separate ref arrays for mobile and desktop layouts.
   // Each layout hides the other via Tailwind (lg:hidden / hidden lg:grid),
   // so display:none elements never trigger IntersectionObserver — meaning
@@ -72,37 +75,41 @@ export default function DynamicGrid({
     >
       {/* Mobile: single column */}
       <div className="lg:hidden flex flex-col gap-y-[32px] py-[18px]">
-        {items.map(({ id, node }, i) => (
+        {items.map((item, i) => (
           <div
-            key={id}
+            key={item.id}
             ref={(el) => {
               mobileRefs.current[i] = el;
             }}
             className="w-full h-[calc(100dvh-64px)] flex flex-col items-center justify-center"
           >
-            {node}
+            {renderItem(item, i)}
           </div>
         ))}
       </div>
 
       {/* Desktop: configurable grid */}
-      <div
-        className="hidden lg:grid gap-x-[18px] gap-y-[18px] py-[18px]"
-        style={colStyle}
-      >
-        {items.map(({ id, node }, i) => (
-          <div
-            key={id}
-            ref={(el) => {
-              desktopRefs.current[i] = el;
-            }}
-            className="flex items-center justify-center"
-            style={{ minHeight: rowHeight }}
-          >
-            {node}
-          </div>
-        ))}
-      </div>
+      <LayoutGroup>
+        <div
+          className="hidden lg:grid gap-x-[18px] gap-y-[18px] py-[18px]"
+          style={colStyle}
+        >
+          {items.map((item, i) => (
+            <motion.div
+              layout
+              key={item.id}
+              ref={(el) => {
+                desktopRefs.current[i] = el;
+              }}
+              className="flex items-center justify-center"
+              style={{ minHeight: rowHeight }}
+              transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+            >
+              {renderItem(item, i)}
+            </motion.div>
+          ))}
+        </div>
+      </LayoutGroup>
     </div>
   );
 }

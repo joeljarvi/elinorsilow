@@ -6,8 +6,9 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import { InfoRow } from "@/components/InfoBox";
 import { HeroText } from "@/components/HeroText";
-import { OGubbeText } from "@/components/OGubbeText";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import WigglyButton from "@/components/WigglyButton";
+import ScrollRevealInit from "@/components/ScrollRevealInit";
 
 function ScrollHint() {
   const [visible, setVisible] = useState(false);
@@ -52,26 +53,38 @@ export default function InfoPageClient() {
   const { setOpen } = useUI();
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
 
-  function ExhibitionList({ items }: { items: typeof soloExhibitions }) {
+  function ExhibitionList({
+    items,
+    title,
+  }: {
+    items: typeof soloExhibitions;
+    title: string;
+  }) {
     return (
-      <div className="flex flex-col mb-[64px]">
+      <div className="mb-[64px] grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px]">
+        {/* Heading row: empty year cell + title in col 2 */}
+        <span />
+        <WigglyButton
+          text={title}
+          size="text-[16px] lg:text-[19px]"
+          className="mb-[9px] lg:mb-[18px] justify-start tracking-wider px-0"
+          active={true}
+          bold={true}
+        />
         {groupByYear(items).map(([year, exs]) =>
           exs.map((ex, idx) => {
             const slug = findExhibitionSlug(ex.title.rendered);
             return (
-              <div
-                key={ex.id}
-                className="flex flex-row items-baseline gap-x-[16px] pt-[9px] no-hide-text"
-              >
-                <span className="shrink-0 text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman text-foreground ">
+              <Fragment key={ex.id}>
+                <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman no-hide-text">
                   {idx === 0 ? year : ""}
                 </span>
-                <div className="flex flex-wrap items-baseline gap-x-1 text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman whitespace-normal">
+                <div className="flex flex-wrap items-baseline gap-x-1 pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman whitespace-normal no-hide-text">
                   {slug ? (
                     <Button
                       variant="link"
                       size="controls"
-                      className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman p-0 h-auto underline underline-offset-4 decoration-1 hover:no-underline justify-start"
+                      className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman  p-0 h-auto  justify-start"
                       onClick={() => {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
@@ -86,7 +99,7 @@ export default function InfoPageClient() {
                     {ex.acf.venue}, {ex.acf.city}
                   </span>
                 </div>
-              </div>
+              </Fragment>
             );
           }),
         )}
@@ -95,144 +108,145 @@ export default function InfoPageClient() {
   }
 
   return (
-    <section className="mt-[48px] relative w-full">
+    <section className="mt-[48px] relative w-full mb-[64px]">
       <ScrollHint />
-      {/* Fixed page header */}
+      <ScrollRevealInit />
 
-      <div className="flex flex-col w-full lg:grid lg:grid-cols-12 pt-[32px] lg:gap-x-[18px] px-[18px] lg:px-[18px]">
-        {/* Col 1: About + Solo Exhibitions */}
-
-        <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] ">
+      <div className="text-muted-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[32px] lg:gap-x-[64px] px-[18px] lg:px-[18px]">
+        <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] mt-[64px]">
           <HeroText />
         </div>
+
         <div className="flex flex-col col-start-1 lg:col-span-4">
           {groupExhibitions.length > 0 && (
-            <>
-              <OGubbeText
-                text="Group Exhibitions"
-                lettersOnly
-                sizes="19px"
-                className="text-[16px] lg:text-[19px] mb-[18px]  justify-start  font-timesNewRoman font-bold tracking-wider"
-              />
-              <ExhibitionList items={groupExhibitions} />
-            </>
+            <ExhibitionList
+              items={groupExhibitions}
+              title="group exhibitions"
+            />
           )}
         </div>
-        <div className="flex flex-col lg:col-span-4 lg:col-start-5 ">
+        <div className="flex flex-col lg:col-span-4 lg:col-start-5">
           {soloExhibitions.length > 0 && (
-            <>
-              <OGubbeText
-                text="Solo Exhibitions"
-                lettersOnly
-                sizes="16px"
-                className="text-[16px] lg:text-[19px] mb-[18px]  justify-start  font-timesNewRoman font-bold tracking-wider"
-              />
-
-              <ExhibitionList items={soloExhibitions} />
-            </>
+            <ExhibitionList items={soloExhibitions} title="solo exhibitions" />
           )}
         </div>
 
-        {/* Col 2: Group Exhibitions + Education + Grants + Press + Colophon */}
-
+        {/* Education */}
         <div className="flex flex-col lg:col-span-4 mb-[18px]">
           {educations.length > 0 && (
-            <>
-              <OGubbeText
-                text="Education"
-                lettersOnly
-                sizes="24px"
-                className="text-[16px] lg:text-[19px]  justify-start  font-timesNewRoman font-bold tracking-wider mb-[18px]"
+            <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
+              <span />
+              <WigglyButton
+                text="education"
+                size="text-[16px] lg:text-[19px]"
+                className="mb-[18px] justify-start tracking-wider"
+                active
+                bold
               />
-              <div className="flex flex-col  mb-4">
-                {educations.map((edu) => (
-                  <InfoRow labelClassName="text-foreground"
-                    key={edu.id}
-                    label={`${edu.acf.start_year}–${edu.acf.end_year}`}
-                  >
-                    <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
-                      {edu.acf.school}, {edu.acf.city}
-                    </span>
-                  </InfoRow>
-                ))}
-              </div>
-            </>
+              {educations.map((edu) => (
+                <Fragment key={edu.id}>
+                  <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                    {`${edu.acf.start_year}–${edu.acf.end_year}`}
+                  </span>
+                  <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                    {edu.acf.school}, {edu.acf.city}
+                  </span>
+                </Fragment>
+              ))}
+            </div>
           )}
         </div>
-        <div className="flex flex-col lg:col-span-4 lg:col-start-1 mb-[32px] ">
+
+        {/* Grants */}
+        <div className="flex flex-col lg:col-span-4 lg:col-start-1 mb-[32px]">
           {grants.length > 0 && (
-            <>
-              <OGubbeText
-                text="Grants"
-                lettersOnly
-                sizes="16px"
-                className="text-[16px] lg:text-[19px]  justify-start px-[9px] font-timesNewRoman font-bold tracking-wider"
+            <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
+              <span />
+              <WigglyButton
+                text="grants"
+                size="text-[16px] lg:text-[19px]"
+                className="mb-[18px] justify-start tracking-wider"
+                active
+                bold
               />
-              <div className="flex flex-col mt-[18px] mb-4">
-                {groupByYear(grants).map(([year, gs]) =>
-                  gs.map((grant) => (
-                    <InfoRow labelClassName="text-foreground" key={grant.id} label={year}>
-                      <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
-                        {grant.acf.title}
-                      </span>
-                    </InfoRow>
-                  )),
-                )}
-              </div>
-            </>
+              {groupByYear(grants).map(([year, gs]) =>
+                gs.map((grant) => (
+                  <Fragment key={grant.id}>
+                    <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                      {year}
+                    </span>
+                    <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                      {grant.acf.title}
+                    </span>
+                  </Fragment>
+                )),
+              )}
+            </div>
           )}
         </div>
-        <div className="flex flex-col lg:col-span-4">
-          <OGubbeText
-            text="Press"
-            lettersOnly
-            sizes="21px"
-            className="text-[16px] lg:text-[19px]  justify-start px-[9px] font-timesNewRoman font-bold tracking-wider"
-          />
-          <div className="flex flex-col mt-[18px] mb-4">
-            <InfoRow labelClassName="text-foreground" label="2022">
-              <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
-                <span>Hjärtat,</span>
-                <span>Lappalainen Hjertström, L-E,</span>
-                <Link
-                  className="underline underline-offset-4 decoration-1 hover:no-underline"
-                  href="https://kunstkritikk.se/hjartats-energi/"
-                >
-                  kunstkritikk.se
-                </Link>
-              </span>
-            </InfoRow>
-            <InfoRow labelClassName="text-foreground" label="2025">
-              <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
-                <span>Gameplay,</span>
-                <span>Slöör, S, Omkonst,</span>
-                <Link
-                  className="underline underline-offset-4 decoration-1 hover:no-underline"
-                  href="https://omkonst.se/25-gameplay.shtml"
-                >
-                  omkonst.se
-                </Link>
-              </span>
-            </InfoRow>
+
+        {/* Press */}
+        <div className="flex flex-col lg:col-span-4 mb-[18px]">
+          <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
+            <span />
+            <WigglyButton
+              text="press"
+              size="text-[16px] lg:text-[19px]"
+              className="mb-[18px] justify-start tracking-wider"
+              active
+              bold
+            />
+            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+              2022
+            </span>
+            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
+              <span>Hjärtat,</span>
+              <span>Lappalainen Hjertström, L-E,</span>
+              <Link
+                className="underline underline-offset-4 decoration-1 hover:no-underline"
+                href="https://kunstkritikk.se/hjartats-energi/"
+              >
+                kunstkritikk.se
+              </Link>
+            </span>
+            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+              2025
+            </span>
+            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
+              <span>Gameplay,</span>
+              <span>Slöör, S, Omkonst,</span>
+              <Link
+                className="underline underline-offset-4 decoration-1 hover:no-underline"
+                href="https://omkonst.se/25-gameplay.shtml"
+              >
+                omkonst.se
+              </Link>
+            </span>
           </div>
         </div>
+
+        {/* Colophon */}
         <div className="flex flex-col lg:col-span-4">
-          <OGubbeText
-            text="Colophon"
-            lettersOnly
-            sizes="16px"
-            className="text-[16px] lg:text-[19px]  justify-start px-[9px] font-timesNewRoman font-bold tracking-wider"
+          <WigglyButton
+            text="colophon"
+            size="text-[16px] lg:text-[19px]"
+            className="mb-[18px] justify-start tracking-wider px-0"
+            active={true}
+            bold={true}
           />
           <div className="flex flex-col mt-[18px] mb-4">
-            <InfoRow labelClassName="text-foreground" label="Design & code">
+            <InfoRow
+              labelClassName="text-muted-foreground"
+              label="Design & code"
+            >
               <Link
-                className=" underline underline-offset-4 decoration-1 hover:no-underline text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman"
+                className="underline underline-offset-4 decoration-1 hover:no-underline text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman"
                 href="/"
               >
                 Joel Järvi
               </Link>
             </InfoRow>
-            <InfoRow labelClassName="text-foreground" label="Typefaces">
+            <InfoRow labelClassName="text-muted-foreground" label="Typefaces">
               <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
                 Times New Roman
               </span>
@@ -240,7 +254,7 @@ export default function InfoPageClient() {
           </div>
         </div>
 
-        <div className="px-[18px] lg:pl-[64px] lg:pr-[32px] py-4 col-span-6">
+        <div className="px-[0px] py-4 col-span-6 ">
           <p className="font-timesNewRoman text-[16px] lg:text-[19px] text-muted-foreground leading-snug">
             All content on this site, including images, text, and design, is the
             intellectual property of Elinor Silow unless otherwise stated. No

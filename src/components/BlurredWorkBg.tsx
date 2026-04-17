@@ -11,7 +11,7 @@ export default function BlurredWorkBg({ imageUrl }: { imageUrl: string }) {
         fill
         sizes="100vw"
         className="object-cover blur-2xl bg-zoom-in"
-        style={{ transform: "scale(1.5)", transformOrigin: "center" }}
+        style={{ transform: "scale(4)", transformOrigin: "center" }}
       />
     </div>
   );
