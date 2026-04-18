@@ -28,6 +28,7 @@ export default function DesktopNav() {
     open,
     setOpen,
     filterOpen,
+    setFilterOpen,
     handleFilterOpen,
     activePage,
     openSearch,
@@ -178,12 +179,27 @@ export default function DesktopNav() {
         transition={transition}
       >
         <div
-          className={`relative h-dvh w-full pointer-events-auto transition-[background-color,backdrop-filter] bg-[#E7F8BE] duration-300 ${open ? "bg-background/10 backdrop-blur-lg" : "bg-transparent backdrop-blur-none"}`}
+          className={`relative h-dvh w-full pointer-events-auto transition-[background-color,backdrop-filter]  duration-300 bg-background`}
           onClick={() => setOpen(false)}
         >
+          <motion.div
+            layout
+            transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+          >
+            <WigglyButton
+              className="cursor-pointer fixed left-1/2 -translate-x-1/2 top-[9px] tracking-normal text-muted-foreground"
+              onClick={() => {
+                setOpen(false);
+                setHeroOverlayOpen(true);
+              }}
+              text="menu"
+              bold={true}
+              size="text-[16px]"
+              active={open}
+            />
+          </motion.div>
           <motion.nav
-            className="flex flex-row px-[9px] pt-[9px] pb-[18px] h-full pointer-events-auto items-start"
-            animate={{ justifyContent: open ? "space-between" : "flex-start" }}
+            className="flex flex-col px-[9px] pt-[9px] pb-[18px]  pointer-events-auto items-center gap-y-[18px] justify-center h-dvh"
             transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -193,19 +209,16 @@ export default function DesktopNav() {
               transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             >
               <WigglyButton
-                className="cursor-pointer"
+                className="cursor-pointer tracking-normal text-muted-foreground "
                 onClick={() => {
-                  setOpen(false);
                   setHeroOverlayOpen(true);
                 }}
                 text="elinor silow"
                 bold={true}
-                size="text-[18px]"
-                vertical
+                size="text-[16px]"
                 active={open}
               />
             </motion.div>
-
             {NAV_LINKS.map(({ href, label }) => (
               <motion.div
                 key={href}
@@ -214,12 +227,11 @@ export default function DesktopNav() {
               >
                 <Link href={href}>
                   <WigglyButton
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${pageLabel === label ? "text-foreground" : "text-muted-foreground"}`}
                     onClick={() => setOpen(false)}
                     text={label}
                     bold={true}
-                    size="text-[18px]"
-                    vertical
+                    size="text-[16px]"
                     active={open}
                     revealAnimation={true}
                   />
@@ -231,15 +243,14 @@ export default function DesktopNav() {
               transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             >
               <WigglyButton
-                className="cursor-pointer"
+                className="cursor-pointer text-muted-foreground"
                 onClick={() => {
                   setOpen(false);
                   setOpenSearch(true);
                 }}
                 text="search"
                 bold={true}
-                size="text-[18px]"
-                vertical
+                size="text-[16px]"
                 active={open}
               />
             </motion.div>
@@ -253,11 +264,10 @@ export default function DesktopNav() {
                 rel="noopener noreferrer"
               >
                 <WigglyButton
-                  className="cursor-pointer"
+                  className="cursor-pointer text-muted-foreground"
                   text="instagram"
                   bold={true}
-                  size="text-[18px]"
-                  vertical
+                  size="text-[16px]"
                   active={open}
                 />
               </Link>
@@ -274,31 +284,37 @@ export default function DesktopNav() {
           active={open}
           onClick={(e) => {
             e.stopPropagation();
-            setOpen(!open);
+            if (filterOpen) {
+              setFilterOpen(false);
+              setOpen(true);
+            } else {
+              setOpen(!open);
+            }
           }}
           bold={true}
           size="text-[16px]"
         />
 
-        {!open && (
-          <>
-            <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-muted-foreground ">
-              /
-            </span>
+        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-muted-foreground ">
+          /
+        </span>
 
-            <WigglyButton
-              text={filterOpen ? "close" : "filter"}
-              active={filterOpen}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleFilterOpen();
-              }}
-              bold={false}
-              size="text-[16px]"
-              className={` ${filterOpen ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
-            />
-          </>
-        )}
+        <WigglyButton
+          text={filterOpen ? "close" : "filter"}
+          active={filterOpen}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (open) {
+              setOpen(false);
+              setFilterOpen(true);
+            } else {
+              handleFilterOpen();
+            }
+          }}
+          bold={false}
+          size="text-[16px]"
+          className={` ${filterOpen ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
+        />
       </div>
     </>
   );

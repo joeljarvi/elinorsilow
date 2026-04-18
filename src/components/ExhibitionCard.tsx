@@ -28,6 +28,7 @@ export default function ExhibitionCard({
   const [infoOpen, setInfoOpen] = useState(false);
   const { setHoveredItemTitle } = useUI();
   const cardRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
 
   // Mobile only: close when another card becomes active
   useEffect(() => {
@@ -38,82 +39,68 @@ export default function ExhibitionCard({
 
   useEffect(() => {
     if (infoOpen) {
-      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [infoOpen]);
 
   return (
     <Card
       ref={cardRef}
-      className="w-full flex flex-col border-0 shadow-none bg-transparent mt-0 lg:mt-[0px] p-0 gap-0 rounded-none"
+      className="w-full h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 rounded-none overflow-hidden"
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      <CardContent className="w-full p-0 flex flex-col">
-        {/* Image — layout so it animates when InfoBox squeezes it */}
-        <motion.div
-          layout
-          animate={{ scale: infoOpen ? 0.5 : 1 }}
-          transition={{ duration: 0.5, ease }}
-        >
-          <button
-            className={`flex justify-center w-full ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
-            onClick={() => {
-              if (infoOpen) {
-                onOpen();
-              } else {
-                setInfoOpen(true);
-                onInfoOpen?.(String(ex.id));
-              }
-            }}
-            aria-label={
-              infoOpen
-                ? `Open ${ex.title.rendered}`
-                : `Show info: ${ex.title.rendered}`
-            }
-          >
-            {ex.acf.image_1 && (
-              <RevealImage
-                src={ex.acf.image_1.url}
-                alt={ex.title.rendered}
-                width={0}
-                height={0}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                revealIndex={index}
-                className="w-full h-auto max-h-[50vh] lg:max-h-[75vh] object-contain"
-              />
-            )}
-          </button>
-        </motion.div>
-
-        {/* InfoBox — grows in height, reveals bottom-to-top */}
+      <CardContent className="w-full h-full p-0 flex flex-col">
+        {/* InfoBox at top */}
         <AnimatePresence>
           {infoOpen && (
             <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              exit={{ height: 0 }}
+              ref={infoRef}
+              initial={{ height: 0, opacity: 0, filter: "blur(8px)" }}
+              animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
+              exit={{ height: 0, opacity: 0, filter: "blur(8px)" }}
               transition={{ duration: 0.5, ease }}
-              style={{ overflow: "hidden" }}
-              className="-mt-[9px]"
+              className="overflow-hidden flex-shrink-0 cursor-zoom-in"
+              onClick={() => onOpen()}
             >
-              <motion.div
-                initial={{ clipPath: "inset(100% 0 0 0)" }}
-                animate={{ clipPath: "inset(0% 0 0 0)" }}
-                exit={{ clipPath: "inset(100% 0 0 0)" }}
-                transition={{ duration: 0.5, ease }}
-                className="cursor-zoom-in"
-                onClick={() => onOpen()}
-              >
-                <InfoBox
-                  exhibition={ex}
-                  onClose={() => setInfoOpen(false)}
-                  onImageClick={onOpen}
-                />
-              </motion.div>
+              <InfoBox
+                exhibition={ex}
+                onClose={() => setInfoOpen(false)}
+                onImageClick={onOpen}
+              />
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Image fills remaining space */}
+        <button
+          className={`flex-1 min-h-0 flex justify-center items-center w-full px-[32px] lg:px-0 ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
+          onClick={() => {
+            if (infoOpen) {
+              onOpen();
+            } else {
+              setInfoOpen(true);
+              onInfoOpen?.(String(ex.id));
+            }
+          }}
+          aria-label={
+            infoOpen
+              ? `Open ${ex.title.rendered}`
+              : `Show info: ${ex.title.rendered}`
+          }
+        >
+          {ex.acf.image_1 && (
+            <RevealImage
+              src={ex.acf.image_1.url}
+              alt={ex.title.rendered}
+              width={0}
+              height={0}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              revealIndex={index}
+              className="w-full h-auto max-h-full object-contain"
+            />
+          )}
+        </button>
       </CardContent>
     </Card>
   );

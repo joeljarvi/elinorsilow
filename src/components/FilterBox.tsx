@@ -25,7 +25,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal lowercase text-[16px] lg:text-[18px] text-muted-foreground tracking-widest mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right ${className}`}
+      className={`font-timesNewRoman font-normal lowercase text-[16px] lg:text-[18px] text-muted-foreground tracking-wider mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right ${className}`}
     >
       {children}
     </span>
@@ -35,29 +35,29 @@ function FilterLabel({
 /* -------------------- DATA -------------------- */
 
 const WORK_SORTS = [
-  { value: "year-latest", label: "Latest" },
-  { value: "year-oldest", label: "Oldest" },
-  { value: "title", label: "A–Z" },
+  { value: "year-latest", label: "latest" },
+  { value: "year-oldest", label: "oldest" },
+  { value: "title", label: "a–ö" },
 ];
 
 const WORK_CATS = [
-  { value: "all", label: "All" },
-  { value: "painting", label: "Painting" },
-  { value: "drawing", label: "Drawing" },
-  { value: "sculpture", label: "Sculpture" },
-  { value: "textile", label: "Textile" },
+  { value: "all", label: "all" },
+  { value: "painting", label: "painting" },
+  { value: "drawing", label: "drawing" },
+  { value: "sculpture", label: "sculpture" },
+  { value: "textile", label: "textile" },
 ];
 
 const EX_SORTS = [
-  { value: "year-latest", label: "Latest" },
-  { value: "year-oldest", label: "Oldest" },
-  { value: "title", label: "A–Z" },
+  { value: "year-latest", label: "latest" },
+  { value: "year-oldest", label: "oldest" },
+  { value: "title", label: "a–ö" },
 ];
 
 const EX_CATS = [
-  { value: "all", label: "All" },
-  { value: "solo", label: "Solo" },
-  { value: "group", label: "Group" },
+  { value: "all", label: "all" },
+  { value: "solo", label: "solo" },
+  { value: "group", label: "group" },
 ];
 
 /* -------------------- CONTROLS -------------------- */
@@ -142,7 +142,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
             }}
             className={showAsList ? "text-foreground" : "text-muted-foreground"}
           />
-          <span className="flex">
+          <span className="hidden lg:flex">
             <WigglyButton
               text="Cols"
               size="text-[16px] lg:text-[18px]"
@@ -152,21 +152,21 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               text="−"
               size="text-[16px] lg:text-[18px]"
               onClick={() => setGridCols(Math.max(1, gridCols - 1))}
-              className="text-foreground"
+              className="text-muted-foreground"
             />
             <WigglyButton
               text={gridCols.toString()}
               size="text-[16px] lg:text-[18px]"
-              className="text-foreground"
+              className="text-muted-foreground"
             />
             <WigglyButton
               text="+"
               size="text-[16px] lg:text-[18px]"
               onClick={() => setGridCols(Math.min(4, gridCols + 1))}
-              className="text-foreground"
+              className="text-muted-foreground"
             />
           </span>
-          <span className="flex">
+          <span className="hidden lg:flex">
             <WigglyButton
               text="Rows"
               size="text-[16px] lg:text-[18px]"
@@ -191,16 +191,14 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
             />
           </span>
           <WigglyButton
-            text={showColorBg ? "B/W" : "COLOR"}
+            text={showColorBg ? "color" : "b/w"}
             size="text-[16px] lg:text-[18px]"
-            active={showColorBg}
+            active={true}
             onClick={() => {
               setShowColorBg(!showColorBg);
               onMobileSelect();
             }}
-            className={
-              showColorBg ? "text-foreground" : "text-muted-foreground"
-            }
+            className={`text-foreground`}
           />
           <WigglyButton
             text={textBlurred ? "unblur" : "blur text"}
@@ -214,8 +212,9 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
           />
           {mounted && (
             <WigglyButton
-              text={theme === "dark" ? "light" : "dark"}
+              text={theme === "dark" ? "dark" : "light"}
               size="text-[16px] lg:text-[18px]"
+              active={true}
               onClick={() => {
                 setTheme(theme === "dark" ? "light" : "dark");
                 onMobileSelect();
@@ -236,7 +235,18 @@ function ExhibitionsControls({
 }) {
   const { exCat, setExCat, exSort, setExSort, exAsList, setExAsList } =
     useExhibitions();
-  const { exGridCols, setExGridCols, exGridRows, setExGridRows } = useUI();
+  const {
+    exGridCols,
+    setExGridCols,
+    exGridRows,
+    setExGridRows,
+    textBlurred,
+    setTextBlurred,
+  } = useUI();
+
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="flex flex-col gap-y-[44px] lg:gap-y-[64px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
@@ -295,7 +305,7 @@ function ExhibitionsControls({
             }}
             className={exAsList ? "text-foreground" : "text-muted-foreground"}
           />
-          <span className="flex">
+          <span className="hidden lg:flex">
             <WigglyButton
               text="Cols"
               size="text-[16px] lg:text-[18px]"
@@ -305,21 +315,21 @@ function ExhibitionsControls({
               text="−"
               size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridCols(Math.max(1, exGridCols - 1))}
-              className="text-foreground"
+              className="text-muted-foreground"
             />
             <WigglyButton
               text={exGridCols.toString()}
               size="text-[16px] lg:text-[18px]"
-              className="text-foreground"
+              className="text-muted-foreground"
             />
             <WigglyButton
               text="+"
               size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridCols(Math.min(4, exGridCols + 1))}
-              className="text-foreground"
+              className="text-muted-foreground"
             />
           </span>
-          <span className="flex">
+          <span className="hidden lg:flex">
             <WigglyButton
               text="Rows"
               size="text-[16px] lg:text-[18px]"
@@ -329,20 +339,42 @@ function ExhibitionsControls({
               text="−"
               size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridRows(Math.max(1, exGridRows - 1))}
-              className="text-foreground"
+              className="text-muted-foreground"
             />
             <WigglyButton
               text={exGridRows.toString()}
               size="text-[16px] lg:text-[18px]"
-              className="text-foreground"
+              className="text-muted-foreground"
             />
             <WigglyButton
               text="+"
               size="text-[16px] lg:text-[18px]"
               onClick={() => setExGridRows(Math.min(4, exGridRows + 1))}
-              className="text-foreground"
+              className="text-muted-foreground"
             />
           </span>
+          <WigglyButton
+            text={textBlurred ? "unblur" : "blur text"}
+            size="text-[16px] lg:text-[18px]"
+            active={textBlurred}
+            onClick={() => {
+              setTextBlurred(!textBlurred);
+              onMobileSelect();
+            }}
+            className={`no-hide-text ${textBlurred ? "text-foreground" : "text-muted-foreground"}`}
+          />
+          {mounted && (
+            <WigglyButton
+              text={theme === "dark" ? "dark" : "light"}
+              size="text-[16px] lg:text-[18px]"
+              onClick={() => {
+                setTheme(theme === "dark" ? "light" : "dark");
+                onMobileSelect();
+              }}
+              className="text-foreground"
+              active={true}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -384,7 +416,7 @@ export default function FilterBox() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[50] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
+    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[80] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
       <motion.div
         animate={{ y: filterOpen ? 0 : drawerHeight }}
         transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
@@ -395,6 +427,12 @@ export default function FilterBox() {
           ref={drawerRef}
           className="bg-background lg:bg-transparent w-full h-dvh flex flex-col justify-end overflow-hidden"
         >
+          <WigglyButton
+            className="cursor-pointer fixed left-1/2 -translate-x-1/2 top-[9px] tracking-normal text-muted-foreground"
+            text="filter"
+            size="text-[16px]"
+            active={true}
+          />
           {/* Scrollable content */}
           <div className="flex-1 min-h-0 overflow-y-auto flex flex-col justify-center lg:justify-end pt-[32px] lg:pt-[18px] pb-[18px] lg:pb-[18px] lg:px-0">
             <FilterContent onMobileSelect={handleMobileSelect} />
