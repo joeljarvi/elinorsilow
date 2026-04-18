@@ -188,7 +188,7 @@ export default function InfoBox({
             )}
             <WigglyButton
               text="(show gallery)"
-              className="hidden mt-[18px] px-0 lg:flex cursor-pointer text-foreground"
+              className="hidden mt-[18px] px-0 lg:flex cursor-pointer text-muted-foreground"
               size="text-[16px]"
               onClick={(e) => {
                 e.stopPropagation();
