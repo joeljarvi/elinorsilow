@@ -58,7 +58,7 @@ export default function InfoBox({
               <span className="flex gap-x-[6px]">
                 {onClose && (
                   <button
-                    className="cursor-pointer text-muted-foreground"
+                    className="cursor-pointer text-shadow-md"
                     onClick={(e) => {
                       e.stopPropagation();
                       onClose();
@@ -70,9 +70,10 @@ export default function InfoBox({
                 )}
                 <WigglyButton
                   text={work.title.rendered}
-                  className="text-[16px] px-0  font-timesNewRoman font-normal text-muted-foreground tracking-wider"
+                  className="text-[16px] px-0  font-timesNewRoman font-normal text-muted-foreground tracking-wider text-shadow-md"
                   size="text-[16px] "
                   revealAnimation={false}
+                  active={true}
                 />
               </span>
               {/* {onImageClick && !hideZoom && (
@@ -125,7 +126,7 @@ export default function InfoBox({
             <span className="flex gap-x-[6px] ">
               {onClose && (
                 <button
-                  className="cursor-pointer text-muted-foreground"
+                  className="cursor-pointer text-muted-foreground text-shadow-md"
                   onClick={(e) => {
                     e.stopPropagation();
                     onClose();
@@ -137,9 +138,10 @@ export default function InfoBox({
               )}
               <WigglyButton
                 text={exhibition.title.rendered}
-                className="px-0 font-timesNewRoman text-muted-foreground"
+                className="px-0 font-timesNewRoman text-muted-foreground text-shadow-md"
                 size="text-[16px]"
                 revealAnimation={false}
+                active
               />
             </span>
             {exhibition.acf.exhibition_type && (
@@ -165,8 +167,9 @@ export default function InfoBox({
               <WigglyButton
                 text="description"
                 size="text-[16px] "
-                className=" px-0 text-muted-foreground "
+                className=" px-0 text-muted-foreground text-shadow-md"
                 revealAnimation={false}
+                active
               />
               {exhibition.acf.description}
             </div>
@@ -176,8 +179,9 @@ export default function InfoBox({
               <WigglyButton
                 text="credits"
                 size="text-[16px] "
-                className="  pl-0  text-muted-foreground"
+                className="  pl-0  text-muted-foreground text-shadow-md"
                 revealAnimation={false}
+                active
               />
               <div>{exhibition.acf.credits}</div>
             </div>
@@ -189,8 +193,9 @@ export default function InfoBox({
                 <WigglyButton
                   text="featuring"
                   size="text-[16px] "
-                  className=" px-0 text-muted-foreground "
+                  className=" px-0 text-muted-foreground text-shadow-md "
                   revealAnimation={false}
+                  active
                 />
                 {works.map((w, i) => (
                   <WigglyButton

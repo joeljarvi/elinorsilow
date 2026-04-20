@@ -210,7 +210,7 @@ export default function DesktopNav() {
               >
                 <Link href={href}>
                   <WigglyButton
-                    className={`cursor-pointer ${pageLabel === label ? "text-foreground" : "text-muted-foreground"}`}
+                    className={`cursor-pointer ${pageLabel === label ? "text-foreground text-shadow-md" : "text-muted-foreground text-shadow-none"}`}
                     onClick={() => setOpen(false)}
                     text={label}
                     size="text-[16px]"
@@ -258,15 +258,15 @@ export default function DesktopNav() {
 
       {/* ── MOBILE: fixed bottom menu/filter tab ── */}
       <div
-        className={`lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[10px] pt-[0px] pointer-events-auto ${showColorBg ? "bg-transparent" : "bg-background"} `}
+        className={`lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[10px] pt-[0px] pointer-events-auto ${showColorBg ? "bg-transparent" : "bg-transparent"} `}
       >
-        <div
+        {/* <div
           className={`${showColorBg ? "hidden" : "block"} absolute bottom-full left-0 right-0 h-[9px] bg-gradient-to-t from-background to-transparent`}
-        />
+        /> */}
         <WigglyButton
           text={open ? "close" : "menu"}
-          className={` ${open ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
-          active={open}
+          className={` ${open ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest text-shadow-md `}
+          active={!open}
           onClick={(e) => {
             e.stopPropagation();
             if (filterOpen) {
@@ -279,13 +279,13 @@ export default function DesktopNav() {
           size="text-[16px]"
         />
 
-        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-muted-foreground ">
+        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-muted-foreground text-shadow-md ">
           /
         </span>
 
         <WigglyButton
           text={filterOpen ? "close" : "filter"}
-          active={filterOpen}
+          active={!filterOpen}
           onClick={(e) => {
             e.stopPropagation();
             if (open) {
@@ -297,7 +297,7 @@ export default function DesktopNav() {
           }}
           bold={false}
           size="text-[16px]"
-          className={` ${filterOpen ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
+          className={` ${filterOpen ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest text-shadow-md `}
         />
       </div>
     </>

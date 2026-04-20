@@ -70,7 +70,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
 
   return (
     <div
-      className={`w-full overflow-y-auto pl-[9px]  pt-[42px] pr-[9px] lg:px-[18px] lg:pt-[44px]   ${className}`}
+      className={`w-full overflow-y-auto pl-[9px]  pt-[42px] pr-[9px] lg:px-[9px] lg:pt-[44px]   ${className}`}
       style={{ minHeight: "100dvh" }}
     >
       {/* Mobile: single column */}

@@ -25,7 +25,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal lowercase text-[16px]  text-muted-foreground tracking-wider mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right ${className}`}
+      className={`font-timesNewRoman font-normal lowercase text-[16px]  text-muted-foreground tracking-wider mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right text-shadow-md ${className}`}
     >
       {children}
     </span>
@@ -98,8 +98,8 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               }}
               className={
                 workSort === s.value
-                  ? "text-foreground"
-                  : "text-muted-foreground"
+                  ? "text-foreground text-shadow-md"
+                  : "text-muted-foreground text-shadow-none"
               }
             />
           ))}
@@ -121,8 +121,8 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               }}
               className={
                 categoryFilter === c.value
-                  ? "text-foreground"
-                  : "text-muted-foreground"
+                  ? "text-foreground text-shadow-md"
+                  : "text-muted-foreground text-shadow-none"
               }
             />
           ))}
@@ -140,7 +140,11 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               setShowAsList(!showAsList);
               onMobileSelect();
             }}
-            className={showAsList ? "text-foreground" : "text-muted-foreground"}
+            className={
+              showAsList
+                ? "text-foreground text-shadow-md"
+                : "text-muted-foreground text-shadow-none"
+            }
           />
           <span className="hidden lg:flex">
             <WigglyButton
@@ -198,7 +202,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
               setShowColorBg(!showColorBg);
               onMobileSelect();
             }}
-            className={`text-foreground flex lg:hidden`}
+            className={`text-foreground ${showColorBg ? "text-shadow-md" : "text-shadow-none"} flex lg:hidden`}
           />
           <WigglyButton
             text={textBlurred ? "unblur" : "blur text"}
@@ -219,7 +223,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
                 setTheme(theme === "dark" ? "light" : "dark");
                 onMobileSelect();
               }}
-              className="text-foreground"
+              className={`${theme === "dark" ? "text-foreground " : "text-muted-foreground"} text-shadow-md`}
             />
           )}
         </div>
@@ -361,7 +365,7 @@ function ExhibitionsControls({
               setTextBlurred(!textBlurred);
               onMobileSelect();
             }}
-            className={`no-hide-text ${textBlurred ? "text-foreground" : "text-muted-foreground"}`}
+            className={`no-hide-text ${textBlurred ? "text-foreground text-shadow-md" : "text-muted-foreground text-shadow-none"}`}
           />
           {mounted && (
             <WigglyButton

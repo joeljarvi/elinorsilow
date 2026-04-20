@@ -38,7 +38,7 @@ export default function PageHeader() {
   const desktopTitle = pathname.startsWith("/info")
     ? "info"
     : hoveredItemTitle?.trim() ||
-      (activePage === "exhibitions" ? "exhibitions" : "elinor silow");
+      (activePage === "exhibitions" ? "exhibitions" : "elinor silow / works");
   return (
     <>
       {/* Mobile: fixed top-center */}
@@ -53,7 +53,7 @@ export default function PageHeader() {
             size="text-[16px]"
             active={true}
             revealAnimation
-            className="no-hide-text mt-[4px] text-[16px]  font-timesNewRoman font-normal text-foreground justify-center tracking-normal w-full  mb-0 "
+            className="no-hide-text mt-[4px] text-[16px]  font-timesNewRoman font-normal text-foreground text-shadow-md justify-center tracking-normal w-full mb-0 "
           />
         )}
         <div className="hidden  absolute top-full left-0 right-0 h-[9px] bg-gradient-to-b from-background to-transparent lg:hidden" />
@@ -61,7 +61,7 @@ export default function PageHeader() {
 
       {/* Desktop: fixed top-left */}
       <div
-        className={`hidden lg:flex fixed top-0 left-0 z-[90] items-center pt-[9px] pb-[0px] px-[9px] pointer-events-none bg-transparent `}
+        className={`hidden  lg:flex fixed top-0 left-0 z-[90] items-center pt-[9px] pb-[0px] px-[9px] pointer-events-none bg-transparent `}
       >
         {desktopTitle && !pathname.startsWith("/info") && (
           <>

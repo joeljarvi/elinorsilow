@@ -67,9 +67,8 @@ export default function InfoPageClient() {
         <WigglyButton
           text={title}
           size="text-[16px] "
-          className="mb-[9px] lg:mb-[9px] justify-start tracking-wider px-0"
+          className="mb-[9px] lg:mb-[9px] justify-start tracking-wider text-shadow-md px-0"
           active={true}
-          bold={true}
         />
         {groupByYear(items).map(([year, exs]) =>
           exs.map((ex, idx) => {
@@ -139,9 +138,8 @@ export default function InfoPageClient() {
               <WigglyButton
                 text="education"
                 size="text-[16px] "
-                className="mb-[18px] justify-start tracking-wider"
+                className="mb-[18px] justify-start tracking-wider text-shadow-md"
                 active
-                bold
               />
               {educations.map((edu) => (
                 <Fragment key={edu.id}>
@@ -165,9 +163,8 @@ export default function InfoPageClient() {
               <WigglyButton
                 text="grants"
                 size="text-[16px] "
-                className="mb-[18px] justify-start tracking-wider"
+                className="mb-[18px] justify-start tracking-wider text-shadow-md"
                 active
-                bold
               />
               {groupByYear(grants).map(([year, gs]) =>
                 gs.map((grant) => (
@@ -192,9 +189,8 @@ export default function InfoPageClient() {
             <WigglyButton
               text="press"
               size="text-[16px] "
-              className="mb-[18px] justify-start tracking-wider"
+              className="mb-[18px] justify-start tracking-wider text-shadow-md"
               active
-              bold
             />
             <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
               2022
@@ -230,11 +226,10 @@ export default function InfoPageClient() {
           <WigglyButton
             text="colophon"
             size="text-[16px] "
-            className="mb-[18px] justify-start tracking-wider px-0"
+            className="mb-[18px] justify-start tracking-wider px-0 text-shadow-md"
             active={true}
-            bold={true}
           />
-          <div className="flex flex-col mt-[18px] mb-4">
+          <div className="flex flex-col  mb-4">
             <InfoRow
               labelClassName="text-muted-foreground"
               label="Design & code"
