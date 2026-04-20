@@ -35,6 +35,16 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     id: "exhibition-gallery",
   });
 
+  const handleTap = () => {
+    const images = getImages(exhibition);
+
+    if (galleryCarousel.index < images.length - 1) {
+      galleryCarousel.api?.scrollNext();
+    } else if (hasNext) {
+      goNext();
+    }
+  };
+
   const loadExhibitionByIndex = useCallback(
     async (index: number) => {
       if (
@@ -132,7 +142,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       {/* Gallery — fills the entire modal */}
       <Carousel
         setApi={galleryCarousel.setApi}
-        opts={{ startIndex: 0, align: "center", loop: false }}
+        opts={{
+          startIndex: 0,
+          align: "center",
+          loop: false,
+          watchDrag: false,
+        }}
         className="w-full h-full"
       >
         <CarouselContent className="-ml-0 h-full">
@@ -142,11 +157,32 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               className="pl-0 flex items-center justify-center h-dvh"
             >
               <div className="relative w-full h-full">
+                {/* LEFT = prev */}
+                <div
+                  className="absolute left-0 top-0 w-1/2 h-full z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (galleryCarousel.index > 0) {
+                      galleryCarousel.api?.scrollPrev();
+                    } else if (hasPrev) {
+                      goPrev();
+                    }
+                  }}
+                />
+
+                {/* RIGHT = next */}
+                <div
+                  className="absolute right-0 top-0 w-1/2 h-full z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTap();
+                  }}
+                />
                 <Image
                   src={img.url}
                   alt={img.alt || img.desc || `Image ${idx + 1}`}
                   fill
-                  className="object-contain object-center"
+                  className="object-contain object-center px-[9px]"
                   priority={idx === 0}
                 />
               </div>
@@ -184,46 +220,16 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             active={false}
             onClick={onClose ?? (() => router.push("/exhibitions"))}
           />
-
-          {hasPrev && (
-            <>
-              <span className="inline-flex items-center font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
-                /
-              </span>
-              <WigglyButton
-                text="prev"
-                className="text-muted-foreground"
-                size="text-[16px] "
-                active={false}
-                onClick={goPrev}
-              />
-            </>
-          )}
-
-          {hasNext && (
-            <>
-              <span className="inline-flex items-center font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
-                /
-              </span>
-              <WigglyButton
-                text="next"
-                size="text-[16px] "
-                className="text-muted-foreground"
-                active={true}
-                onClick={goNext}
-              />
-            </>
-          )}
         </div>
       </div>
 
       {/* Image counter */}
       {images.length > 1 && (
-        <div className="absolute top-[9px] left-[9px]  z-10 pointer-events-none">
+        <div className="absolute top-[9px] left-1/2 -translate-x-1/2 z-10 pointer-events-none">
           <WigglyButton
             text={`${galleryCarousel.index + 1} / ${images.length}`}
-            size="text-[16px] "
-            className="text-muted-foreground"
+            size="text-[16px]"
+            className="text-muted-foreground text-center"
             active={false}
           />
         </div>
