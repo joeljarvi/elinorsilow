@@ -12,7 +12,6 @@ interface WorkCardProps {
   work: Work;
   onOpen: () => void;
   revealIndex?: number;
-  objectPosition?: string;
   showTitles?: boolean;
   imageClassName?: string;
 }
@@ -21,9 +20,8 @@ export default function WorkCard({
   work,
   onOpen,
   revealIndex = 0,
-  objectPosition = "center",
   showTitles = false,
-  imageClassName = "max-h-dvh",
+  imageClassName = "max-h-full",
 }: WorkCardProps) {
   const [infoOpen, setInfoOpen] = useState(false);
   const { setHoveredItemTitle } = useUI();
@@ -39,11 +37,11 @@ export default function WorkCard({
   return (
     <Card
       ref={cardRef}
-      className="w-full h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 rounded-none overflow-hidden"
+      className="w-full bg-transparent flex flex-col h-dvh lg:h-full items-start justify-start  border-0 shadow-none   gap-0 rounded-none overflow-hidden py-0"
       onMouseEnter={() => setHoveredItemTitle(work.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      <CardContent className="w-full h-full p-0 flex flex-col">
+      <CardContent className="w-full h-full items-start justify-start px-0 pb-0  flex flex-col">
         {/* InfoBox at top */}
         <AnimatePresence>
           {infoOpen && (
@@ -53,19 +51,19 @@ export default function WorkCard({
               animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
               exit={{ height: 0, opacity: 0, filter: "blur(8px)" }}
               transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-              className="overflow-hidden flex-shrink-0 cursor-zoom-in"
+              className="overflow-hidden flex-shrink-0 cursor-zoom-in  lg:p-0 w-full"
               onClick={() => onOpen()}
             >
-              <InfoBox work={work} onClose={() => setInfoOpen(false)} onImageClick={onOpen} />
+              <InfoBox work={work} onClose={() => setInfoOpen(false)} />
             </motion.div>
           )}
         </AnimatePresence>
-
         {/* Image fills remaining space */}
         <motion.button
           animate={{ scale: infoOpen ? 0.75 : 1 }}
           transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-          className={`flex-1 min-h-0 flex justify-center items-center w-full ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
+          style={{ originX: 0, originY: 0 }}
+          className={`flex-1 min-h-0 flex justify-start items-start w-full ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
           onClick={() => (infoOpen ? onOpen() : setInfoOpen(true))}
           aria-label={
             infoOpen
@@ -80,7 +78,7 @@ export default function WorkCard({
               revealIndex={revealIndex}
               noScaleY
               dimensions={work.acf.dimensions}
-              objectPosition={objectPosition}
+              objectPosition="top left"
               className={`max-h-full ${imageClassName}`}
             />
           )}

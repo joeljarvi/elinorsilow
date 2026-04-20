@@ -87,17 +87,17 @@ export default function DesktopNav() {
       </AnimatePresence>
 
       {/* ── DESKTOP: horizontal tab bar (always visible) ── */}
-      <div className="hidden lg:flex items-start justify-end fixed top-0 right-0 bottom-0 left-0 z-[80] pointer-events-none pt-[9px] px-[9px] h-min w-auto">
+      <div className="hidden lg:flex items-start justify-end fixed top-0 right-0 left-0 z-[80] pointer-events-none pt-[9px] px-[9px] pb-[9px] w-full bg-background h-min">
         {/* Nav links — shown when navExpanded */}
         <div
-          className={`flex items-center transition-opacity duration-300 ${navExpanded ? "opacity-100 max-w-[600px]" : "opacity-0 max-w-0 pointer-events-none"}`}
+          className={`items-center h-min bg-background ${navExpanded ? "flex" : "hidden"}`}
         >
           {NAV_LINKS.map(({ href, label }) => (
             <div key={href} className="flex items-center">
               <Link href={href}>
                 <WigglyButton
                   text={label}
-                  size="text-[19px]"
+                  size="text-[16px]"
                   bold={false}
                   revealAnimation={false}
                   active={pageLabel === label}
@@ -108,26 +108,26 @@ export default function DesktopNav() {
                   }`}
                 />
               </Link>
-              <span className="items-center font-timesNewRoman font-normal text-[19px]  text-muted-foreground">
+              <span className="items-center font-timesNewRoman font-normal text-[16px]  text-muted-foreground">
                 /
               </span>
             </div>
           ))}
           <WigglyButton
             text="instagram"
-            size="text-[19px]"
+            size="text-[16px]"
             bold={false}
             revealAnimation={false}
             href="https://www.instagram.com/elinorsilow"
             className="tracking-wide text-muted-foreground"
           />
 
-          <span className="inline-flex items-center font-timesNewRoman font-normal text-[19px] select-none text-muted-foreground">
+          <span className="inline-flex items-center font-timesNewRoman font-normal text-[16px] select-none text-muted-foreground">
             /
           </span>
           <WigglyButton
             text={openSearch ? "close search" : "search"}
-            size="text-[19px]"
+            size="text-[16px]"
             bold={false}
             revealAnimation={false}
             active={openSearch}
@@ -136,13 +136,13 @@ export default function DesktopNav() {
             }`}
             onClick={() => setOpenSearch(!openSearch)}
           />
-          <span className="items-center font-timesNewRoman font-normal text-[19px]  text-muted-foreground">
+          <span className="items-center font-timesNewRoman font-normal text-[16px]  text-muted-foreground">
             /
           </span>
         </div>
         <WigglyButton
           text={navExpanded ? "close menu" : "menu"}
-          size="text-[19px]"
+          size="text-[16px]"
           bold={false}
           revealAnimation={false}
           active={navExpanded}
@@ -153,12 +153,12 @@ export default function DesktopNav() {
         />
         {!isInfo && (
           <>
-            <span className="inline-flex items-center  font-timesNewRoman font-normal text-[18px] select-none text-muted-foreground">
+            <span className="inline-flex items-center  font-timesNewRoman font-normal text-[16px] select-none text-muted-foreground">
               /
             </span>
             <WigglyButton
               text={filterOpen ? "close filter" : "filter"}
-              size="text-[19px]"
+              size="text-[16px]"
               bold={false}
               revealAnimation={false}
               active={filterOpen}
@@ -182,24 +182,8 @@ export default function DesktopNav() {
           className={`relative h-dvh w-full pointer-events-auto transition-[background-color,backdrop-filter]  duration-300 bg-background`}
           onClick={() => setOpen(false)}
         >
-          <motion.div
-            layout
-            transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
-          >
-            <WigglyButton
-              className="cursor-pointer fixed left-1/2 -translate-x-1/2 top-[9px] tracking-normal text-muted-foreground"
-              onClick={() => {
-                setOpen(false);
-                setHeroOverlayOpen(true);
-              }}
-              text="menu"
-              bold={true}
-              size="text-[16px]"
-              active={open}
-            />
-          </motion.div>
           <motion.nav
-            className="flex flex-col px-[9px] pt-[9px] pb-[18px]  pointer-events-auto items-center gap-y-[18px] justify-center h-dvh"
+            className="flex flex-col px-[9px] pt-[9px] pb-[18px]  pointer-events-auto items-center gap-y-[9px] justify-center h-dvh"
             transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -214,7 +198,6 @@ export default function DesktopNav() {
                   setHeroOverlayOpen(true);
                 }}
                 text="elinor silow"
-                bold={true}
                 size="text-[16px]"
                 active={open}
               />
@@ -230,7 +213,6 @@ export default function DesktopNav() {
                     className={`cursor-pointer ${pageLabel === label ? "text-foreground" : "text-muted-foreground"}`}
                     onClick={() => setOpen(false)}
                     text={label}
-                    bold={true}
                     size="text-[16px]"
                     active={open}
                     revealAnimation={true}
@@ -249,7 +231,6 @@ export default function DesktopNav() {
                   setOpenSearch(true);
                 }}
                 text="search"
-                bold={true}
                 size="text-[16px]"
                 active={open}
               />
@@ -266,7 +247,6 @@ export default function DesktopNav() {
                 <WigglyButton
                   className="cursor-pointer text-muted-foreground"
                   text="instagram"
-                  bold={true}
                   size="text-[16px]"
                   active={open}
                 />
@@ -277,7 +257,12 @@ export default function DesktopNav() {
       </motion.div>
 
       {/* ── MOBILE: fixed bottom menu/filter tab ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto">
+      <div
+        className={`lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[10px] pt-[0px] pointer-events-auto ${showColorBg ? "bg-transparent" : "bg-background"} `}
+      >
+        <div
+          className={`${showColorBg ? "hidden" : "block"} absolute bottom-full left-0 right-0 h-[9px] bg-gradient-to-t from-background to-transparent`}
+        />
         <WigglyButton
           text={open ? "close" : "menu"}
           className={` ${open ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest `}
@@ -291,7 +276,6 @@ export default function DesktopNav() {
               setOpen(!open);
             }
           }}
-          bold={true}
           size="text-[16px]"
         />
 

@@ -167,7 +167,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
             <WigglyButton
               key={i}
               text={line}
-              size="text-[16px] lg:text-[19px]"
+              size="text-[16px] "
               className="pointer-events-none font-timesNewRoman"
             />
           ))}
@@ -180,7 +180,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           <WigglyButton
             text="close"
             className="text-muted-foreground"
-            size="text-[16px] lg:text-[19px]"
+            size="text-[16px] "
             active={false}
             onClick={onClose ?? (() => router.push("/exhibitions"))}
           />
@@ -193,7 +193,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               <WigglyButton
                 text="prev"
                 className="text-muted-foreground"
-                size="text-[16px] lg:text-[19px]"
+                size="text-[16px] "
                 active={false}
                 onClick={goPrev}
               />
@@ -207,7 +207,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
               </span>
               <WigglyButton
                 text="next"
-                size="text-[16px] lg:text-[19px]"
+                size="text-[16px] "
                 className="text-muted-foreground"
                 active={true}
                 onClick={goNext}
@@ -222,7 +222,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
         <div className="absolute top-[9px] left-[9px]  z-10 pointer-events-none">
           <WigglyButton
             text={`${galleryCarousel.index + 1} / ${images.length}`}
-            size="text-[16px] lg:text-[19px]"
+            size="text-[16px] "
             className="text-muted-foreground"
             active={false}
           />

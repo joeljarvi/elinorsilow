@@ -73,14 +73,14 @@ export default function NavSearch({
 
   if (inline) {
     return (
-      <div className="relative flex items-start self-start lg:pt-[32px] lg:px-[18px] w-full bg-blue-500">
+      <div className="relative flex items-start self-start lg:pt-[32px] lg:px-[9px] w-full bg-blue-500">
         <div className="flex items-center w-full">
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="search"
-            className="outline-none bg-transparent font-timesNewRoman font-bold text-[18px] tracking-wide px-[12px] py-[0px] flex-1 placeholder:text-muted-foreground"
+            className="outline-none bg-transparent font-timesNewRoman font-bold text-[16px] tracking-wide px-[12px] py-[0px] flex-1 placeholder:text-muted-foreground"
           />
           {query && (
             <button
@@ -102,7 +102,7 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed  inset-0 z-[100] lg:z-[50]   flex flex-col bg-background/10 backdrop-blur-2xl lg:bg-background p-[32px] lg:pt-[64px] lg:px-[18px]  "
+          className="fixed  inset-0 z-[100] lg:z-[50]   flex flex-col bg-background/10 backdrop-blur-2xl lg:bg-background p-[32px] lg:pt-[9px] lg:px-[9px]  "
         >
           {/* Search input row */}
 
@@ -113,7 +113,7 @@ export default function NavSearch({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-[18px] lg:text-[19px] font-timesNewRoman font-normal py-[9px] lg:py-[18px] tracking-wide px-[9px]"
+              className="flex-1 outline-none bg-transparent text-[16px]  font-timesNewRoman font-normal py-[9px] lg:py-[18px] tracking-wide px-[9px]"
             />
             <button
               className=" no-hide-text cursor-pointer p-[6px] text-muted-foreground hover:opacity-70 transition-opacity "
@@ -128,7 +128,7 @@ export default function NavSearch({
           </div>
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto pt-[9px] lg:pt-[18px]">
+          <div className="flex-1 overflow-y-auto pt-[9px] lg:pt-[9px]">
             {query && results.length > 0 ? (
               <div className="flex flex-col">
                 {results.slice(0, 20).map((item) => (
@@ -142,7 +142,7 @@ export default function NavSearch({
                     </span>
                     <OGubbeText
                       text={item.title}
-                      className="font-timesNewRoman font-normal text-[18px] lg:text-[19px] "
+                      className="font-timesNewRoman font-normal text-[16px]  "
                       revealAnimation={false}
                       lettersOnly
                       wrap
@@ -151,7 +151,7 @@ export default function NavSearch({
                 ))}
               </div>
             ) : query && results.length === 0 ? (
-              <div className="px-[18px] py-[24px] font-timesNewRoman text-[18px] lg:text-[19px] text-muted-foreground">
+              <div className="px-[18px] py-[24px] font-timesNewRoman text-[16px]  text-muted-foreground">
                 No results for &ldquo;{query}&rdquo;
               </div>
             ) : null}
@@ -161,7 +161,7 @@ export default function NavSearch({
           <div className="absolute bottom-0 left-0 right-0 lg:hidden  flex justify-center pb-[9px] shrink-0">
             <WigglyButton
               text="close"
-              size="text-[18px]"
+              size="text-[16px]"
               bold={true}
               onClick={onClose}
               active={open}

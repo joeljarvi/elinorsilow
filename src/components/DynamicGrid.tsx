@@ -70,18 +70,18 @@ export default function DynamicGrid<T extends { id: string | number }>({
 
   return (
     <div
-      className={`w-full overflow-y-auto px-[18px] lg:px-[32px] ${className}`}
+      className={`w-full overflow-y-auto pl-[9px]  pt-[42px] pr-[9px] lg:px-[18px] lg:pt-[44px]   ${className}`}
       style={{ minHeight: "100dvh" }}
     >
       {/* Mobile: single column */}
-      <div className="lg:hidden flex flex-col gap-y-[32px] py-[18px]">
+      <div className="lg:hidden flex flex-col justify-start items-start gap-y-[9px] ">
         {items.map((item, i) => (
           <div
             key={item.id}
             ref={(el) => {
               mobileRefs.current[i] = el;
             }}
-            className="w-full h-[calc(100dvh-64px)] flex flex-col items-center justify-center"
+            className="w-full min-h-dvh flex flex-col items-start justify-start"
           >
             {renderItem(item, i)}
           </div>
@@ -91,7 +91,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
       {/* Desktop: configurable grid */}
       <LayoutGroup>
         <div
-          className="hidden lg:grid gap-x-[18px] gap-y-[18px] py-[18px]"
+          className="hidden lg:grid gap-x-[9px] gap-y-[9px] "
           style={colStyle}
         >
           {items.map((item, i) => (
@@ -101,8 +101,8 @@ export default function DynamicGrid<T extends { id: string | number }>({
               ref={(el) => {
                 desktopRefs.current[i] = el;
               }}
-              className="flex items-center justify-center"
-              style={{ minHeight: rowHeight }}
+              className="flex items-start justify-start"
+              style={{ height: rowHeight }}
               transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
             >
               {renderItem(item, i)}

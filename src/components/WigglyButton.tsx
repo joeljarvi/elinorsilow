@@ -25,7 +25,7 @@ export default function WigglyButton({
   href,
   vertical = false,
   className,
-  size = "text-[16px] lg:text-[19px]",
+  size = "text-[16px]",
   bold = false,
   active = false,
 }: WigglyButtonProps) {
@@ -108,7 +108,7 @@ export default function WigglyButton({
           "no-hide-text pointer-events-auto px-[9px] tracking-wider",
           vertical
             ? "inline-flex flex-col items-center"
-            : "inline-flex items-baseline text-[16px] lg:text-[19px]",
+            : "inline-flex items-baseline text-[16px]",
           className,
         )}
         onMouseEnter={() => setHovered(true)}
@@ -167,7 +167,7 @@ export default function WigglyButton({
     <button
       data-no-reveal
       className={cn(
-        " pointer-events-auto cursor-pointer px-[9px] flex flex-wrap items-baseline text-[16px] lg:text-[19px] tracking-wider",
+        " pointer-events-auto cursor-pointer px-[9px] flex flex-wrap items-baseline text-[16px] tracking-wider",
         className,
       )}
       onClick={(e) => {

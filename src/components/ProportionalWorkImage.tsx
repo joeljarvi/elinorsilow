@@ -41,7 +41,7 @@ export default function ProportionalWorkImage({
   fillWidth = false,
   className = "",
   revealIndex = 0,
-  objectPosition = "center",
+  objectPosition = "top left",
   noScaleY = false,
 }: Props) {
   const parsed = parseDimensions(dimensions);
@@ -54,7 +54,7 @@ export default function ProportionalWorkImage({
         className={`w-full ${className}`}
         style={{ aspectRatio: `${w} / ${h}` }}
       >
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full bg-transparent">
           <RevealImage
             src={src}
             alt={alt}

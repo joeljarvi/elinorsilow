@@ -25,7 +25,7 @@ export default function UnderConstruction() {
           alt="Sleeping head"
           width={98}
           height={98}
-          className="w-[64px] h-[64px] lg:w-[128px] lg:h-[128px]"
+          className="w-[64px] h-[64px] lg:w-[128px] lg:h-[128px] "
         />
         <OGubbeText
           text="Shh... This page is sleeping..."

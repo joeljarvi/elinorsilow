@@ -25,7 +25,7 @@ function ScrollHint() {
 
   return (
     <p
-      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-[16px] lg:text-[19px] bg-transparent"
+      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-[16px]  bg-transparent"
       style={{ opacity: visible ? 0.3 : 0, transition: "opacity 0.7s ease" }}
     >
       scroll
@@ -66,8 +66,8 @@ export default function InfoPageClient() {
         <span />
         <WigglyButton
           text={title}
-          size="text-[16px] lg:text-[19px]"
-          className="mb-[9px] lg:mb-[18px] justify-start tracking-wider px-0"
+          size="text-[16px] "
+          className="mb-[9px] lg:mb-[9px] justify-start tracking-wider px-0"
           active={true}
           bold={true}
         />
@@ -76,15 +76,15 @@ export default function InfoPageClient() {
             const slug = findExhibitionSlug(ex.title.rendered);
             return (
               <Fragment key={ex.id}>
-                <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman no-hide-text">
+                <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman no-hide-text">
                   {idx === 0 ? year : ""}
                 </span>
-                <div className="flex flex-wrap items-baseline gap-x-1 pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman whitespace-normal no-hide-text">
+                <div className="flex flex-wrap items-baseline gap-x-1 pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman whitespace-normal no-hide-text">
                   {slug ? (
                     <Button
                       variant="link"
                       size="controls"
-                      className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman  p-0 h-auto  justify-start"
+                      className="text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman  p-0 h-auto  justify-start"
                       onClick={() => {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
@@ -112,7 +112,7 @@ export default function InfoPageClient() {
       <ScrollHint />
       <ScrollRevealInit />
 
-      <div className="text-muted-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[32px] lg:gap-x-[64px] px-[18px] lg:px-[18px]">
+      <div className="text-muted-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[32px] lg:gap-x-[64px] px-[18px] lg:px-[9px]">
         <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] mt-[64px]">
           <HeroText />
         </div>
@@ -138,17 +138,17 @@ export default function InfoPageClient() {
               <span />
               <WigglyButton
                 text="education"
-                size="text-[16px] lg:text-[19px]"
+                size="text-[16px] "
                 className="mb-[18px] justify-start tracking-wider"
                 active
                 bold
               />
               {educations.map((edu) => (
                 <Fragment key={edu.id}>
-                  <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                  <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
                     {`${edu.acf.start_year}–${edu.acf.end_year}`}
                   </span>
-                  <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                  <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
                     {edu.acf.school}, {edu.acf.city}
                   </span>
                 </Fragment>
@@ -164,7 +164,7 @@ export default function InfoPageClient() {
               <span />
               <WigglyButton
                 text="grants"
-                size="text-[16px] lg:text-[19px]"
+                size="text-[16px] "
                 className="mb-[18px] justify-start tracking-wider"
                 active
                 bold
@@ -172,10 +172,10 @@ export default function InfoPageClient() {
               {groupByYear(grants).map(([year, gs]) =>
                 gs.map((grant) => (
                   <Fragment key={grant.id}>
-                    <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                    <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
                       {year}
                     </span>
-                    <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+                    <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
                       {grant.acf.title}
                     </span>
                   </Fragment>
@@ -191,15 +191,15 @@ export default function InfoPageClient() {
             <span />
             <WigglyButton
               text="press"
-              size="text-[16px] lg:text-[19px]"
+              size="text-[16px] "
               className="mb-[18px] justify-start tracking-wider"
               active
               bold
             />
-            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+            <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
               2022
             </span>
-            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
+            <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
               <span>Hjärtat,</span>
               <span>Lappalainen Hjertström, L-E,</span>
               <Link
@@ -209,10 +209,10 @@ export default function InfoPageClient() {
                 kunstkritikk.se
               </Link>
             </span>
-            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+            <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
               2025
             </span>
-            <span className="pt-[9px] text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
+            <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
               <span>Gameplay,</span>
               <span>Slöör, S, Omkonst,</span>
               <Link
@@ -229,7 +229,7 @@ export default function InfoPageClient() {
         <div className="flex flex-col lg:col-span-4">
           <WigglyButton
             text="colophon"
-            size="text-[16px] lg:text-[19px]"
+            size="text-[16px] "
             className="mb-[18px] justify-start tracking-wider px-0"
             active={true}
             bold={true}
@@ -240,14 +240,14 @@ export default function InfoPageClient() {
               label="Design & code"
             >
               <Link
-                className="underline underline-offset-4 decoration-1 hover:no-underline text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman"
+                className="underline underline-offset-4 decoration-1 hover:no-underline text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman"
                 href="/"
               >
                 Joel Järvi
               </Link>
             </InfoRow>
             <InfoRow labelClassName="text-muted-foreground" label="Typefaces">
-              <span className="text-[16px] lg:text-[19px] leading-[1.2] tracking-wide font-timesNewRoman">
+              <span className="text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
                 Times New Roman
               </span>
             </InfoRow>
@@ -255,7 +255,7 @@ export default function InfoPageClient() {
         </div>
 
         <div className="px-[0px] py-4 col-span-6 ">
-          <p className="font-timesNewRoman text-[16px] lg:text-[19px] text-muted-foreground leading-snug">
+          <p className="font-timesNewRoman text-[16px]  text-muted-foreground leading-snug">
             All content on this site, including images, text, and design, is the
             intellectual property of Elinor Silow unless otherwise stated. No
             part of this website may be copied, reproduced, distributed, or used
