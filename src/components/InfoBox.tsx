@@ -120,7 +120,7 @@ export default function InfoBox({
     ].filter(Boolean) as string[];
 
     return (
-      <div className="text-muted-foreground relative group  pt-[0px] px-[0px] pb-[0px] w-full   lg:mt-[0px] mb-[0x]">
+      <div className="text-muted-foreground relative group  border-b-1 pt-[0px] px-[0px] pb-[9px]  w-full   lg:mt-[0px] mb-[0x]">
         <div className="flex flex-col lg:grid lg:grid-cols-2 justify-start items-start gap-x-[32px] gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide w-full pt-[0px] pb-[0px]">
           <div className=" flex-col items-start justify-start col-span-1 w-full">
             <span className="flex gap-x-[6px] ">

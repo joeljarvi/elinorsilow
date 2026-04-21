@@ -38,15 +38,19 @@ export default function ExhibitionCard({
   }, [activeInfoId, ex.id]);
 
   useEffect(() => {
-    if (infoOpen) {
-      cardRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
+    if (infoOpen && cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      window.scrollTo({
+        top: window.scrollY + rect.top - 9,
+        behavior: "instant",
+      });
     }
   }, [infoOpen]);
 
   return (
     <Card
       ref={cardRef}
-      className="w-full min-h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 rounded-none scroll-mt-[42px] max-w-3xl"
+      className="w-full min-h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 rounded-none scroll-mt-[9px] max-w-3xl"
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
@@ -85,7 +89,7 @@ export default function ExhibitionCard({
           }
         >
           {infoOpen ? (
-            <div className="flex flex-wrap gap-[9px] mt-[9px] p-[0px]   w-full ">
+            <div className="flex flex-wrap gap-[9px] mt-[9px] p-[0px] pb-[9px] border-b-1   w-full  ">
               {[
                 ex.acf.image_1,
                 ex.acf.image_2,
@@ -104,7 +108,7 @@ export default function ExhibitionCard({
                     key={i}
                     src={img!.url}
                     alt={`${ex.title.rendered} ${i + 1}`}
-                    className="h-[120px] w-auto object-cover"
+                    className="h-[92px] w-auto object-cover opacity-50 hover:opacity-100"
                   />
                 ))}
             </div>
