@@ -15,6 +15,9 @@ interface WigglyButtonProps {
   bold?: boolean;
   revealAnimation?: boolean;
   active?: boolean;
+  textShadow?: boolean;
+  sizeGradient?: { from: number; to: number };
+  wiggleGradient?: boolean;
 }
 
 type LetterDistortion = { rotate: number; y: number };
@@ -28,6 +31,9 @@ export default function WigglyButton({
   size = "text-[16px]",
   bold = false,
   active = false,
+  textShadow = false,
+  sizeGradient,
+  wiggleGradient = false,
 }: WigglyButtonProps) {
   const [hovered, setHovered] = useState(false);
   const distortions = useRef<LetterDistortion[]>([]);
@@ -44,6 +50,15 @@ export default function WigglyButton({
 
   const distorted = mounted && (active || hovered);
   const letters = text.split("");
+
+  const getCharFontSize = (i: number): number | undefined => {
+    if (!sizeGradient) return undefined;
+    const t = letters.length > 1 ? i / (letters.length - 1) : 0;
+    return sizeGradient.from + (sizeGradient.to - sizeGradient.from) * t;
+  };
+
+  const getWiggleFactor = (i: number) =>
+    wiggleGradient ? i / Math.max(letters.length - 1, 1) : 1;
 
   const transition = { duration: 0.18, ease: "easeOut" as const };
 
@@ -62,8 +77,8 @@ export default function WigglyButton({
             animate={
               distorted
                 ? {
-                    rotate: distortions.current[i]?.rotate ?? 0,
-                    y: distortions.current[i]?.y ?? 0,
+                    rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                    y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
                   }
                 : { rotate: 0, y: 0 }
             }
@@ -87,8 +102,8 @@ export default function WigglyButton({
             animate={
               distorted
                 ? {
-                    rotate: distortions.current[i]?.rotate ?? 0,
-                    y: distortions.current[i]?.y ?? 0,
+                    rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                    y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
                   }
                 : { rotate: 0, y: 0 }
             }
@@ -109,6 +124,7 @@ export default function WigglyButton({
           vertical
             ? "inline-flex flex-col items-center"
             : "inline-flex items-baseline text-[16px]",
+          textShadow && "text-shadow-xl",
           className,
         )}
         onMouseEnter={() => setHovered(true)}
@@ -125,6 +141,7 @@ export default function WigglyButton({
         data-no-reveal
         className={cn(
           "no-hide-text pointer-events-auto cursor-pointer px-[9px] inline-flex flex-col items-center tracking-wider",
+          textShadow && "text-shadow-xl",
           className,
         )}
         onClick={(e) => {
@@ -168,6 +185,7 @@ export default function WigglyButton({
       data-no-reveal
       className={cn(
         " pointer-events-auto cursor-pointer px-[9px] flex flex-wrap items-baseline text-[16px] tracking-wider",
+        textShadow && "text-shadow-md",
         className,
       )}
       onClick={(e) => {
@@ -177,9 +195,14 @@ export default function WigglyButton({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {letters.map((char, i) =>
-        char === " " ? (
-          <span key={i} className="inline-block w-[0.3em]" />
+      {letters.map((char, i) => {
+        const fs = getCharFontSize(i);
+        return char === " " ? (
+          <span
+            key={i}
+            className="inline-block w-[0.3em]"
+            style={fs ? { width: `${fs * 0.3}px` } : undefined}
+          />
         ) : (
           <motion.span
             key={i}
@@ -188,11 +211,12 @@ export default function WigglyButton({
               size,
               bold ? "font-bold" : "font-normal",
             )}
+            style={fs ? { fontSize: `${fs}px` } : undefined}
             animate={
               distorted
                 ? {
-                    rotate: distortions.current[i]?.rotate ?? 0,
-                    y: distortions.current[i]?.y ?? 0,
+                    rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                    y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
                   }
                 : { rotate: 0, y: 0 }
             }
@@ -200,7 +224,8 @@ export default function WigglyButton({
           >
             {char}
           </motion.span>
-        ),
+        );
+      },
       )}
     </button>
   );

@@ -90,6 +90,7 @@ interface OGubbeTextProps {
   bold?: boolean;
   rotate?: boolean;
   revealAnimation?: boolean;
+  lang?: string;
 }
 
 export function OGubbeText({
@@ -104,6 +105,7 @@ export function OGubbeText({
   bold = true,
   rotate = true,
   revealAnimation = true,
+  lang,
 }: OGubbeTextProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const [itemYOffset, setItemYOffset] = useState(0);
@@ -251,6 +253,7 @@ export function OGubbeText({
     return (
       <span
         ref={containerRef}
+        lang={lang}
         className={cn(
           `inline-flex flex-wrap items-center font-universNextProExt ${bold ? "font-extrabold" : "font-normal"} overflow-visible`,
           className,

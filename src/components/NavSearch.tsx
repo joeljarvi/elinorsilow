@@ -102,11 +102,11 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed  inset-0 z-[100] lg:z-[50]   flex flex-col bg-background/10 backdrop-blur-2xl lg:bg-background p-[32px] lg:pt-[9px] lg:px-[9px]  "
+          className="fixed  inset-0 z-[125] lg:z-[50]   flex flex-col bg-background lg:bg-background p-[32px] lg:pt-[9px] lg:px-[9px]  "
         >
           {/* Search input row */}
 
-          <div className="px-[18px] flex items-center border-b border-border shrink-0 border bg-background rounded-full lg:border-b lg:border-x-transparent lg:border-t-transparent lg:rounded-none">
+          <div className="px-[18px] flex items-center border-b border-border shrink-0 border bg-background  border-x-transparent border-t-transparent lg:rounded-none">
             <MagnifyingGlassIcon className="mr-2 text-muted-foreground shrink-0 w-[16px] h-[16px]   " />
             <input
               ref={inputRef}

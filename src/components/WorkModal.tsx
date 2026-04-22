@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import WorkSlugModalClient from "@/components/WorkSlugModalClient";
 import { useUI } from "@/context/UIContext";
@@ -15,6 +15,11 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [cursorVisible, setCursorVisible] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
 
   const handleClose = () => {
     window.history.replaceState(null, "", window.location.pathname);

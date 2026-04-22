@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import { InfoRow } from "@/components/InfoBox";
-import { HeroText } from "@/components/HeroText";
+import HeroText from "@/components/HeroText";
 import { Fragment, useEffect, useState } from "react";
 import WigglyButton from "@/components/WigglyButton";
 import ScrollRevealInit from "@/components/ScrollRevealInit";
@@ -61,13 +61,15 @@ export default function InfoPageClient() {
     title: string;
   }) {
     return (
-      <div className="mb-[64px] grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px]">
+      <div
+        className={`mb-[64px] grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px]`}
+      >
         {/* Heading row: empty year cell + title in col 2 */}
         <span />
         <WigglyButton
           text={title}
-          size="text-[16px] "
-          className="mb-[9px] lg:mb-[9px] justify-start tracking-wider text-shadow-md px-0"
+          size="text-[16px] lg:text-[16px]"
+          className="mb-[9px] lg:mb-[9px] justify-start tracking-wider  px-0"
           active={true}
         />
         {groupByYear(items).map(([year, exs]) =>
@@ -83,7 +85,7 @@ export default function InfoPageClient() {
                     <Button
                       variant="link"
                       size="controls"
-                      className="text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman  p-0 h-auto  justify-start"
+                      className="text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman font-normal  p-0 h-auto  justify-start"
                       onClick={() => {
                         setActiveExhibitionSlug(slug);
                         setOpen(false);
@@ -107,12 +109,12 @@ export default function InfoPageClient() {
   }
 
   return (
-    <section className="mt-[48px] relative w-full mb-[64px]">
+    <section className="mt-[18px] lg:mt-[54px] relative w-full mb-[64px]">
       <ScrollHint />
       <ScrollRevealInit />
 
-      <div className="text-muted-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[32px] lg:gap-x-[64px] px-[18px] lg:px-[9px]">
-        <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] mt-[64px]">
+      <div className="text-muted-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[0px] lg:gap-x-[64px] px-[18px] lg:px-[9px] pb-[64px]">
+        <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] lg:mb-[32px] mt-[0px]">
           <HeroText />
         </div>
 
@@ -120,25 +122,25 @@ export default function InfoPageClient() {
           {groupExhibitions.length > 0 && (
             <ExhibitionList
               items={groupExhibitions}
-              title="group exhibitions"
+              title="Group Exhibitions"
             />
           )}
         </div>
         <div className="flex flex-col lg:col-span-4 lg:col-start-5">
           {soloExhibitions.length > 0 && (
-            <ExhibitionList items={soloExhibitions} title="solo exhibitions" />
+            <ExhibitionList items={soloExhibitions} title="Solo Exhibitions" />
           )}
         </div>
 
         {/* Education */}
         <div className="flex flex-col lg:col-span-4 mb-[18px]">
           {educations.length > 0 && (
-            <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
+            <div className="grid grid-cols-[8ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
               <span />
               <WigglyButton
-                text="education"
-                size="text-[16px] "
-                className="mb-[18px] justify-start tracking-wider text-shadow-md"
+                text="Education"
+                size="text-[16px]"
+                className="mb-[9px] pl-0 justify-start tracking-wider "
                 active
               />
               {educations.map((edu) => (
@@ -161,9 +163,9 @@ export default function InfoPageClient() {
             <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
               <span />
               <WigglyButton
-                text="grants"
-                size="text-[16px] "
-                className="mb-[18px] justify-start tracking-wider text-shadow-md"
+                text="Grants"
+                size="text-[16px]"
+                className="mb-[9px] pl-0 justify-start tracking-wider "
                 active
               />
               {groupByYear(grants).map(([year, gs]) =>
@@ -187,9 +189,9 @@ export default function InfoPageClient() {
           <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start mb-[64px]">
             <span />
             <WigglyButton
-              text="press"
-              size="text-[16px] "
-              className="mb-[18px] justify-start tracking-wider text-shadow-md"
+              text="Press"
+              size="text-[16px]"
+              className="mb-[9px] justify-start tracking-wider  pl-0"
               active
             />
             <span className="pt-[9px] text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
@@ -224,9 +226,9 @@ export default function InfoPageClient() {
         {/* Colophon */}
         <div className="flex flex-col lg:col-span-4">
           <WigglyButton
-            text="colophon"
+            text="Colophon"
             size="text-[16px] "
-            className="mb-[18px] justify-start tracking-wider px-0 text-shadow-md"
+            className="mb-[9px] justify-start tracking-wider px-0 "
             active={true}
           />
           <div className="flex flex-col  mb-4">

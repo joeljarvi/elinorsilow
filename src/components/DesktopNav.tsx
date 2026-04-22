@@ -8,7 +8,7 @@ import NavSearch from "./NavSearch";
 import Link from "next/link";
 import WigglyButton from "./WigglyButton";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { HeroText } from "./HeroText";
+import HeroText from "./HeroText";
 
 const NAV_LINKS = [
   { href: "/", label: "works" },
@@ -87,7 +87,7 @@ export default function DesktopNav() {
       </AnimatePresence>
 
       {/* ── DESKTOP: horizontal tab bar (always visible) ── */}
-      <div className="hidden lg:flex items-start justify-end fixed top-0 right-0 left-0 z-[80] pointer-events-none pt-[9px] px-[9px] pb-[9px] w-full bg-background h-min">
+      <div className="hidden lg:flex items-start justify-end fixed top-0 right-0 left-0 z-[80] pointer-events-none pt-[9px] px-[9px] pb-[21px] w-full bg-background">
         {/* Nav links — shown when navExpanded */}
         <div
           className={`items-center h-min bg-background ${navExpanded ? "flex" : "hidden"}`}
@@ -122,7 +122,7 @@ export default function DesktopNav() {
             className="tracking-wide text-muted-foreground"
           />
 
-          <span className="inline-flex items-center font-timesNewRoman font-normal text-[16px] select-none text-muted-foreground">
+          <span className="inline-flex items-center font-timesNewRoman font-normal text-[16px] select-none text-foreground">
             /
           </span>
           <WigglyButton
@@ -136,7 +136,7 @@ export default function DesktopNav() {
             }`}
             onClick={() => setOpenSearch(!openSearch)}
           />
-          <span className="items-center font-timesNewRoman font-normal text-[16px]  text-muted-foreground">
+          <span className="items-center font-timesNewRoman font-normal text-[16px]  text-foreground">
             /
           </span>
         </div>
@@ -146,14 +146,12 @@ export default function DesktopNav() {
           bold={false}
           revealAnimation={false}
           active={navExpanded}
-          className={`tracking-wide ${
-            navExpanded ? "text-foreground" : "text-muted-foreground"
-          }`}
+          className={`tracking-wide  `}
           onClick={() => setNavExpanded((v) => !v)}
         />
         {!isInfo && (
           <>
-            <span className="inline-flex items-center  font-timesNewRoman font-normal text-[16px] select-none text-muted-foreground">
+            <span className="inline-flex items-center  font-timesNewRoman font-normal text-[16px] select-none ">
               /
             </span>
             <WigglyButton
@@ -163,7 +161,7 @@ export default function DesktopNav() {
               revealAnimation={false}
               active={filterOpen}
               className={`tracking-wide ${
-                filterOpen ? "text-foreground" : "text-muted-foreground"
+                filterOpen ? "text-foreground" : "text-foreground"
               }`}
               onClick={() => handleFilterOpen()}
             />
@@ -193,12 +191,12 @@ export default function DesktopNav() {
               transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             >
               <WigglyButton
-                className="cursor-pointer tracking-normal text-muted-foreground "
+                className="cursor-pointer tracking-normal text-muted-foreground  "
                 onClick={() => {
                   setHeroOverlayOpen(true);
                 }}
                 text="elinor silow"
-                size="text-[16px]"
+                size="text-[24px]"
                 active={open}
               />
             </motion.div>
@@ -210,12 +208,13 @@ export default function DesktopNav() {
               >
                 <Link href={href}>
                   <WigglyButton
-                    className={`cursor-pointer ${pageLabel === label ? "text-foreground text-shadow-md" : "text-muted-foreground text-shadow-none"}`}
+                    className={`cursor-pointer ${pageLabel === label ? "text-foreground" : "text-muted-foreground"}`}
                     onClick={() => setOpen(false)}
                     text={label}
-                    size="text-[16px]"
+                    size="text-[24px]"
                     active={open}
                     revealAnimation={true}
+                    textShadow={pageLabel === label}
                   />
                 </Link>
               </motion.div>
@@ -225,13 +224,13 @@ export default function DesktopNav() {
               transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             >
               <WigglyButton
-                className="cursor-pointer text-muted-foreground"
+                className="cursor-pointer text-muted-foreground "
                 onClick={() => {
                   setOpen(false);
                   setOpenSearch(true);
                 }}
                 text="search"
-                size="text-[16px]"
+                size="text-[24px]"
                 active={open}
               />
             </motion.div>
@@ -245,9 +244,9 @@ export default function DesktopNav() {
                 rel="noopener noreferrer"
               >
                 <WigglyButton
-                  className="cursor-pointer text-muted-foreground"
+                  className="cursor-pointer text-muted-foreground "
                   text="instagram"
-                  size="text-[16px]"
+                  size="text-[24px]"
                   active={open}
                 />
               </Link>
@@ -265,8 +264,9 @@ export default function DesktopNav() {
         /> */}
         <WigglyButton
           text={open ? "close" : "menu"}
-          className={` ${open ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest text-shadow-md `}
+          className="text-foreground no-hide-text tracking-widest"
           active={!open}
+          textShadow
           onClick={(e) => {
             e.stopPropagation();
             if (filterOpen) {
@@ -279,7 +279,7 @@ export default function DesktopNav() {
           size="text-[16px]"
         />
 
-        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-muted-foreground text-shadow-md ">
+        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-foreground text-shadow-md ">
           /
         </span>
 
@@ -297,7 +297,8 @@ export default function DesktopNav() {
           }}
           bold={false}
           size="text-[16px]"
-          className={` ${filterOpen ? "text-foreground" : "text-muted-foreground"} no-hide-text tracking-widest text-shadow-md `}
+          textShadow
+          className="text-foreground no-hide-text tracking-widest"
         />
       </div>
     </>

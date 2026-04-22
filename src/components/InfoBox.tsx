@@ -1,7 +1,7 @@
 "use client";
 
+import { useState } from "react";
 import { Work, Exhibition } from "../../lib/sanity";
-import { OGubbeText } from "@/components/OGubbeText";
 import CornerFrame from "@/components/CornerFrame";
 import { useUI } from "@/context/UIContext";
 import WigglyButton from "./WigglyButton";
@@ -49,7 +49,7 @@ export default function InfoBox({
 
     return (
       <div
-        className={`text-muted-foreground relative group  block gap-x-[18px]  items-center  overflow-hidden pt-[9px] px-[0px] lg:px-[0px] pb-[9px] w-full`}
+        className={`text-foreground relative group  block gap-x-[18px]  items-center  overflow-hidden pt-[9px] px-[0px] lg:px-[0px] pb-[9px] w-full`}
       >
         {/* Metadata */}
         <div className="font-timesNewRoman text-[16px]  leading-tight tracking-wider w-full">
@@ -58,7 +58,7 @@ export default function InfoBox({
               <span className="flex gap-x-[6px]">
                 {onClose && (
                   <button
-                    className="cursor-pointer text-shadow-md"
+                    className="cursor-pointer "
                     onClick={(e) => {
                       e.stopPropagation();
                       onClose();
@@ -70,10 +70,21 @@ export default function InfoBox({
                 )}
                 <WigglyButton
                   text={work.title.rendered}
-                  className="text-[16px] px-0  font-timesNewRoman font-normal text-muted-foreground tracking-wider text-shadow-md"
-                  size="text-[16px] "
+                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal  tracking-wider "
+                  size="text-[28px] "
                   revealAnimation={false}
                   active={true}
+                  sizeGradient={{ from: 28, to: 16 }}
+                />
+
+                <WigglyButton
+                  text={work.title.rendered}
+                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal  tracking-wider "
+                  size="text-[24px] "
+                  revealAnimation={false}
+                  active={true}
+                  sizeGradient={{ from: 24, to: 16 }}
+                  textShadow
                 />
               </span>
               {/* {onImageClick && !hideZoom && (
@@ -106,6 +117,12 @@ export default function InfoBox({
   }
 
   if (exhibition) {
+    const [descExpanded, setDescExpanded] = useState(false);
+
+    const descWords = exhibition.acf.description?.split(/\s+/) ?? [];
+    const descBody = descWords.slice(0, -8).join(" ");
+    const descTail = descWords.slice(-8).join(" ");
+
     const works = [
       exhibition.acf.work_1,
       exhibition.acf.work_2,
@@ -120,13 +137,13 @@ export default function InfoBox({
     ].filter(Boolean) as string[];
 
     return (
-      <div className="text-muted-foreground relative group  border-b-1 pt-[0px] px-[0px] pb-[9px]  w-full   lg:mt-[0px] mb-[0x]">
-        <div className="flex flex-col lg:grid lg:grid-cols-2 justify-start items-start gap-x-[32px] gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide w-full pt-[0px] pb-[0px]">
-          <div className=" flex-col items-start justify-start col-span-1 w-full">
+      <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-full   lg:mt-[0px] mb-[0x]">
+        <div className="grid grid-cols-2 justify-start items-start gap-x-[32px] gap-y-[32px] lg:gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide w-full pt-[0px] pb-[0px]">
+          <div className=" flex-col items-start justify-start col-span-2 w-full">
             <span className="flex gap-x-[6px] ">
               {onClose && (
                 <button
-                  className="cursor-pointer text-muted-foreground text-shadow-md"
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     onClose();
@@ -138,8 +155,8 @@ export default function InfoBox({
               )}
               <WigglyButton
                 text={exhibition.title.rendered}
-                className="px-0 font-timesNewRoman text-muted-foreground text-shadow-md"
-                size="text-[16px]"
+                className="px-0 font-timesNewRoman"
+                size="text-[16px] "
                 revealAnimation={false}
                 active
               />
@@ -163,37 +180,45 @@ export default function InfoBox({
           </div>
 
           {exhibition.acf.description && (
-            <div className="col-start-2 col-span-1 tracking-wider ">
-              <WigglyButton
-                text="description"
-                size="text-[16px] "
-                className=" px-0 text-muted-foreground text-shadow-md"
-                revealAnimation={false}
-                active
-              />
-              {exhibition.acf.description}
+            <div className="col-start-1 col-span-2 max-w-md lg:max-w-xl tracking-wider ">
+              <p
+                className={`font-timesNewRoman text-[24px] tracking-wide leading-[1.2] `}
+              >
+                {descBody && <span>{descBody} </span>}
+                {descTail && (
+                  <WigglyButton
+                    text={descTail}
+                    className="inline-flex px-0 font-timesNewRoman align-baseline"
+                    size="text-[24px] lg:text-[28px]"
+                    sizeGradient={{ from: 24, to: 16 }}
+                    wiggleGradient
+                    revealAnimation={false}
+                    active
+                  />
+                )}
+              </p>
             </div>
           )}
+
           {exhibition.acf.credits && (
             <div className="col-start-1 col-span-1  mx-0 tracking-wider">
               <WigglyButton
                 text="credits"
                 size="text-[16px] "
-                className="  pl-0  text-muted-foreground text-shadow-md"
+                className="  pl-0"
                 revealAnimation={false}
                 active
               />
               <div>{exhibition.acf.credits}</div>
             </div>
           )}
-
           <div className="px-0 col-start-2 col-span-1">
             {works.length > 0 && (
               <>
                 <WigglyButton
-                  text="featuring"
+                  text="featuring the works:"
                   size="text-[16px] "
-                  className=" px-0 text-muted-foreground text-shadow-md "
+                  className=" px-0"
                   revealAnimation={false}
                   active
                 />

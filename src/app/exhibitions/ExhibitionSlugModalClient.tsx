@@ -35,13 +35,15 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     id: "exhibition-gallery",
   });
 
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
+  }, []);
+
   const handleTap = () => {
     const images = getImages(exhibition);
-
     if (galleryCarousel.index < images.length - 1) {
       galleryCarousel.api?.scrollNext();
-    } else if (hasNext) {
-      goNext();
     }
   };
 
@@ -124,8 +126,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
   const images = getImages(exhibition);
   const hasPrev = currentIndex > 0;
-  const hasNext =
-    !!filteredExhibitions && currentIndex < filteredExhibitions.length - 1;
 
   const metadataLines = [
     exhibition.title.rendered,
@@ -147,6 +147,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
           align: "center",
           loop: false,
           watchDrag: false,
+          duration: isDesktop ? 0 : undefined,
         }}
         className="w-full h-full"
       >
@@ -211,7 +212,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
       </div>
 
       {/* Controls — mobile: bottom-center, desktop: top-right */}
-      <div className="absolute bottom-[9px] left-0 right-0 flex justify-center z-10 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end bg-transparent">
+      <div className="absolute bottom-[9px] left-0 right-0 flex justify-center z-20 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end bg-transparent">
         <div className="flex gap-x-0">
           <WigglyButton
             text="close"
@@ -225,7 +226,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Image counter */}
       {images.length > 1 && (
-        <div className="absolute top-[9px] left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+        <div className="absolute top-[9px] left-1/2 -translate-x-1/2 lg:left-[9px] lg:translate-x-0 z-10 pointer-events-none">
           <WigglyButton
             text={`${galleryCarousel.index + 1} / ${images.length}`}
             size="text-[16px]"

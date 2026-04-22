@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
 
@@ -14,6 +14,11 @@ export default function ExhibitionModal({
   onClose,
 }: ExhibitionModalProps) {
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
 
   const handleClose = () => {
     window.history.replaceState(null, "", window.location.pathname);

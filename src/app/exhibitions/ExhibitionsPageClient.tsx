@@ -62,7 +62,7 @@ export default function ExhibitionsPageClient() {
   }
 
   return (
-    <section ref={sectionRef} className="relative w-full pt-[0px] ">
+    <section ref={sectionRef} className="relative w-full pt-[0px]  ">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
