@@ -56,8 +56,6 @@ export default function PageHeader() {
             size="text-[24px]"
             active
             revealAnimation
-            sizeGradient={{ from: 24, to: 16 }}
-            wiggleGradient
             className="no-hide-text font-timesNewRoman font-normal text-foreground tracking-normal pl-0 w-full"
             textShadow
           />

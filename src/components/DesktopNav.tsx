@@ -265,7 +265,7 @@ export default function DesktopNav() {
         <WigglyButton
           text={open ? "close" : "menu"}
           className="text-foreground no-hide-text tracking-widest"
-          active={!open}
+          active={open}
           textShadow
           onClick={(e) => {
             e.stopPropagation();
@@ -285,7 +285,7 @@ export default function DesktopNav() {
 
         <WigglyButton
           text={filterOpen ? "close" : "filter"}
-          active={!filterOpen}
+          active={filterOpen}
           onClick={(e) => {
             e.stopPropagation();
             if (open) {
