@@ -156,7 +156,7 @@ export default function InfoBox({
               <WigglyButton
                 text={exhibition.title.rendered}
                 className="px-0 font-timesNewRoman"
-                size="text-[16px] "
+                size="text-[16px] lg:text-[28px]  "
                 revealAnimation={false}
                 active
               />

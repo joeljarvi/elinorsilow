@@ -38,7 +38,7 @@ export default function PageHeader() {
   const mobileSection = activePage === "exhibitions" ? "exhibitions" : "works";
   const mobileText =
     !isInfoPage && mobileTitle && !exAsList && !showAsList
-      ? `${mobileSection} / ${mobileTitle}`
+      ? ` ${mobileTitle}`
       : mobileSection;
 
   const section =
@@ -58,7 +58,7 @@ export default function PageHeader() {
             revealAnimation
             sizeGradient={{ from: 24, to: 16 }}
             wiggleGradient
-            className="no-hide-text font-timesNewRoman font-normal text-foreground tracking-normal w-full"
+            className="no-hide-text font-timesNewRoman font-normal text-foreground tracking-normal pl-0 w-full"
             textShadow
           />
         )}

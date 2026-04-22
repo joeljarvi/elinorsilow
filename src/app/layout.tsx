@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "@/app/globals.css";
+import "./globals.css";
 import { AnimationProvider } from "@/context/AnimationContext";
 import { WorksProvider } from "@/context/WorksContext";
 import { ExhibitionsProvider } from "@/context/ExhibitionsContext";

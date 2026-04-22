@@ -59,7 +59,7 @@ export default function ExhibitionCard({
   return (
     <Card
       ref={cardRef}
-      className="w-full min-h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 rounded-none scroll-mt-[9px] lg:scroll-mt-[44px] max-w-3xl lg:max-w-6xl mb-[18px]"
+      className="w-full min-h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 h-full rounded-none scroll-mt-[9px] lg:scroll-mt-[44px] max-w-3xl lg:max-w-6xl mb-[18px]"
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
@@ -80,7 +80,7 @@ export default function ExhibitionCard({
           )}
         </AnimatePresence>
 
-        <div className="flex-1 min-h-0 flex flex-col lg:flex-row lg:items-start lg:gap-x-[18px]">
+        <div className="flex-1 min-h-0 flex flex-col  lg:items-start lg:gap-x-[18px]">
           {/* LEFT: Images */}
           <motion.div
             animate={{
