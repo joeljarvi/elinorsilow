@@ -113,7 +113,7 @@ export default function InfoPageClient() {
       <ScrollHint />
       <ScrollRevealInit />
 
-      <div className="text-muted-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[0px] lg:gap-x-[64px] px-[18px] lg:px-[9px] pb-[64px]">
+      <div className="text-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[0px] lg:gap-x-[64px] px-[18px] lg:px-[9px] pb-[64px]">
         <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] lg:mb-[32px] mt-[0px]">
           <HeroText />
         </div>
@@ -233,7 +233,7 @@ export default function InfoPageClient() {
           />
           <div className="flex flex-col  mb-4">
             <InfoRow
-              labelClassName="text-muted-foreground"
+              labelClassName="text-foreground"
               label="Design & code"
             >
               <Link
@@ -243,7 +243,7 @@ export default function InfoPageClient() {
                 Joel Järvi
               </Link>
             </InfoRow>
-            <InfoRow labelClassName="text-muted-foreground" label="Typefaces">
+            <InfoRow labelClassName="text-foreground" label="Typefaces">
               <span className="text-[16px]  leading-[1.2] tracking-wide font-timesNewRoman">
                 Times New Roman
               </span>
@@ -252,7 +252,7 @@ export default function InfoPageClient() {
         </div>
 
         <div className="px-[0px] py-4 col-span-6 ">
-          <p className="font-timesNewRoman text-[16px]  text-muted-foreground leading-snug">
+          <p className="font-timesNewRoman text-[16px]  text-foreground leading-snug">
             All content on this site, including images, text, and design, is the
             intellectual property of Elinor Silow unless otherwise stated. No
             part of this website may be copied, reproduced, distributed, or used

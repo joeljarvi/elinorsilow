@@ -15,8 +15,8 @@ export default function HeroText() {
         {heroStart && (
           <WigglyButton
             text={heroStart}
-            className="inline-flex -mt-[6px] px-0 font-timesNewRoman align-baseline"
-            size="text-[16px]"
+            className="inline-flex px-0 font-timesNewRoman align-baseline"
+            size="text-[16px] leading-[1.2]"
             sizeGradient={{ from: 28, to: 16 }}
             wiggleGradient
             revealAnimation={false}

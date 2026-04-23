@@ -7,6 +7,9 @@ import { useUI } from "@/context/UIContext";
 import { Card, CardContent } from "@/components/ui/card";
 import InfoBox from "@/components/InfoBox";
 import { RevealImage } from "@/components/RevealImage";
+import WigglyDivider from "./WigglyDivider";
+import { info } from "console";
+import exhibition from "../../schemas/exhibition";
 
 interface ExhibitionCardProps {
   ex: Exhibition;
@@ -38,8 +41,8 @@ export default function ExhibitionCard({
   }, [activeInfoId, ex.id]);
 
   useEffect(() => {
-    if (infoOpen && cardRef.current) {
-      cardRef.current.scrollIntoView({ behavior: "instant", block: "start" });
+    if (infoOpen && infoRef.current) {
+      infoRef.current.scrollIntoView({ behavior: "instant", block: "start" });
     }
   }, [infoOpen]);
 
@@ -59,112 +62,116 @@ export default function ExhibitionCard({
   return (
     <Card
       ref={cardRef}
-      className="w-full min-h-dvh flex flex-col border-0 shadow-none bg-transparent p-0 gap-0 h-full rounded-none scroll-mt-[9px] lg:scroll-mt-[44px] max-w-3xl lg:max-w-6xl mb-[18px]"
+      className="w-full min-h-dvh lg:min-h-0 lg:h-auto flex flex-col shadow-none scroll-mt-[72px] lg:max-w-4xl border-none bg-transparent p-0 gap-0 mx-0"
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
+      {infoOpen && (
+        <WigglyDivider
+          size="text-[16px]"
+          className="items-center py-0  "
+          active
+          char="x"
+          sizeGradient={{ from: 16, to: 8 }}
+          wiggleGradient
+          textShadow
+        />
+      )}
       <CardContent className="w-full h-full p-0 flex flex-col">
-        {/* Mobile: InfoBox above image */}
-        <AnimatePresence>
-          {infoOpen && (
-            <motion.div
-              ref={infoRef}
-              initial={{ height: 0, opacity: 0, filter: "blur(8px)" }}
-              animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
-              exit={{ height: 0, opacity: 0, filter: "blur(8px)" }}
-              transition={{ duration: 0.5, ease }}
-              className="lg:hidden overflow-hidden flex-shrink-0 scroll-mt-[18px]"
-            >
-              <InfoBox exhibition={ex} onClose={() => setInfoOpen(false)} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="flex-1 min-h-0 flex flex-col  lg:items-start lg:gap-x-[18px]">
-          {/* LEFT: Images */}
-          <motion.div
-            animate={{
-              flex: infoOpen ? "0 1 25%" : "1 1 100%",
-            }}
-            transition={{ duration: 0.5, ease }}
-            className="flex min-h-0 gap-[9px] flex-row lg:flex-col overflow-hidden"
-          >
-            {/* Main image */}
-            <motion.button
-              className={`flex-shrink min-w-0 ${
-                infoOpen ? "cursor-zoom-in" : "cursor-pointer"
-              }`}
-              onClick={() => {
-                if (infoOpen) {
-                  onOpen();
-                } else {
-                  setInfoOpen(true);
-                  onInfoOpen?.(String(ex.id));
-                }
-              }}
-            >
-              {ex.acf.image_1 && (
-                <RevealImage
-                  src={ex.acf.image_1.url}
-                  alt={ex.title.rendered}
-                  width={0}
-                  height={0}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  revealIndex={index}
-                  className="w-full h-auto object-contain opacity-100 hover:opacity-30 object-top"
-                  style={{ objectPosition: "top left" }}
-                />
-              )}
-            </motion.button>
-
-            {/* Thumbnails */}
-            <AnimatePresence>
-              {infoOpen && (
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.4, ease }}
-                  className="
-            flex flex-col gap-[9px]
-
-            w-[72px] flex-shrink-0
-            max-h-[calc(50dvh-120px)]
-            overflow-y-auto
-
-            lg:flex-row lg:flex-wrap
-            lg:w-auto lg:max-h-none lg:overflow-visible
-          "
-                >
-                  {images.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img!.url}
-                      alt={`${ex.title.rendered} ${i + 1}`}
-                      className="h-[64px] w-auto object-contain opacity-100 hover:opacity-30 cursor-zoom-in"
-                    />
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* RIGHT: InfoBox */}
+        <div className="flex-1 min-h-0 flex flex-col">
+          {/* InfoBox — above image */}
           <AnimatePresence>
             {infoOpen && (
               <motion.div
-                initial={{ opacity: 0, x: 40, filter: "blur(8px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, x: 40, filter: "blur(8px)" }}
+                ref={infoRef}
+                initial={{ height: 0, opacity: 0, filter: "blur(8px)" }}
+                animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
+                exit={{ height: 0, opacity: 0, filter: "blur(8px)" }}
                 transition={{ duration: 0.5, ease }}
-                className="hidden lg:block w-1/2 flex-shrink-0"
+                className="overflow-hidden flex-shrink-0 "
               >
                 <InfoBox exhibition={ex} onClose={() => setInfoOpen(false)} />
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Images — image_1 fills space when closed, shrinks to first thumbnail when open */}
+          <div className="flex-1 min-h-0 lg:max-w-3xl overflow-hidden flex flex-row flex-wrap content-start gap-[9px]">
+            {ex.acf.image_1 && (
+              <motion.button
+                layout
+                transition={{ layout: { duration: 0.5, ease } }}
+                className={
+                  infoOpen
+                    ? "flex-shrink-0 cursor-zoom-in"
+                    : "flex-1 min-h-0 min-w-0 cursor-pointer"
+                }
+                onClick={() => {
+                  if (infoOpen) onOpen();
+                  else {
+                    setInfoOpen(true);
+                    onInfoOpen?.(String(ex.id));
+                  }
+                }}
+              >
+                {infoOpen ? (
+                  <img
+                    src={ex.acf.image_1.url}
+                    alt={ex.title.rendered}
+                    className="h-[64px] w-auto object-contain opacity-100 hover:opacity-30"
+                    style={{ objectPosition: "top left" }}
+                  />
+                ) : (
+                  <RevealImage
+                    src={ex.acf.image_1.url}
+                    alt={ex.title.rendered}
+                    width={0}
+                    height={0}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    revealIndex={index}
+                    className="w-full h-auto lg:h-full object-contain opacity-100 hover:opacity-30"
+                    style={{ objectPosition: "center" }}
+                  />
+                )}
+              </motion.button>
+            )}
+
+            {/* Remaining thumbnails fade in beside image_1 */}
+            <AnimatePresence>
+              {infoOpen &&
+                images.slice(1).map((img, i) => (
+                  <motion.button
+                    key={i + 1}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ delay: 0.1 + i * 0.04, duration: 0.3 }}
+                    className="flex-shrink-0 cursor-zoom-in"
+                    onClick={onOpen}
+                  >
+                    <img
+                      src={img!.url}
+                      alt={`${ex.title.rendered} ${i + 2}`}
+                      className="h-[64px] w-auto object-contain opacity-100 hover:opacity-30"
+                    />
+                  </motion.button>
+                ))}
+            </AnimatePresence>
+          </div>
         </div>
       </CardContent>
+
+      {infoOpen && (
+        <WigglyDivider
+          size="text-[16px]"
+          className="items-center mt-[18px] lowercase    "
+          active
+          char="x"
+          sizeGradient={{ from: 16, to: 8 }}
+          wiggleGradient
+          textShadow
+        />
+      )}
     </Card>
   );
 }

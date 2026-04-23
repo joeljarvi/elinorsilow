@@ -62,7 +62,7 @@ export default function ExhibitionsPageClient() {
   }
 
   return (
-    <section ref={sectionRef} className="relative w-full pt-[0px]  ">
+    <section ref={sectionRef} className="relative w-full pt-[25vh]  ">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
@@ -102,6 +102,7 @@ export default function ExhibitionsPageClient() {
           onTopVisibleChange={setVisibleExhibitionIndex}
           gridCols={Math.min(4, Math.max(1, exGridCols))}
           gridRows={Math.min(4, Math.max(1, exGridRows))}
+          gapY="gap-y-[72px]"
         />
       </motion.div>
 

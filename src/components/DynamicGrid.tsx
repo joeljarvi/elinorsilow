@@ -9,6 +9,7 @@ interface DynamicGridProps<T extends { id: string | number }> {
   gridCols: number;
   gridRows: number;
   className?: string;
+  gapY?: string;
   /** Called with the index of the topmost visible item whenever it changes. */
   onTopVisibleChange?: (index: number) => void;
 }
@@ -19,6 +20,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
   gridCols,
   gridRows,
   className = "",
+  gapY = "gap-y-[9px]",
   onTopVisibleChange,
 }: DynamicGridProps<T>) {
   // Separate ref arrays for mobile and desktop layouts.
@@ -70,11 +72,13 @@ export default function DynamicGrid<T extends { id: string | number }>({
 
   return (
     <div
-      className={`w-full overflow-y-auto pl-[9px]  pt-[42px] pr-[9px] lg:px-[9px] lg:pt-[44px]   ${className}`}
+      className={`w-full overflow-y-auto pl-[9px]  pt-[42px] pr-[9px] lg:px-[9px] lg:pt-[44px]    ${className}`}
       style={{ minHeight: "100dvh" }}
     >
       {/* Mobile: single column */}
-      <div className="lg:hidden flex flex-col justify-start items-start gap-y-[9px] ">
+      <div
+        className={`lg:hidden flex flex-col justify-start items-start ${gapY}`}
+      >
         {items.map((item, i) => (
           <div
             key={item.id}
@@ -90,10 +94,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
 
       {/* Desktop: configurable grid */}
       <LayoutGroup>
-        <div
-          className="hidden lg:grid gap-x-[9px] gap-y-[9px] "
-          style={colStyle}
-        >
+        <div className={`hidden lg:grid gap-x-[9px] ${gapY}`} style={colStyle}>
           {items.map((item, i) => (
             <motion.div
               layout
@@ -101,7 +102,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
               ref={(el) => {
                 desktopRefs.current[i] = el;
               }}
-              className="flex items-start justify-start"
+              className="flex items-center justify-start"
               style={{ height: rowHeight }}
               transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
             >

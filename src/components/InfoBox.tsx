@@ -70,7 +70,7 @@ export default function InfoBox({
                 )}
                 <WigglyButton
                   text={work.title.rendered}
-                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal  tracking-wider "
+                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal lowercase items-end -mt-[9px]  tracking-wider "
                   size="text-[28px] "
                   revealAnimation={false}
                   active={true}
@@ -79,7 +79,7 @@ export default function InfoBox({
 
                 <WigglyButton
                   text={work.title.rendered}
-                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal  tracking-wider "
+                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal lowercase tracking-wider "
                   size="text-[24px] "
                   revealAnimation={false}
                   active={true}
@@ -120,7 +120,8 @@ export default function InfoBox({
     const [descExpanded, setDescExpanded] = useState(false);
 
     const descWords = exhibition.acf.description?.split(/\s+/) ?? [];
-    const descBody = descWords.slice(0, -8).join(" ");
+    const descHead = descWords.slice(0, 2).join(" ");
+    const descBody = descWords.slice(2, -8).join(" ");
     const descTail = descWords.slice(-8).join(" ");
 
     const works = [
@@ -137,8 +138,8 @@ export default function InfoBox({
     ].filter(Boolean) as string[];
 
     return (
-      <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-full   lg:mt-[0px] mb-[0x]">
-        <div className="grid grid-cols-2 justify-start items-start gap-x-[32px] gap-y-[32px] lg:gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide w-full pt-[0px] pb-[0px]">
+      <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-auto   lg:mt-[0px] mb-[0x] ">
+        <div className="grid grid-cols-2 justify-start items-start gap-x-[32px] gap-y-[32px] lg:gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide max-w-3xl pt-[0px] pb-[0px]  ">
           <div className=" flex-col items-start justify-start col-span-2 w-full">
             <span className="flex gap-x-[6px] ">
               {onClose && (
@@ -155,10 +156,11 @@ export default function InfoBox({
               )}
               <WigglyButton
                 text={exhibition.title.rendered}
-                className="px-0 font-timesNewRoman"
-                size="text-[16px] lg:text-[28px]  "
+                className="px-0 font-timesNewRoman "
+                size="text-[24px] lg:text-[28px]  "
                 revealAnimation={false}
                 active
+                textShadow
               />
             </span>
             {exhibition.acf.exhibition_type && (
@@ -184,12 +186,23 @@ export default function InfoBox({
               <p
                 className={`font-timesNewRoman text-[24px] tracking-wide leading-[1.2] `}
               >
+                {descHead && (
+                  <WigglyButton
+                    text={descHead + " "}
+                    className="inline-flex px-0 font-timesNewRoman align-baseline"
+                    size="text-[24px] lg:text-[28px] leading-[1.2]"
+                    sizeGradient={{ from: 24, to: 24 }}
+                    wiggleGradient
+                    revealAnimation={false}
+                    active
+                  />
+                )}
                 {descBody && <span>{descBody} </span>}
                 {descTail && (
                   <WigglyButton
                     text={descTail}
                     className="inline-flex px-0 font-timesNewRoman align-baseline"
-                    size="text-[24px] lg:text-[28px]"
+                    size="text-[24px] lg:text-[28px] leading-[1.2]"
                     sizeGradient={{ from: 24, to: 16 }}
                     wiggleGradient
                     revealAnimation={false}
