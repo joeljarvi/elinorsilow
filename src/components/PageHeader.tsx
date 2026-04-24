@@ -38,16 +38,14 @@ export default function PageHeader() {
   // Desktop: whichever item is currently hovered
 
   const mobileSection =
-    activePage === "exhibitions" ? "" : "elinor silow / works /";
+    activePage === "exhibitions" ? "" : "Elinor Silow / Works /";
   const mobileText =
     !isInfoPage && mobileTitle && !exAsList && !showAsList
       ? `${mobileTitle}`
       : mobileSection;
 
   const section =
-    activePage === "exhibitions"
-      ? "elinor silow / exhibitions"
-      : "elinor silow / works";
+    activePage === "exhibitions" ? "Exhibitions" : "Elinor Silow / Works";
   return (
     <>
       {/* Mobile: fixed top-center */}
@@ -63,7 +61,7 @@ export default function PageHeader() {
             revealAnimation
             wiggleGradient
             sizeGradient={{ from: 28, to: 16 }}
-            className="no-hide-text font-timesNewRoman font-normal text-foreground items-center tracking-normal w-full"
+            className="no-hide-text font-timesNewRoman font-normal text-foreground items-baseline tracking-normal w-full"
             textShadow
           />
         )}
@@ -80,7 +78,7 @@ export default function PageHeader() {
               text={section}
               size="text-[28px]"
               revealAnimation={false}
-              className="font-timesNewRoman lowercase font-normal items-start justify-start text-foreground"
+              className="font-timesNewRoman font-normal items-start justify-start text-foreground"
               textShadow
             />
             {hoveredItemTitle?.trim() && (
@@ -94,7 +92,7 @@ export default function PageHeader() {
                   size="text-[28px]"
                   active={true}
                   revealAnimation
-                  className="font-timesNewRoman lowercase font-normal items-center justify-start text-foreground"
+                  className="font-timesNewRoman  font-normal items-start justify-start text-foreground"
                   sizeGradient={{ from: 28, to: 16 }}
                   textShadow
                 />

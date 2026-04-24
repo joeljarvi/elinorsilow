@@ -31,7 +31,6 @@ export default function ExhibitionCard({
   const [infoOpen, setInfoOpen] = useState(false);
   const { setHoveredItemTitle } = useUI();
   const cardRef = useRef<HTMLDivElement>(null);
-  const infoRef = useRef<HTMLDivElement>(null);
 
   // Mobile only: close when another card becomes active
   useEffect(() => {
@@ -41,8 +40,8 @@ export default function ExhibitionCard({
   }, [activeInfoId, ex.id]);
 
   useEffect(() => {
-    if (infoOpen && infoRef.current) {
-      infoRef.current.scrollIntoView({ behavior: "instant", block: "start" });
+    if (infoOpen && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [infoOpen]);
 
@@ -62,28 +61,16 @@ export default function ExhibitionCard({
   return (
     <Card
       ref={cardRef}
-      className="w-full min-h-dvh lg:min-h-0 lg:h-auto flex flex-col shadow-none scroll-mt-[72px] lg:max-w-4xl border-none bg-transparent p-0 gap-0 mx-0"
+      className="snap-start w-full min-h-dvh lg:min-h-0 lg:h-auto flex flex-col shadow-none scroll-mt-[0px] lg:max-w-4xl border-none bg-transparent p-0 gap-0 mx-0"
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      {infoOpen && (
-        <WigglyDivider
-          size="text-[16px]"
-          className="items-center py-0  "
-          active
-          char="x"
-          sizeGradient={{ from: 16, to: 8 }}
-          wiggleGradient
-          textShadow
-        />
-      )}
       <CardContent className="w-full h-full p-0 flex flex-col">
         <div className="flex-1 min-h-0 flex flex-col">
           {/* InfoBox — above image */}
           <AnimatePresence>
             {infoOpen && (
               <motion.div
-                ref={infoRef}
                 initial={{ height: 0, opacity: 0, filter: "blur(8px)" }}
                 animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
                 exit={{ height: 0, opacity: 0, filter: "blur(8px)" }}
@@ -96,7 +83,7 @@ export default function ExhibitionCard({
           </AnimatePresence>
 
           {/* Images — image_1 fills space when closed, shrinks to first thumbnail when open */}
-          <div className="flex-1 min-h-0 lg:max-w-3xl overflow-hidden flex flex-row flex-wrap content-start gap-[9px]">
+          <div className="flex-1 min-h-0  overflow-hidden flex flex-row flex-wrap content-start gap-[9px]">
             {ex.acf.image_1 && (
               <motion.button
                 layout
@@ -130,7 +117,7 @@ export default function ExhibitionCard({
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     revealIndex={index}
                     className="w-full h-auto lg:h-full object-contain opacity-100 hover:opacity-30"
-                    style={{ objectPosition: "center" }}
+                    style={{ objectPosition: "top-left" }}
                   />
                 )}
               </motion.button>
@@ -162,15 +149,25 @@ export default function ExhibitionCard({
       </CardContent>
 
       {infoOpen && (
-        <WigglyDivider
-          size="text-[16px]"
-          className="items-center mt-[18px] lowercase    "
-          active
-          char="x"
-          sizeGradient={{ from: 16, to: 8 }}
-          wiggleGradient
-          textShadow
-        />
+        <>
+          <WigglyDivider
+            size="text-[16px]"
+            className="flex lg:hidden items-center mt-[18px] lowercase    "
+            active
+            char="^"
+            sizeGradient={{ from: 24, to: 16 }}
+            wiggleGradient
+          />
+
+          <WigglyDivider
+            size="text-[16px]"
+            className="hidden lg:flex  items-center mt-[18px] lowercase    "
+            active
+            char="^"
+            sizeGradient={{ from: 28, to: 16 }}
+            wiggleGradient
+          />
+        </>
       )}
     </Card>
   );

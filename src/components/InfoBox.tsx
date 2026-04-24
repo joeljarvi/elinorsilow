@@ -70,7 +70,7 @@ export default function InfoBox({
                 )}
                 <WigglyButton
                   text={work.title.rendered}
-                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal lowercase items-end -mt-[9px]  tracking-wider "
+                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal  items-end -mt-[9px]  tracking-wider "
                   size="text-[28px] "
                   revealAnimation={false}
                   active={true}
@@ -79,7 +79,7 @@ export default function InfoBox({
 
                 <WigglyButton
                   text={work.title.rendered}
-                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal lowercase tracking-wider "
+                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal items-baseline  tracking-wider "
                   size="text-[24px] "
                   revealAnimation={false}
                   active={true}
@@ -157,7 +157,7 @@ export default function InfoBox({
               <WigglyButton
                 text={exhibition.title.rendered}
                 className="px-0 font-timesNewRoman "
-                size="text-[24px] lg:text-[28px]  "
+                size="text-[16px] lg:text-[16px]  "
                 revealAnimation={false}
                 active
                 textShadow

@@ -25,7 +25,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal lowercase text-[18px] lg:text-[16px]  text-foreground tracking-wider mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right  ${className}`}
+      className={`font-timesNewRoman font-normal  text-[18px] lg:text-[16px]  text-foreground tracking-wider mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right  ${className}`}
     >
       {children}
     </span>
@@ -35,29 +35,29 @@ function FilterLabel({
 /* -------------------- DATA -------------------- */
 
 const WORK_SORTS = [
-  { value: "year-latest", label: "latest" },
-  { value: "year-oldest", label: "oldest" },
-  { value: "title", label: "a–ö" },
+  { value: "year-latest", label: "Latest" },
+  { value: "year-oldest", label: "Oldest" },
+  { value: "title", label: "A–Ö" },
 ];
 
 const WORK_CATS = [
-  { value: "all", label: "all" },
-  { value: "painting", label: "painting" },
-  { value: "drawing", label: "drawing" },
-  { value: "sculpture", label: "sculpture" },
-  { value: "textile", label: "textile" },
+  { value: "all", label: "All" },
+  { value: "painting", label: "Painting" },
+  { value: "drawing", label: "Drawing" },
+  { value: "sculpture", label: "Sculpture" },
+  { value: "textile", label: "Textile" },
 ];
 
 const EX_SORTS = [
-  { value: "year-latest", label: "latest" },
-  { value: "year-oldest", label: "oldest" },
-  { value: "title", label: "a–ö" },
+  { value: "year-latest", label: "Latest" },
+  { value: "year-oldest", label: "Oldest" },
+  { value: "title", label: "A–Ö" },
 ];
 
 const EX_CATS = [
-  { value: "all", label: "all" },
-  { value: "solo", label: "solo" },
-  { value: "group", label: "group" },
+  { value: "all", label: "All" },
+  { value: "solo", label: "Solo Exhibitions" },
+  { value: "group", label: "Group Exhibitions" },
 ];
 
 /* -------------------- CONTROLS -------------------- */
@@ -133,7 +133,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
         <FilterLabel>Settings</FilterLabel>
         <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
           <WigglyButton
-            text={showAsList ? "hide list" : "show list"}
+            text={showAsList ? "Hide list" : "Show list"}
             size="text-[24px] lg:text-[16px]"
             active={showAsList}
             onClick={() => {
@@ -146,7 +146,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
           />
           <span className="hidden lg:flex">
             <WigglyButton
-              text="cols"
+              text="Columns"
               size="text-[18px] lg:text-[16px]"
               className="text-muted-foreground"
             />
@@ -170,7 +170,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
           </span>
           <span className="hidden lg:flex">
             <WigglyButton
-              text="rows"
+              text="Rows"
               size="text-[18px] lg:text-[16px]"
               className="text-muted-foreground"
             />
@@ -193,7 +193,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
             />
           </span>
           <WigglyButton
-            text={showColorBg ? "color" : "b/w"}
+            text={showColorBg ? "Color" : "B/W"}
             size="text-[24px] lg:text-[16px]"
             active={true}
             onClick={() => {
@@ -203,7 +203,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
             className={`text-foreground flex lg:hidden`}
           />
           <WigglyButton
-            text={textBlurred ? "unblur" : "blur text"}
+            text={textBlurred ? "Unblur" : "Blur text"}
             size="text-[24px] lg:text-[16px]"
             active={textBlurred}
             onClick={() => {
@@ -214,7 +214,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
           />
           {mounted && (
             <WigglyButton
-              text={theme === "dark" ? "dark" : "light"}
+              text={theme === "dark" ? "Dark" : "Light"}
               size="text-[24px] lg:text-[16px]"
               active={true}
               onClick={() => {

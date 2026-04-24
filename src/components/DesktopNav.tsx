@@ -11,10 +11,10 @@ import { Cross1Icon } from "@radix-ui/react-icons";
 import HeroText from "./HeroText";
 
 const NAV_LINKS = [
-  { href: "/", label: "works" },
-  { href: "/exhibitions", label: "exhibitions" },
-  { href: "/info", label: "info" },
-  { href: "/contact", label: "contact" },
+  { href: "/", label: "Works" },
+  { href: "/exhibitions", label: "Exhibitions" },
+  { href: "/info", label: "Info" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const transition = { duration: 0.35, ease: [0.25, 1, 0.5, 1] as const };
@@ -114,7 +114,7 @@ export default function DesktopNav() {
             </div>
           ))}
           <WigglyButton
-            text="instagram"
+            text="Instagram"
             size="text-[16px]"
             bold={false}
             revealAnimation={false}
@@ -126,7 +126,7 @@ export default function DesktopNav() {
             /
           </span>
           <WigglyButton
-            text={openSearch ? "close search" : "search"}
+            text={openSearch ? "Close Search" : "Search"}
             size="text-[16px]"
             bold={false}
             revealAnimation={false}
@@ -141,7 +141,7 @@ export default function DesktopNav() {
           </span>
         </div>
         <WigglyButton
-          text={navExpanded ? "close menu" : "menu"}
+          text={navExpanded ? "Close Menu" : "Menu"}
           size="text-[16px]"
           bold={false}
           revealAnimation={false}
@@ -155,7 +155,7 @@ export default function DesktopNav() {
               /
             </span>
             <WigglyButton
-              text={filterOpen ? "close filter" : "filter"}
+              text={filterOpen ? "Close Filter" : "Filter"}
               size="text-[16px]"
               bold={false}
               revealAnimation={false}
@@ -195,7 +195,7 @@ export default function DesktopNav() {
                 onClick={() => {
                   setHeroOverlayOpen(true);
                 }}
-                text="elinor silow"
+                text="Elinor Silow"
                 size="text-[24px]"
                 active={open}
               />
@@ -229,7 +229,7 @@ export default function DesktopNav() {
                   setOpen(false);
                   setOpenSearch(true);
                 }}
-                text="search"
+                text="Search"
                 size="text-[24px]"
                 active={open}
               />
@@ -245,7 +245,7 @@ export default function DesktopNav() {
               >
                 <WigglyButton
                   className="cursor-pointer text-muted-foreground "
-                  text="instagram"
+                  text="Instagram"
                   size="text-[24px]"
                   active={open}
                 />
@@ -263,7 +263,7 @@ export default function DesktopNav() {
           className={`${showColorBg ? "hidden" : "block"} absolute bottom-full left-0 right-0 h-[9px] bg-gradient-to-t from-background to-transparent`}
         /> */}
         <WigglyButton
-          text={open ? "close" : "menu"}
+          text={open ? "Close" : "Menu"}
           className="text-foreground no-hide-text tracking-widest"
           active={open}
           textShadow
@@ -284,7 +284,7 @@ export default function DesktopNav() {
         </span>
 
         <WigglyButton
-          text={filterOpen ? "close" : "filter"}
+          text={filterOpen ? "Close" : "Filter"}
           active={filterOpen}
           onClick={(e) => {
             e.stopPropagation();
