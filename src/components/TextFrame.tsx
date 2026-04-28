@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import WigglyDivider from "./WigglyDivider";
 
 function pageTitle(pathname: string): string {
@@ -8,16 +7,13 @@ function pageTitle(pathname: string): string {
   return pathname.slice(1).split("/")[0];
 }
 
-export default function PageFrame() {
-  const pathname = usePathname();
-  const title = pageTitle(pathname);
-
+export default function TextFrame() {
   return (
-    <div className="hidden fixed top-0 left-0 w-full h-dvh pointer-events-none z-[40]">
+    <div className="hidden absolute inset-0 pointer-events-none z-[40] w-full h-full">
       {/* Top */}
       <div className="absolute top-0 left-0 right-0">
         <WigglyDivider
-          text={title}
+          char="^"
           active
           size="text-[16px]"
           className="text-muted-foreground"
@@ -27,7 +23,7 @@ export default function PageFrame() {
       {/* Left */}
       <div className="absolute left-0 top-0 h-full">
         <WigglyDivider
-          text={title}
+          char="^"
           vertical
           active
           size="text-[16px]"
@@ -38,7 +34,7 @@ export default function PageFrame() {
       {/* Right */}
       <div className="absolute right-0 top-0 h-full">
         <WigglyDivider
-          text={title}
+          char="^"
           vertical
           active
           size="text-[16px]"

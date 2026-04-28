@@ -213,12 +213,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Controls — mobile: bottom-center, desktop: top-right */}
       <div className="absolute bottom-[9px] left-0 right-0 flex justify-center z-20 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end bg-transparent">
-        <div className="flex gap-x-0">
+        <div className="flex gap-x-0 w-full px-2">
           <WigglyButton
             text="close"
-            className="text-muted-foreground"
+            className=" bg-transparent py-[9px] px-2 justify-center flex w-full "
             size="text-[16px] "
-            active={false}
+            active
             onClick={onClose ?? (() => router.push("/exhibitions"))}
           />
         </div>
@@ -226,12 +226,12 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
 
       {/* Image counter */}
       {images.length > 1 && (
-        <div className="absolute top-[9px] left-1/2 -translate-x-1/2 lg:left-[9px] lg:translate-x-0 z-10 pointer-events-none">
+        <div className="absolute top-[9px] left-1/2 -translate-x-1/2 lg:left-[9px] lg:translate-x-0 z-10 pointer-events-none w-full px-2">
           <WigglyButton
             text={`${galleryCarousel.index + 1} / ${images.length}`}
             size="text-[16px]"
-            className="text-muted-foreground text-center"
-            active={false}
+            className=" text-center  py-[9px] px-2 bg-transparent justify-center flex w-full  "
+            active
           />
         </div>
       )}

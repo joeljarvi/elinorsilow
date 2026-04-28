@@ -3,10 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import {
-  prepareWithSegments,
-  measureNaturalWidth,
-} from "@chenglou/pretext";
+import { prepareWithSegments, measureNaturalWidth } from "@chenglou/pretext";
 
 interface WigglyDividerProps {
   char?: string;
@@ -19,9 +16,10 @@ interface WigglyDividerProps {
   sizeGradient?: { from: number; to: number };
   wiggleGradient?: boolean;
   textShadow?: boolean;
+  style?: React.CSSProperties;
 }
 
-type LetterDistortion = { rotate: number; y: number };
+type LetterDistortion = { rotate: number; y: number; x: number };
 
 const transition = { duration: 0.18, ease: "easeOut" as const };
 
@@ -48,25 +46,22 @@ export default function WigglyDivider({
   sizeGradient,
   wiggleGradient = false,
   textShadow = false,
+  style,
 }: WigglyDividerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const distortions = useRef<LetterDistortion[]>([]);
-  const [count, setCount] = useState(0); // number of word/char repetitions
+  const [count, setCount] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  // Text mode: use pretext to measure word width (horizontal) or letter height (vertical)
   useEffect(() => {
     if (!text || !containerRef.current) return;
 
     const basePx = measureFontSizePx(size);
-
-    // Measure word width for horizontal fill
     const font = `normal ${basePx}px "Times New Roman", Times, serif`;
     const prepared = prepareWithSegments(text, font);
     const wordWidth = measureNaturalWidth(prepared);
 
-    // Measure letter height for vertical fill
     const tempH = document.createElement("span");
     tempH.className = `font-timesNewRoman ${size}`;
     tempH.style.cssText =
@@ -81,17 +76,23 @@ export default function WigglyDivider({
       if (!containerRef.current) return;
       const { width: containerW, height: containerH } =
         containerRef.current.getBoundingClientRect();
+
       const span = vertical ? containerH : containerW;
       const wordSpan = vertical ? wordHeight : wordWidth;
+
       if (span === 0 || wordSpan === 0) return;
+
       const n = Math.max(1, Math.floor(span / wordSpan));
       const totalLetters = n * text.length;
+
       if (totalLetters !== distortions.current.length) {
         distortions.current = Array.from({ length: totalLetters }, () => ({
           rotate: parseFloat((Math.random() * 14 - 7).toFixed(1)),
           y: parseFloat((Math.random() * 6 - 3).toFixed(1)),
+          x: parseFloat((Math.random() * 6 - 3).toFixed(1)), // 👈 horizontal jitter
         }));
       }
+
       setCount(n);
       setMounted(true);
     };
@@ -102,7 +103,6 @@ export default function WigglyDivider({
     return () => ro.disconnect();
   }, [text, size, vertical]);
 
-  // Char fill mode: measure char width, repeat to fill container
   useEffect(() => {
     if (text || !containerRef.current) return;
 
@@ -114,7 +114,9 @@ export default function WigglyDivider({
     temp.className = `font-timesNewRoman tracking-wider ${size}`;
     temp.style.cssText =
       "position:fixed;left:-9999px;top:-9999px;visibility:hidden;white-space:nowrap";
+
     if (measureFontSize) temp.style.fontSize = `${measureFontSize}px`;
+
     temp.textContent = char;
     document.body.appendChild(temp);
     const charWidth = temp.getBoundingClientRect().width;
@@ -122,14 +124,18 @@ export default function WigglyDivider({
 
     const update = () => {
       if (!containerRef.current || charWidth === 0) return;
+
       const containerWidth = containerRef.current.getBoundingClientRect().width;
       const n = Math.floor(containerWidth / charWidth);
+
       if (n !== distortions.current.length) {
         distortions.current = Array.from({ length: n }, () => ({
           rotate: parseFloat((Math.random() * 14 - 7).toFixed(1)),
           y: parseFloat((Math.random() * 6 - 3).toFixed(1)),
+          x: parseFloat((Math.random() * 6 - 3).toFixed(1)), // 👈 horizontal jitter
         }));
       }
+
       setCount(n);
       setMounted(true);
     };
@@ -152,22 +158,17 @@ export default function WigglyDivider({
   const getWiggleFactor = (i: number, total: number) =>
     wiggleGradient ? i / Math.max(total - 1, 1) : 1;
 
-  // Text fill mode: render `count` repetitions of the word
   if (text) {
     const letters = Array.from({ length: count }, () => text.split("")).flat();
+
     return (
       <div
         ref={containerRef}
+        style={style}
         className={cn(
           vertical
-            ? cn(
-                "h-full flex flex-col items-center overflow-hidden",
-                spread ? "justify-between" : "justify-start",
-              )
-            : cn(
-                "w-full flex items-baseline overflow-hidden",
-                spread ? "justify-between" : "justify-start",
-              ),
+            ? "h-full flex flex-col items-center overflow-hidden"
+            : "w-full flex items-baseline overflow-hidden",
           textShadow && "text-shadow-md",
           className,
         )}
@@ -184,7 +185,6 @@ export default function WigglyDivider({
           ) : (
             <motion.span
               key={i}
-              layout={justify}
               className={cn(
                 "inline-block leading-none font-timesNewRoman tracking-wider",
                 size,
@@ -202,8 +202,11 @@ export default function WigglyDivider({
                       y:
                         (distortions.current[i]?.y ?? 0) *
                         getWiggleFactor(i, letters.length),
+                      x:
+                        (distortions.current[i]?.x ?? 0) *
+                        getWiggleFactor(i, letters.length),
                     }
-                  : { rotate: 0, y: 0 }
+                  : { rotate: 0, y: 0, x: 0 }
               }
               transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
             >
@@ -215,7 +218,6 @@ export default function WigglyDivider({
     );
   }
 
-  // Char fill mode
   return (
     <div
       ref={containerRef}
@@ -246,8 +248,11 @@ export default function WigglyDivider({
                     y:
                       (distortions.current[i]?.y ?? 0) *
                       getWiggleFactor(i, count),
+                    x:
+                      (distortions.current[i]?.x ?? 0) *
+                      getWiggleFactor(i, count),
                   }
-                : { rotate: 0, y: 0 }
+                : { rotate: 0, y: 0, x: 0 }
             }
             transition={{ ...transition, delay: distorted ? i * 0.008 : 0 }}
           >

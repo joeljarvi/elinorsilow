@@ -7,6 +7,7 @@ import { useUI } from "@/context/UIContext";
 import WigglyButton from "./WigglyButton";
 import { Button } from "./ui/button";
 import { MagnifyingGlassIcon, Cross2Icon } from "@radix-ui/react-icons";
+import WigglyDivider from "./WigglyDivider";
 
 export function InfoRow({
   label,
@@ -55,17 +56,17 @@ export default function InfoBox({
         <div className="font-timesNewRoman text-[16px]  leading-tight tracking-wider w-full">
           <div className="flex flex-col items-start justify-center">
             <div className="flex items-center justify-between gap-x-[9px] w-full mb-[0px]">
-              <span className="flex gap-x-[6px]">
+              <span className="flex gap-x-[6px] items-center">
                 {onClose && (
                   <button
-                    className="cursor-pointer "
+                    className="cursor-pointer lg:hidden"
                     onClick={(e) => {
                       e.stopPropagation();
                       onClose();
                     }}
                     aria-label="Close"
                   >
-                    <Cross2Icon className="w-4 h-4" />
+                    x
                   </button>
                 )}
                 <WigglyButton
@@ -86,18 +87,18 @@ export default function InfoBox({
                   sizeGradient={{ from: 24, to: 16 }}
                 />
               </span>
-              {/* {onImageClick && !hideZoom && (
+              {onClose && (
                 <button
-                  className="cursor-pointer text-muted-foreground"
+                  className="cursor-pointer hidden lg:block"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onImageClick();
+                    onClose();
                   }}
-                  aria-label="Zoom"
+                  aria-label="Close"
                 >
-                  <MagnifyingGlassIcon className="w-4 h-4" />
+                  <Cross2Icon className="w-4 h-4" />
                 </button>
-              )} */}
+              )}
             </div>
             {yearDimensions && <div className="w-full">{yearDimensions}</div>}
             {work.acf.materials && (
@@ -137,30 +138,33 @@ export default function InfoBox({
     ].filter(Boolean) as string[];
 
     return (
-      <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-auto   lg:mt-[0px] mb-[0x] ">
-        <div className="grid grid-cols-2 justify-start items-start gap-x-[32px] gap-y-[32px] lg:gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide max-w-3xl pt-[0px] pb-[0px]  ">
+      <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-auto   lg:mt-[0px] mb-[0x]  ">
+        <div className="flex flex-col  justify-start items-start gap-x-[32px] gap-y-[32px] lg:gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide max-w-3xl pt-[0px] pb-[0px]  ">
           <div className=" flex-col items-start justify-start col-span-2 w-full">
-            <span className="flex gap-x-[6px] ">
-              {onClose && (
-                <button
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClose();
-                  }}
-                  aria-label="Close"
-                >
-                  <Cross2Icon className="w-4 h-4" />
-                </button>
-              )}
-              <WigglyButton
-                text={exhibition.title.rendered}
-                className="px-0 font-timesNewRoman "
-                size="text-[16px] lg:text-[16px]  "
-                revealAnimation={false}
-                active
-              />
-            </span>
+            <div className="flex items-start justify-between w-full">
+              <span className="flex justify-between gap-x-[6px] w-full ">
+                <WigglyButton
+                  text={exhibition.title.rendered}
+                  className="px-0 font-timesNewRoman "
+                  size="text-[16px] lg:text-[16px]  "
+                  revealAnimation={false}
+                  active
+                />
+
+                {onClose && (
+                  <button
+                    className="cursor-pointer px-1  bg-transparent text-[16px] "
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClose();
+                    }}
+                    aria-label="Close"
+                  >
+                    X
+                  </button>
+                )}
+              </span>
+            </div>
             {exhibition.acf.exhibition_type && (
               <div className="whitespace-nowrap tracking-wider">
                 {exhibition.acf.exhibition_type} exhibition
@@ -199,7 +203,7 @@ export default function InfoBox({
                 {descTail && (
                   <WigglyButton
                     text={descTail}
-                    className="inline-flex px-0 font-timesNewRoman align-baseline"
+                    className="inline-flex px-0 font-timesNewRoman align-baseline justify-start"
                     size="text-[24px] lg:text-[28px] leading-[1.2]"
                     sizeGradient={{ from: 24, to: 16 }}
                     wiggleGradient
@@ -211,25 +215,13 @@ export default function InfoBox({
             </div>
           )}
 
-          {exhibition.acf.credits && (
-            <div className="col-start-1 col-span-1  mx-0 tracking-wider">
-              <WigglyButton
-                text="credits"
-                size="text-[16px] "
-                className="  pl-0"
-                revealAnimation={false}
-                active
-              />
-              <div>{exhibition.acf.credits}</div>
-            </div>
-          )}
           <div className="px-0 col-start-2 col-span-1">
             {works.length > 0 && (
               <>
                 <WigglyButton
-                  text="featuring the works:"
+                  text="Featuring the works:"
                   size="text-[16px] "
-                  className=" px-0"
+                  className=" px-0 justify-start"
                   revealAnimation={false}
                   active
                 />
@@ -237,7 +229,7 @@ export default function InfoBox({
                   <WigglyButton
                     size="text-[16px] "
                     bold={false}
-                    className="pl-0"
+                    className="pl-0 justify-start"
                     revealAnimation={false}
                     active={false}
                     text={w}
@@ -247,6 +239,18 @@ export default function InfoBox({
               </>
             )}
           </div>
+          {exhibition.acf.credits && (
+            <div className="col-start-1 col-span-1 mb-[32px] mx-0 tracking-wider">
+              <WigglyButton
+                text="Credits"
+                size="text-[16px] "
+                className="  pl-0"
+                revealAnimation={false}
+                active
+              />
+              <div>{exhibition.acf.credits}</div>
+            </div>
+          )}
         </div>
       </div>
     );

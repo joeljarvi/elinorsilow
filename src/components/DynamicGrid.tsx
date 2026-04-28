@@ -103,7 +103,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
                 desktopRefs.current[i] = el;
               }}
               className="flex items-center justify-start"
-              style={{ height: rowHeight }}
+              style={{ minHeight: rowHeight }}
               transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
             >
               {renderItem(item, i)}

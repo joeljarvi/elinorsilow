@@ -53,9 +53,10 @@ export default function WigglyButton({
   }, []);
 
   const distorted = mounted && (active || hovered);
-  const spread = spreading !== undefined
-    ? (spreading || (justify && hovered))
-    : justify && distorted;
+  const spread =
+    spreading !== undefined
+      ? spreading || (justify && hovered)
+      : justify && distorted;
   const letters = text.split("");
 
   const getCharFontSize = (i: number): number | undefined => {
@@ -84,7 +85,8 @@ export default function WigglyButton({
         animate={
           distorted
             ? {
-                rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                rotate:
+                  (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
                 y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
               }
             : { rotate: 0, y: 0 }
@@ -101,7 +103,7 @@ export default function WigglyButton({
     return char === " " ? (
       <span
         key={i}
-        className="inline-block w-[0.3em]"
+        className="inline-block w-[0.3em] "
         style={fs ? { width: `${fs * 0.3}px` } : undefined}
       />
     ) : (
@@ -109,7 +111,7 @@ export default function WigglyButton({
         key={i}
         layout={justify}
         className={cn(
-          "inline-block leading-none font-timesNewRoman tracking-wider",
+          "inline-block leading-none  font-timesNewRoman tracking-wider",
           size,
           bold ? "font-bold" : "font-normal",
         )}
@@ -117,7 +119,8 @@ export default function WigglyButton({
         animate={
           distorted
             ? {
-                rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                rotate:
+                  (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
                 y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
               }
             : { rotate: 0, y: 0 }

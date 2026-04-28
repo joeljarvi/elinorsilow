@@ -10,6 +10,7 @@ import { RevealImage } from "@/components/RevealImage";
 import WigglyDivider from "./WigglyDivider";
 import { info } from "console";
 import exhibition from "../../schemas/exhibition";
+import TextFrame from "./TextFrame";
 
 interface ExhibitionCardProps {
   ex: Exhibition;
@@ -61,11 +62,23 @@ export default function ExhibitionCard({
   return (
     <Card
       ref={cardRef}
-      className="snap-start scroll-mt-[44px] w-full lg:h-auto flex flex-col shadow-none lg:max-w-4xl border-none bg-transparent gap-0 mx-0"
+      className="scroll-mt-[5px] lg:scroll-mt-[44px] w-full lg:h-auto flex justify-start items-start shadow-none l border-none bg-transparent gap-0 mx-0 relative "
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      <CardContent className="w-full h-full p-0 flex flex-col">
+      {infoOpen && (
+        <>
+          <WigglyDivider
+            char="^"
+            active
+            size="text-[16px]"
+            className=" mt-[9px] w-full flex items-center justify-start pointer-events-none "
+            sizeGradient={{ from: 16, to: 8 }}
+          />{" "}
+        </>
+      )}
+
+      <CardContent className="w-full  p-0 flex flex-col lg:max-w-2xl">
         <div className="flex-1 min-h-0 flex flex-col">
           {/* InfoBox — above image */}
           <AnimatePresence>
@@ -105,7 +118,7 @@ export default function ExhibitionCard({
                   <img
                     src={ex.acf.image_1.url}
                     alt={ex.title.rendered}
-                    className="h-[64px] w-auto object-contain opacity-100 hover:opacity-30"
+                    className="h-[64px] w-auto object-contain "
                     style={{ objectPosition: "top left" }}
                   />
                 ) : (
@@ -147,27 +160,14 @@ export default function ExhibitionCard({
           </div>
         </div>
       </CardContent>
-
       {infoOpen && (
-        <>
-          <WigglyDivider
-            size="text-[16px]"
-            className="flex lg:hidden items-center mt-[18px] lowercase    "
-            active
-            char="^"
-            sizeGradient={{ from: 24, to: 16 }}
-            wiggleGradient
-          />
-
-          <WigglyDivider
-            size="text-[16px]"
-            className="hidden lg:flex  items-center mt-[18px] lowercase    "
-            active
-            char="^"
-            sizeGradient={{ from: 28, to: 16 }}
-            wiggleGradient
-          />
-        </>
+        <WigglyDivider
+          char="^"
+          active
+          size="text-[16px]"
+          className=" mt-[9px] w-full flex items-center justify-start pointer-events-none "
+          sizeGradient={{ from: 16, to: 8 }}
+        />
       )}
     </Card>
   );

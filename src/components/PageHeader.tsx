@@ -50,7 +50,7 @@ export default function PageHeader() {
     <>
       {/* Mobile: fixed top-center */}
       <div
-        className={`lg:hidden fixed top-0 left-0 right-0 z-[100] flex flex-col pr-[9px] pt-[6px] pb-[0px] gap-y-0 h-dvh pointer-events-none w-full`}
+        className={`lg:hidden  fixed top-0 left-0 right-0 z-[100] flex flex-col pr-[9px] pt-[6px] pb-[0px] gap-y-0 bg-background  pointer-events-none w-full pl-[0px] `}
       >
         {!isInfoPage && (
           <WigglyButton
@@ -68,7 +68,7 @@ export default function PageHeader() {
 
       {/* Desktop: fixed top-left */}
       <div
-        className={`hidden lg:flex fixed top-0 left-0 z-[90] items-start pt-[3px] pb-[9px] px-[4px] pointer-events-none bg-transparent`}
+        className={`hidden lg:flex fixed top-0 left-0 z-[90] items-start pt-[3px] pb-[0px] px-[0px] pointer-events-none bg-transparent`}
       >
         {!pathname.startsWith("/info") && (
           <div className="flex items-center justify-start">

@@ -37,7 +37,7 @@ export default function WorkCard({
   return (
     <Card
       ref={cardRef}
-      className="w-full bg-transparent flex flex-col h-dvh lg:h-full items-start justify-start  border-0 shadow-none   gap-0 rounded-none overflow-hidden py-0"
+      className="w-full bg-transparent flex flex-col scroll-mt-[5px] lg:scroll-mt-[44px] h-dvh lg:min-h-0 items-start justify-start  border-0 shadow-none   gap-0 rounded-none py-0"
       onMouseEnter={() => setHoveredItemTitle(work.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
@@ -47,23 +47,22 @@ export default function WorkCard({
           {infoOpen && (
             <motion.div
               ref={infoRef}
-              initial={{ height: 0, opacity: 0, filter: "blur(8px)" }}
-              animate={{ height: "auto", opacity: 1, filter: "blur(0px)" }}
-              exit={{ height: 0, opacity: 0, filter: "blur(8px)" }}
-              transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-              className="overflow-hidden flex-shrink-0 cursor-zoom-in  lg:p-0 w-full"
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(8px)" }}
+              transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+              className="flex-shrink-0 cursor-zoom-in lg:p-0 w-full"
               onClick={() => onOpen()}
             >
               <InfoBox work={work} onClose={() => setInfoOpen(false)} />
             </motion.div>
           )}
         </AnimatePresence>
-        {/* Image fills remaining space */}
+        {/* Image */}
         <motion.button
-          animate={{ scale: infoOpen ? 0.75 : 1 }}
-          transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
-          style={{ originX: 0, originY: 0 }}
-          className={`flex-1 min-h-0 flex justify-start items-start w-full ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
+          layout
+          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          className={`flex justify-start items-start w-full ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
           onClick={() => (infoOpen ? onOpen() : setInfoOpen(true))}
           aria-label={
             infoOpen
