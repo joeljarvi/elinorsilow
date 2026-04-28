@@ -35,7 +35,7 @@ export default function ContactClient() {
         <Link href="mailto:elinor.silow@gmail.com">
           <OGubbeText
             text=" elinor.silow@gmail.com"
-            className="font-timesNewRoman tracking-wider font-normal text-[18px] underline underline-offset-7 decoration-[1px] lg:text-[36px]"
+            className="font-timesNewRoman tracking-wider font-normal text-[18px]  lg:text-[36px]"
             lettersOnly
             revealAnimation={false}
           />
@@ -50,7 +50,7 @@ export default function ContactClient() {
           <Link href="instagram.com/elinorsilow">
             <OGubbeText
               text=" Instagram"
-              className="font-timesNewRoman tracking-wider font-normal underline underline-offset-7 decoration-[1px] text-[18px] lg:text-[36px]"
+              className="font-timesNewRoman tracking-wider font-normal  text-[18px] lg:text-[36px]"
               lettersOnly
               revealAnimation={false}
             />

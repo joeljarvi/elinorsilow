@@ -61,7 +61,7 @@ export default function ExhibitionCard({
   return (
     <Card
       ref={cardRef}
-      className="snap-start w-full min-h-dvh lg:min-h-0 lg:h-auto flex flex-col shadow-none scroll-mt-[0px] lg:max-w-4xl border-none bg-transparent p-0 gap-0 mx-0"
+      className="snap-start scroll-mt-[44px] w-full lg:h-auto flex flex-col shadow-none lg:max-w-4xl border-none bg-transparent gap-0 mx-0"
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >

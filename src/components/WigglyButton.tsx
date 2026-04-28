@@ -10,6 +10,8 @@ interface WigglyButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   href?: string;
   vertical?: boolean;
+  justify?: boolean;
+  spreading?: boolean;
   className?: string;
   size?: string;
   bold?: boolean;
@@ -27,6 +29,8 @@ export default function WigglyButton({
   onClick,
   href,
   vertical = false,
+  justify = false,
+  spreading,
   className,
   size = "text-[16px]",
   bold = false,
@@ -49,6 +53,9 @@ export default function WigglyButton({
   }, []);
 
   const distorted = mounted && (active || hovered);
+  const spread = spreading !== undefined
+    ? (spreading || (justify && hovered))
+    : justify && distorted;
   const letters = text.split("");
 
   const getCharFontSize = (i: number): number | undefined => {
@@ -62,57 +69,65 @@ export default function WigglyButton({
 
   const transition = { duration: 0.18, ease: "easeOut" as const };
 
-  const letterSpans = vertical
-    ? letters.map((char, i) =>
-        char === " " ? (
-          <span key={i} className="block h-[0.4em]" />
-        ) : (
-          <motion.span
-            key={i}
-            className={cn(
-              "inline-block leading-none font-timesNewRoman tracking-wider",
-              size,
-              bold ? "font-bold" : "font-normal",
-            )}
-            animate={
-              distorted
-                ? {
-                    rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
-                    y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
-                  }
-                : { rotate: 0, y: 0 }
-            }
-            transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
-          >
-            {char}
-          </motion.span>
-        ),
-      )
-    : letters.map((char, i) =>
-        char === " " ? (
-          <span key={i} className="inline-block w-[0.3em]" />
-        ) : (
-          <motion.span
-            key={i}
-            className={cn(
-              "inline-block leading-none font-timesNewRoman tracking-wider",
-              size,
-              bold ? "font-bold" : "font-normal",
-            )}
-            animate={
-              distorted
-                ? {
-                    rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
-                    y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
-                  }
-                : { rotate: 0, y: 0 }
-            }
-            transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
-          >
-            {char}
-          </motion.span>
-        ),
-      );
+  const verticalLetters = letters.map((char, i) =>
+    char === " " ? (
+      <span key={i} className="block h-[0.4em]" />
+    ) : (
+      <motion.span
+        key={i}
+        layout={justify}
+        className={cn(
+          "inline-block leading-none font-timesNewRoman tracking-wider",
+          size,
+          bold ? "font-bold" : "font-normal",
+        )}
+        animate={
+          distorted
+            ? {
+                rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
+              }
+            : { rotate: 0, y: 0 }
+        }
+        transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
+      >
+        {char}
+      </motion.span>
+    ),
+  );
+
+  const horizontalLetters = letters.map((char, i) => {
+    const fs = getCharFontSize(i);
+    return char === " " ? (
+      <span
+        key={i}
+        className="inline-block w-[0.3em]"
+        style={fs ? { width: `${fs * 0.3}px` } : undefined}
+      />
+    ) : (
+      <motion.span
+        key={i}
+        layout={justify}
+        className={cn(
+          "inline-block leading-none font-timesNewRoman tracking-wider",
+          size,
+          bold ? "font-bold" : "font-normal",
+        )}
+        style={fs ? { fontSize: `${fs}px` } : undefined}
+        animate={
+          distorted
+            ? {
+                rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
+                y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
+              }
+            : { rotate: 0, y: 0 }
+        }
+        transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
+      >
+        {char}
+      </motion.span>
+    );
+  });
 
   if (href) {
     return (
@@ -122,15 +137,23 @@ export default function WigglyButton({
         className={cn(
           "no-hide-text pointer-events-auto px-[9px] tracking-wider",
           vertical
-            ? "inline-flex flex-col items-center"
-            : "inline-flex items-baseline text-[16px]",
+            ? cn(
+                "inline-flex flex-col items-center",
+                justify && "h-full",
+                spread ? "justify-between" : "justify-center",
+              )
+            : cn(
+                "inline-flex items-baseline text-[16px]",
+                justify ? "w-full" : "flex-wrap",
+                spread ? "justify-between" : "justify-center",
+              ),
           textShadow && "text-shadow-xl",
           className,
         )}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {letterSpans}
+        {vertical ? verticalLetters : horizontalLetters}
       </Link>
     );
   }
@@ -141,6 +164,8 @@ export default function WigglyButton({
         data-no-reveal
         className={cn(
           "no-hide-text pointer-events-auto cursor-pointer px-[9px] inline-flex flex-col items-center tracking-wider",
+          justify && "h-full",
+          spread ? "justify-between" : "justify-center",
           textShadow && "text-shadow-xl",
           className,
         )}
@@ -151,31 +176,7 @@ export default function WigglyButton({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {letters.map((char, i) =>
-          char === " " ? (
-            <span key={i} className="block h-[0.4em]" />
-          ) : (
-            <motion.span
-              key={i}
-              className={cn(
-                "inline-block leading-none font-timesNewRoman tracking-wider",
-                size,
-                bold ? "font-bold" : "font-normal",
-              )}
-              animate={
-                distorted
-                  ? {
-                      rotate: distortions.current[i]?.rotate ?? 0,
-                      y: distortions.current[i]?.y ?? 0,
-                    }
-                  : { rotate: 0, y: 0 }
-              }
-              transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
-            >
-              {char}
-            </motion.span>
-          ),
-        )}
+        {verticalLetters}
       </button>
     );
   }
@@ -184,7 +185,9 @@ export default function WigglyButton({
     <button
       data-no-reveal
       className={cn(
-        " pointer-events-auto cursor-pointer px-[9px] flex flex-wrap items-baseline text-[16px] tracking-wider",
+        "pointer-events-auto cursor-pointer px-[9px] flex items-baseline text-[16px] tracking-wider",
+        justify ? "w-full" : "flex-wrap",
+        spread ? "justify-between" : "justify-center",
         textShadow && "text-shadow-md",
         className,
       )}
@@ -195,38 +198,7 @@ export default function WigglyButton({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {letters.map((char, i) => {
-        const fs = getCharFontSize(i);
-        return char === " " ? (
-          <span
-            key={i}
-            className="inline-block w-[0.3em]"
-            style={fs ? { width: `${fs * 0.3}px` } : undefined}
-          />
-        ) : (
-          <motion.span
-            key={i}
-            className={cn(
-              "inline-block leading-none font-timesNewRoman tracking-wider",
-              size,
-              bold ? "font-bold" : "font-normal",
-            )}
-            style={fs ? { fontSize: `${fs}px` } : undefined}
-            animate={
-              distorted
-                ? {
-                    rotate: (distortions.current[i]?.rotate ?? 0) * getWiggleFactor(i),
-                    y: (distortions.current[i]?.y ?? 0) * getWiggleFactor(i),
-                  }
-                : { rotate: 0, y: 0 }
-            }
-            transition={{ ...transition, delay: distorted ? i * 0.015 : 0 }}
-          >
-            {char}
-          </motion.span>
-        );
-      },
-      )}
+      {horizontalLetters}
     </button>
   );
 }

@@ -84,7 +84,6 @@ export default function InfoBox({
                   revealAnimation={false}
                   active={true}
                   sizeGradient={{ from: 24, to: 16 }}
-                  textShadow
                 />
               </span>
               {/* {onImageClick && !hideZoom && (
@@ -160,7 +159,6 @@ export default function InfoBox({
                 size="text-[16px] lg:text-[16px]  "
                 revealAnimation={false}
                 active
-                textShadow
               />
             </span>
             {exhibition.acf.exhibition_type && (

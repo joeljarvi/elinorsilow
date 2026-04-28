@@ -56,8 +56,8 @@ const EX_SORTS = [
 
 const EX_CATS = [
   { value: "all", label: "All" },
-  { value: "solo", label: "Solo Exhibitions" },
-  { value: "group", label: "Group Exhibitions" },
+  { value: "solo", label: "Solo" },
+  { value: "group", label: "Group " },
 ];
 
 /* -------------------- CONTROLS -------------------- */
@@ -298,7 +298,7 @@ function ExhibitionsControls({
         <FilterLabel>Settings</FilterLabel>
         <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
           <WigglyButton
-            text={exAsList ? "hide list" : "show list"}
+            text={exAsList ? "Hide list" : "Show list"}
             size="text-[18px] lg:text-[16px]"
             active={exAsList}
             onClick={() => {
@@ -309,7 +309,7 @@ function ExhibitionsControls({
           />
           <span className="hidden lg:flex">
             <WigglyButton
-              text="cols"
+              text="Columns"
               size="text-[18px] lg:text-[16px]"
               className="text-muted-foreground"
             />
@@ -333,7 +333,7 @@ function ExhibitionsControls({
           </span>
           <span className="hidden lg:flex">
             <WigglyButton
-              text="rows"
+              text="Rows"
               size="text-[18px] lg:text-[16px]"
               className="text-muted-foreground"
             />
@@ -356,7 +356,7 @@ function ExhibitionsControls({
             />
           </span>
           <WigglyButton
-            text={textBlurred ? "unblur" : "blur text"}
+            text={textBlurred ? "Unblur" : "Blur text"}
             size="text-[18px] lg:text-[16px]"
             active={textBlurred}
             onClick={() => {
@@ -367,7 +367,7 @@ function ExhibitionsControls({
           />
           {mounted && (
             <WigglyButton
-              text={theme === "dark" ? "dark" : "light"}
+              text={theme === "dark" ? "Dark" : "Light"}
               size="text-[18px] lg:text-[16px]"
               onClick={() => {
                 setTheme(theme === "dark" ? "light" : "dark");

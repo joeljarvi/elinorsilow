@@ -191,7 +191,7 @@ export default function DesktopNav() {
               transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
             >
               <WigglyButton
-                className="cursor-pointer tracking-normal text-muted-foreground  "
+                className="cursor-pointer tracking-normal justify-center text-center w-full text-muted-foreground  "
                 onClick={() => {
                   setHeroOverlayOpen(true);
                 }}
@@ -200,25 +200,30 @@ export default function DesktopNav() {
                 active={open}
               />
             </motion.div>
-            {NAV_LINKS.map(({ href, label }) => (
-              <motion.div
-                key={href}
-                layout
-                transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
-              >
-                <Link href={href}>
-                  <WigglyButton
-                    className={`cursor-pointer ${pageLabel === label ? "text-foreground" : "text-muted-foreground"}`}
-                    onClick={() => setOpen(false)}
-                    text={label}
-                    size="text-[24px]"
-                    active={open}
-                    revealAnimation={true}
-                    textShadow={pageLabel === label}
-                  />
-                </Link>
-              </motion.div>
-            ))}
+            {NAV_LINKS.map(({ href, label }) => {
+              const isActive =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <motion.div
+                  key={href}
+                  layout
+                  transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+                  className="w-full"
+                >
+                  <Link href={href} className="w-full block">
+                    <WigglyButton
+                      className={`cursor-pointer ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+                      onClick={() => setOpen(false)}
+                      text={label}
+                      size="text-[24px]"
+                      active={open}
+                      justify
+                      spreading={isActive && open}
+                    />
+                  </Link>
+                </motion.div>
+              );
+            })}
             <motion.div
               layout
               transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
@@ -266,7 +271,6 @@ export default function DesktopNav() {
           text={open ? "Close" : "Menu"}
           className="text-foreground no-hide-text tracking-widest"
           active={open}
-          textShadow
           onClick={(e) => {
             e.stopPropagation();
             if (filterOpen) {
@@ -279,7 +283,7 @@ export default function DesktopNav() {
           size="text-[16px]"
         />
 
-        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-foreground text-shadow-md ">
+        <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-foreground  ">
           /
         </span>
 
@@ -297,7 +301,6 @@ export default function DesktopNav() {
           }}
           bold={false}
           size="text-[16px]"
-          textShadow
           className="text-foreground no-hide-text tracking-widest"
         />
       </div>

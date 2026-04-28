@@ -50,7 +50,7 @@ export default function PageHeader() {
     <>
       {/* Mobile: fixed top-center */}
       <div
-        className={`lg:hidden fixed top-0 left-0 right-0 z-[100] flex flex-col px-[9px] pt-[6px] pb-[0px] gap-y-0 bg-background pointer-events-none w-full`}
+        className={`lg:hidden fixed top-0 left-0 right-0 z-[100] flex flex-col pr-[9px] pt-[6px] pb-[0px] gap-y-0 h-dvh pointer-events-none w-full`}
       >
         {!isInfoPage && (
           <WigglyButton
@@ -61,8 +61,7 @@ export default function PageHeader() {
             revealAnimation
             wiggleGradient
             sizeGradient={{ from: 28, to: 16 }}
-            className="no-hide-text font-timesNewRoman font-normal text-foreground items-baseline tracking-normal w-full"
-            textShadow
+            className="no-hide-text font-timesNewRoman font-normal justify-start text-foreground items-baseline tracking-normal w-full"
           />
         )}
       </div>
@@ -72,14 +71,14 @@ export default function PageHeader() {
         className={`hidden lg:flex fixed top-0 left-0 z-[90] items-start pt-[3px] pb-[9px] px-[4px] pointer-events-none bg-transparent`}
       >
         {!pathname.startsWith("/info") && (
-          <div className="flex items-start justify-start">
+          <div className="flex items-center justify-start">
             <WigglyButton
               key={section}
               text={section}
               size="text-[28px]"
               revealAnimation={false}
-              className="font-timesNewRoman font-normal items-start justify-start text-foreground"
-              textShadow
+              className="font-timesNewRoman font-normal items-center justify-center text-foreground"
+              active={true}
             />
             {hoveredItemTitle?.trim() && (
               <>
@@ -92,9 +91,8 @@ export default function PageHeader() {
                   size="text-[28px]"
                   active={true}
                   revealAnimation
-                  className="font-timesNewRoman  font-normal items-start justify-start text-foreground"
+                  className="font-timesNewRoman  font-normal items-center justify-start text-foreground"
                   sizeGradient={{ from: 28, to: 16 }}
-                  textShadow
                 />
               </>
             )}

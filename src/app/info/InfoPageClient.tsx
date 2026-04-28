@@ -8,7 +8,6 @@ import { InfoRow } from "@/components/InfoBox";
 import HeroText from "@/components/HeroText";
 import { Fragment, useEffect, useState } from "react";
 import WigglyButton from "@/components/WigglyButton";
-import ScrollRevealInit from "@/components/ScrollRevealInit";
 
 function ScrollHint() {
   const [visible, setVisible] = useState(false);
@@ -111,7 +110,6 @@ export default function InfoPageClient() {
   return (
     <section className="mt-[18px] lg:mt-[54px] relative w-full mb-[64px]">
       <ScrollHint />
-      <ScrollRevealInit />
 
       <div className="text-foreground flex flex-col gap-y-[18px] lg:gap-y-0 w-full lg:grid lg:grid-cols-12 pt-[0px] lg:gap-x-[64px] px-[18px] lg:px-[9px] pb-[64px]">
         <div className="flex flex-col lg:col-start-1 lg:col-span-10 mb-[18px] lg:mb-[32px] mt-[0px]">
