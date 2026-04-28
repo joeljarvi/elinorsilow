@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Exhibition } from "../../lib/sanity";
 import { useUI } from "@/context/UIContext";
+import { useWorks } from "@/context/WorksContext";
 import { Card, CardContent } from "@/components/ui/card";
 import InfoBox from "@/components/InfoBox";
 import { RevealImage } from "@/components/RevealImage";
@@ -11,6 +12,7 @@ import WigglyDivider from "./WigglyDivider";
 import { info } from "console";
 import exhibition from "../../schemas/exhibition";
 import TextFrame from "./TextFrame";
+import { Work } from "../../lib/sanity";
 
 interface ExhibitionCardProps {
   ex: Exhibition;
@@ -18,6 +20,7 @@ interface ExhibitionCardProps {
   onOpen: () => void;
   activeInfoId?: string | null;
   onInfoOpen?: (id: string) => void;
+  onOpenWorkByTitle: (title: string) => void;
 }
 
 const ease = [0.25, 1, 0.5, 1] as const;
@@ -28,9 +31,11 @@ export default function ExhibitionCard({
   onOpen,
   activeInfoId,
   onInfoOpen,
+  onOpenWorkByTitle,
 }: ExhibitionCardProps) {
   const [infoOpen, setInfoOpen] = useState(false);
   const { setHoveredItemTitle } = useUI();
+  const { allWorks } = useWorks();
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Mobile only: close when another card becomes active
@@ -78,7 +83,11 @@ export default function ExhibitionCard({
                 transition={{ duration: 0.5, ease }}
                 className="overflow-hidden flex-shrink-0 "
               >
-                <InfoBox exhibition={ex} onClose={() => setInfoOpen(false)} />
+                <InfoBox
+                  exhibition={ex}
+                  onWorkSelect={onOpenWorkByTitle}
+                  onClose={() => setInfoOpen(false)}
+                />
               </motion.div>
             )}
           </AnimatePresence>

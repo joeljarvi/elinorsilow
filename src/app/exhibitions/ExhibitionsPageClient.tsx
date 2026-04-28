@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useUI } from "@/context/UIContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
+import WorkModal from "@/components/WorkModal";
 import { motion } from "framer-motion";
 import PageLoader from "@/components/PageLoader";
 import DynamicGrid from "@/components/DynamicGrid";
 import ExhibitionCard from "@/components/ExhibitionCard";
 import { OGubbeText } from "@/components/OGubbeText";
+import { Work } from "../../../lib/sanity";
+import { useWorks } from "@/context/WorksContext";
 
 export default function ExhibitionsPageClient() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -27,6 +30,7 @@ export default function ExhibitionsPageClient() {
     setVisibleExhibitionIndex,
     visibleExhibitionIndex,
   } = useUI();
+  const { allWorks } = useWorks();
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -40,6 +44,15 @@ export default function ExhibitionsPageClient() {
     observer.observe(el);
     return () => observer.disconnect();
   }, [setActivePage]);
+
+  const [activeWork, setActiveWork] = useState<Work | null>(null);
+
+  const handleWorkSelect = (title: string) => {
+    const work = allWorks.find((w) => w.title.rendered === title);
+    if (!work) return;
+
+    setActiveWork(work);
+  };
 
   const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
   const [initialAnimDone, setInitialAnimDone] = useState(false);
@@ -94,6 +107,7 @@ export default function ExhibitionsPageClient() {
             <ExhibitionCard
               ex={ex}
               index={i}
+              onOpenWorkByTitle={handleWorkSelect}
               onOpen={() => openExhibition(ex)}
               activeInfoId={activeInfoId}
               onInfoOpen={(id) => setActiveInfoId(id)}
@@ -112,6 +126,14 @@ export default function ExhibitionsPageClient() {
           onClose={() => {
             setActiveExhibitionSlug(null);
           }}
+        />
+      )}
+
+      {activeWork && (
+        <WorkModal
+          slug={activeWork.slug}
+          onClose={() => setActiveWork(null)}
+          showInfo
         />
       )}
     </section>

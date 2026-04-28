@@ -194,9 +194,9 @@ a {
   box-shadow: none !important;
 }
 
-/* Blur all text except WigglyButton (no-hide-text) elements */
+/* Blur all text and buttons except no-hide-text elements */
 [data-blur-text="true"]
-  :where(p, h1, h2, h3, h4, h5, h6, span, a, li):not(.no-hide-text):not(
+  :where(p, h1, h2, h3, h4, h5, h6, span, a, li, button):not(.no-hide-text):not(
     .no-hide-text *
   ) {
   filter: blur(4px) !important;

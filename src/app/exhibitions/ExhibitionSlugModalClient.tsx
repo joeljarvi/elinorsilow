@@ -100,22 +100,14 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   }, [currentIndex, filteredExhibitions, loadExhibitionByIndex]);
 
   const swipeHandlers = useSwipe({
-    onSwipedLeft: goNext,
-    onSwipedRight: goPrev,
+    onSwipedLeft: () => galleryCarousel.api?.scrollNext(),
+    onSwipedRight: () => galleryCarousel.api?.scrollPrev(),
   });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        if (galleryCarousel.index > 0) galleryCarousel.api?.scrollPrev();
-        else goPrev();
-      }
-      if (e.key === "ArrowRight") {
-        const images = getImages(exhibition);
-        if (galleryCarousel.index < images.length - 1)
-          galleryCarousel.api?.scrollNext();
-        else goNext();
-      }
+      if (e.key === "ArrowLeft") galleryCarousel.api?.scrollPrev();
+      if (e.key === "ArrowRight") galleryCarousel.api?.scrollNext();
       if (e.key === "Escape" && onClose) onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -163,11 +155,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                   className="absolute left-0 top-0 w-1/2 h-full z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (galleryCarousel.index > 0) {
-                      galleryCarousel.api?.scrollPrev();
-                    } else if (hasPrev) {
-                      goPrev();
-                    }
+                    galleryCarousel.api?.scrollPrev();
                   }}
                 />
 
@@ -176,7 +164,7 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
                   className="absolute right-0 top-0 w-1/2 h-full z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleTap();
+                    galleryCarousel.api?.scrollNext();
                   }}
                 />
                 <Image

@@ -290,7 +290,7 @@ export default function DesktopNav() {
             size="text-[16px]"
           />
 
-          <span className="inline-flex items-center mt-[4px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-foreground  ">
+          <span className="inline-flex items-center mt-[0px] font-timesNewRoman font-normal px-0 text-[16px] select-none text-foreground  ">
             /
           </span>
 

@@ -8,9 +8,10 @@ import { useUI } from "@/context/UIContext";
 type WorkModalProps = {
   slug: string;
   onClose: () => void;
+  showInfo?: boolean;
 };
 
-export default function WorkModal({ slug, onClose }: WorkModalProps) {
+export default function WorkModal({ slug, onClose, showInfo }: WorkModalProps) {
   const { showColorBg } = useUI();
   const [isOpen, setIsOpen] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -48,7 +49,7 @@ export default function WorkModal({ slug, onClose }: WorkModalProps) {
             exit={{ scale: 0.94, opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <WorkSlugModalClient slug={slug} onClose={handleClose} />
+            <WorkSlugModalClient slug={slug} onClose={handleClose} showInfo={showInfo} />
           </motion.div>
 
           {/* Custom cursor */}

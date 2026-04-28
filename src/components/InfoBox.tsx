@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { Work, Exhibition } from "../../lib/sanity";
-import CornerFrame from "@/components/CornerFrame";
+
 import { useUI } from "@/context/UIContext";
 import WigglyButton from "./WigglyButton";
-import { Button } from "./ui/button";
-import { MagnifyingGlassIcon, Cross2Icon } from "@radix-ui/react-icons";
-import WigglyDivider from "./WigglyDivider";
+
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 export function InfoRow({
   label,
@@ -35,11 +34,13 @@ export default function InfoBox({
   exhibition,
   onClose,
   hideZoom = false,
+  onWorkSelect,
 }: {
   work?: Work;
   exhibition?: Exhibition;
   onClose?: () => void;
   hideZoom?: boolean;
+  onWorkSelect?: (workTitle: string) => void;
 }) {
   const { showColorBg } = useUI();
 
@@ -50,7 +51,7 @@ export default function InfoBox({
 
     return (
       <div
-        className={`text-foreground relative group  block gap-x-[18px]  items-center  overflow-hidden pt-[9px] px-[0px] lg:px-[0px] pb-[9px] w-full`}
+        className={`text-foreground relative group  block gap-x-[18px] no-hide items-center  overflow-hidden pt-[9px] px-[0px] lg:px-[0px] pb-[9px] w-full`}
       >
         {/* Metadata */}
         <div className="font-timesNewRoman text-[16px]  leading-tight tracking-wider w-full">
@@ -96,13 +97,13 @@ export default function InfoBox({
                   }}
                   aria-label="Close"
                 >
-                  <Cross2Icon className="w-4 h-4" />
+                  x
                 </button>
               )}
             </div>
-            {yearDimensions && <div className="w-full">{yearDimensions}</div>}
+            {yearDimensions && <p className="w-full">{yearDimensions}</p>}
             {work.acf.materials && (
-              <div className="w-full">{work.acf.materials}</div>
+              <p className="w-full">{work.acf.materials}</p>
             )}
             {work.acf.exhibition && (
               <div className="w-full flex flex-wrap items-baseline justify-start gap-x-[5px] whitespace-normal ">
@@ -122,7 +123,6 @@ export default function InfoBox({
     const descWords = exhibition.acf.description?.split(/\s+/) ?? [];
     const descHead = descWords.slice(0, 2).join(" ");
     const descBody = descWords.slice(2, -8).join(" ");
-    const descTail = descWords.slice(-8).join(" ");
 
     const works = [
       exhibition.acf.work_1,
@@ -189,28 +189,28 @@ export default function InfoBox({
                 className={`font-timesNewRoman text-[24px] tracking-wide leading-[1.2] `}
               >
                 {descHead && (
-                  <WigglyButton
-                    text={descHead + " "}
-                    className="inline-flex px-0 font-timesNewRoman align-baseline"
-                    size="text-[24px] lg:text-[28px] leading-[1.2]"
-                    sizeGradient={{ from: 24, to: 24 }}
-                    wiggleGradient
-                    revealAnimation={false}
-                    active
-                  />
+                  <>
+                    <WigglyButton
+                      text={descHead + " "}
+                      className=" inline-flex lg:hidden px-0 font-timesNewRoman align-baseline"
+                      size="text-[24px] lg:text-[28px] leading-[1.2]"
+                      sizeGradient={{ from: 24, to: 24 }}
+                      wiggleGradient
+                      revealAnimation={false}
+                      active
+                    />
+                    <WigglyButton
+                      text={descHead + " "}
+                      className="hidden lg:inline-flex px-0 font-timesNewRoman align-baseline"
+                      size="text-[24px] lg:text-[28px] leading-[1.2]"
+                      sizeGradient={{ from: 28, to: 28 }}
+                      wiggleGradient
+                      revealAnimation={false}
+                      active
+                    />
+                  </>
                 )}
                 {descBody && <span>{descBody} </span>}
-                {descTail && (
-                  <WigglyButton
-                    text={descTail}
-                    className="inline-flex px-0 font-timesNewRoman align-baseline justify-start"
-                    size="text-[24px] lg:text-[28px] leading-[1.2]"
-                    sizeGradient={{ from: 24, to: 16 }}
-                    wiggleGradient
-                    revealAnimation={false}
-                    active
-                  />
-                )}
               </p>
             </div>
           )}
@@ -220,20 +220,20 @@ export default function InfoBox({
               <>
                 <WigglyButton
                   text="Featuring the works:"
-                  size="text-[16px] "
+                  size="text-[16px] lg:text-[16px] "
                   className=" px-0 justify-start"
                   revealAnimation={false}
                   active
                 />
                 {works.map((w, i) => (
                   <WigglyButton
-                    size="text-[16px] "
+                    size="text-[24px] lg:text-[28px] "
                     bold={false}
                     className="pl-0 justify-start"
                     revealAnimation={false}
-                    active={false}
                     text={w}
                     key={i}
+                    onClick={() => onWorkSelect?.(w)}
                   />
                 ))}
               </>

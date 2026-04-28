@@ -8,15 +8,18 @@ import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
 import BlurredWorkBg from "@/components/BlurredWorkBg";
 import WigglyButton from "@/components/WigglyButton";
+import InfoBox from "@/components/InfoBox";
 
 type WorkSlugModalClientProps = {
   slug: string;
   onClose?: () => void;
+  showInfo?: boolean;
 };
 
 export default function WorkSlugModalClient({
   slug,
   onClose,
+  showInfo,
 }: WorkSlugModalClientProps) {
   const {
     filteredWorks,
@@ -93,21 +96,29 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className="relative w-full h-dvh flex flex-col lg:flex-row p-[18px] gap-x-4"
+      className="relative w-full h-dvh flex flex-col  gap-x-4 p-[9px]"
       onClick={onClose}
     >
       {showColorBg && work?.image_url && (
         <BlurredWorkBg imageUrl={work.image_url} />
       )}
       {/* Image */}
+      {showInfo && (
+        <div
+          className="flex-shrink-0  w-full lg:w-[280px] pt-[0px] "
+          onClick={(e) => e.stopPropagation()}
+        >
+          <InfoBox work={work} />
+        </div>
+      )}
       <div className="flex-1 flex flex-col min-w-0" onClick={onClose}>
-        <div className="relative flex-1">
+        <div className="relative flex-1 ">
           {work.image_url && (
             <Image
               src={work.image_url}
               alt={work.title.rendered}
               fill
-              className="object-contain object-center pointer-events-auto"
+              className={`object-contain pointer-events-auto ${showInfo ? "object-left-top" : "object-center"}`}
               priority
             />
           )}
@@ -115,7 +126,7 @@ export default function WorkSlugModalClient({
       </div>
 
       {/* Mobile close button */}
-      <div className="hidden  justify-center ">
+      <div className="hidden justify-center">
         <WigglyButton text="close" size="text-18px" onClick={onClose} />
       </div>
     </div>
