@@ -66,18 +66,6 @@ export default function ExhibitionCard({
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      {infoOpen && (
-        <>
-          <WigglyDivider
-            char="^"
-            active
-            size="text-[16px]"
-            className=" mt-[9px] w-full flex items-center justify-start pointer-events-none "
-            sizeGradient={{ from: 16, to: 8 }}
-          />{" "}
-        </>
-      )}
-
       <CardContent className="w-full  p-0 flex flex-col lg:max-w-2xl">
         <div className="flex-1 min-h-0 flex flex-col">
           {/* InfoBox — above image */}
