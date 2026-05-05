@@ -37,12 +37,8 @@ export default function PageHeader() {
   }
   // Desktop: whichever item is currently hovered
 
-  const mobileSection =
-    activePage === "exhibitions" ? "" : "Elinor Silow / Works /";
   const mobileText =
-    !isInfoPage && mobileTitle && !exAsList && !showAsList
-      ? `${mobileTitle}`
-      : mobileSection;
+    !isInfoPage && mobileTitle && !exAsList && !showAsList ? mobileTitle : null;
 
   const section =
     activePage === "exhibitions" ? "Exhibitions" : "Elinor Silow / Works";
@@ -50,9 +46,9 @@ export default function PageHeader() {
     <>
       {/* Mobile: fixed top-center */}
       <div
-        className={`lg:hidden  fixed top-0 left-0 right-0 z-[100] flex flex-col pr-[9px] pt-[6px] pb-[0px] gap-y-0 bg-background  pointer-events-none w-full pl-[0px] `}
+        className={`lg:hidden fixed top-0 left-0 right-0 z-[100] flex flex-col pr-[9px] pt-[6px] pb-[0px] gap-y-0 bg-background pointer-events-none w-full pl-[0px]`}
       >
-        {!isInfoPage && (
+        {mobileText && (
           <WigglyButton
             key={mobileText}
             text={mobileText}

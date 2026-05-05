@@ -82,7 +82,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
+    <div className="flex flex-col gap-y-[32px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort by</FilterLabel>
         <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[0px] px-[9px]">
@@ -251,7 +251,7 @@ function ExhibitionsControls({
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="flex flex-col gap-y-[44px] lg:gap-y-[32px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
+    <div className="flex flex-col gap-y-[32px] lg:gap-y-[32px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort</FilterLabel>
         <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[0px] px-[9px]">
@@ -383,7 +383,11 @@ function ExhibitionsControls({
   );
 }
 
-export function FilterContent({ onMobileSelect }: { onMobileSelect: () => void }) {
+export function FilterContent({
+  onMobileSelect,
+}: {
+  onMobileSelect: () => void;
+}) {
   const { activePage } = useUI();
   return activePage === "exhibitions" ? (
     <ExhibitionsControls onMobileSelect={onMobileSelect} />
