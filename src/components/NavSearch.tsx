@@ -97,17 +97,17 @@ export default function NavSearch({
         <WigglyDivider
           text="search"
           size="text-[8px]"
-          className="w-full text-muted-foreground"
+          className="w-full mt-[9px] text-muted-foreground"
           active={true}
         />
         {query && (
-          <div className="flex flex-col pt-[0px]">
+          <div className="flex flex-col pt-[9px]">
             {results.length > 0 ? (
               results.slice(0, 20).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleResultClick(item)}
-                  className="no-hide-text flex items-baseline gap-x-[9px] px-[9px] py-[6px] text-left"
+                  className="no-hide-text flex items-baseline gap-x-[18px] px-[9px] py-[6px] text-left"
                 >
                   <span className="font-timesNewRoman text-[16px] text-muted-foreground whitespace-nowrap shrink-0">
                     {item.type}
@@ -180,7 +180,7 @@ export default function NavSearch({
                   <button
                     key={item.id}
                     onClick={() => handleResultClick(item)}
-                    className="no-hide-text flex cursor-pointer items-baseline gap-x-[9px] px-[18px] py-[9px] text-left  "
+                    className="no-hide-text flex cursor-pointer items-baseline gap-x-[18px] px-[18px] py-[9px] text-left  "
                   >
                     <span className="font-timesNewRoman font-normal text-[16px]  text-muted-foreground whitespace-nowrap  shrink-0 px-[9px]">
                       {item.type}
