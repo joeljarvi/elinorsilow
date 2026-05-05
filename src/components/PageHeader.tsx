@@ -40,8 +40,6 @@ export default function PageHeader() {
   const mobileText =
     !isInfoPage && mobileTitle && !exAsList && !showAsList ? mobileTitle : null;
 
-  const section =
-    activePage === "exhibitions" ? "Exhibitions" : "Elinor Silow / Works";
   return (
     <>
       {/* Mobile: fixed top-center */}
@@ -66,34 +64,21 @@ export default function PageHeader() {
       <div
         className={`hidden lg:flex fixed top-0 left-0 z-[90] items-start pt-[3px] pb-[0px] px-[0px] pointer-events-none bg-transparent`}
       >
-        {!pathname.startsWith("/info") && (
-          <div className="flex items-center justify-start">
-            <WigglyButton
-              key={section}
-              text={section}
-              size="text-[28px]"
-              revealAnimation={false}
-              className="font-timesNewRoman font-normal items-center justify-center tracking-tight text-foreground hidden"
-              active={true}
-            />
-            {hoveredItemTitle?.trim() && (
-              <>
-                <span className="hidden font-timesNewRoman font-normal text-[28px] text-foreground select-none ">
-                  /
-                </span>
-                <WigglyButton
-                  key={hoveredItemTitle}
-                  text={hoveredItemTitle.trim()}
-                  size="text-[28px]"
-                  active={true}
-                  revealAnimation
-                  className="font-timesNewRoman  font-normal items-center justify-start text-foreground"
-                  sizeGradient={{ from: 28, to: 16 }}
-                />
-              </>
-            )}
-          </div>
-        )}
+        {!pathname.startsWith("/info") &&
+          (() => {
+            const desktopTitle = hoveredItemTitle?.trim() || mobileTitle;
+            return desktopTitle ? (
+              <WigglyButton
+                key={desktopTitle}
+                text={desktopTitle}
+                size="text-[28px]"
+                active={true}
+                revealAnimation
+                className="font-timesNewRoman font-normal items-center justify-start text-foreground"
+                sizeGradient={{ from: 28, to: 16 }}
+              />
+            ) : null;
+          })()}
       </div>
     </>
   );

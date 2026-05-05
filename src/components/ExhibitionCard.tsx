@@ -67,11 +67,11 @@ export default function ExhibitionCard({
   return (
     <Card
       ref={cardRef}
-      className="scroll-mt-[5px] lg:scroll-mt-[44px] w-full lg:h-auto flex justify-start items-start shadow-none l border-none bg-transparent gap-0 mx-0 relative "
+      className="scroll-mt-[9px] lg:scroll-mt-[44px] w-full lg:h-auto flex justify-start items-start shadow-none l border-none bg-transparent gap-0 mx-0 relative "
       onMouseEnter={() => setHoveredItemTitle(ex.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
-      <CardContent className="w-full  p-0 flex flex-col lg:max-w-2xl">
+      <CardContent className="w-full p-0 flex flex-col">
         <div className="flex-1 min-h-0 flex flex-col">
           {/* InfoBox — above image */}
           <AnimatePresence>
@@ -93,7 +93,7 @@ export default function ExhibitionCard({
           </AnimatePresence>
 
           {/* Images — image_1 fills space when closed, shrinks to first thumbnail when open */}
-          <div className="flex-1 min-h-0  overflow-hidden flex flex-row flex-wrap content-start gap-[9px]">
+          <div className="flex-1 min-h-0 overflow-hidden flex flex-row flex-wrap content-start gap-[9px] lg:max-w-2xl">
             {ex.acf.image_1 && (
               <motion.button
                 layout
@@ -159,11 +159,10 @@ export default function ExhibitionCard({
       </CardContent>
       {infoOpen && (
         <WigglyDivider
-          char="^"
           active
-          size="text-[16px]"
-          className=" mt-[9px] w-full flex items-center justify-start pointer-events-none "
-          sizeGradient={{ from: 16, to: 8 }}
+          text="exhibition"
+          size="text-[8px]"
+          className="text-muted-foreground mt-[9px]"
         />
       )}
     </Card>

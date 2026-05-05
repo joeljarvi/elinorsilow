@@ -7,6 +7,7 @@ import { useUI } from "@/context/UIContext";
 import WigglyButton from "./WigglyButton";
 
 import { Cross2Icon } from "@radix-ui/react-icons";
+import WigglyDivider from "./WigglyDivider";
 
 export function InfoRow({
   label,
@@ -133,7 +134,13 @@ export default function InfoBox({
 
     return (
       <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-auto   lg:mt-[0px] mb-[0x]  ">
-        <div className="flex flex-col  justify-start items-start gap-x-[32px] gap-y-[32px] lg:gap-y-[32px] font-timesNewRoman text-[16px] leading-tight tracking-wide max-w-3xl pt-[0px] pb-[0px]  ">
+        <WigglyDivider
+          active
+          text="exhibition"
+          size="text-[8px]"
+          className="text-muted-foreground"
+        />
+        <div className="flex flex-col  justify-start items-start gap-x-[32px] gap-y-[9px] lg:gap-y-[9px] mt-[9px] font-timesNewRoman text-[16px] leading-tight tracking-wide  pt-[0px] pb-[0px]  ">
           <div className=" flex-col items-start justify-start col-span-2 w-full">
             <div className="flex items-start justify-between w-full">
               <span className="flex justify-between gap-x-[6px] w-full ">
@@ -176,7 +183,12 @@ export default function InfoBox({
               <div className="tracking-wider">{exhibition.acf.year}</div>
             )}
           </div>
-
+          <WigglyDivider
+            active
+            text="description"
+            size="text-[8px]"
+            className="text-muted-foreground"
+          />
           {exhibition.acf.description && (
             <div className="col-start-1 col-span-2 max-w-md lg:max-w-xl tracking-wider">
               <p className="font-timesNewRoman text-[24px] tracking-wide leading-[1.2]">
@@ -216,7 +228,12 @@ export default function InfoBox({
               )}
             </div>
           )}
-
+          <WigglyDivider
+            active
+            text="featuring the works:"
+            size="text-[8px]"
+            className="text-muted-foreground"
+          />
           <div className="px-0 col-start-2 col-span-1">
             {works.length > 0 && (
               <>
@@ -229,7 +246,7 @@ export default function InfoBox({
                 />
                 {works.map((w, i) => (
                   <WigglyButton
-                    size="text-[24px] lg:text-[28px] "
+                    size="text-[24px] lg:text-[16px] "
                     bold={false}
                     className="pl-0 justify-start"
                     revealAnimation={false}
@@ -241,8 +258,14 @@ export default function InfoBox({
               </>
             )}
           </div>
+          <WigglyDivider
+            active
+            text="credits"
+            size="text-[8px]"
+            className="text-muted-foreground"
+          />
           {exhibition.acf.credits && (
-            <div className="col-start-1 col-span-1 mb-[32px] mx-0 tracking-wider">
+            <div className="col-start-1 col-span-1 mb-[0px] mx-0 tracking-wider">
               <WigglyButton
                 text="Credits"
                 size="text-[16px] "
@@ -253,6 +276,12 @@ export default function InfoBox({
               <div>{exhibition.acf.credits}</div>
             </div>
           )}
+          <WigglyDivider
+            active
+            text="gallery"
+            size="text-[8px]"
+            className="text-muted-foreground"
+          />
         </div>
       </div>
     );

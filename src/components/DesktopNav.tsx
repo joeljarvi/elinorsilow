@@ -246,7 +246,7 @@ export default function DesktopNav() {
 
       {/* ── MOBILE: fixed bottom tab ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto bg-transparent">
-        <div className="flex items-center w-full px-[9px]">
+        <div className="flex items-start w-full px-[9px] h-[32px]">
           <WigglyButton
             text={open ? "close" : "menu&filters"}
             className="text-foreground bg-transparent justify-center py-[9px] px-2 w-full no-hide-text tracking-widest font-bold"
