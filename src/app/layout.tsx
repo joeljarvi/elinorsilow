@@ -12,6 +12,7 @@ import { NavSlotProvider } from "@/context/NavSlotContext";
 
 import BlurTextManager from "@/components/BlurTextManager";
 import NavWrapper from "@/components/NavWrapper";
+import DottedGrid from "@/components/DottedGrid";
 
 import NavSpacer from "@/components/NavSpacer";
 
@@ -208,6 +209,7 @@ export default function RootLayout({
                     <NavSlotProvider>
                       <AnimationProvider>
                         <BlurTextManager />
+
                         {/* Column shadow overlay — fixed, covers full viewport */}
                         <FixedFooter />
                         <NavWrapper />
@@ -215,7 +217,6 @@ export default function RootLayout({
                         {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
                       <div className="fixed bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-background/0 z-50 pointer-events-none" /> */}
                         <CarouselProvider>
-                          <NavSpacer />
                           {children} {modal}
                         </CarouselProvider>
                       </AnimationProvider>

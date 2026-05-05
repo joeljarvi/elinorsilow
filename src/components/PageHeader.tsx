@@ -77,12 +77,12 @@ export default function PageHeader() {
               text={section}
               size="text-[28px]"
               revealAnimation={false}
-              className="font-timesNewRoman font-normal items-center justify-center text-foreground"
+              className="font-timesNewRoman font-normal items-center justify-center tracking-tight text-foreground hidden"
               active={true}
             />
             {hoveredItemTitle?.trim() && (
               <>
-                <span className="font-timesNewRoman font-normal text-[28px] text-foreground select-none ">
+                <span className="hidden font-timesNewRoman font-normal text-[28px] text-foreground select-none ">
                   /
                 </span>
                 <WigglyButton

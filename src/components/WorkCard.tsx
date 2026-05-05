@@ -37,7 +37,7 @@ export default function WorkCard({
   return (
     <Card
       ref={cardRef}
-      className="w-full bg-transparent flex flex-col  scroll-mt-[5px] lg:scroll-mt-[44px] h-dvh lg:min-h-0 items-start justify-start  border-0 shadow-none   gap-0 rounded-none py-0"
+      className="w-full bg-transparent flex flex-col  scroll-mt-[64px] lg:scroll-mt-[45px] h-dvh lg:min-h-0 items-start justify-start  border-0 shadow-none   gap-0 rounded-none py-0"
       onMouseEnter={() => setHoveredItemTitle(work.title.rendered)}
       onMouseLeave={() => setHoveredItemTitle(null)}
     >

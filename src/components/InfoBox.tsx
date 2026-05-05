@@ -56,23 +56,11 @@ export default function InfoBox({
         {/* Metadata */}
         <div className="font-timesNewRoman text-[16px]  leading-tight tracking-wider w-full">
           <div className="flex flex-col items-start justify-center">
-            <div className="flex items-center justify-between gap-x-[9px] w-full mb-[0px]">
-              <span className="flex gap-x-[6px] items-center">
-                {onClose && (
-                  <button
-                    className="cursor-pointer lg:hidden"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClose();
-                    }}
-                    aria-label="Close"
-                  >
-                    x
-                  </button>
-                )}
+            <div className="flex items-center justify-between gap-x-[9px] w-full  mb-[0px]">
+              <span className="flex gap-x-[6px] items-center w-full">
                 <WigglyButton
                   text={work.title.rendered}
-                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal  items-end -mt-[9px]  tracking-wider "
+                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal  items-center  tracking-wider "
                   size="text-[28px] "
                   revealAnimation={false}
                   active={true}
@@ -90,7 +78,7 @@ export default function InfoBox({
               </span>
               {onClose && (
                 <button
-                  className="cursor-pointer hidden lg:block"
+                  className="cursor-pointer "
                   onClick={(e) => {
                     e.stopPropagation();
                     onClose();
@@ -121,8 +109,14 @@ export default function InfoBox({
     const [descExpanded, setDescExpanded] = useState(false);
 
     const descWords = exhibition.acf.description?.split(/\s+/) ?? [];
-    const descHead = descWords.slice(0, 2).join(" ");
-    const descBody = descWords.slice(2, -8).join(" ");
+    const descHead = descWords.slice(0, 3).join(" ");
+    const descBodyWords = descWords.slice(3);
+    const TRUNCATE_AT = 15;
+    const isTruncatable = descBodyWords.length > TRUNCATE_AT;
+    const descBody =
+      !descExpanded && isTruncatable
+        ? descBodyWords.slice(0, TRUNCATE_AT).join(" ") + " (...)"
+        : descBodyWords.join(" ");
 
     const works = [
       exhibition.acf.work_1,
@@ -184,10 +178,8 @@ export default function InfoBox({
           </div>
 
           {exhibition.acf.description && (
-            <div className="col-start-1 col-span-2 max-w-md lg:max-w-xl tracking-wider ">
-              <p
-                className={`font-timesNewRoman text-[24px] tracking-wide leading-[1.2] `}
-              >
+            <div className="col-start-1 col-span-2 max-w-md lg:max-w-xl tracking-wider">
+              <p className="font-timesNewRoman text-[24px] tracking-wide leading-[1.2]">
                 {descHead && (
                   <>
                     <WigglyButton
@@ -210,8 +202,18 @@ export default function InfoBox({
                     />
                   </>
                 )}
-                {descBody && <span>{descBody} </span>}
+                {descBody && <span>{descBody}</span>}
               </p>
+              {isTruncatable && (
+                <WigglyButton
+                  text={descExpanded ? "Read less" : "Read more"}
+                  size="text-[16px]"
+                  className="px-0 mt-[9px] text-foreground"
+                  revealAnimation={false}
+                  active
+                  onClick={() => setDescExpanded((v) => !v)}
+                />
+              )}
             </div>
           )}
 

@@ -383,7 +383,7 @@ function ExhibitionsControls({
   );
 }
 
-function FilterContent({ onMobileSelect }: { onMobileSelect: () => void }) {
+export function FilterContent({ onMobileSelect }: { onMobileSelect: () => void }) {
   const { activePage } = useUI();
   return activePage === "exhibitions" ? (
     <ExhibitionsControls onMobileSelect={onMobileSelect} />
@@ -405,7 +405,7 @@ export default function FilterBox() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[110] lg:z-[70] flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
+    <div className="fixed bottom-0 left-0 right-0 lg:left-auto z-[110] lg:z-[70] hidden lg:flex justify-center lg:justify-end pointer-events-none px-[0px] lg:px-0">
       <motion.div
         initial={{ y: "100dvh" }}
         animate={{ y: filterOpen ? "0dvh" : "100dvh" }}

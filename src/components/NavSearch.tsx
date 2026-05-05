@@ -10,6 +10,7 @@ import { Cross1Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import WigglyButton from "./WigglyButton";
 import { OGubbeText } from "./OGubbeText";
+import WigglyDivider from "./WigglyDivider";
 
 export default function NavSearch({
   open,
@@ -73,22 +74,61 @@ export default function NavSearch({
 
   if (inline) {
     return (
-      <div className="relative flex items-start self-start lg:pt-[32px] lg:px-[9px] w-full bg-blue-500">
-        <div className="flex items-center w-full">
+      <div className="w-full flex flex-col">
+        <div className="flex items-center px-[9px]">
+          <MagnifyingGlassIcon className="shrink-0 w-[16px] h-[16px] text-muted-foreground" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="search"
-            className="outline-none bg-transparent font-timesNewRoman font-bold text-[16px] tracking-wide px-[12px] py-[0px] flex-1 placeholder:text-muted-foreground"
+            placeholder="Search..."
+            className="flex-1 outline-none bg-transparent font-timesNewRoman text-[16px] tracking-wide px-[9px] py-[9px] placeholder:text-muted-foreground"
           />
           {query && (
             <button
-              className="no-hide-text cursor-pointer shrink-0 px-[12px]"
+              className="no-hide-text cursor-pointer shrink-0 p-[6px] text-muted-foreground"
               onClick={() => setQuery("")}
-            />
+              aria-label="Clear search"
+            >
+              <Cross1Icon className="w-[14px] h-[14px]" />
+            </button>
           )}
         </div>
+        <WigglyDivider
+          text="search"
+          size="text-[8px]"
+          className="w-full text-muted-foreground"
+          active={true}
+        />
+        {query && (
+          <div className="flex flex-col pt-[0px]">
+            {results.length > 0 ? (
+              results.slice(0, 20).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleResultClick(item)}
+                  className="no-hide-text flex items-baseline gap-x-[9px] px-[9px] py-[6px] text-left"
+                >
+                  <span className="font-timesNewRoman text-[16px] text-muted-foreground whitespace-nowrap shrink-0">
+                    {item.type}
+                  </span>
+                  <OGubbeText
+                    text={item.title}
+                    className="font-timesNewRoman text-[16px] tracking-wider"
+                    revealAnimation={false}
+                    lettersOnly
+                    wrap
+                    bold={false}
+                  />
+                </button>
+              ))
+            ) : (
+              <p className="px-[9px] py-[9px] font-timesNewRoman text-[16px] text-muted-foreground">
+                No results for &ldquo;{query}&rdquo;
+              </p>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -102,40 +142,45 @@ export default function NavSearch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed  inset-0 z-[125] lg:z-[50]   flex flex-col bg-background lg:bg-background p-[32px] lg:pt-[9px] lg:px-[9px]  "
+          className="fixed  inset-0 z-[125] lg:z-[50] bg-background  flex flex-col  p-[32px] lg:pt-[32px] lg:px-[18px]  "
         >
           {/* Search input row */}
 
-          <div className="px-[18px] flex items-center border-b border-border shrink-0 border bg-background  border-x-transparent border-t-transparent lg:rounded-none">
-            <MagnifyingGlassIcon className="mr-2 text-muted-foreground shrink-0 w-[16px] h-[16px]   " />
+          <div className="px-[18px] flex items-center shrink-0 bg-background">
+            <MagnifyingGlassIcon className="mr-2 text-muted-foreground shrink-0 w-[16px] h-[16px]" />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 outline-none bg-transparent text-[16px]  font-timesNewRoman font-normal py-[9px] lg:py-[18px] tracking-wide px-[9px]"
+              className="flex-1 outline-none bg-transparent text-[16px] font-timesNewRoman font-normal py-[9px] tracking-wide px-[9px]"
             />
             <button
-              className=" no-hide-text cursor-pointer p-[6px] text-muted-foreground hover:opacity-70 transition-opacity "
+              className="no-hide-text cursor-pointer p-[6px] text-muted-foreground hover:opacity-70 transition-opacity"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();
               }}
-              aria-label="Close info"
+              aria-label="Close search"
             >
-              <Cross1Icon className="w-[16px] h-[16px]  " />
+              <Cross1Icon className="w-[14px] h-[14px]" />
             </button>
           </div>
+          <WigglyDivider
+            size="text-[8px]"
+            className="w-full text-muted-foreground"
+            active
+          />
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto pt-[9px] lg:pt-[9px]">
+          <div className="flex-1 overflow-y-auto pt-[9px] lg:pt-[0px]">
             {query && results.length > 0 ? (
               <div className="flex flex-col">
                 {results.slice(0, 20).map((item) => (
                   <button
                     key={item.id}
                     onClick={() => handleResultClick(item)}
-                    className="no-hide-text flex items-baseline gap-x-[9px] px-[18px] py-[9px] text-left  "
+                    className="no-hide-text flex cursor-pointer items-baseline gap-x-[9px] px-[18px] py-[9px] text-left  "
                   >
                     <span className="font-timesNewRoman font-normal text-[16px]  text-muted-foreground whitespace-nowrap  shrink-0 px-[9px]">
                       {item.type}
