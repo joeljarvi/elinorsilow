@@ -189,9 +189,9 @@ export default function DesktopNav() {
             </div>
 
             {/* Nav section */}
-            <div className="flex flex-col items-center gap-y-[0px] py-[9px]">
+            <div className="flex flex-col items-start justify-start gap-y-[0px] py-[9px]">
               <WigglyButton
-                className="cursor-pointer tracking-normal justify-center text-center w-full text-muted-foreground bg-background py-[9px]"
+                className="cursor-pointer tracking-normal justify-start  w-full text-muted-foreground bg-background py-[9px]"
                 onClick={() => setHeroOverlayOpen(true)}
                 text="Elinor Silow"
                 size="text-[16px]"
@@ -203,7 +203,7 @@ export default function DesktopNav() {
                 return (
                   <Link key={href} href={href} className="w-full block">
                     <WigglyButton
-                      className={`cursor-pointer bg-background justify-center w-full py-[9px] ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+                      className={`cursor-pointer bg-background justify-start w-full py-[9px] ${isActive ? "text-foreground" : "text-muted-foreground"}`}
                       onClick={() => setOpen(false)}
                       text={label}
                       size="text-[16px]"
@@ -219,7 +219,7 @@ export default function DesktopNav() {
                 className="w-full"
               >
                 <WigglyButton
-                  className="cursor-pointer flex text-center justify-center text-muted-foreground bg-background w-full py-[9px]"
+                  className="cursor-pointer flex justify-start text-muted-foreground bg-background w-full py-[9px]"
                   text="Instagram"
                   size="text-[16px]"
                   active={open}
@@ -245,11 +245,11 @@ export default function DesktopNav() {
       </motion.div>
 
       {/* ── MOBILE: fixed bottom tab ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[9px] pointer-events-auto bg-transparent">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[18px] pointer-events-auto bg-transparent">
         <div className="flex items-start w-full px-[9px] h-[32px]">
           <WigglyButton
             text={open ? "close" : "menu&filters"}
-            className="text-foreground bg-transparent justify-center py-[9px] px-2 w-full no-hide-text tracking-widest font-bold"
+            className="text-muted-foreground bg-transparent justify-center py-[9px] px-2 w-full no-hide-text tracking-widest font-bold"
             active={open}
             onClick={(e) => {
               e.stopPropagation();

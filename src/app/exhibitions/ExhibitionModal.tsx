@@ -7,11 +7,13 @@ import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClie
 type ExhibitionModalProps = {
   slug: string;
   onClose: () => void;
+  onOpenWorkByTitle?: (title: string) => void;
 };
 
 export default function ExhibitionModal({
   slug,
   onClose,
+  onOpenWorkByTitle,
 }: ExhibitionModalProps) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -48,7 +50,7 @@ export default function ExhibitionModal({
             aria-modal="true"
             aria-labelledby="exhibition-modal-title"
           >
-            <ExhibitionSlugModalClient slug={slug} onClose={handleClose} />
+            <ExhibitionSlugModalClient slug={slug} onClose={handleClose} onOpenWorkByTitle={onOpenWorkByTitle} />
           </motion.div>
         </motion.div>
       )}

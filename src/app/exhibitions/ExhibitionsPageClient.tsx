@@ -6,7 +6,6 @@ import { useExhibitions } from "@/context/ExhibitionsContext";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import WorkModal from "@/components/WorkModal";
 import { motion } from "framer-motion";
-import PageLoader from "@/components/PageLoader";
 import DynamicGrid from "@/components/DynamicGrid";
 import ExhibitionCard from "@/components/ExhibitionCard";
 import { OGubbeText } from "@/components/OGubbeText";
@@ -54,7 +53,6 @@ export default function ExhibitionsPageClient() {
     setActiveWork(work);
   };
 
-  const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
   const [initialAnimDone, setInitialAnimDone] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   useEffect(() => {
@@ -83,21 +81,24 @@ export default function ExhibitionsPageClient() {
       >
         {/* Title list — behind cards */}
         {exAsList && (
-          <div className="fixed top-0 left-0 right-0 -z-[5] h-auto overflow-y-auto flex flex-col items-center gap-y-[0px] pt-[32px] pb-[18px] pointer-events-auto">
-            {filteredExhibitions.map((ex, i) => (
-              <button key={ex.id} onClick={() => openExhibition(ex)}>
-                <OGubbeText
-                  text={ex.title.rendered}
-                  revealAnimation={false}
-                  sizes="16px"
-                  className={`font-timesNewRoman font-normal text-[16px] tracking-wide transition-colors duration-300 py-0 ${
-                    i === visibleExhibitionIndex
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                />
-              </button>
-            ))}
+          <div className="fixed top-0 left-0 right-0 z-[5] h-dvh overflow-y-auto pointer-events-auto">
+            <div className="flex flex-col items-center min-h-dvh pt-[32px] pb-[18px]">
+              {filteredExhibitions.map((ex, i) => (
+                <button key={ex.id} onClick={() => openExhibition(ex)}>
+                  <OGubbeText
+                    text={ex.title.rendered}
+                    revealAnimation={false}
+                    sizes="16px"
+                    className={`font-timesNewRoman font-normal text-[16px] tracking-wide transition-colors duration-300 py-0 ${
+                      i === visibleExhibitionIndex
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="sticky bottom-0 h-[48px] w-full shrink-0 bg-gradient-to-t from-background to-transparent pointer-events-none -mt-[48px] z-10" />
           </div>
         )}
 
@@ -107,10 +108,7 @@ export default function ExhibitionsPageClient() {
             <ExhibitionCard
               ex={ex}
               index={i}
-              onOpenWorkByTitle={handleWorkSelect}
               onOpen={() => openExhibition(ex)}
-              activeInfoId={activeInfoId}
-              onInfoOpen={(id) => setActiveInfoId(id)}
             />
           )}
           onTopVisibleChange={setVisibleExhibitionIndex}
@@ -123,9 +121,8 @@ export default function ExhibitionsPageClient() {
       {activeExhibitionSlug && (
         <ExhibitionModal
           slug={activeExhibitionSlug}
-          onClose={() => {
-            setActiveExhibitionSlug(null);
-          }}
+          onClose={() => setActiveExhibitionSlug(null)}
+          onOpenWorkByTitle={handleWorkSelect}
         />
       )}
 

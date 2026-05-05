@@ -25,7 +25,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal  text-[16px]  text-foreground tracking-wider mx-[0px] pb-[0px] px-[18px] block text-center lg:text-right  ${className}`}
+      className={`font-timesNewRoman font-normal  text-[16px]  text-muted-foreground tracking-wider mx-[0px] pb-[0px] px-[9px] lg:px-[18px] block text-left lg:text-right  ${className}`}
     >
       {children}
     </span>
@@ -82,10 +82,10 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="flex flex-col gap-y-[32px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
+    <div className="flex flex-col gap-y-[32px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] justify-start items-start lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort by</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[0px] px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end mt-[0px] lg:px-[9px]">
           {WORK_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
@@ -108,7 +108,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
 
       <div>
         <FilterLabel>Filter by</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] lg:px-[9px]">
           {WORK_CATS.map((c) => (
             <WigglyButton
               key={c.value}
@@ -131,7 +131,7 @@ function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
 
       <div>
         <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] lg:px-[9px]">
           <WigglyButton
             text={showAsList ? "Hide list" : "Show list"}
             size="text-[16px]"
@@ -251,10 +251,10 @@ function ExhibitionsControls({
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="flex flex-col gap-y-[32px] lg:gap-y-[32px] w-full pt-[18px] pb-[18px] justify-center items-center lg:items-end lg:justify-end">
+    <div className="flex flex-col gap-y-[32px] lg:gap-y-[32px] w-full pt-[18px] pb-[18px] justify-start items-start lg:items-end lg:justify-end">
       <div>
         <FilterLabel>Sort</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end mt-[0px] px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end mt-[0px] px-[9px]">
           {EX_SORTS.map((s) => (
             <WigglyButton
               key={s.value}
@@ -275,7 +275,7 @@ function ExhibitionsControls({
 
       <div>
         <FilterLabel>Type</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] px-[9px]">
           {EX_CATS.map((c) => (
             <WigglyButton
               key={c.value}
@@ -296,7 +296,7 @@ function ExhibitionsControls({
 
       <div>
         <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-center lg:justify-end lg:items-end mt-[0px] px-[9px]">
+        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] px-[9px]">
           <WigglyButton
             text={exAsList ? "Hide list" : "Show list"}
             size="text-[16px]"

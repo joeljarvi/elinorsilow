@@ -49,7 +49,7 @@ export default function DynamicGrid<T extends { id: string | number }>({
             visibleSet.current.delete(i);
           }
           if (visibleSet.current.size > 0) {
-            callbackRef.current?.(Math.min(...visibleSet.current));
+            callbackRef.current?.(Math.max(...visibleSet.current));
           }
         },
         { threshold: 0.1 },

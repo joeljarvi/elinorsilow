@@ -9,6 +9,7 @@ import useSwipe from "@/hooks/use-swipe";
 import BlurredWorkBg from "@/components/BlurredWorkBg";
 import WigglyButton from "@/components/WigglyButton";
 import InfoBox from "@/components/InfoBox";
+import WigglyDivider from "./WigglyDivider";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -108,10 +109,22 @@ export default function WorkSlugModalClient({
           className="flex-shrink-0  w-full lg:w-[280px] pt-[0px] "
           onClick={(e) => e.stopPropagation()}
         >
+          <WigglyDivider
+            text="work"
+            className="text-muted-foreground"
+            size="text-[8px]"
+            active
+          />
           <InfoBox work={work} />
+          <WigglyDivider
+            text="work"
+            className="text-muted-foreground"
+            size="text-[8px]"
+            active
+          />
         </div>
       )}
-      <div className="flex-1 flex flex-col min-w-0" onClick={onClose}>
+      <div className="mt-[9px] flex-1 flex flex-col min-w-0" onClick={onClose}>
         <div className="relative flex-1 ">
           {work.image_url && (
             <Image
@@ -126,8 +139,8 @@ export default function WorkSlugModalClient({
       </div>
 
       {/* Mobile close button */}
-      <div className="hidden justify-center">
-        <WigglyButton text="close" size="text-18px" onClick={onClose} />
+      <div className="fixed bottom-[32px] left-1/2 -translate-x-1/2 z-[20] justify-center">
+        <WigglyButton text="close" active size="text-18px" onClick={onClose} />
       </div>
     </div>
   );

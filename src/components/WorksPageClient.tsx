@@ -99,22 +99,24 @@ export default function WorksPageClient() {
       >
         {/* Title list — behind cards, z-[5] */}
         {showAsList && (
-          <div className="fixed top-[0px] left-0 right-0 -z-[10]  h-dvh overflow-y-auto flex flex-col items-center gap-y-[0px] pt-[32px] pb-[18px] pointer-events-auto">
-            {filteredWorks.map((work, i) => (
-              <button key={work.id} onClick={() => openWork(work)}>
-                <OGubbeText
-                  text={work.title.rendered}
-                  revealAnimation={false}
-                  sizes="16px"
-                  lettersOnly
-                  className={`font-timesNewRoman font-normal text-[16px] tracking-wide transition-colors duration-300 py-0 ${
-                    i === visibleWorkIndex
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                />
-              </button>
-            ))}
+          <div className="fixed top-[0px] left-0 right-0 z-[5] h-dvh overflow-y-auto pointer-events-auto">
+            <div className="flex flex-col items-center min-h-dvh pt-[9px] pb-[18px]">
+              {filteredWorks.map((work, i) => (
+                <button key={work.id} onClick={() => openWork(work)}>
+                  <OGubbeText
+                    text={work.title.rendered}
+                    revealAnimation={false}
+                    sizes="16px"
+                    lettersOnly
+                    className={`font-timesNewRoman font-normal text-[16px] tracking-wide w-min transition-colors duration-300 py-0 ${
+                      i === visibleWorkIndex
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
             <div className="sticky bottom-0 h-[48px] w-full shrink-0 bg-gradient-to-t from-background to-transparent pointer-events-none -mt-[48px] z-10" />
           </div>
         )}
@@ -139,6 +141,7 @@ export default function WorksPageClient() {
       <CopyrightFooter />
       {activeWorkSlug && (
         <WorkModal
+          showInfo
           slug={activeWorkSlug}
           onClose={() => {
             setActiveWorkSlug(null);

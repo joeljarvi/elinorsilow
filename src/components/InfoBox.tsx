@@ -70,11 +70,11 @@ export default function InfoBox({
 
                 <WigglyButton
                   text={work.title.rendered}
-                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal items-baseline  tracking-wider "
+                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal items-center  tracking-wider "
                   size="text-[24px] "
                   revealAnimation={false}
                   active={true}
-                  sizeGradient={{ from: 24, to: 16 }}
+                  sizeGradient={{ from: 16, to: 16 }}
                 />
               </span>
               {onClose && (
@@ -116,7 +116,7 @@ export default function InfoBox({
     const isTruncatable = descBodyWords.length > TRUNCATE_AT;
     const descBody =
       !descExpanded && isTruncatable
-        ? descBodyWords.slice(0, TRUNCATE_AT).join(" ") + " (...)"
+        ? descBodyWords.slice(0, TRUNCATE_AT).join(" ")
         : descBodyWords.join(" ");
 
     const works = [
@@ -166,22 +166,26 @@ export default function InfoBox({
                 )}
               </span>
             </div>
-            {exhibition.acf.exhibition_type && (
-              <div className="whitespace-nowrap tracking-wider">
-                {exhibition.acf.exhibition_type} exhibition
-              </div>
-            )}
-            {exhibition.acf.location && (
-              <div className="tracking-wider">{exhibition.acf.location}</div>
-            )}
-            {exhibition.acf.city && (
-              <div className="whitespace-nowrap tracking-wider">
-                {exhibition.acf.city}
-              </div>
-            )}
-            {exhibition.acf.year && (
-              <div className="tracking-wider">{exhibition.acf.year}</div>
-            )}
+            <div className="flex flex-wrap gap-x-[4px]">
+              {exhibition.acf.exhibition_type && (
+                <div className="whitespace-nowrap tracking-wider">
+                  {exhibition.acf.exhibition_type} exhibition,{" "}
+                </div>
+              )}
+              {exhibition.acf.location && (
+                <div className="tracking-wider">
+                  {exhibition.acf.location},{" "}
+                </div>
+              )}
+              {exhibition.acf.city && (
+                <div className="whitespace-nowrap tracking-wider">
+                  {exhibition.acf.city},{" "}
+                </div>
+              )}
+              {exhibition.acf.year && (
+                <div className="tracking-wider">{exhibition.acf.year}</div>
+              )}
+            </div>
           </div>
           <WigglyDivider
             active
@@ -191,14 +195,14 @@ export default function InfoBox({
           />
           {exhibition.acf.description && (
             <div className="col-start-1 col-span-2 max-w-md lg:max-w-xl tracking-wider">
-              <p className="font-timesNewRoman text-[24px] tracking-wide leading-[1.2]">
+              <p className="font-timesNewRoman text-[16px] tracking-wide leading-[1.2]">
                 {descHead && (
                   <>
                     <WigglyButton
                       text={descHead + " "}
                       className=" inline-flex lg:hidden px-0 font-timesNewRoman align-baseline"
-                      size="text-[24px] lg:text-[28px] leading-[1.2]"
-                      sizeGradient={{ from: 24, to: 24 }}
+                      size="text-[16px] lg:text-[28px] leading-[1.2]"
+                      sizeGradient={{ from: 16, to: 16 }}
                       wiggleGradient
                       revealAnimation={false}
                       active
@@ -206,26 +210,25 @@ export default function InfoBox({
                     <WigglyButton
                       text={descHead + " "}
                       className="hidden lg:inline-flex px-0 font-timesNewRoman align-baseline"
-                      size="text-[24px] lg:text-[28px] leading-[1.2]"
-                      sizeGradient={{ from: 28, to: 28 }}
+                      size="text-[16px] lg:text-[16px] leading-[1.2]"
+                      sizeGradient={{ from: 16, to: 16 }}
                       wiggleGradient
                       revealAnimation={false}
                       active
                     />
                   </>
                 )}
-                {descBody && <span>{descBody}</span>}
+                {descBody && <span>{descBody} </span>}
+                {!descExpanded && isTruncatable && (
+                  <WigglyButton
+                    text="(...)"
+                    size="text-[16px]"
+                    className="inline-flex px-0 text-muted-foreground"
+                    revealAnimation={false}
+                    onClick={() => setDescExpanded((v) => !v)}
+                  />
+                )}
               </p>
-              {isTruncatable && (
-                <WigglyButton
-                  text={descExpanded ? "Read less" : "Read more"}
-                  size="text-[16px]"
-                  className="px-0 mt-[9px] text-foreground"
-                  revealAnimation={false}
-                  active
-                  onClick={() => setDescExpanded((v) => !v)}
-                />
-              )}
             </div>
           )}
           <WigglyDivider
@@ -244,9 +247,10 @@ export default function InfoBox({
                   revealAnimation={false}
                   active
                 />
+
                 {works.map((w, i) => (
                   <WigglyButton
-                    size="text-[24px] lg:text-[16px] "
+                    size="text-[16px] lg:text-[16px] "
                     bold={false}
                     className="pl-0 justify-start"
                     revealAnimation={false}
@@ -266,13 +270,6 @@ export default function InfoBox({
           />
           {exhibition.acf.credits && (
             <div className="col-start-1 col-span-1 mb-[0px] mx-0 tracking-wider">
-              <WigglyButton
-                text="Credits"
-                size="text-[16px] "
-                className="  pl-0"
-                revealAnimation={false}
-                active
-              />
               <div>{exhibition.acf.credits}</div>
             </div>
           )}

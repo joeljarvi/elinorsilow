@@ -8,8 +8,9 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { useExhibitions } from "@/context/ExhibitionsContext";
-import { useWorks, normalizeSlug } from "@/context/WorksContext";
+import { useWorks } from "@/context/WorksContext";
 import WorkModal from "@/components/WorkModal";
+import InfoBox from "@/components/InfoBox";
 import { useGalleryCarousel } from "@/lib/useGalleryCarousel";
 import { Exhibition } from "../../../lib/sanity";
 import useSwipe from "@/hooks/use-swipe";
@@ -19,9 +20,14 @@ import WigglyButton from "@/components/WigglyButton";
 type Props = {
   slug: string;
   onClose?: () => void;
+  onOpenWorkByTitle?: (title: string) => void;
 };
 
-export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
+export default function ExhibitionSlugModalClient({
+  slug,
+  onClose,
+  onOpenWorkByTitle,
+}: Props) {
   const router = useRouter();
   const { filteredExhibitions, getExhibitionBySlug: getFromContext } =
     useExhibitions();
@@ -39,13 +45,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024);
   }, []);
-
-  const handleTap = () => {
-    const images = getImages(exhibition);
-    if (galleryCarousel.index < images.length - 1) {
-      galleryCarousel.api?.scrollNext();
-    }
-  };
 
   const loadExhibitionByIndex = useCallback(
     async (index: number) => {
@@ -90,20 +89,6 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     });
   }, [slug, getFromContext, filteredExhibitions]);
 
-  const goPrev = useCallback(() => {
-    if (currentIndex > 0) loadExhibitionByIndex(currentIndex - 1);
-  }, [currentIndex, loadExhibitionByIndex]);
-
-  const goNext = useCallback(() => {
-    if (filteredExhibitions && currentIndex < filteredExhibitions.length - 1)
-      loadExhibitionByIndex(currentIndex + 1);
-  }, [currentIndex, filteredExhibitions, loadExhibitionByIndex]);
-
-  const swipeHandlers = useSwipe({
-    onSwipedLeft: () => galleryCarousel.api?.scrollNext(),
-    onSwipedRight: () => galleryCarousel.api?.scrollPrev(),
-  });
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") galleryCarousel.api?.scrollPrev();
@@ -112,117 +97,109 @@ export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goPrev, goNext, onClose, galleryCarousel, exhibition]);
+  }, [onClose, galleryCarousel]);
+
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: () => galleryCarousel.api?.scrollNext(),
+    onSwipedRight: () => galleryCarousel.api?.scrollPrev(),
+  });
 
   if (loading || !exhibition || !exhibition.acf) return <div />;
 
   const images = getImages(exhibition);
-  const hasPrev = currentIndex > 0;
-
-  const metadataLines = [
-    exhibition.title.rendered,
-    exhibition.acf.year,
-    exhibition.acf.exhibition_type
-      ? `${exhibition.acf.exhibition_type} exhibition`
-      : null,
-    exhibition.acf.location,
-    exhibition.acf.city,
-  ].filter(Boolean) as string[];
 
   return (
-    <div {...swipeHandlers} className="relative w-full h-full bg-background">
-      {/* Gallery — fills the entire modal */}
-      <Carousel
-        setApi={galleryCarousel.setApi}
-        opts={{
-          startIndex: 0,
-          align: "center",
-          loop: false,
-          watchDrag: false,
-          duration: isDesktop ? 0 : undefined,
-        }}
-        className="w-full h-full"
+    <div className="relative w-full min-h-dvh bg-background flex flex-col ">
+      {/* InfoBox — top on mobile, left panel on desktop */}
+      <div
+        className="w-full  lg:h-auto lg:overflow-y-auto flex-shrink-0 px-[18px] pb-[0px] pt-[18px] lg:pb-[18px]"
+        onClick={(e) => e.stopPropagation()}
       >
-        <CarouselContent className="-ml-0 h-full">
-          {images.map((img, idx) => (
-            <CarouselItem
-              key={img.id}
-              className="pl-0 flex items-center justify-center h-dvh"
-            >
-              <div className="relative w-full h-full">
-                {/* LEFT = prev */}
-                <div
-                  className="absolute left-0 top-0 w-1/2 h-full z-10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    galleryCarousel.api?.scrollPrev();
-                  }}
-                />
+        <InfoBox exhibition={exhibition} onWorkSelect={onOpenWorkByTitle} />
+      </div>
 
-                {/* RIGHT = next */}
-                <div
-                  className="absolute right-0 top-0 w-1/2 h-full z-10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    galleryCarousel.api?.scrollNext();
-                  }}
-                />
-                <Image
-                  src={img.url}
-                  alt={img.alt || img.desc || `Image ${idx + 1}`}
-                  fill
-                  className="object-contain object-center px-[9px]"
-                  priority={idx === 0}
-                />
-              </div>
-              {img.desc && (
-                <p className="absolute bottom-[64px] left-0 right-0 text-center text-muted-foreground text-sm font-timesNewRoman px-4">
-                  {img.desc}
-                </p>
-              )}
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      {/* Gallery — fills viewport height, takes remaining width on desktop */}
+      <div
+        {...swipeHandlers}
+        className="relative w-full h-dvh lg:flex-1 flex-shrink-0"
+      >
+        <Carousel
+          setApi={galleryCarousel.setApi}
+          opts={{
+            startIndex: 0,
+            align: "center",
+            loop: false,
+            watchDrag: false,
+            duration: isDesktop ? 0 : undefined,
+          }}
+          className="w-full h-full"
+        >
+          <CarouselContent className="-ml-0 h-full">
+            {images.map((img, idx) => (
+              <CarouselItem
+                key={img.id}
+                className="pl-0 flex items-center justify-center h-dvh"
+              >
+                <div className="relative w-full h-full">
+                  {/* LEFT = prev */}
+                  <div
+                    className="absolute left-0 top-0 w-1/2 h-full z-10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      galleryCarousel.api?.scrollPrev();
+                    }}
+                  />
+                  {/* RIGHT = next */}
+                  <div
+                    className="absolute right-0 top-0 w-1/2 h-full z-10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      galleryCarousel.api?.scrollNext();
+                    }}
+                  />
+                  <Image
+                    src={img.url}
+                    alt={img.alt || img.desc || `Image ${idx + 1}`}
+                    fill
+                    className="object-contain object-center px-[9px]"
+                    priority={idx === 0}
+                  />
+                </div>
+                {img.desc && (
+                  <p className="absolute bottom-[64px] left-0 right-0 text-center text-muted-foreground text-sm font-timesNewRoman px-4">
+                    {img.desc}
+                  </p>
+                )}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
 
-      {/* Metadata overlay — mobile: top-center, desktop: bottom-center */}
-      <div className="absolute hidden top-[9px] left-0 right-0  justify-center z-10 pointer-events-none  ">
-        <div className="flex flex-wrap justify-center gap-x-[9px] gap-y-0 px-[9px]">
-          {metadataLines.map((line, i) => (
+        {/* Image counter */}
+        {images.length > 1 && (
+          <div className="absolute top-[18px] left-1/2 -translate-x-1/2 z-10 pointer-events-none px-[9px] lg:bottom-[9px]">
             <WigglyButton
-              key={i}
-              text={line}
-              size="text-[16px] "
-              className="pointer-events-none font-timesNewRoman"
+              text={`${galleryCarousel.index + 1} / ${images.length}`}
+              size="text-[16px]"
+              className="bg-transparent text-muted-foreground"
+              active
             />
-          ))}
+          </div>
+        )}
+
+        {/* Close button */}
+        <div className="fixed bottom-[9px] left-0 right-0 flex justify-center z-20 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end bg-transparent">
+          <div className="flex gap-x-0 w-full px-2">
+            <WigglyButton
+              text="close"
+              className="bg-transparent py-[9px] px-2 justify-center flex w-full"
+              size="text-[16px]"
+              active
+              onClick={onClose ?? (() => router.push("/exhibitions"))}
+            />
+          </div>
         </div>
       </div>
-
-      {/* Controls — mobile: bottom-center, desktop: top-right */}
-      <div className="absolute bottom-[9px] left-0 right-0 flex justify-center z-20 lg:bottom-auto lg:top-[9px] lg:right-[9px] lg:left-auto lg:justify-end bg-transparent">
-        <div className="flex gap-x-0 w-full px-2">
-          <WigglyButton
-            text="close"
-            className=" bg-transparent py-[9px] px-2 justify-center flex w-full "
-            size="text-[16px] "
-            active
-            onClick={onClose ?? (() => router.push("/exhibitions"))}
-          />
-        </div>
-      </div>
-
-      {/* Image counter */}
-      {images.length > 1 && (
-        <div className="absolute top-[9px] left-1/2 -translate-x-1/2 lg:left-[9px] lg:translate-x-0 z-10 pointer-events-none w-full px-2">
-          <WigglyButton
-            text={`${galleryCarousel.index + 1} / ${images.length}`}
-            size="text-[16px]"
-            className=" text-center  py-[9px] px-2 bg-transparent justify-center flex w-full  "
-            active
-          />
-        </div>
-      )}
 
       {activeWorkSlug && (
         <WorkModal

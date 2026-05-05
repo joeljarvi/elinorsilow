@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Work } from "../../lib/sanity";
 import { useUI } from "@/context/UIContext";
@@ -24,15 +24,9 @@ export default function WorkCard({
   imageClassName = "max-h-full",
 }: WorkCardProps) {
   const [infoOpen, setInfoOpen] = useState(false);
-  const { setHoveredItemTitle } = useUI();
+  const { setHoveredItemTitle, setVisibleWorkIndex } = useUI();
   const cardRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (infoOpen) {
-      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [infoOpen]);
 
   return (
     <Card
@@ -42,7 +36,7 @@ export default function WorkCard({
       onMouseLeave={() => setHoveredItemTitle(null)}
     >
       <CardContent className="w-full h-full items-start justify-start px-0 pb-0  flex flex-col">
-        {/* InfoBox at top */}
+        {/* InfoBox above */}
         <AnimatePresence>
           {infoOpen && (
             <motion.div
@@ -63,7 +57,14 @@ export default function WorkCard({
           layout
           transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
           className={`flex justify-start items-start w-full ${infoOpen ? "cursor-zoom-in" : "cursor-pointer"}`}
-          onClick={() => (infoOpen ? onOpen() : setInfoOpen(true))}
+          onClick={() => {
+            if (infoOpen) {
+              onOpen();
+            } else {
+              setInfoOpen(true);
+              setVisibleWorkIndex(revealIndex);
+            }
+          }}
           aria-label={
             infoOpen
               ? `Open ${work.title.rendered}`
