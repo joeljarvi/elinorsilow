@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useWorks } from "@/context/WorksContext";
 import { useUI } from "@/context/UIContext";
@@ -14,11 +14,16 @@ export default function WorksPageClient() {
 
   const work = filteredWorks[index] ?? null;
 
-  function handleClick() {
+  const handleClick = useCallback(() => {
     if (!filteredWorks.length) return;
     setIndex((i) => (i + 1) % filteredWorks.length);
     if (moreFun) refreshMoreFunBg();
-  }
+  }, [filteredWorks.length, moreFun, refreshMoreFunBg]);
+
+  useEffect(() => {
+    const id = setInterval(handleClick, 5000);
+    return () => clearInterval(id);
+  }, [handleClick]);
 
   return (
     <div

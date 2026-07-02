@@ -232,63 +232,65 @@ export default function ExhibitionSlugModalClient({
         </div>
       )}
 
-      {/* Image thumbnails — top center */}
-      {images.length > 0 && (() => {
-        const imageStartIdx = slides.findIndex((s) => s.type === "image");
-        return (
-          <div
-            className="fixed top-2 left-0 right-0 z-[220] flex flex-wrap justify-center gap-1 pointer-events-none"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {images.map((img, i) => {
-              const targetIdx = imageStartIdx + i;
-              const active = clampedIndex === targetIdx;
-              return (
-                <button
-                  key={img.id}
-                  className={`relative w-10 h-10 overflow-hidden pointer-events-auto shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-40"}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSlideIndex(targetIdx);
-                  }}
-                >
-                  <Image src={img.url} alt={img.alt} fill className="object-cover" />
-                </button>
-              );
-            })}
-          </div>
-        );
-      })()}
-
       {/* Bottom bar */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-[220] pb-4 px-6 lg:px-4 pointer-events-none "
+        className="fixed bottom-0 left-0 right-0 z-[220] pb-4 px-6 lg:px-4 pointer-events-none flex flex-col items-center gap-y-2"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Mobile: InfoBox centered only */}
-        <div className="flex lg:hidden justify-center">
-          <div className="pointer-events-auto">
-            <InfoBox exhibition={exhibition} centered />
-          </div>
-        </div>
+        {/* Thumbnails — visible after description slide (images, works, credits) */}
+        {slide?.type !== "meta" && slide?.type !== "description" && images.length > 0 && (() => {
+          const imageStartIdx = slides.findIndex((s) => s.type === "image");
+          return (
+            <div className="flex flex-wrap justify-center gap-1 pointer-events-none">
+              {images.map((img, i) => {
+                const targetIdx = imageStartIdx + i;
+                const active = clampedIndex === targetIdx;
+                return (
+                  <button
+                    key={img.id}
+                    className={`relative w-10 h-10 overflow-hidden pointer-events-auto shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-40"}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSlideIndex(targetIdx);
+                    }}
+                  >
+                    <Image src={img.url} alt={img.alt} fill className="object-cover" />
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
 
-        {/* Desktop: justify-between with balanced spacer to keep InfoBox centered */}
-        <div className="hidden lg:flex justify-between items-end">
-          <div className="w-24" />
-          <div className="pointer-events-auto">
-            <InfoBox exhibition={exhibition} centered />
-          </div>
-          <div className="w-24 flex justify-end pointer-events-auto">
-            <WigglyButton
-              text="close"
-              size="text-3xl"
-              mobileSize="text-2xl"
-              className="tracking-wide text-muted-foreground"
-              onClick={() => onClose?.() ?? router.push("/exhibitions")}
-              active
-            />
-          </div>
-        </div>
+        {/* Meta info — only on title slide */}
+        {slide?.type === "meta" && (
+          <>
+            {/* Mobile: InfoBox centered only */}
+            <div className="flex lg:hidden justify-center">
+              <div className="pointer-events-auto">
+                <InfoBox exhibition={exhibition} centered />
+              </div>
+            </div>
+
+            {/* Desktop: justify-between with balanced spacer to keep InfoBox centered */}
+            <div className="hidden lg:flex justify-between items-end w-full">
+              <div className="w-24" />
+              <div className="pointer-events-auto">
+                <InfoBox exhibition={exhibition} centered />
+              </div>
+              <div className="w-24 flex justify-end pointer-events-auto">
+                <WigglyButton
+                  text="close"
+                  size="text-3xl"
+                  mobileSize="text-2xl"
+                  className="tracking-wide text-muted-foreground"
+                  onClick={() => onClose?.() ?? router.push("/exhibitions")}
+                  active
+                />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Mobile close — top right */}

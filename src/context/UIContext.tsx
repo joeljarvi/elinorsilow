@@ -27,6 +27,8 @@ interface UIContextValue {
   setShowAnchorsAll: Dispatch<boolean>;
   moreFunBg: string;
   refreshMoreFunBg: () => void;
+  homeBg: string | null;
+  setHomeBg: (v: string | null) => void;
   navVisible: boolean;
   setNavVisible: (v: boolean) => void;
   openDesktopNav: boolean;
@@ -124,6 +126,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [funForeground, setFunForeground] = useState(true);
   const [showAnchorsAll, setShowAnchorsAll] = useState(false);
   const [moreFunBg, setMoreFunBg] = useState(() => randomHsl());
+  const [homeBg, setHomeBg] = useState<string | null>(null);
   const [openDesktopNav, setOpenDesktopNav] = useState(false);
   const [navVisible, setNavVisible] = useState(false);
 
@@ -208,6 +211,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setShowAnchorsAll,
         moreFunBg,
         refreshMoreFunBg: () => setMoreFunBg(randomHsl()),
+        homeBg,
+        setHomeBg,
         navVisible,
         setNavVisible,
         openDesktopNav,

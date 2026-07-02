@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useWorks } from "@/context/WorksContext";
@@ -21,11 +21,16 @@ export default function ExhibitionsPageClient() {
   const ex = filteredExhibitions[index] ?? null;
   const imageUrl = ex?.acf.image_1?.url ?? null;
 
-  function handleClick() {
+  const handleClick = useCallback(() => {
     if (!filteredExhibitions.length) return;
     setIndex((i) => (i + 1) % filteredExhibitions.length);
     if (moreFun) refreshMoreFunBg();
-  }
+  }, [filteredExhibitions.length, moreFun, refreshMoreFunBg]);
+
+  useEffect(() => {
+    const id = setInterval(handleClick, 5000);
+    return () => clearInterval(id);
+  }, [handleClick]);
 
   return (
     <div

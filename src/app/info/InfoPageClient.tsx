@@ -81,6 +81,8 @@ export default function InfoPageClient() {
             bold
             forceBaseline
             anchorFill="currentColor"
+            wiggleGradient
+            active
           />
           <div className="w-full col-span-2 flex flex-col gap-y-0">
             {groupByYear(items).map(([year, exs]) => (
@@ -144,7 +146,7 @@ export default function InfoPageClient() {
   }
 
   return (
-    <section className="bg-blue-600 text-foreground relative w-full min-h-dvh px-6 lg:px-4 pt-36">
+    <section className="text-foreground relative w-full min-h-dvh px-6 lg:px-4 pt-36">
       <div className="text-foreground flex flex-col w-full">
         {/* Hero */}
         <div id="bio" className="lg:max-w-[66%] lg:mx-auto mb-8 ">

@@ -223,9 +223,9 @@ function NewNavOverlay({
       className={`lg:hidden fixed inset-0 z-[125] ${pathname === "/info" ? "bg-blue-600" : "bg-[#B0916E]"} px-6 pb-4 pointer-events-auto grid grid-cols-2 gap-x-4 grid-rows-2 gap-y-0 h-dvh`}
     >
       {/* Row 1, Col 1: spacer — logo+menu floats here at z-[131] */}
-      <div className="col-start-1 row-start-1 min-h-10 " />
+
       {/* Row 1, Col 2: nav links */}
-      <div className="col-start-2 row-start-1 flex flex-col items-start justify-baseline gap-y-2 pt-6.5">
+      <div className="col-start-1 mt-1 row-start-1 flex flex-col items-start justify-baseline gap-y-2 pt-12">
         {NAV_LINKS.map(({ href, label, target, rel }) => (
           <WigglyButton
             key={href}
@@ -399,16 +399,16 @@ export default function DesktopNav() {
               return (
                 <Fragment key={f.value}>
                   {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
                       ,
                     </span>
                   )}
                   <WigglyButton
                     text={f.label}
                     size="text-3xl"
-                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
                     onClick={() => setCategoryFilter(f.value)}
-                    bold
+                    bold={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
@@ -433,7 +433,7 @@ export default function DesktopNav() {
                   <WigglyButton
                     text={c.label}
                     size="text-3xl"
-                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
                     onClick={() => setExCat(c.value)}
                     bold={active}
                     anchorFill="currentColor"
@@ -460,7 +460,7 @@ export default function DesktopNav() {
                   <WigglyButton
                     text={m}
                     size="text-3xl"
-                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
                     onClick={() => setMode(m)}
                     bold={active}
                     anchorFill="currentColor"
@@ -475,7 +475,7 @@ export default function DesktopNav() {
             <WigglyButton
               text="settings"
               size="text-3xl"
-              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
               onClick={() => setShowSettings((v) => !v)}
               bold={showSettings}
               anchorFill="currentColor"
@@ -490,7 +490,7 @@ export default function DesktopNav() {
             <WigglyButton
               text="zoom in"
               size="text-3xl"
-              className="tracking-wide leading-tight px-0 lg:ml-2 text-muted-foreground"
+              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
               onClick={() => setZoom(Math.max(0, zoom - 1))}
               anchorFill="currentColor"
               forceBaseline
@@ -501,7 +501,7 @@ export default function DesktopNav() {
             <WigglyButton
               text="zoom out"
               size="text-3xl"
-              className="tracking-wide leading-tight px-0 lg:ml-2 text-muted-foreground"
+              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
               onClick={() => setZoom(Math.min(4, zoom + 1))}
               anchorFill="currentColor"
               forceBaseline
@@ -512,7 +512,7 @@ export default function DesktopNav() {
             <WigglyButton
               text="tidy up"
               size="text-3xl"
-              className={`tracking-wide leading-tight px-0 lg:ml-2 ${tidy ? "text-foreground" : "text-muted-foreground"}`}
+              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
               onClick={() => setTidy(!tidy)}
               bold={tidy}
               anchorFill="currentColor"

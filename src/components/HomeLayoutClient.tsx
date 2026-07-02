@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Work, ActivityEntry } from "../../lib/sanity";
 import { useUI } from "@/context/UIContext";
 
+import Image from "next/image";
 import InfoBox from "./InfoBox";
 import HistoryClient from "./HistoryClient";
 import FixedCookieAccept from "./FixedCookieAccept";
@@ -18,9 +19,9 @@ export default function HomeLayoutClient({
   recentWorks: Work[];
   updates: ActivityEntry[];
 }) {
-  const { moreFun, moreFunBg, refreshMoreFunBg } = useUI();
+  const { moreFun, moreFunBg, refreshMoreFunBg, setHomeBg } = useUI();
   const [workIndex, setWorkIndex] = useState(0);
-  const [sculptureBg, setSculptureBg] = useState<string | null>(null);
+  const [trumpetFrame, setTrumpetFrame] = useState(1);
 
   const work = recentWorks[workIndex] ?? null;
 
@@ -29,28 +30,29 @@ export default function HomeLayoutClient({
       const nextIndex = idx < recentWorks.length - 1 ? idx + 1 : 0;
       const nextWork = recentWorks[nextIndex] ?? null;
       if (nextWork?.acf?.category === "sculpture") {
-        setSculptureBg(
+        setHomeBg(
           SCULPTURE_COLORS[Math.floor(Math.random() * SCULPTURE_COLORS.length)],
         );
       } else {
-        setSculptureBg(null);
+        setHomeBg(null);
       }
       return nextIndex;
     });
     if (moreFun) refreshMoreFunBg();
-  }, [recentWorks, moreFun, refreshMoreFunBg]);
+  }, [recentWorks, moreFun, refreshMoreFunBg, setHomeBg]);
 
   useEffect(() => {
     const id = setInterval(advance, 3000);
     return () => clearInterval(id);
   }, [advance]);
 
+  useEffect(() => {
+    return () => setHomeBg(null);
+  }, [setHomeBg]);
+
   return (
     <div
       className="h-dvh w-full flex flex-col px-4 pt-4 cursor-pointer transition-colors duration-300"
-      style={{
-        backgroundColor: sculptureBg ?? (moreFun ? moreFunBg : undefined),
-      }}
       onClick={advance}
     >
       <div className=" relative w-full hidden">
@@ -58,24 +60,41 @@ export default function HomeLayoutClient({
       </div>
       {/* Image — centered in available space between nav and InfoBox */}
       <div
-        className="flex-1 flex items-center justify-center"
+        className="fixed top-0 flex items-center justify-center w-full h-dvh "
         style={{ perspective: "800px" }}
       >
         {work?.image_url && (
           <motion.img
             src={work.image_url}
             alt={work.title.rendered}
-            className="max-h-[50dvh] lg:max-h-[66.6dvh] max-w-full object-contain"
+            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8 max-w-full object-contain"
             style={{}}
           />
         )}
       </div>
 
       {work && (
-        <div className="flex justify-center lg:justify-center px-2 lg:px-0 py-2">
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center px-2 lg:px-0 py-2">
           <InfoBox work={work} centered />
         </div>
       )}
+
+      <button
+        className="fixed top-8 right-8 z-10 pointer-events-auto"
+        onClick={(e) => {
+          e.stopPropagation();
+          setTrumpetFrame((f) => (f % 3) + 1);
+          advance();
+        }}
+        aria-label="Next work"
+      >
+        <Image
+          src={`/trumpet_${trumpetFrame}_NAV.svg`}
+          alt="Next"
+          width={80}
+          height={80}
+        />
+      </button>
     </div>
   );
 }
