@@ -18,7 +18,7 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-primary shadow-none transition-all hover:bg-neutral-100 rounded-2xl border-secondary",
         ghost:
-          "bg-background text-neutral-600 dark:text-neutral-400 hover:bg-foreground/10 hover:text-foreground justify-center",
+          "bg-transparent text-foreground dark:text-neutral-400 hover:bg-foreground/10 hover:text-muted-foreground justify-center",
         link: "text-primary hover:text-foreground/80 font-extrabold font-universNextProExt [transition:color_0.2s_ease]",
         filter:
           "text-primary hover:text-foreground/80 font-medium font-universNextProExt [transition:color_0.2s_ease]",

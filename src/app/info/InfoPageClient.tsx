@@ -4,7 +4,6 @@ import { useInfo } from "@/context/InfoContext";
 import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
-import { InfoRow } from "@/components/InfoBox";
 import HeroText from "@/components/HeroText";
 import { Fragment, useEffect, useState } from "react";
 import WigglyButton from "@/components/WigglyButton";
@@ -25,7 +24,7 @@ function ScrollHint() {
 
   return (
     <p
-      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-[16px] bg-transparent"
+      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-2xl lg:text-3xl bg-transparent"
       style={{ opacity: visible ? 0.3 : 0, transition: "opacity 0.7s ease" }}
     >
       scroll
@@ -53,19 +52,7 @@ function HDiv({ className = "" }: { className?: string }) {
     <WigglyDivider
       text="info"
       size="text-[8px]"
-      className={`w-full text-muted-foreground ${className}`}
-      active
-    />
-  );
-}
-
-function VDiv() {
-  return (
-    <WigglyDivider
-      vertical
-      text="info"
-      size="text-[8px]"
-      className="hidden lg:flex w-[20px] flex-shrink-0 text-muted-foreground"
+      className={`w-full  ${className}`}
       active
     />
   );
@@ -84,194 +71,262 @@ export default function InfoPageClient() {
     title: string;
   }) {
     return (
-      <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px]">
-        <span />
-        <WigglyButton
-          text={title}
-          size="text-[16px]"
-          className="mb-[9px] justify-start tracking-wider px-0"
-          active
-        />
-        {groupByYear(items).map(([year, exs]) =>
-          exs.map((ex, idx) => {
-            const slug = findExhibitionSlug(ex.title.rendered);
-            return (
-              <Fragment key={ex.id}>
-                <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman no-hide-text">
-                  {idx === 0 ? year : ""}
-                </span>
-                <div className="flex flex-wrap items-baseline gap-x-1 pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman whitespace-normal no-hide-text">
-                  {slug ? (
-                    <Button
-                      variant="link"
-                      size="controls"
-                      className="text-[16px] leading-[1.2] tracking-wide font-timesNewRoman font-normal p-0 h-auto justify-start"
-                      onClick={() => {
-                        setActiveExhibitionSlug(slug);
-                        setOpen(false);
-                      }}
-                    >
-                      {ex.title.rendered},
-                    </Button>
-                  ) : (
-                    <span>{ex.title.rendered},</span>
-                  )}
-                  <span>
-                    {ex.acf.venue}, {ex.acf.city}
-                  </span>
+      <div className="flex flex-col gap-y-0 pt-0 items-start justify-center w-full">
+        <span className="flex flex-col lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+          <WigglyButton
+            text={title}
+            size="text-3xl"
+            mobileSize="text-2xl"
+            className="lowercase col-start-1 col-span-1 justify-start tracking-wider px-0 mb-4 leading-tight"
+            bold
+            forceBaseline
+            anchorFill="currentColor"
+          />
+          <div className="w-full col-span-2 flex flex-col gap-y-0">
+            {groupByYear(items).map(([year, exs]) => (
+              <div key={year} className="flex gap-x-4 items-baseline mb-0">
+                <WigglyButton
+                  text={year}
+                  size="text-3xl"
+                  mobileSize="text-2xl"
+                  className="tracking-wide leading-tight px-0"
+                  forceBaseline
+                  anchorFill="currentColor"
+                />
+                <div className="flex flex-col gap-y-0">
+                  {exs.map((ex) => {
+                    const slug = findExhibitionSlug(ex.title.rendered);
+                    return (
+                      <div
+                        key={ex.id}
+                        className="flex flex-wrap items-baseline gap-x-0 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0"
+                      >
+                        {slug ? (
+                          <WigglyButton
+                            text={ex.title.rendered}
+                            size="text-3xl"
+                            mobileSize="text-2xl"
+                            className="tracking-wide leading-tight items-baseline whitespace-normal px-0"
+                            forceBaseline
+                            onClick={() => {
+                              setActiveExhibitionSlug(slug);
+                              setOpen(false);
+                            }}
+                            bold
+                            anchorFill="currentColor"
+                          />
+                        ) : (
+                          <WigglyButton
+                            text={ex.title.rendered}
+                            size="text-3xl"
+                            mobileSize="text-2xl"
+                            className="tracking-wide leading-tight whitespace-normal px-0"
+                            forceBaseline
+                            anchorFill="currentColor"
+                          />
+                        )}
+                        <span className="font-timesNewRoman text-2xl lg:text-3xl leading-[1.1]">
+                          ,{" "}
+                        </span>
+                        <span className="leading-[1.1] whitespace-normal">
+                          {ex.acf.venue}, {ex.acf.city}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              </Fragment>
-            );
-          }),
-        )}
+              </div>
+            ))}
+          </div>
+        </span>
       </div>
     );
   }
 
   return (
-    <section className="mt-[18px] lg:mt-[54px] relative w-full mb-[64px]">
-      <ScrollHint />
-
-      <div className="text-foreground flex flex-col w-full px-[18px] lg:px-[9px] pb-[64px]">
+    <section className="bg-blue-600 text-foreground relative w-full min-h-dvh px-6 lg:px-4 pt-36">
+      <div className="text-foreground flex flex-col w-full">
         {/* Hero */}
-        <div className="mb-[18px] lg:mb-[32px] lg:max-w-[66%]">
+        <div id="bio" className="lg:max-w-[66%] lg:mx-auto mb-8 ">
           <HeroText />
         </div>
 
-        <HDiv />
-
         {/* Row 1: Group Exhibitions | Solo Exhibitions | Education */}
-        <div className="flex flex-col lg:flex-row">
-          <div className="flex-1 pt-[9px] pb-[18px]">
+        <div className="flex flex-col justify-start gap-y-0 w-full">
+          <div id="group-exhibitions" className="flex-1 w-full mb-8">
             {groupExhibitions.length > 0 && (
-              <ExhibitionList items={groupExhibitions} title="Group Exhibitions" />
+              <ExhibitionList
+                items={groupExhibitions}
+                title="group exhibitions"
+              />
             )}
           </div>
-          <HDiv className="lg:hidden" />
-          <VDiv />
-          <div className="flex-1 pt-[9px] pb-[18px]">
+
+          <div id="solo-exhibitions" className="flex-1 mb-8">
             {soloExhibitions.length > 0 && (
-              <ExhibitionList items={soloExhibitions} title="Solo Exhibitions" />
+              <ExhibitionList
+                items={soloExhibitions}
+                title="solo exhibitions"
+              />
             )}
           </div>
-          <HDiv className="lg:hidden" />
-          <VDiv />
-          <div className="flex-1 pt-[9px] pb-[18px]">
+
+          <div id="education" className="flex-1 mb-8">
             {educations.length > 0 && (
-              <div className="grid grid-cols-[8ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start">
-                <span />
-                <WigglyButton
-                  text="Education"
-                  size="text-[16px]"
-                  className="mb-[9px] pl-0 justify-start tracking-wider"
-                  active
-                />
-                {educations.map((edu) => (
-                  <Fragment key={edu.id}>
-                    <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                      {`${edu.acf.start_year}–${edu.acf.end_year}`}
-                    </span>
-                    <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                      {edu.acf.school}, {edu.acf.city}
-                    </span>
-                  </Fragment>
-                ))}
+              <div className="flex flex-col gap-y-0 items-start justify-start">
+                <span className="flex flex-col lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+                  <WigglyButton
+                    text="education"
+                    size="text-3xl"
+                    mobileSize="text-2xl"
+                    className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                    bold
+                    forceBaseline
+                  />
+                  <div className="w-full col-span-2 ">
+                    {educations.map((edu) => (
+                      <div
+                        key={edu.id}
+                        className="flex lg:grid grid-cols-3 gap-x-4 items-baseline mb-1 "
+                      >
+                        <WigglyButton
+                          text={`${edu.acf.start_year}-${edu.acf.end_year}`}
+                          size="text-3xl"
+                          mobileSize="text-2xl"
+                          className="col-span-1 tracking-wide leading-tight lowercase shrink-0 px-0 w-36"
+                          forceBaseline
+                        />
+                        <span className="text-2xl lg:text-3xl tracking-wide font-timesNewRoman leading-tight col-span-3">
+                          {edu.acf.school}, {edu.acf.city}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </span>
               </div>
             )}
           </div>
         </div>
 
-        <HDiv />
-
         {/* Row 2: Grants | Press | Colophon */}
-        <div className="flex flex-col lg:flex-row">
-          <div className="flex-1 pt-[9px] pb-[18px]">
+        <div className="flex flex-col gap-y-0 mb-4 lg:mt-8">
+          <div id="grants" className="flex-1 mb-4">
             {grants.length > 0 && (
-              <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start">
-                <span />
-                <WigglyButton
-                  text="Grants"
-                  size="text-[16px]"
-                  className="mb-[9px] pl-0 justify-start tracking-wider"
-                  active
-                />
-                {groupByYear(grants).map(([year, gs]) =>
-                  gs.map((grant) => (
-                    <Fragment key={grant.id}>
-                      <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                        {year}
-                      </span>
-                      <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                        {grant.acf.title}
-                      </span>
-                    </Fragment>
-                  )),
-                )}
+              <div className="flex flex-col gap-y-0 items-start justify-center">
+                <span className="lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+                  <WigglyButton
+                    text="grants"
+                    size="text-3xl"
+                    mobileSize="text-2xl"
+                    className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                    bold
+                  />
+                  <div className="w-full col-span-2">
+                    {groupByYear(grants).map(([year, gs]) =>
+                      gs.map((grant) => (
+                        <div
+                          key={grant.id}
+                          className="flex gap-x-6 items-baseline mb-1"
+                        >
+                          <WigglyButton
+                            text={year}
+                            size="text-3xl"
+                            mobileSize="text-2xl"
+                            className="tracking-wide leading-tight lowercase shrink-0 px-0 "
+                            forceBaseline
+                          />
+                          <span className="text-2xl lg:text-3xl tracking-wide font-timesNewRoman leading-tight">
+                            {grant.acf.title}
+                          </span>
+                        </div>
+                      )),
+                    )}
+                  </div>
+                </span>
               </div>
             )}
           </div>
-          <HDiv className="lg:hidden" />
-          <VDiv />
-          <div className="flex-1 pt-[9px] pb-[18px]">
-            <div className="grid grid-cols-[4ch_1fr] gap-x-[9px] lg:gap-x-[32px] content-start">
-              <span />
-              <WigglyButton
-                text="Press"
-                size="text-[16px]"
-                className="mb-[9px] justify-start tracking-wider pl-0"
-                active
-              />
-              <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                2022
-              </span>
-              <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
-                <span>Hjärtat,</span>
-                <span>Lappalainen Hjertström, L-E,</span>
-                <Link
-                  className="underline underline-offset-4 decoration-1 hover:no-underline"
-                  href="https://kunstkritikk.se/hjartats-energi/"
-                >
-                  kunstkritikk.se
-                </Link>
-              </span>
-              <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                2025
-              </span>
-              <span className="pt-[9px] text-[16px] leading-[1.2] tracking-wide font-timesNewRoman flex flex-wrap gap-x-1">
-                <span>Gameplay,</span>
-                <span>Slöör, S, Omkonst,</span>
-                <Link
-                  className="underline underline-offset-4 decoration-1 hover:no-underline"
-                  href="https://omkonst.se/25-gameplay.shtml"
-                >
-                  omkonst.se
-                </Link>
+
+          <div id="press" className="flex-1 mb-4">
+            <div className="flex flex-col items-start justify-center">
+              <span className="lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+                <WigglyButton
+                  text="press"
+                  size="text-3xl"
+                  mobileSize="text-2xl"
+                  className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                  bold
+                />
+                <div className="w-full col-span-2">
+                  <div className="flex gap-x-6 items-baseline mb-1">
+                    <WigglyButton
+                      text="2022"
+                      size="text-3xl"
+                      mobileSize="text-2xl"
+                      className="tracking-wide leading-tight lowercase shrink-0 px-0"
+                      forceBaseline
+                    />
+                    <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                      <span>Hjärtat,</span>
+                      <span>Lappalainen Hjertström, L-E,</span>
+                      <Link
+                        className="underline underline-offset-4 decoration-1 hover:no-underline"
+                        href="https://kunstkritikk.se/hjartats-energi/"
+                      >
+                        kunstkritikk.se
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="flex gap-x-6 items-baseline">
+                    <WigglyButton
+                      text="2025"
+                      size="text-3xl"
+                      mobileSize="text-2xl"
+                      className="tracking-wide leading-tight lowercase shrink-0 px-0"
+                      forceBaseline
+                    />
+                    <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                      <span>Gameplay,</span>
+                      <span>Slöör, S, Omkonst,</span>
+                      <Link
+                        className="underline underline-offset-4 decoration-1 hover:no-underline"
+                        href="https://omkonst.se/25-gameplay.shtml"
+                      >
+                        omkonst.se
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </span>
             </div>
           </div>
-          <HDiv className="lg:hidden" />
-          <VDiv />
-          <div className="flex-1 pt-[9px] pb-[18px]">
-            <WigglyButton
-              text="Colophon"
-              size="text-[16px]"
-              className="mb-[9px] justify-start tracking-wider px-0"
-              active
-            />
-            <div className="flex flex-col mb-4">
-              <InfoRow labelClassName="text-foreground" label="Design & code">
-                <Link
-                  className="underline underline-offset-4 decoration-1 hover:no-underline text-[16px] leading-[1.2] tracking-wide font-timesNewRoman"
-                  href="/"
-                >
-                  Joel Järvi
-                </Link>
-              </InfoRow>
-              <InfoRow labelClassName="text-foreground" label="Typefaces">
-                <span className="text-[16px] leading-[1.2] tracking-wide font-timesNewRoman">
-                  Times New Roman
-                </span>
-              </InfoRow>
+
+          <div className="flex-1">
+            <div className="flex flex-col items-start justify-center">
+              <span className="lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+                <WigglyButton
+                  text="colophon"
+                  size="text-3xl"
+                  mobileSize="text-2xl"
+                  className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                  bold
+                />
+                <div className="col-span-2 flex flex-col gap-y-0">
+                  <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                    <span className="text-foreground">Design & code:</span>
+                    <Link
+                      className="underline underline-offset-4 decoration-1 hover:no-underline"
+                      href="/"
+                    >
+                      Joel Järvi
+                    </Link>
+                  </div>
+                  <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                    <span className="text-foreground">Typefaces:</span>
+                    <span>Times New Roman</span>
+                  </div>
+                </div>
+              </span>
             </div>
           </div>
         </div>
@@ -279,8 +334,8 @@ export default function InfoPageClient() {
         <HDiv />
 
         {/* Copyright */}
-        <div className="py-4">
-          <p className="font-timesNewRoman text-[16px] text-foreground leading-snug">
+        <div className="pt-4 pb-8">
+          <p className="font-timesNewRoman text-foreground text-2xl leading-[1.1] lg:text-3xl text-left lg:text-center">
             All content on this site, including images, text, and design, is the
             intellectual property of Elinor Silow unless otherwise stated. No
             part of this website may be copied, reproduced, distributed, or used

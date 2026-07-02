@@ -1,264 +1,582 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useUI } from "@/context/UIContext";
+import { useIndex, IndexSort, IndexMode } from "@/context/IndexContext";
+import { useWorks, CategoryFilter } from "@/context/WorksContext";
+import { useExhibitions, ExCategory } from "@/context/ExhibitionsContext";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import NavSearch from "./NavSearch";
-import Link from "next/link";
 import WigglyButton from "./WigglyButton";
-import WigglyDivider from "./WigglyDivider";
-import { Cross1Icon } from "@radix-ui/react-icons";
-import HeroText from "./HeroText";
-import { FilterContent } from "./FilterBox";
 
 const NAV_LINKS = [
-  { href: "/", label: "Works" },
-  { href: "/exhibitions", label: "Exhibitions" },
-  { href: "/info", label: "Info" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "home" },
+  { href: "/works", label: "works" },
+  { href: "/exhibitions", label: "exhibitions" },
+  { href: "/index", label: "index" },
+  { href: "/info", label: "info" },
+  { href: "/contact", label: "contact" },
+  {
+    href: "https://www.instagram.com/elinorsilow",
+    label: "instagram",
+    target: "_blank",
+    rel: "noopener noreferrer",
+  },
 ];
 
-const transition = { duration: 0.35, ease: [0.25, 1, 0.5, 1] as const };
+const INDEX_SORTS: IndexSort[] = ["latest", "year", "a-z"];
+const INDEX_MODES: IndexMode[] = ["works", "exhibitions", "all"];
+
+const WORK_FILTERS: { label: string; value: CategoryFilter }[] = [
+  { label: "all works", value: "all" },
+  { label: "paintings", value: "painting" },
+  { label: "sculptures", value: "sculpture" },
+  { label: "drawings", value: "drawing" },
+];
+
+const EX_CATS: { label: string; value: ExCategory }[] = [
+  { label: "all exhibitions", value: "all" },
+  { label: "group exhibitions", value: "group" },
+  { label: "solo exhibitions", value: "solo" },
+];
+
+const INFO_SECTIONS = [
+  "bio",
+  "group exhibitions",
+  "solo exhibitions",
+  "education",
+  "grants",
+  "press",
+];
+
+function NewNavOverlay({
+  onClose,
+  pathname,
+}: {
+  onClose: () => void;
+  pathname: string;
+}) {
+  const { categoryFilter, setCategoryFilter } = useWorks();
+  const { exCat, setExCat } = useExhibitions();
+  const { mode, setMode, sort, setSort, zoom, setZoom, tidy, setTidy } =
+    useIndex();
+
+  const [showSettings, setShowSettings] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+
+  const onWorks = pathname === "/works";
+  const onInfo = pathname === "/info";
+  const onIndex = pathname === "/index";
+  const onExhibitions = pathname === "/exhibitions";
+
+  useEffect(() => {
+    if (!onInfo) return;
+    const ids = INFO_SECTIONS.map((s) => s.replace(/\s+/g, "-"));
+    const observers: IntersectionObserver[] = [];
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { threshold: 0.3 },
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, [onInfo]);
+
+  const renderSubmenu = () => {
+    if (onWorks) {
+      return WORK_FILTERS.map((f) => {
+        const active = categoryFilter === f.value;
+        return (
+          <WigglyButton
+            key={f.value}
+            text={f.label}
+            mobileSize="text-2xl"
+            className={`tracking-wide px-0 leading-tight  `}
+            onClick={() => setCategoryFilter(f.value)}
+            bold={active}
+            anchorFill="currentColor"
+            forceBaseline
+          />
+        );
+      });
+    }
+    if (onInfo) {
+      return INFO_SECTIONS.map((s) => {
+        const id = s.replace(/\s+/g, "-");
+        return (
+          <WigglyButton
+            key={s}
+            text={s}
+            mobileSize="text-2xl"
+            className="tracking-wide leading-tight px-0 text-foreground"
+            href={`#${id}`}
+            bold={activeSection === id}
+            anchorFill="currentColor"
+            forceBaseline
+            onClick={onClose}
+          />
+        );
+      });
+    }
+    if (onIndex) {
+      return (
+        <>
+          {INDEX_MODES.map((m) => {
+            const active = mode === m;
+            return (
+              <WigglyButton
+                key={m}
+                text={m}
+                mobileSize="text-2xl"
+                className="tracking-wide px-0 text-foreground leading-tight"
+                onClick={() => setMode(m)}
+                bold={active}
+                anchorFill="currentColor"
+                forceBaseline
+              />
+            );
+          })}
+          {INDEX_SORTS.map((s) => {
+            const active = sort === s;
+            return (
+              <WigglyButton
+                key={s}
+                text={s}
+                mobileSize="text-2xl"
+                className="tracking-wide px-0 text-foreground leading-tight"
+                onClick={() => setSort(s)}
+                bold={active}
+                anchorFill="currentColor"
+                forceBaseline
+              />
+            );
+          })}
+          <WigglyButton
+            text="settings"
+            mobileSize="text-2xl"
+            className="tracking-wide px-0 text-foreground leading-tight"
+            onClick={() => setShowSettings((v) => !v)}
+            bold={showSettings}
+            anchorFill="currentColor"
+            forceBaseline
+          />
+          {showSettings && (
+            <>
+              <WigglyButton
+                text="zoom in"
+                mobileSize="text-2xl"
+                className="tracking-wide px-0 text-foreground leading-tight"
+                onClick={() => setZoom(Math.max(0, zoom - 1))}
+                anchorFill="currentColor"
+                forceBaseline
+              />
+              <WigglyButton
+                text="zoom out"
+                mobileSize="text-2xl"
+                className="tracking-wide px-0 text-foreground leading-tight"
+                onClick={() => setZoom(Math.min(4, zoom + 1))}
+                anchorFill="currentColor"
+                forceBaseline
+              />
+              <WigglyButton
+                text="tidy up"
+                mobileSize="text-2xl"
+                className="tracking-wide px-0 text-foreground leading-tight"
+                onClick={() => setTidy(!tidy)}
+                bold={tidy}
+                active={tidy}
+                anchorFill="currentColor"
+                forceBaseline
+              />
+            </>
+          )}
+        </>
+      );
+    }
+    if (onExhibitions) {
+      return EX_CATS.map((c) => {
+        const active = exCat === c.value;
+        return (
+          <WigglyButton
+            key={c.value}
+            text={c.label}
+            mobileSize="text-2xl"
+            className="tracking-wide px-0 text-foreground leading-tight"
+            onClick={() => setExCat(c.value)}
+            bold={active}
+            anchorFill="currentColor"
+            forceBaseline
+          />
+        );
+      });
+    }
+    return null;
+  };
+
+  return (
+    <div
+      className={`lg:hidden fixed inset-0 z-[125] ${pathname === "/info" ? "bg-blue-600" : "bg-[#B0916E]"} px-6 pb-4 pointer-events-auto grid grid-cols-2 gap-x-4 grid-rows-2 gap-y-0 h-dvh`}
+    >
+      {/* Row 1, Col 1: spacer — logo+menu floats here at z-[131] */}
+      <div className="col-start-1 row-start-1 min-h-10 " />
+      {/* Row 1, Col 2: nav links */}
+      <div className="col-start-2 row-start-1 flex flex-col items-start justify-baseline gap-y-2 pt-6.5">
+        {NAV_LINKS.map(({ href, label, target, rel }) => (
+          <WigglyButton
+            key={href}
+            text={label}
+            mobileSize="text-2xl"
+            className="tracking-wide px-0 text-foreground leading-tight"
+            href={href}
+            target={target}
+            rel={rel}
+            bold={pathname === href}
+            anchorFill="currentColor"
+            onClick={onClose}
+            forceBaseline
+          />
+        ))}
+      </div>
+      {/* Row 2, Col 1: page-specific submenu */}
+      <div className="col-start-1 row-start-2 flex flex-col items-start gap-y-2 ">
+        {renderSubmenu()}
+      </div>
+      {/* Close button — bottom center */}
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-x-4 px-6 pb-8">
+        <WigglyButton
+          text="close"
+          mobileSize="text-2xl"
+          className=" col-start-2 tracking-wide px-0 text-foreground leading-tight"
+          onClick={onClose}
+          anchorFill="currentColor"
+          bold
+          forceBaseline
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function DesktopNav() {
-  const [heroOverlayOpen, setHeroOverlayOpen] = useState(false);
-  const [navExpanded, setNavExpanded] = useState(false);
-
   const pathname = usePathname();
-  const {
-    open,
-    setOpen,
-    filterOpen,
-    handleFilterOpen,
-    activePage,
-    openSearch,
-    setOpenSearch,
-  } = useUI();
+  const { sans } = useUI();
+  const { mode, setMode, tidy, setTidy, zoom, setZoom, search, setSearch } =
+    useIndex();
 
-  const pageLabel =
-    activePage === "home" || activePage === "works"
-      ? "works"
-      : activePage === "exhibitions"
-        ? "exhibitions"
-        : activePage;
+  const [showSearch, setShowSearch] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const isInfo = pathname.startsWith("/info");
   useEffect(() => {
-    setOpen(false);
-  }, [pathname, setOpen]);
+    document.documentElement.classList.toggle("sans-mode", sans);
+  }, [sans]);
+
+  useEffect(() => {
+    if (showSearch) inputRef.current?.focus();
+  }, [showSearch]);
+
+  const onIndex = pathname === "/index";
+  const onWorks = pathname === "/works";
+  const onExhibitions = pathname === "/exhibitions";
+  const onInfo = pathname === "/info";
+
+  const { categoryFilter, setCategoryFilter } = useWorks();
+  const { exCat, setExCat } = useExhibitions();
+
+  useEffect(() => {
+    if (!onIndex) return;
+    function handleScroll() {
+      if (window.innerWidth < 1024) setNavOpen(false);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [onIndex]);
+
+  useEffect(() => {
+    if (!onInfo) return;
+    const ids = INFO_SECTIONS.map((s) => s.replace(/\s+/g, "-"));
+    const observers: IntersectionObserver[] = [];
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { threshold: 0.3 },
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, [onInfo]);
 
   return (
     <>
-      {/* Full-screen search overlay — all screen sizes */}
-      <NavSearch open={openSearch} onClose={() => setOpenSearch(false)} />
-
-      {/* HeroText overlay — mobile, opened by tapping "elinor silow" */}
-      <AnimatePresence>
-        {heroOverlayOpen && (
-          <motion.div
-            key="hero-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={transition}
-            className="lg:hidden fixed inset-0 z-[130] bg-background/90 backdrop-blur-sm flex flex-col"
-            onClick={() => setHeroOverlayOpen(false)}
-          >
-            <button
-              className="absolute top-[18px] right-[18px] no-hide-text p-[6px] text-muted-foreground"
-              onClick={(e) => {
-                e.stopPropagation();
-                setHeroOverlayOpen(false);
-              }}
-              aria-label="Close"
-            >
-              <Cross1Icon className="w-[18px] h-[18px]" />
-            </button>
-            <div
-              className="flex flex-col justify-center flex-1 px-[18px]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <HeroText />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── DESKTOP: horizontal tab bar (always visible) ── */}
-      <div className="hidden lg:flex items-start justify-end fixed top-0 right-0 left-0 z-[80] pointer-events-none pt-[9px] px-[9px] pb-[9px] w-full bg-background">
-        {/* Nav links — shown when navExpanded */}
-        <div
-          className={`items-center h-min bg-background ${navExpanded ? "flex" : "hidden"}`}
-        >
-          {NAV_LINKS.map(({ href, label }) => (
-            <div key={href} className="flex items-center">
-              <Link href={href}>
-                <WigglyButton
-                  text={label}
-                  size="text-[16px]"
-                  bold={false}
-                  revealAnimation={false}
-                  active={pageLabel === label.toLowerCase()}
-                  className={`tracking-wide no-hide-text lowercase ${
-                    pageLabel === label
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                />
-              </Link>
-              <span className="items-center font-timesNewRoman font-normal text-[16px]  text-muted-foreground">
-                /
-              </span>
-            </div>
+      {/* Main nav — z-[131], always above NewNavOverlay */}
+      <div
+        id="main-nav"
+        className={`fixed left-0 right-0 z-[131] flex flex-col items-center pt-2 lg:pt-0 pointer-events-none ${onInfo ? " max-lg:bg-blue-600" : ""}`}
+      >
+        {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
+        <div className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
+          <WigglyButton
+            text="elinor silow"
+            size="text-3xl"
+            mobileSize="text-2xl"
+            className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0"
+            href="/"
+            bold
+            anchorFill="currentColor"
+            wiggleGradient={true}
+            forceBaseline
+            active
+          />
+          <span className="font-timesNewRoman text-2xl lg:text-3xl text-foreground select-none leading-tight font-bold">
+            ,{" "}
+          </span>
+          <WigglyButton
+            text="menu"
+            size="text-3xl"
+            mobileSize="text-2xl"
+            className="tracking-wide leading-tight px-0 mx-0 ml-2 text-foreground"
+            onClick={() => setNavOpen((v) => !v)}
+            anchorFill="currentColor"
+            forceBaseline
+            wiggleGradient={true}
+            active
+          />
+          {/* ":" on mobile when nav open */}
+          {navOpen && (
+            <span className="lg:hidden font-timesNewRoman text-2xl text-foreground select-none font-bold leading-none">
+              :
+            </span>
+          )}
+          {/* ":" on desktop before nav links */}
+          {navOpen && (
+            <span className="hidden lg:inline font-timesNewRoman text-3xl select-none leading-tight mr-1.5">
+              {":"}
+            </span>
+          )}
+          {/* Desktop nav links — hidden on mobile (NewNavOverlay handles mobile) */}
+          {NAV_LINKS.map(({ href, label, target, rel }, idx) => (
+            <Fragment key={href}>
+              {idx > 0 && navOpen && (
+                <span className="hidden lg:inline font-timesNewRoman text-3xl select-none leading-tight mr-1.5">
+                  ,{" "}
+                </span>
+              )}
+              <WigglyButton
+                text={label}
+                size="text-3xl"
+                mobileSize="text-2xl"
+                className={`tracking-wide leading-tight px-0 ml-0 ${navOpen ? "hidden lg:inline-flex" : "hidden"}`}
+                href={href}
+                target={target}
+                rel={rel}
+                bold={pathname === href}
+                anchorFill="currentColor"
+                forceBaseline
+              />
+            </Fragment>
           ))}
-          <WigglyButton
-            text="Instagram"
-            size="text-[16px]"
-            bold={false}
-            revealAnimation={false}
-            href="https://www.instagram.com/elinorsilow"
-            className="tracking-wide text-muted-foreground lowercase"
-          />
-
-          <span className="inline-flex items-center font-timesNewRoman font-normal text-[16px] select-none text-muted-foreground">
-            /
-          </span>
-          <WigglyButton
-            text={openSearch ? "Close Search" : "Search"}
-            size="text-[16px]"
-            bold={false}
-            revealAnimation={false}
-            active={openSearch}
-            className={`tracking-wide lowercase ${
-              openSearch ? "text-foreground" : "text-muted-foreground"
-            }`}
-            onClick={() => setOpenSearch(!openSearch)}
-          />
-          <span className="items-center font-timesNewRoman font-normal text-[16px]  text-foreground">
-            /
-          </span>
         </div>
-        <WigglyButton
-          text={navExpanded ? "Close Menu" : "Menu"}
-          size="text-[16px]"
-          bold={false}
-          revealAnimation={false}
-          active={navExpanded}
-          className={`tracking-wide lowercase`}
-          onClick={() => setNavExpanded((v) => !v)}
-        />
-        {!isInfo && (
-          <>
-            <span className="inline-flex items-center  font-timesNewRoman font-normal text-[16px] select-none ">
-              /
+
+        {/* Desktop submenus — flex-wrap rows below the nav row */}
+
+        {/* Works: category filter */}
+        {onWorks && navOpen && (
+          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {WORK_FILTERS.map((f, i) => {
+              const active = categoryFilter === f.value;
+              return (
+                <Fragment key={f.value}>
+                  {i > 0 && (
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+                      ,
+                    </span>
+                  )}
+                  <WigglyButton
+                    text={f.label}
+                    size="text-3xl"
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    onClick={() => setCategoryFilter(f.value)}
+                    bold
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                </Fragment>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Exhibitions: always-visible desktop category row */}
+        {onExhibitions && (
+          <div className="hidden lg:flex -mt-2 gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {EX_CATS.map((c, i) => {
+              const active = exCat === c.value;
+              return (
+                <Fragment key={c.value}>
+                  {i > 0 && (
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+                      ,
+                    </span>
+                  )}
+                  <WigglyButton
+                    text={c.label}
+                    size="text-3xl"
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    onClick={() => setExCat(c.value)}
+                    bold={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                </Fragment>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Index: mode filter + settings toggle */}
+        {onIndex && navOpen && (
+          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto  w-full">
+            {INDEX_MODES.map((m, i) => {
+              const active = mode === m;
+              return (
+                <Fragment key={m}>
+                  {i > 0 && (
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+                      ,
+                    </span>
+                  )}
+                  <WigglyButton
+                    text={m}
+                    size="text-3xl"
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    onClick={() => setMode(m)}
+                    bold={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                </Fragment>
+              );
+            })}
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+              ,
             </span>
             <WigglyButton
-              text={filterOpen ? "Close Filter" : "Filter"}
-              size="text-[16px]"
-              bold={false}
-              revealAnimation={false}
-              active={filterOpen}
-              className={`tracking-wide lowercase ${
-                filterOpen ? "text-foreground" : "text-foreground"
-              }`}
-              onClick={() => handleFilterOpen()}
+              text="settings"
+              size="text-3xl"
+              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              onClick={() => setShowSettings((v) => !v)}
+              bold={showSettings}
+              anchorFill="currentColor"
+              forceBaseline
             />
-          </>
+          </div>
+        )}
+
+        {/* Index: settings sub-panel */}
+        {onIndex && navOpen && showSettings && (
+          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+            <WigglyButton
+              text="zoom in"
+              size="text-3xl"
+              className="tracking-wide leading-tight px-0 lg:ml-2 text-muted-foreground"
+              onClick={() => setZoom(Math.max(0, zoom - 1))}
+              anchorFill="currentColor"
+              forceBaseline
+            />
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+              ,
+            </span>
+            <WigglyButton
+              text="zoom out"
+              size="text-3xl"
+              className="tracking-wide leading-tight px-0 lg:ml-2 text-muted-foreground"
+              onClick={() => setZoom(Math.min(4, zoom + 1))}
+              anchorFill="currentColor"
+              forceBaseline
+            />
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+              ,
+            </span>
+            <WigglyButton
+              text="tidy up"
+              size="text-3xl"
+              className={`tracking-wide leading-tight px-0 lg:ml-2 ${tidy ? "text-foreground" : "text-muted-foreground"}`}
+              onClick={() => setTidy(!tidy)}
+              bold={tidy}
+              anchorFill="currentColor"
+              forceBaseline
+            />
+          </div>
+        )}
+
+        {/* Info: section links */}
+        {onInfo && navOpen && (
+          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {INFO_SECTIONS.map((s, i) => (
+              <Fragment key={s}>
+                {i > 0 && (
+                  <span className="font-timesNewRoman text-2xl select-none text-foreground leading-tight ">
+                    ,
+                  </span>
+                )}
+                <WigglyButton
+                  text={s}
+                  size="text-3xl"
+                  className="tracking-wide leading-tight px-0 lg:ml-2 "
+                  href={`#${s.replace(/\s+/g, "-")}`}
+                  bold={activeSection === s.replace(/\s+/g, "-")}
+                  anchorFill="currentColor"
+                  forceBaseline
+                  onClick={() => setNavOpen(false)}
+                />
+              </Fragment>
+            ))}
+          </div>
         )}
       </div>
 
-      {/* ── MOBILE: top-slide full-screen ── */}
-      <motion.div
-        className="lg:hidden fixed top-0 left-0 z-[120] w-full pointer-events-none"
-        initial={{ y: "-100dvh" }}
-        animate={{ y: open ? 0 : "-100dvh" }}
-        transition={transition}
-      >
-        <div
-          className="relative h-dvh w-full pointer-events-auto bg-background overflow-y-auto"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="flex flex-col px-[18px] pt-[18px] pb-[64px] pointer-events-auto w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Search — always visible at top */}
-            <div className="py-[9px]">
-              <NavSearch inline open={true} onClose={() => {}} />
-            </div>
+      {/* Mobile overlay — z-[125], behind logo/menu */}
+      {navOpen && (
+        <NewNavOverlay onClose={() => setNavOpen(false)} pathname={pathname} />
+      )}
 
-            {/* Nav section */}
-            <div className="flex flex-col items-start justify-start gap-y-[0px] py-[9px]">
-              <WigglyButton
-                className="cursor-pointer tracking-normal justify-start  w-full text-muted-foreground bg-background py-[9px]"
-                onClick={() => setHeroOverlayOpen(true)}
-                text="Elinor Silow"
-                size="text-[16px]"
-                active={open}
-              />
-              {NAV_LINKS.map(({ href, label }) => {
-                const isActive =
-                  href === "/" ? pathname === "/" : pathname.startsWith(href);
-                return (
-                  <Link key={href} href={href} className="w-full block">
-                    <WigglyButton
-                      className={`cursor-pointer bg-background justify-start w-full py-[9px] ${isActive ? "text-foreground" : "text-muted-foreground"}`}
-                      onClick={() => setOpen(false)}
-                      text={label}
-                      size="text-[16px]"
-                      active={open}
-                    />
-                  </Link>
-                );
-              })}
-              <Link
-                href="https://www.instagram.com/elinorsilow"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full"
-              >
-                <WigglyButton
-                  className="cursor-pointer flex justify-start text-muted-foreground bg-background w-full py-[9px]"
-                  text="Instagram"
-                  size="text-[16px]"
-                  active={open}
-                />
-              </Link>
-            </div>
-            <WigglyDivider
-              text="menu"
-              size="text-[8px]"
-              className="w-full  text-muted-foreground"
-              active={true}
+      {/* Search overlay */}
+      {showSearch && (
+        <div className="fixed inset-0 z-[130] flex items-center justify-center pointer-events-none w-full px-4 bg-background">
+          <div className="pointer-events-auto relative inline-flex items-center border-b-1 border-foreground w-full">
+            <input
+              ref={inputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="search..."
+              className="bg-transparent border-none outline-none font-timesNewRoman text-2xl lowercase font-normal tracking-wide placeholder:text-foreground text-foreground px-2 pr-8"
             />
-            {/* Filter section */}
-            <FilterContent onMobileSelect={() => setOpen(false)} />
-            <WigglyDivider
-              text="filter"
-              size="text-[8px]"
-              className="w-full mt-[9px]  text-muted-foreground"
-              active={true}
-            />
+            <button
+              onClick={() => {
+                setSearch("");
+                setShowSearch(false);
+              }}
+              className="absolute right-0 text-foreground text-2xl font-timesNewRoman"
+              aria-label="Close search"
+            >
+              ×
+            </button>
           </div>
         </div>
-      </motion.div>
-
-      {/* ── MOBILE: fixed bottom tab ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[130] flex justify-center items-center pb-[18px] pointer-events-auto bg-transparent">
-        <div className="flex items-start w-full px-[9px] h-[32px]">
-          <WigglyButton
-            text={open ? "close" : "menu&filters"}
-            className="text-muted-foreground bg-transparent justify-center py-[9px] px-2 w-full no-hide-text tracking-widest font-bold"
-            active={open}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(!open);
-            }}
-            size="text-[16px]"
-          />
-        </div>
-      </div>
+      )}
     </>
   );
 }

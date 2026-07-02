@@ -1,138 +1,86 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useUI } from "@/context/UIContext";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { useExhibitions } from "@/context/ExhibitionsContext";
+import { useWorks } from "@/context/WorksContext";
+import { useUI } from "@/context/UIContext";
+
+import InfoBox from "@/components/InfoBox";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
 import WorkModal from "@/components/WorkModal";
-import { motion } from "framer-motion";
-import DynamicGrid from "@/components/DynamicGrid";
-import ExhibitionCard from "@/components/ExhibitionCard";
-import { OGubbeText } from "@/components/OGubbeText";
-import { Work } from "../../../lib/sanity";
-import { useWorks } from "@/context/WorksContext";
 
 export default function ExhibitionsPageClient() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const {
-    filteredExhibitions,
-    exAsList,
-    setActiveExhibitionSlug,
-    activeExhibitionSlug,
-    exLoading,
-  } = useExhibitions();
-  const {
-    setOpen,
-    setActivePage,
-    exGridCols,
-    exGridRows,
-    setVisibleExhibitionIndex,
-    visibleExhibitionIndex,
-  } = useUI();
+  const { filteredExhibitions, setActiveExhibitionSlug, activeExhibitionSlug } =
+    useExhibitions();
   const { allWorks } = useWorks();
+  const { moreFun, moreFunBg, refreshMoreFunBg } = useUI();
+  const [index, setIndex] = useState(0);
+  const [activeWorkSlug, setActiveWorkSlug] = useState<string | null>(null);
 
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setActivePage("exhibitions");
-      },
-      { rootMargin: "-40% 0px -40% 0px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [setActivePage]);
+  const ex = filteredExhibitions[index] ?? null;
+  const imageUrl = ex?.acf.image_1?.url ?? null;
 
-  const [activeWork, setActiveWork] = useState<Work | null>(null);
-
-  const handleWorkSelect = (title: string) => {
-    const work = allWorks.find((w) => w.title.rendered === title);
-    if (!work) return;
-
-    setActiveWork(work);
-  };
-
-  const [initialAnimDone, setInitialAnimDone] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  useEffect(() => {
-    if (!exLoading) setDataLoaded(true);
-  }, [exLoading]);
-  useEffect(() => {
-    if (dataLoaded) {
-      const t = setTimeout(() => setInitialAnimDone(true), 600);
-      return () => clearTimeout(t);
-    }
-  }, [dataLoaded]);
-  const loading = !initialAnimDone || !dataLoaded;
-
-  function openExhibition(ex: { slug: string }) {
-    setActiveExhibitionSlug(ex.slug);
-    setOpen(false);
-    window.history.pushState(null, "", `/exhibitions?exhibition=${ex.slug}`);
+  function handleClick() {
+    if (!filteredExhibitions.length) return;
+    setIndex((i) => (i + 1) % filteredExhibitions.length);
+    if (moreFun) refreshMoreFunBg();
   }
 
   return (
-    <section ref={sectionRef} className="relative w-full   ">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: loading ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
+    <div
+      className="h-dvh w-full flex flex-col px-6 cursor-pointer transition-colors duration-300 bg-yellow-300"
+      style={moreFun ? { backgroundColor: moreFunBg } : undefined}
+      onClick={handleClick}
+    >
+      <div
+        className="flex-1 flex items-center justify-center "
+        style={{ perspective: "800px" }}
       >
-        {/* Title list — behind cards */}
-        {exAsList && (
-          <div className="fixed top-0 left-0 right-0 z-[5] h-dvh overflow-y-auto pointer-events-auto">
-            <div className="flex flex-col items-center min-h-dvh pt-[32px] pb-[18px]">
-              {filteredExhibitions.map((ex, i) => (
-                <button key={ex.id} onClick={() => openExhibition(ex)}>
-                  <OGubbeText
-                    text={ex.title.rendered}
-                    revealAnimation={false}
-                    sizes="16px"
-                    className={`font-timesNewRoman font-normal text-[16px] tracking-wide transition-colors duration-300 py-0 ${
-                      i === visibleExhibitionIndex
-                        ? "text-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            <div className="sticky bottom-0 h-[48px] w-full shrink-0 bg-gradient-to-t from-background to-transparent pointer-events-none -mt-[48px] z-10" />
-          </div>
+        {imageUrl && (
+          <motion.img
+            src={imageUrl}
+            alt={ex!.title.rendered}
+            className="max-h-[50dvh] lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
+            style={{}}
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveExhibitionSlug(ex!.slug);
+            }}
+          />
         )}
+      </div>
 
-        <DynamicGrid
-          items={filteredExhibitions}
-          renderItem={(ex, i) => (
-            <ExhibitionCard
-              ex={ex}
-              index={i}
-              onOpen={() => openExhibition(ex)}
-            />
-          )}
-          onTopVisibleChange={setVisibleExhibitionIndex}
-          gridCols={Math.min(4, Math.max(1, exGridCols))}
-          gridRows={Math.min(4, Math.max(1, exGridRows))}
-          gapY="gap-y-[72px]"
-        />
-      </motion.div>
+      {ex && (
+        <div
+          className="flex justify-center px-2 lg:px-0 py-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveExhibitionSlug(ex.slug);
+          }}
+        >
+          <InfoBox exhibition={ex} centered />
+        </div>
+      )}
 
       {activeExhibitionSlug && (
         <ExhibitionModal
           slug={activeExhibitionSlug}
           onClose={() => setActiveExhibitionSlug(null)}
-          onOpenWorkByTitle={handleWorkSelect}
+          onOpenWorkByTitle={(title) => {
+            const work = allWorks.find((w) => w.title.rendered === title);
+            if (work) setActiveWorkSlug(work.slug);
+          }}
         />
       )}
 
-      {activeWork && (
+      {activeWorkSlug && (
         <WorkModal
-          slug={activeWork.slug}
-          onClose={() => setActiveWork(null)}
+          slug={activeWorkSlug}
+          onClose={() => setActiveWorkSlug(null)}
           showInfo
         />
       )}
-    </section>
+    </div>
   );
 }

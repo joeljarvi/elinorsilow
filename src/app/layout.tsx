@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/context/theme-provider";
 import { InfoProvider } from "@/context/InfoContext";
 import { NavProvider } from "@/context/NavContext";
 import { UIProvider } from "@/context/UIContext";
+import { IndexProvider } from "@/context/IndexContext";
 import { NavSlotProvider } from "@/context/NavSlotContext";
 
 import BlurTextManager from "@/components/BlurTextManager";
@@ -15,9 +16,20 @@ import NavWrapper from "@/components/NavWrapper";
 import DottedGrid from "@/components/DottedGrid";
 
 import NavSpacer from "@/components/NavSpacer";
+import ContentWrapper from "@/components/ContentWrapper";
 
 import { CarouselProvider } from "@/context/CarouselContext";
 import FixedFooter from "@/components/FixedCookieAccept";
+import { ActivityProvider } from "@/context/ActivityContext";
+import { getRecentActivity } from "../../lib/sanity";
+
+const timesDot = localFont({
+  src: [
+    { path: "assets/fonts/TimesDotRom.otf", weight: "400", style: "normal" },
+    { path: "assets/fonts/TimesDotBol.otf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-timesDot",
+});
 
 const bookish = localFont({
   src: "assets/fonts/Bookish-Book-TRIAL.otf",
@@ -183,17 +195,18 @@ export const metadata: Metadata = {
   description: "The artist known as Elinor Silow",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   modal,
 }: Readonly<{
   children: React.ReactNode;
   modal?: React.ReactNode;
 }>) {
+  const updates = await getRecentActivity(20);
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable} ${universNextPro.variable} ${universNextProExt.variable} ${universNextProCond.variable} ${universNextTypewrtr.variable} antialiased`}
+        className={`${timesDot.variable} ${EBGaramond.variable} ${EBGaramondItalic.variable} ${EBGaramondAC.variable} ${directorMono.variable} ${directorBold.variable} ${directorLight.variable} ${bookish.variable} ${universNextPro.variable} ${universNextProExt.variable} ${universNextProCond.variable} ${universNextTypewrtr.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -206,21 +219,28 @@ export default function RootLayout({
               <InfoProvider>
                 <NavProvider>
                   <UIProvider>
+                    <IndexProvider>
+                    <ActivityProvider updates={updates}>
                     <NavSlotProvider>
                       <AnimationProvider>
-                        <BlurTextManager />
+                      
 
                         {/* Column shadow overlay — fixed, covers full viewport */}
                         <FixedFooter />
                         <NavWrapper />
+                        <NavSpacer />
 
                         {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
                       <div className="fixed bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-background/0 z-50 pointer-events-none" /> */}
                         <CarouselProvider>
-                          {children} {modal}
+                          <ContentWrapper>
+                            {children} {modal}
+                          </ContentWrapper>
                         </CarouselProvider>
                       </AnimationProvider>
                     </NavSlotProvider>
+                    </ActivityProvider>
+                    </IndexProvider>
                   </UIProvider>
                 </NavProvider>
               </InfoProvider>

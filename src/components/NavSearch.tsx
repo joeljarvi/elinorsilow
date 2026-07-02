@@ -76,13 +76,12 @@ export default function NavSearch({
     return (
       <div className="w-full flex flex-col">
         <div className="flex items-center px-[9px]">
-          <MagnifyingGlassIcon className="shrink-0 w-[16px] h-[16px] text-muted-foreground" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search..."
-            className="flex-1 outline-none bg-transparent font-timesNewRoman text-[16px] tracking-wide px-[9px] py-[9px] placeholder:text-muted-foreground"
+            className="flex-1 outline-none bg-transparent font-timesNewRoman text-3xl tracking-wide px-[9px] py-[9px] placeholder:text-muted-foreground"
           />
           {query && (
             <button
@@ -94,22 +93,17 @@ export default function NavSearch({
             </button>
           )}
         </div>
-        <WigglyDivider
-          text="search"
-          size="text-[8px]"
-          className="w-full mt-[9px] text-muted-foreground"
-          active={true}
-        />
+
         {query && (
-          <div className="flex flex-col pt-[9px]">
+          <div className="flex flex-col px-4 pb-4">
             {results.length > 0 ? (
               results.slice(0, 20).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleResultClick(item)}
-                  className="no-hide-text flex items-baseline gap-x-[18px] px-[9px] py-[6px] text-left"
+                  className="no-hide-text flex items-baseline gap-x-4 py-2 text-left"
                 >
-                  <span className="font-timesNewRoman text-[16px] text-muted-foreground whitespace-nowrap shrink-0">
+                  <span className="font-timesNewRoman text-base tracking-wide text-muted-foreground whitespace-nowrap shrink-0">
                     {item.type}
                   </span>
                   <OGubbeText
@@ -123,7 +117,7 @@ export default function NavSearch({
                 </button>
               ))
             ) : (
-              <p className="px-[9px] py-[9px] font-timesNewRoman text-[16px] text-muted-foreground">
+              <p className="px-4 font-timesNewRoman text-base text-muted-foreground">
                 No results for &ldquo;{query}&rdquo;
               </p>
             )}

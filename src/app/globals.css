@@ -64,6 +64,7 @@ html {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 :root {
+  --font-haas: "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --radius: 0.625rem;
   --shadow-ui: none;
   --shadow-md: none;
@@ -259,6 +260,23 @@ a {
   vertical-align: middle;
 }
 
+.noise-bg {
+  position: relative;
+  isolation: isolate;
+}
+.noise-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  mix-blend-mode: overlay;
+  opacity: 1;
+  background-image: url("/noise-texture-1.png");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
 /* globals.css */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
@@ -266,4 +284,20 @@ a {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
+}
+
+/* Sans mode — override all text to Neue Haas / system sans-serif */
+html.sans-mode .font-timesNewRoman,
+html.sans-mode .p,
+html.sans-mode .p-small,
+html.sans-mode p,
+html.sans-mode span,
+html.sans-mode a,
+html.sans-mode button,
+html.sans-mode input,
+html.sans-mode h1,
+html.sans-mode h2,
+html.sans-mode h3,
+html.sans-mode h4 {
+  font-family: var(--font-haas) !important;
 }

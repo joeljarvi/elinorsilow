@@ -7,9 +7,7 @@ import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
 import BlurredWorkBg from "@/components/BlurredWorkBg";
-import WigglyButton from "@/components/WigglyButton";
 import InfoBox from "@/components/InfoBox";
-import WigglyDivider from "./WigglyDivider";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -22,11 +20,7 @@ export default function WorkSlugModalClient({
   onClose,
   showInfo,
 }: WorkSlugModalClientProps) {
-  const {
-    filteredWorks,
-    normalizeSlug,
-    workLoading: contextLoading,
-  } = useWorks();
+  const { filteredWorks, normalizeSlug, workLoading: contextLoading } = useWorks();
   const { showColorBg } = useUI();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,10 +70,7 @@ export default function WorkSlugModalClient({
       loadWorkByIndex(currentIndex + 1);
   }, [currentIndex, filteredWorks, loadWorkByIndex]);
 
-  const swipeHandlers = useSwipe({
-    onSwipedLeft: goNext,
-    onSwipedRight: goPrev,
-  });
+  const swipeHandlers = useSwipe({ onSwipedLeft: goNext, onSwipedRight: goPrev });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -97,51 +88,35 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className="relative w-full h-dvh flex flex-col  gap-x-4 p-[9px]"
+      className="relative w-full h-dvh flex flex-col p-[9px]"
       onClick={onClose}
     >
-      {showColorBg && work?.image_url && (
+      {showColorBg && work.image_url && (
         <BlurredWorkBg imageUrl={work.image_url} />
       )}
+
       {/* Image */}
-      {showInfo && (
-        <div
-          className="flex-shrink-0  w-full lg:w-[280px] pt-[0px] "
-          onClick={(e) => e.stopPropagation()}
-        >
-          <WigglyDivider
-            text="work"
-            className="text-muted-foreground"
-            size="text-[8px]"
-            active
+      <div className="relative flex-1 min-h-0">
+        {work.image_url && (
+          <Image
+            src={work.image_url}
+            alt={work.title.rendered}
+            fill
+            className="object-contain object-center pointer-events-none"
+            priority
           />
-          <InfoBox work={work} />
-          <WigglyDivider
-            text="work"
-            className="text-muted-foreground"
-            size="text-[8px]"
-            active
-          />
-        </div>
-      )}
-      <div className="mt-[9px] flex-1 flex flex-col min-w-0" onClick={onClose}>
-        <div className="relative flex-1 ">
-          {work.image_url && (
-            <Image
-              src={work.image_url}
-              alt={work.title.rendered}
-              fill
-              className={`object-contain pointer-events-auto ${showInfo ? "object-left-top" : "object-center"}`}
-              priority
-            />
-          )}
-        </div>
+        )}
       </div>
 
-      {/* Mobile close button */}
-      <div className="fixed bottom-[32px] left-1/2 -translate-x-1/2 z-[20] justify-center">
-        <WigglyButton text="close" active size="text-18px" onClick={onClose} />
-      </div>
+      {/* Info — bottom left */}
+      {showInfo && (
+        <div
+          className="flex-shrink-0 pt-[9px]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <InfoBox work={work} />
+        </div>
+      )}
     </div>
   );
 }

@@ -14,12 +14,12 @@ type WorkModalProps = {
 export default function WorkModal({ slug, onClose, showInfo }: WorkModalProps) {
   const { showColorBg } = useUI();
   const [isOpen, setIsOpen] = useState(true);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [cursorVisible, setCursorVisible] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const handleClose = () => {
@@ -32,14 +32,12 @@ export default function WorkModal({ slug, onClose, showInfo }: WorkModalProps) {
       {isOpen && (
         <motion.div
           key="backdrop"
-          className={`fixed inset-0 z-[200] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/70 backdrop-blur-sm"}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          className={`fixed inset-0 z-[200] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/40 backdrop-blur-md"}`}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0 }}
           transition={{ duration: 0.3 }}
-          onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-          onMouseEnter={() => setCursorVisible(true)}
-          onMouseLeave={() => setCursorVisible(false)}
+          onClick={handleClose}
         >
           <motion.div
             key="content"
@@ -49,7 +47,11 @@ export default function WorkModal({ slug, onClose, showInfo }: WorkModalProps) {
             exit={{ scale: 0.94, opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
           >
-            <WorkSlugModalClient slug={slug} onClose={handleClose} showInfo={showInfo} />
+            <WorkSlugModalClient
+              slug={slug}
+              onClose={handleClose}
+              showInfo={showInfo}
+            />
           </motion.div>
 
           {/* Custom cursor */}

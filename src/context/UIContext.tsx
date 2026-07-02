@@ -4,13 +4,29 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
   Dispatch,
 } from "react";
 
 interface UIContextValue {
+  inactive: boolean;
   open: boolean;
   setOpen: (v: boolean) => void;
+  boring: boolean;
+  setBoring: Dispatch<boolean>;
+  moreFun: boolean;
+  setMoreFun: Dispatch<boolean>;
+  sans: boolean;
+  setSans: Dispatch<boolean>;
+  small: boolean;
+  setSmall: Dispatch<boolean>;
+  funForeground: boolean;
+  setFunForeground: Dispatch<boolean>;
+  showAnchorsAll: boolean;
+  setShowAnchorsAll: Dispatch<boolean>;
+  moreFunBg: string;
+  refreshMoreFunBg: () => void;
   navVisible: boolean;
   setNavVisible: (v: boolean) => void;
   openDesktopNav: boolean;
@@ -75,10 +91,39 @@ interface UIContextValue {
   handleOpenContact: () => void;
 }
 
+function randomHsl() {
+  return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+}
+
 const UIContext = createContext<UIContextValue | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
+  const [inactive, setInactive] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    function resetTimer() {
+      setInactive(false);
+      clearTimeout(timer);
+      timer = setTimeout(() => setInactive(true), 4000);
+    }
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll", "click"] as const;
+    events.forEach((e) => document.addEventListener(e, resetTimer, { passive: true }));
+    resetTimer();
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => document.removeEventListener(e, resetTimer));
+    };
+  }, []);
+
   const [open, setOpen] = useState(false);
+  const [boring, setBoring] = useState(false);
+  const [moreFun, setMoreFun] = useState(false);
+  const [sans, setSans] = useState(false);
+  const [small, setSmall] = useState(false);
+  const [funForeground, setFunForeground] = useState(true);
+  const [showAnchorsAll, setShowAnchorsAll] = useState(false);
+  const [moreFunBg, setMoreFunBg] = useState(() => randomHsl());
   const [openDesktopNav, setOpenDesktopNav] = useState(false);
   const [navVisible, setNavVisible] = useState(false);
 
@@ -146,8 +191,23 @@ export function UIProvider({ children }: { children: ReactNode }) {
   return (
     <UIContext.Provider
       value={{
+        inactive,
         open,
         setOpen,
+        boring,
+        setBoring,
+        moreFun,
+        setMoreFun,
+        sans,
+        setSans,
+        small,
+        setSmall,
+        funForeground,
+        setFunForeground,
+        showAnchorsAll,
+        setShowAnchorsAll,
+        moreFunBg,
+        refreshMoreFunBg: () => setMoreFunBg(randomHsl()),
         navVisible,
         setNavVisible,
         openDesktopNav,

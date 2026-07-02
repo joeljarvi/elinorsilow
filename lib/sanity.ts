@@ -21,6 +21,7 @@ export type Work = {
   id: string;
   slug: string;
   title: { rendered: string };
+  date: string;
   acf: {
     year: number;
     category: string;
@@ -144,6 +145,7 @@ function transformWork(doc: any): Work {
     id: doc._id,
     slug: doc.slug,
     title: { rendered: doc.title },
+    date: doc._createdAt || "",
     acf: {
       year: doc.year,
       category: doc.category?.toLowerCase() || "",
@@ -225,7 +227,7 @@ let cachedExhibitions: Exhibition[] | null = null;
 
 const WORK_FIELDS = `
   _id, "slug": slug.current, title, year, category,
-  materials, dimensions, exhibition, status, description, image, featured
+  materials, dimensions, exhibition, status, description, image, featured, _createdAt
 `;
 
 const EXHIBITION_FIELDS = `
@@ -345,6 +347,61 @@ export async function getLongBio(): Promise<string> {
     { next: { revalidate: 60 } }
   );
   return data?.bio ?? "";
+}
+
+export type ActivityEntry = {
+  type: "work" | "exhibition" | "exhibition_list";
+  title: string;
+  slug: string;
+  updatedAt: string;
+};
+
+export async function getLatestWorks(limit = 10): Promise<Work[]> {
+  const data = await client.fetch(
+    `*[_type == "work"] | order(_createdAt desc) [0...$limit] { ${WORK_FIELDS} }`,
+    { limit },
+    { next: { revalidate: 60 } }
+  );
+  return Array.isArray(data) ? data.map(transformWork) : [];
+}
+
+export async function getFeaturedWorks(): Promise<Work[]> {
+  const data = await client.fetch(
+    `*[_type == "work" && featured == true] | order(_createdAt desc) { ${WORK_FIELDS} }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return Array.isArray(data) ? data.map(transformWork) : [];
+}
+
+export async function getRecentActivity(limit = 12): Promise<ActivityEntry[]> {
+  const [works, exhibitions, exhibitionList] = await Promise.all([
+    client.fetch(
+      `*[_type == "work"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt }`,
+      { limit },
+      { next: { revalidate: 60 } }
+    ),
+    client.fetch(
+      `*[_type == "exhibition"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt }`,
+      { limit },
+      { next: { revalidate: 60 } }
+    ),
+    client.fetch(
+      `*[_type == "exhibition_list"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt }`,
+      { limit },
+      { next: { revalidate: 60 } }
+    ),
+  ]);
+
+  const combined: ActivityEntry[] = [
+    ...works.map((d: any) => ({ type: "work" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
+    ...exhibitions.map((d: any) => ({ type: "exhibition" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
+    ...exhibitionList.map((d: any) => ({ type: "exhibition_list" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
+  ];
+
+  return combined
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, limit);
 }
 
 export async function getExhibitionList(): Promise<Exhibition_list[]> {

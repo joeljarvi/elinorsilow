@@ -37,8 +37,7 @@ export default function PageHeader() {
   }
   // Desktop: whichever item is currently hovered
 
-  const mobileText =
-    !isInfoPage && mobileTitle && !exAsList && !showAsList ? mobileTitle : null;
+  const mobileText = "elinor silow";
 
   return (
     <>
@@ -53,8 +52,6 @@ export default function PageHeader() {
             size="text-[24px]"
             active
             revealAnimation
-            wiggleGradient
-            sizeGradient={{ from: 28, to: 16 }}
             className="no-hide-text font-timesNewRoman font-normal justify-start text-foreground items-baseline tracking-normal w-full"
           />
         )}

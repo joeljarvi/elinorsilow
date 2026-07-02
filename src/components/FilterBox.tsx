@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { useUI } from "@/context/UIContext";
 import { useWorks, WorkSort, CategoryFilter } from "@/context/WorksContext";
 import {
@@ -9,8 +8,7 @@ import {
   ExCategory,
   ExSort,
 } from "@/context/ExhibitionsContext";
-import WigglyButton from "./WigglyButton";
-import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 
 const transition = { duration: 0.35, ease: [0.25, 1, 0.5, 1] as const };
 
@@ -25,7 +23,7 @@ function FilterLabel({
 }) {
   return (
     <span
-      className={`font-timesNewRoman font-normal  text-[16px]  text-muted-foreground tracking-wider mx-[0px] pb-[0px] px-[9px] lg:px-[18px] block text-left lg:text-right  ${className}`}
+      className={`font-timesNewRoman font-normal  text-[16px]  text-muted-foreground tracking-wider pb-1 px-2  block text-left lg:text-right  ${className}`}
     >
       {children}
     </span>
@@ -63,169 +61,41 @@ const EX_CATS = [
 /* -------------------- CONTROLS -------------------- */
 
 function WorksControls({ onMobileSelect }: { onMobileSelect: () => void }) {
-  const { workSort, setWorkSort, categoryFilter, setCategoryFilter } =
-    useWorks();
-  const {
-    showAsList,
-    setShowAsList,
-    gridCols,
-    setGridCols,
-    gridRows,
-    setGridRows,
-    showColorBg,
-    setShowColorBg,
-    textBlurred,
-    setTextBlurred,
-  } = useUI();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { workSort, setWorkSort, categoryFilter, setCategoryFilter } = useWorks();
+  const { gridCols, setGridCols, gridRows, setGridRows } = useUI();
+
+  const sortIndex = WORK_SORTS.findIndex((s) => s.value === workSort);
+  const catIndex = WORK_CATS.findIndex((c) => c.value === categoryFilter);
+
+  const btnClass = "justify-start font-timesNewRoman font-normal text-3xl";
 
   return (
-    <div className="flex flex-col gap-y-[32px] lg:gap-y-[9px] w-full pt-[18px] pb-[18px] justify-start items-start lg:items-end lg:justify-end">
-      <div>
-        <FilterLabel>Sort by</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end mt-[0px] lg:px-[9px]">
-          {WORK_SORTS.map((s) => (
-            <WigglyButton
-              key={s.value}
-              text={s.label}
-              size="text-[16px]"
-              active={workSort === s.value}
-              onClick={() => {
-                setWorkSort(s.value as WorkSort);
-                onMobileSelect();
-              }}
-              className={
-                workSort === s.value
-                  ? "text-foreground "
-                  : "text-muted-foreground "
-              }
-            />
-          ))}
-        </div>
+    <div className="flex flex-col w-full gap-y-2 mt-8">
+      <Button variant="link" className={btnClass}
+        onClick={() => setWorkSort(WORK_SORTS[(sortIndex + 1) % WORK_SORTS.length].value as WorkSort)}>
+        Sort by: {WORK_SORTS[sortIndex]?.label ?? WORK_SORTS[0].label}
+      </Button>
+      <Button variant="link" className={btnClass}
+        onClick={() => setCategoryFilter(WORK_CATS[(catIndex + 1) % WORK_CATS.length].value as CategoryFilter)}>
+        Filter by: {WORK_CATS[catIndex]?.label ?? WORK_CATS[0].label}
+      </Button>
+      <div className="hidden lg:contents">
+        <Button variant="link" className={btnClass}
+          onClick={() => setGridCols((gridCols % 4) + 1)}>
+          Cols: {gridCols}
+        </Button>
+        <Button variant="link" className={btnClass}
+          onClick={() => setGridRows((gridRows % 4) + 1)}>
+          Rows: {gridRows}
+        </Button>
       </div>
-
-      <div>
-        <FilterLabel>Filter by</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] lg:px-[9px]">
-          {WORK_CATS.map((c) => (
-            <WigglyButton
-              key={c.value}
-              text={c.label}
-              size="text-[16px]"
-              active={categoryFilter === c.value}
-              onClick={() => {
-                setCategoryFilter(c.value as CategoryFilter);
-                onMobileSelect();
-              }}
-              className={
-                categoryFilter === c.value
-                  ? "text-foreground "
-                  : "text-muted-foreground "
-              }
-            />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] lg:px-[9px]">
-          <WigglyButton
-            text={showAsList ? "Hide list" : "Show list"}
-            size="text-[16px]"
-            active={showAsList}
-            onClick={() => {
-              setShowAsList(!showAsList);
-              onMobileSelect();
-            }}
-            className={
-              showAsList ? "text-foreground " : "text-muted-foreground "
-            }
-          />
-          <span className="hidden lg:flex">
-            <WigglyButton
-              text="Columns"
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="−"
-              size="text-[16px]"
-              onClick={() => setGridCols(Math.max(1, gridCols - 1))}
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text={gridCols.toString()}
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="+"
-              size="text-[16px]"
-              onClick={() => setGridCols(Math.min(4, gridCols + 1))}
-              className="text-muted-foreground"
-            />
-          </span>
-          <span className="hidden lg:flex">
-            <WigglyButton
-              text="Rows"
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="−"
-              size="text-[16px]"
-              onClick={() => setGridRows(Math.max(1, gridRows - 1))}
-              className="text-foreground"
-            />
-            <WigglyButton
-              text={gridRows.toString()}
-              size="text-[16px]"
-              className="text-foreground"
-            />
-            <WigglyButton
-              text="+"
-              size="text-[16px]"
-              onClick={() => setGridRows(Math.min(4, gridRows + 1))}
-              className="text-foreground"
-            />
-          </span>
-          <WigglyButton
-            text={showColorBg ? "Color" : "B/W"}
-            size="text-[16px]"
-            active={true}
-            onClick={() => {
-              setShowColorBg(!showColorBg);
-              onMobileSelect();
-            }}
-            className={`text-foreground flex lg:hidden`}
-          />
-          <WigglyButton
-            text={textBlurred ? "Unblur" : "Blur text"}
-            size="text-[16px]"
-            active={textBlurred}
-            onClick={() => {
-              setTextBlurred(!textBlurred);
-              onMobileSelect();
-            }}
-            className={`no-hide-text ${textBlurred ? "text-foreground" : "text-muted-foreground"}`}
-          />
-          {mounted && (
-            <WigglyButton
-              text={theme === "dark" ? "Dark" : "Light"}
-              size="text-[16px]"
-              active={true}
-              onClick={() => {
-                setTheme(theme === "dark" ? "light" : "dark");
-                onMobileSelect();
-              }}
-              className={`${theme === "dark" ? "text-foreground " : "text-muted-foreground"} `}
-            />
-          )}
-        </div>
-      </div>
+      <Button
+        variant="link"
+        className="justify-start font-timesNewRoman underline font-bold  underline-offset-4 text-3xl"
+        onClick={onMobileSelect}
+      >
+        Apply
+      </Button>
     </div>
   );
 }
@@ -235,150 +105,39 @@ function ExhibitionsControls({
 }: {
   onMobileSelect: () => void;
 }) {
-  const { exCat, setExCat, exSort, setExSort, exAsList, setExAsList } =
-    useExhibitions();
-  const {
-    exGridCols,
-    setExGridCols,
-    exGridRows,
-    setExGridRows,
-    textBlurred,
-    setTextBlurred,
-  } = useUI();
+  const { exCat, setExCat, exSort, setExSort } = useExhibitions();
+  const { exGridCols, setExGridCols, exGridRows, setExGridRows } = useUI();
 
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const sortIndex = EX_SORTS.findIndex((s) => s.value === exSort);
+  const catIndex = EX_CATS.findIndex((c) => c.value === exCat);
+
+  const btnClass = "justify-start font-timesNewRoman font-normal text-3xl";
 
   return (
-    <div className="flex flex-col gap-y-[32px] lg:gap-y-[32px] w-full pt-[18px] pb-[18px] justify-start items-start lg:items-end lg:justify-end">
-      <div>
-        <FilterLabel>Sort</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end mt-[0px] px-[9px]">
-          {EX_SORTS.map((s) => (
-            <WigglyButton
-              key={s.value}
-              text={s.label}
-              size="text-[16px] "
-              active={exSort === s.value}
-              onClick={() => {
-                setExSort(s.value as ExSort);
-                onMobileSelect();
-              }}
-              className={
-                exSort === s.value ? "text-foreground" : "text-muted-foreground"
-              }
-            />
-          ))}
-        </div>
+    <div className="flex flex-col w-full gap-y-2 mt-8">
+      <Button variant="link" className={btnClass}
+        onClick={() => setExSort(EX_SORTS[(sortIndex + 1) % EX_SORTS.length].value as ExSort)}>
+        Sort by: {EX_SORTS[sortIndex]?.label ?? EX_SORTS[0].label}
+      </Button>
+      <Button variant="link" className={btnClass}
+        onClick={() => setExCat(EX_CATS[(catIndex + 1) % EX_CATS.length].value as ExCategory)}>
+        Filter by: {EX_CATS[catIndex]?.label ?? EX_CATS[0].label}
+      </Button>
+      <div className="hidden lg:contents">
+        <Button variant="link" className={btnClass}
+          onClick={() => setExGridCols((exGridCols % 4) + 1)}>
+          Cols: {exGridCols}
+        </Button>
+        <Button variant="link" className={btnClass}
+          onClick={() => setExGridRows((exGridRows % 4) + 1)}>
+          Rows: {exGridRows}
+        </Button>
       </div>
-
-      <div>
-        <FilterLabel>Type</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] px-[9px]">
-          {EX_CATS.map((c) => (
-            <WigglyButton
-              key={c.value}
-              text={c.label}
-              size="text-[16px]"
-              active={exCat === c.value}
-              onClick={() => {
-                setExCat(c.value as ExCategory);
-                onMobileSelect();
-              }}
-              className={
-                exCat === c.value ? "text-foreground" : "text-muted-foreground"
-              }
-            />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <FilterLabel>Settings</FilterLabel>
-        <div className="flex flex-wrap lg:flex-col justify-start lg:justify-end lg:items-end mt-[0px] px-[9px]">
-          <WigglyButton
-            text={exAsList ? "Hide list" : "Show list"}
-            size="text-[16px]"
-            active={exAsList}
-            onClick={() => {
-              setExAsList(!exAsList);
-              onMobileSelect();
-            }}
-            className={exAsList ? "text-foreground" : "text-muted-foreground"}
-          />
-          <span className="hidden lg:flex">
-            <WigglyButton
-              text="Columns"
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="−"
-              size="text-[16px]"
-              onClick={() => setExGridCols(Math.max(1, exGridCols - 1))}
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text={exGridCols.toString()}
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="+"
-              size="text-[16px]"
-              onClick={() => setExGridCols(Math.min(4, exGridCols + 1))}
-              className="text-muted-foreground"
-            />
-          </span>
-          <span className="hidden lg:flex">
-            <WigglyButton
-              text="Rows"
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="−"
-              size="text-[16px]"
-              onClick={() => setExGridRows(Math.max(1, exGridRows - 1))}
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text={exGridRows.toString()}
-              size="text-[16px]"
-              className="text-muted-foreground"
-            />
-            <WigglyButton
-              text="+"
-              size="text-[16px]"
-              onClick={() => setExGridRows(Math.min(4, exGridRows + 1))}
-              className="text-muted-foreground"
-            />
-          </span>
-          <WigglyButton
-            text={textBlurred ? "Unblur" : "Blur text"}
-            size="text-[16px]"
-            active={textBlurred}
-            onClick={() => {
-              setTextBlurred(!textBlurred);
-              onMobileSelect();
-            }}
-            className={`no-hide-text ${textBlurred ? "text-foreground text-shadow-md" : "text-muted-foreground text-shadow-none"}`}
-          />
-          {mounted && (
-            <WigglyButton
-              text={theme === "dark" ? "Dark" : "Light"}
-              size="text-[16px]"
-              onClick={() => {
-                setTheme(theme === "dark" ? "light" : "dark");
-                onMobileSelect();
-              }}
-              className="text-foreground"
-              active={true}
-            />
-          )}
-        </div>
-      </div>
+      <Button variant="link"
+        className="justify-start font-timesNewRoman underline font-bold underline-offset-4 text-3xl"
+        onClick={onMobileSelect}>
+        Apply
+      </Button>
     </div>
   );
 }

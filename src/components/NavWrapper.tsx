@@ -5,6 +5,7 @@ import DesktopNav from "./DesktopNav";
 import FilterBox from "./FilterBox";
 import PageHeader from "./PageHeader";
 import SeoShortBio from "./SeoShortBio";
+import ViewportFrame from "./ViewportFrame";
 
 export default function NavWrapper() {
   const pathname = usePathname();
@@ -12,10 +13,7 @@ export default function NavWrapper() {
   const hideFilter = pathname === "/info";
   return (
     <>
-      <SeoShortBio />
-      <PageHeader />
       <DesktopNav />
-      {!hideFilter && <FilterBox />}
     </>
   );
 }

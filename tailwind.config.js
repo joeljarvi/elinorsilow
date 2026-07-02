@@ -15,6 +15,7 @@ module.exports = {
         serif: ["var(--font-serif)", ...fontFamily.serif],
         "serif-italic": ["var(--font-serif-italic)", ...fontFamily.serif],
         "serif-bold": ["var(--font-serif-bold)", ...fontFamily.serif],
+        timesDot: ["var(--font-timesDot)", ...fontFamily.serif],
       },
     },
   },

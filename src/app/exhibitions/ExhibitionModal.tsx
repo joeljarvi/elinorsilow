@@ -32,7 +32,7 @@ export default function ExhibitionModal({
       {isOpen && (
         <motion.div
           key="overlay"
-          className="fixed inset-0 z-[200] h-dvh bg-background/10 backdrop-blur-xs w-full overflow-hidden"
+          className="fixed inset-0 z-[200] h-dvh bg-background/40 backdrop-blur-md w-full overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

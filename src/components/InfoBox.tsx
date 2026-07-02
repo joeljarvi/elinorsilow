@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Work, Exhibition } from "../../lib/sanity";
-
 import { useUI } from "@/context/UIContext";
 import WigglyButton from "./WigglyButton";
 
-import { Cross2Icon } from "@radix-ui/react-icons";
-import WigglyDivider from "./WigglyDivider";
+function truncateTitle(title: string, maxChars = 45): string {
+  if (title.length <= maxChars) return title;
+  return title.slice(0, maxChars - 5).trimEnd() + " (..)";
+}
 
 export function InfoRow({
   label,
@@ -21,7 +22,7 @@ export function InfoRow({
   return (
     <div className="flex flex-wrap items-baseline gap-x-[16px]">
       <span
-        className={`text-[16px]  leading-[1.3] px-[0px]  tracking-wide font-timesNewRoman  ${labelClassName}`}
+        className={`text-[16px] leading-[1.3] px-[0px] tracking-wide font-timesNewRoman ${labelClassName}`}
       >
         {label}
       </span>
@@ -36,72 +37,101 @@ export default function InfoBox({
   onClose,
   hideZoom = false,
   onWorkSelect,
+  className = "",
+  centered = false,
+  titleOnly = false,
+  hideTitle = false,
 }: {
   work?: Work;
   exhibition?: Exhibition;
   onClose?: () => void;
   hideZoom?: boolean;
   onWorkSelect?: (workTitle: string) => void;
+  className?: string;
+  centered?: boolean;
+  titleOnly?: boolean;
+  hideTitle?: boolean;
 }) {
-  const { showColorBg } = useUI();
+  const { small } = useUI();
+  const [cookieAccepted, setCookieAccepted] = useState(false);
+  useEffect(() => {
+    setCookieAccepted(localStorage.getItem("cookiesAccepted") === "true");
+  }, []);
 
   if (work) {
-    const yearDimensions = [work.acf.year, work.acf.dimensions]
-      .filter(Boolean)
-      .join(", ");
+    const parts: { key: string; node: React.ReactNode }[] = [
+      {
+        key: "title",
+        node: (
+          <WigglyButton
+            text={truncateTitle(work.title.rendered)}
+            size="text-3xl"
+            mobileSize="text-2xl"
+            bold
+            className="px-0 tracking-widest leading-tight whitespace-break-spaces"
+            forceBaseline
+            wiggleGradient
+            active
+          />
+        ),
+      },
+      ...(work.acf.year
+        ? [
+            {
+              key: "year",
+              node: <span className="font-bold">{work.acf.year}</span>,
+            },
+          ]
+        : []),
+      ...(work.acf.materials
+        ? [
+            {
+              key: "mat",
+              node: (
+                <span className="lowercase whitespace-break-spaces">
+                  {work.acf.materials}
+                </span>
+              ),
+            },
+          ]
+        : []),
+      ...(work.acf.dimensions
+        ? [{ key: "dim", node: <span>{work.acf.dimensions}</span> }]
+        : []),
+    ];
+
+    const visibleParts = titleOnly
+      ? parts.filter((p) => p.key === "title")
+      : hideTitle
+        ? parts.filter((p) => p.key !== "title")
+        : parts;
 
     return (
       <div
-        className={`text-foreground relative group  block gap-x-[18px] no-hide items-center  overflow-hidden pt-[9px] px-[0px] lg:px-[0px] pb-[9px] w-full`}
+        className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
       >
-        {/* Metadata */}
-        <div className="font-timesNewRoman text-[16px]  leading-tight tracking-wider w-full">
-          <div className="flex flex-col items-start justify-center">
-            <div className="flex items-center justify-between gap-x-[9px] w-full  mb-[0px]">
-              <span className="flex gap-x-[6px] items-center w-full">
-                <WigglyButton
-                  text={work.title.rendered}
-                  className="hidden lg:flex text-[16px] px-0  font-timesNewRoman font-normal  items-center  tracking-wider "
-                  size="text-[28px] "
-                  revealAnimation={false}
-                  active={true}
-                  sizeGradient={{ from: 28, to: 16 }}
-                />
-
-                <WigglyButton
-                  text={work.title.rendered}
-                  className="flex lg:hidden text-[16px] px-0  font-timesNewRoman font-normal items-center  tracking-wider "
-                  size="text-[24px] "
-                  revealAnimation={false}
-                  active={true}
-                  sizeGradient={{ from: 16, to: 16 }}
-                />
-              </span>
-              {onClose && (
-                <button
-                  className="cursor-pointer "
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClose();
-                  }}
-                  aria-label="Close"
-                >
-                  x
-                </button>
-              )}
-            </div>
-            {yearDimensions && <p className="w-full">{yearDimensions}</p>}
-            {work.acf.materials && (
-              <p className="w-full">{work.acf.materials}</p>
-            )}
-            {work.acf.exhibition && (
-              <div className="w-full flex flex-wrap items-baseline justify-start gap-x-[5px] whitespace-normal ">
-                Part of exhibition:
-                <button className="">{work.acf.exhibition}</button>
-              </div>
-            )}
-          </div>
-        </div>
+        <span
+          className={`inline-flex flex-wrap items-baseline font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide ${centered ? "lg:justify-center lg:text-center" : ""}`}
+        >
+          {visibleParts.map((part, i) => (
+            <Fragment key={part.key}>
+              {i > 0 && <span className="mr-1.5">, </span>}
+              {part.node}
+            </Fragment>
+          ))}
+          {onClose && (
+            <button
+              className="cursor-pointer ml-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          )}
+        </span>
       </div>
     );
   }
@@ -109,177 +139,74 @@ export default function InfoBox({
   if (exhibition) {
     const [descExpanded, setDescExpanded] = useState(false);
 
-    const descWords = exhibition.acf.description?.split(/\s+/) ?? [];
-    const descHead = descWords.slice(0, 3).join(" ");
-    const descBodyWords = descWords.slice(3);
-    const TRUNCATE_AT = 15;
-    const isTruncatable = descBodyWords.length > TRUNCATE_AT;
-    const descBody =
-      !descExpanded && isTruncatable
-        ? descBodyWords.slice(0, TRUNCATE_AT).join(" ")
-        : descBodyWords.join(" ");
+    const parts: { key: string; node: React.ReactNode }[] = [
+      {
+        key: "title",
+        node: (
+          <WigglyButton
+            text={truncateTitle(exhibition.title.rendered)}
+            size="text-3xl"
+            mobileSize="text-2xl"
+            bold
+            className="px-0 tracking-wide whitespace-normal leading-tight"
+            forceBaseline
+            wiggleGradient
+            active
+          />
+        ),
+      },
+      ...(exhibition.acf.year
+        ? [
+            {
+              key: "year",
+              node: <span className="font-bold">{exhibition.acf.year}</span>,
+            },
+          ]
+        : []),
+      ...(exhibition.acf.location
+        ? [
+            {
+              key: "loc",
+              node: (
+                <span className="lowercase">{exhibition.acf.location}</span>
+              ),
+            },
+          ]
+        : []),
+      ...(exhibition.acf.exhibition_type
+        ? [
+            {
+              key: "type",
+              node: (
+                <span className="lowercase">
+                  {exhibition.acf.exhibition_type} exhibition
+                </span>
+              ),
+            },
+          ]
+        : []),
+    ];
 
-    const works = [
-      exhibition.acf.work_1,
-      exhibition.acf.work_2,
-      exhibition.acf.work_3,
-      exhibition.acf.work_4,
-      exhibition.acf.work_5,
-      exhibition.acf.work_6,
-      exhibition.acf.work_7,
-      exhibition.acf.work_8,
-      exhibition.acf.work_9,
-      exhibition.acf.work_10,
-    ].filter(Boolean) as string[];
+    const visibleParts = titleOnly
+      ? parts.filter((p) => p.key === "title")
+      : hideTitle
+        ? parts.filter((p) => p.key !== "title")
+        : parts;
 
     return (
-      <div className="text-foreground relative group   pt-[0px] px-[0px] pb-[9px]  w-auto   lg:mt-[0px] mb-[0x]  ">
-        <WigglyDivider
-          active
-          text="exhibition"
-          size="text-[8px]"
-          className="text-muted-foreground"
-        />
-        <div className="flex flex-col  justify-start items-start gap-x-[32px] gap-y-[9px] lg:gap-y-[9px] mt-[9px] font-timesNewRoman text-[16px] leading-tight tracking-wide  pt-[0px] pb-[0px]  ">
-          <div className=" flex-col items-start justify-start col-span-2 w-full">
-            <div className="flex items-start justify-between w-full">
-              <span className="flex justify-between gap-x-[6px] w-full ">
-                <WigglyButton
-                  text={exhibition.title.rendered}
-                  className="px-0 font-timesNewRoman "
-                  size="text-[16px] lg:text-[16px]  "
-                  revealAnimation={false}
-                  active
-                />
-
-                {onClose && (
-                  <button
-                    className="cursor-pointer px-1  bg-transparent text-[16px] "
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClose();
-                    }}
-                    aria-label="Close"
-                  >
-                    X
-                  </button>
-                )}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-x-[4px]">
-              {exhibition.acf.exhibition_type && (
-                <div className="whitespace-nowrap tracking-wider">
-                  {exhibition.acf.exhibition_type} exhibition,{" "}
-                </div>
-              )}
-              {exhibition.acf.location && (
-                <div className="tracking-wider">
-                  {exhibition.acf.location},{" "}
-                </div>
-              )}
-              {exhibition.acf.city && (
-                <div className="whitespace-nowrap tracking-wider">
-                  {exhibition.acf.city},{" "}
-                </div>
-              )}
-              {exhibition.acf.year && (
-                <div className="tracking-wider">{exhibition.acf.year}</div>
-              )}
-            </div>
-          </div>
-          <WigglyDivider
-            active
-            text="description"
-            size="text-[8px]"
-            className="text-muted-foreground"
-          />
-          {exhibition.acf.description && (
-            <div className="col-start-1 col-span-2 max-w-md lg:max-w-xl tracking-wider">
-              <p className="font-timesNewRoman text-[16px] tracking-wide leading-[1.2]">
-                {descHead && (
-                  <>
-                    <WigglyButton
-                      text={descHead + " "}
-                      className=" inline-flex lg:hidden px-0 font-timesNewRoman align-baseline"
-                      size="text-[16px] lg:text-[28px] leading-[1.2]"
-                      sizeGradient={{ from: 16, to: 16 }}
-                      wiggleGradient
-                      revealAnimation={false}
-                      active
-                    />
-                    <WigglyButton
-                      text={descHead + " "}
-                      className="hidden lg:inline-flex px-0 font-timesNewRoman align-baseline"
-                      size="text-[16px] lg:text-[16px] leading-[1.2]"
-                      sizeGradient={{ from: 16, to: 16 }}
-                      wiggleGradient
-                      revealAnimation={false}
-                      active
-                    />
-                  </>
-                )}
-                {descBody && <span>{descBody} </span>}
-                {!descExpanded && isTruncatable && (
-                  <WigglyButton
-                    text="(...)"
-                    size="text-[16px]"
-                    className="inline-flex px-0 text-muted-foreground"
-                    revealAnimation={false}
-                    onClick={() => setDescExpanded((v) => !v)}
-                  />
-                )}
-              </p>
-            </div>
-          )}
-          <WigglyDivider
-            active
-            text="featuring the works:"
-            size="text-[8px]"
-            className="text-muted-foreground"
-          />
-          <div className="px-0 col-start-2 col-span-1">
-            {works.length > 0 && (
-              <>
-                <WigglyButton
-                  text="Featuring the works:"
-                  size="text-[16px] lg:text-[16px] "
-                  className=" px-0 justify-start"
-                  revealAnimation={false}
-                  active
-                />
-
-                {works.map((w, i) => (
-                  <WigglyButton
-                    size="text-[16px] lg:text-[16px] "
-                    bold={false}
-                    className="pl-0 justify-start"
-                    revealAnimation={false}
-                    text={w}
-                    key={i}
-                    onClick={() => onWorkSelect?.(w)}
-                  />
-                ))}
-              </>
-            )}
-          </div>
-          <WigglyDivider
-            active
-            text="credits"
-            size="text-[8px]"
-            className="text-muted-foreground"
-          />
-          {exhibition.acf.credits && (
-            <div className="col-start-1 col-span-1 mb-[0px] mx-0 tracking-wider">
-              <div>{exhibition.acf.credits}</div>
-            </div>
-          )}
-          <WigglyDivider
-            active
-            text="gallery"
-            size="text-[8px]"
-            className="text-muted-foreground"
-          />
-        </div>
+      <div
+        className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
+      >
+        <span
+          className={`inline-flex flex-wrap items-baseline font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide ${centered ? "lg:justify-center" : ""}`}
+        >
+          {visibleParts.map((part, i) => (
+            <Fragment key={part.key}>
+              {i > 0 && <span className="mr-[2px]">, </span>}
+              {part.node}
+            </Fragment>
+          ))}
+        </span>
       </div>
     );
   }

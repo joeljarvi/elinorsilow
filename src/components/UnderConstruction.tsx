@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { OGubbeText } from "./OGubbeText";
+import WigglyButton from "./WigglyButton";
 
 export default function UnderConstruction() {
   const [open, setOpen] = useState(true);
@@ -27,18 +28,14 @@ export default function UnderConstruction() {
           height={98}
           className="w-[64px] h-[64px] lg:w-[128px] lg:h-[128px] "
         />
-        <OGubbeText
-          text="Shh... This page is sleeping..."
-          className="font-timesNewRoman tracking-wider font-normal text-[18px] lg:text-[36px]"
-          lettersOnly
-          revealAnimation={false}
-        />
-
-        <OGubbeText
-          text=" Please check back later."
-          className="font-timesNewRoman tracking-wider font-normal text-[18px] lg:text-[36px]"
-          lettersOnly
-          revealAnimation={false}
+        <WigglyButton
+          text="Zzzz...under construction..."
+          size="text-3xl"
+          mobileSize="text-2xl"
+          className="tracking-wide text-foreground px-0 mx-0 items-baseline"
+          active
+          anchorFill="currentColor"
+          forceBaseline
         />
       </div>
     </div>
