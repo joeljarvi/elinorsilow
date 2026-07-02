@@ -225,7 +225,7 @@ function NewNavOverlay({
       {/* Row 1, Col 1: spacer — logo+menu floats here at z-[131] */}
 
       {/* Row 1, Col 2: nav links */}
-      <div className="col-start-1 mt-1 row-start-1 flex flex-col items-start justify-baseline gap-y-2 pt-12">
+      <div className="col-start-1 col-span-2 mt-1 row-start-1 flex flex-col items-center text-center justify-baseline gap-y-2 pt-12">
         {NAV_LINKS.map(({ href, label, target, rel }) => (
           <WigglyButton
             key={href}
@@ -243,15 +243,15 @@ function NewNavOverlay({
         ))}
       </div>
       {/* Row 2, Col 1: page-specific submenu */}
-      <div className="col-start-1 row-start-2 flex flex-col items-start gap-y-2 ">
+      <div className="col-start-1 col-span-2 row-start-2 flex flex-col items-center text-center gap-y-2">
         {renderSubmenu()}
       </div>
       {/* Close button — bottom center */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-x-4 px-6 pb-8">
+      <div className="absolute bottom-0 left-0 right-0 flex justify-center px-6 pb-8">
         <WigglyButton
           text="close"
           mobileSize="text-2xl"
-          className=" col-start-2 tracking-wide px-0 text-foreground leading-tight"
+          className="tracking-wide px-0 text-foreground leading-tight"
           onClick={onClose}
           anchorFill="currentColor"
           bold
@@ -326,7 +326,7 @@ export default function DesktopNav() {
         className={`fixed left-0 right-0 z-[131] flex flex-col items-center pt-2 lg:pt-0 pointer-events-none ${onInfo ? " max-lg:bg-blue-600" : ""}`}
       >
         {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
-        <div className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
+        <div className="flex flex-wrap items-baseline justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
           <WigglyButton
             text="elinor silow"
             size="text-3xl"

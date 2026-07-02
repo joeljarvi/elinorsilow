@@ -46,7 +46,7 @@ export default function ExhibitionsPageClient() {
           <motion.img
             src={imageUrl}
             alt={ex!.title.rendered}
-            className="max-h-[50dvh] lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
+            className="max-h-[33.3dvh] lg:max-w-full lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
             style={{}}
             onClick={(e) => {
               e.stopPropagation();

@@ -111,7 +111,7 @@ export default function InfoBox({
         className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
       >
         <span
-          className={`flex flex-col items-start lg:inline-flex lg:flex-wrap lg:items-baseline font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide ${centered ? "lg:justify-center lg:text-center" : ""}`}
+          className={`flex flex-wrap justify-center mx-auto items-baseline text-center font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide`}
         >
           {visibleParts.map((part, i) => {
             if (part.key === "year") return null;
@@ -133,7 +133,7 @@ export default function InfoBox({
             }
             return (
               <Fragment key={part.key}>
-                {i > 0 && <span className="hidden lg:inline mr-1.5">, </span>}
+                {i > 0 && <span className="mr-1.5">, </span>}
                 {part.node}
               </Fragment>
             );
@@ -217,7 +217,7 @@ export default function InfoBox({
         className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
       >
         <span
-          className={`flex flex-col items-start lg:inline-flex lg:flex-wrap lg:items-baseline font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide ${centered ? "lg:justify-center" : ""}`}
+          className={`flex flex-wrap items-baseline font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide ${centered ? "lg:justify-center" : ""}`}
         >
           {visibleParts.map((part, i) => {
             if (part.key === "year") return null;
@@ -239,7 +239,7 @@ export default function InfoBox({
             }
             return (
               <Fragment key={part.key}>
-                {i > 0 && <span className="hidden lg:inline mr-[2px]">, </span>}
+                {i > 0 && <span className="mr-[2px]">, </span>}
                 {part.node}
               </Fragment>
             );

@@ -74,7 +74,7 @@ export default function HomeLayoutClient({
       </div>
 
       {work && (
-        <div className="fixed bottom-0 left-0 right-0 flex lg:justify-center px-4 lg:px-0 py-2">
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center px-4 lg:px-0 py-2">
           <InfoBox work={work} centered />
         </div>
       )}
