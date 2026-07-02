@@ -34,12 +34,12 @@ export default function ExhibitionsPageClient() {
 
   return (
     <div
-      className="h-dvh w-full flex flex-col px-6 cursor-pointer transition-colors duration-300 bg-yellow-300"
+      className="h-dvh w-full flex flex-col px-6 cursor-pointer transition-colors duration-300 "
       style={moreFun ? { backgroundColor: moreFunBg } : undefined}
       onClick={handleClick}
     >
       <div
-        className="flex-1 flex items-center justify-center "
+        className="fixed top-0 flex items-center justify-center w-full h-dvh"
         style={{ perspective: "800px" }}
       >
         {imageUrl && (
@@ -58,7 +58,7 @@ export default function ExhibitionsPageClient() {
 
       {ex && (
         <div
-          className="flex justify-center px-2 lg:px-0 py-2"
+          className="fixed bottom-0 left-0 right-0 flex lg:justify-center px-4 lg:px-0 py-2"
           onClick={(e) => {
             e.stopPropagation();
             setActiveExhibitionSlug(ex.slug);

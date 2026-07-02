@@ -38,8 +38,8 @@ export default function Loader() {
         <Image
           src="/nav_loading.svg"
           alt="Loading"
-          width={48}
-          height={48}
+          width={400}
+          height={400}
         />
       </div>
     </div>

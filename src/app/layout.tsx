@@ -12,7 +12,6 @@ import { IndexProvider } from "@/context/IndexContext";
 import { NavSlotProvider } from "@/context/NavSlotContext";
 
 import BlurTextManager from "@/components/BlurTextManager";
-import Loader from "@/components/Loader";
 import NavWrapper from "@/components/NavWrapper";
 import DottedGrid from "@/components/DottedGrid";
 
@@ -227,7 +226,6 @@ export default async function RootLayout({
                       
 
                         {/* Column shadow overlay — fixed, covers full viewport */}
-                        <Loader />
                         <FixedFooter />
                         <NavWrapper />
                         <NavSpacer />

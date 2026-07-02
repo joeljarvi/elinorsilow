@@ -11,6 +11,10 @@ const TRUMPETS = [
 
 export default function FixedCookieAccept() {
   const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (localStorage.getItem("cookiesAccepted") !== null) setVisible(false);
+  }, []);
   const [trumpetIndex, setTrumpetIndex] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 

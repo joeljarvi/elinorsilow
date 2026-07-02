@@ -32,7 +32,7 @@ export default function WorksPageClient() {
       onClick={handleClick}
     >
       <div
-        className="flex-1 flex items-center justify-center"
+        className="fixed top-0 flex items-center justify-center w-full h-dvh"
         style={{ perspective: "800px" }}
       >
         {work?.image_url && (
@@ -51,7 +51,7 @@ export default function WorksPageClient() {
 
       {work && (
         <div
-          className="flex justify-center px-2 lg:px-0 py-2"
+          className="fixed bottom-0 left-0 right-0 flex lg:justify-center px-4 lg:px-0 py-2"
           onClick={(e) => {
             e.stopPropagation();
             setActiveWorkSlug(work.slug);
