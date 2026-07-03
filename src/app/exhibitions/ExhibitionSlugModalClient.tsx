@@ -169,7 +169,7 @@ export default function ExhibitionSlugModalClient({
           )}
 
           {slide?.type === "description" && (
-            <p className="font-timesNewRoman text-foreground text-3xl leading-[1.2] lg:leading-[1.1] lg:text-3xl tracking-wide text-center max-w-2xl px-8">
+            <p className="font-timesNewRoman text-foreground text-2xl leading-[1.2] lg:leading-[1.1] lg:text-3xl tracking-wide text-center max-w-2xl px-8">
               {description}
             </p>
           )}
@@ -184,7 +184,7 @@ export default function ExhibitionSlugModalClient({
                   key={i}
                   text={w}
                   size="text-3xl"
-                  mobileSize="text-3xl"
+                  mobileSize="text-2xl"
                   className="tracking-wide px-0 text-foreground"
                   onClick={(e) => {
                     e.stopPropagation();

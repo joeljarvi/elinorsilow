@@ -24,7 +24,7 @@ function ScrollHint() {
 
   return (
     <p
-      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-2xl lg:text-3xl bg-transparent"
+      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-xl lg:text-3xl bg-transparent"
       style={{ opacity: visible ? 0.3 : 0, transition: "opacity 0.7s ease" }}
     >
       scroll
@@ -84,25 +84,28 @@ export default function InfoPageClient() {
             wiggleGradient
             active
           />
-          <div className="w-full col-span-2 flex flex-col gap-y-0 items-baseline justify-start">
+          <div className="w-full col-span-2 flex flex-col gap-y-0 items-center lg:items-baseline justify-start">
             {groupByYear(items).map(([year, exs]) => (
-              <div key={year} className="flex gap-x-4 items-baseline mb-0">
+              <div
+                key={year}
+                className="flex flex-col items-center justify-start lg:flex-row lg:items-baseline gap-x-4 mb-0 w-full"
+              >
                 <WigglyButton
                   text={year}
                   size="text-3xl"
                   mobileSize="text-xl"
-                  className="tracking-wide leading-tight px-0"
+                  className="tracking-wide leading-tight px-0 justify-center lg:justify-start"
                   forceBaseline
                   bold
                   anchorFill="currentColor"
                 />
-                <div className="flex flex-col gap-y-0">
+                <div className="flex flex-col gap-y-0 items-center lg:items-start">
                   {exs.map((ex) => {
                     const slug = findExhibitionSlug(ex.title.rendered);
                     return (
                       <div
                         key={ex.id}
-                        className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0"
+                        className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0 justify-center lg:justify-start"
                       >
                         {slug ? (
                           <WigglyButton
@@ -189,23 +192,29 @@ export default function InfoPageClient() {
                     wiggleGradient
                     active
                   />
-                  <div className="w-full col-span-2 flex flex-col gap-y-0 items-baseline justify-start">
+                  <div className="w-full col-span-2 flex flex-col gap-y-0 items-center lg:items-baseline justify-start">
                     {[...educations]
-                      .sort((a, b) => Number(b.acf.end_year) - Number(a.acf.end_year))
+                      .sort(
+                        (a, b) =>
+                          Number(b.acf.end_year) - Number(a.acf.end_year),
+                      )
                       .map((edu) => (
-                        <div key={edu.id} className="flex gap-x-4 items-baseline mb-0">
+                        <div
+                          key={edu.id}
+                          className="flex flex-col items-center lg:flex-row lg:items-baseline gap-x-4 mb-0 w-full"
+                        >
                           <WigglyButton
                             text={`${edu.acf.start_year}–${edu.acf.end_year}`}
                             size="text-3xl"
                             mobileSize="text-xl"
-                            className="tracking-wide leading-tight px-0"
+                            className="tracking-wide leading-tight px-0 justify-center lg:justify-start"
                             forceBaseline
                             bold
                             anchorFill="currentColor"
                           />
-                          <div className="flex flex-col gap-y-0">
-                            <div className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0">
-                              <span className="leading-[1.1] whitespace-normal">
+                          <div className="flex flex-col gap-y-0 items-center lg:items-start">
+                            <div className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0 justify-center lg:justify-start">
+                              <span className="leading-[1.1] whitespace-normal text-center lg:text-left">
                                 {edu.acf.school}, {edu.acf.city}
                               </span>
                             </div>
@@ -223,30 +232,30 @@ export default function InfoPageClient() {
         <div className="flex flex-col gap-y-0 mb-4 lg:mt-8">
           <div id="grants" className="flex-1 mb-4">
             {grants.length > 0 && (
-              <div className="flex flex-col gap-y-0 items-start justify-center">
-                <span className="lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+              <div className="flex flex-col gap-y-0 items-center lg:items-start justify-center w-full">
+                <span className="flex flex-col w-full items-center lg:items-baseline gap-x-4 gap-y-0">
                   <WigglyButton
                     text="grants"
                     size="text-3xl"
-                    mobileSize="text-2xl"
-                    className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                    mobileSize="text-xl"
+                    className="lowercase justify-center lg:justify-start tracking-wider px-0 mb-4 leading-tight"
                     bold
                   />
-                  <div className="w-full col-span-2">
+                  <div className="w-full col-span-2 flex flex-col gap-y-0 items-center lg:items-baseline">
                     {groupByYear(grants).map(([year, gs]) =>
                       gs.map((grant) => (
                         <div
                           key={grant.id}
-                          className="flex gap-x-6 items-baseline mb-1"
+                          className="flex flex-col items-center lg:flex-row lg:items-baseline gap-x-6 mb-0 w-full"
                         >
                           <WigglyButton
                             text={year}
                             size="text-3xl"
-                            mobileSize="text-2xl"
-                            className="tracking-wide leading-tight lowercase shrink-0 px-0 "
+                            mobileSize="text-xl"
+                            className="tracking-wide leading-tight lowercase shrink-0 px-0 justify-center lg:justify-start"
                             forceBaseline
                           />
-                          <span className="text-2xl lg:text-3xl tracking-wide font-timesNewRoman leading-tight">
+                          <span className="text-xl lg:text-3xl tracking-wide font-timesNewRoman leading-tight text-center lg:text-left">
                             {grant.acf.title}
                           </span>
                         </div>
@@ -259,25 +268,25 @@ export default function InfoPageClient() {
           </div>
 
           <div id="press" className="flex-1 mb-4">
-            <div className="flex flex-col items-start justify-center">
-              <span className="lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+            <div className="flex flex-col items-center lg:items-start justify-center w-full">
+              <span className="flex flex-col w-full items-center lg:items-baseline gap-x-4 gap-y-0">
                 <WigglyButton
                   text="press"
                   size="text-3xl"
-                  mobileSize="text-2xl"
-                  className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                  mobileSize="text-xl"
+                  className="lowercase justify-center lg:justify-start tracking-wider px-0 mb-4 leading-tight"
                   bold
                 />
-                <div className="w-full col-span-2">
-                  <div className="flex gap-x-6 items-baseline mb-1">
+                <div className="w-full col-span-2 flex flex-col gap-y-0 items-center lg:items-baseline">
+                  <div className="flex flex-col items-center lg:flex-row lg:items-baseline gap-x-6 mb-0 w-full">
                     <WigglyButton
                       text="2022"
                       size="text-3xl"
-                      mobileSize="text-2xl"
-                      className="tracking-wide leading-tight lowercase shrink-0 px-0"
+                      mobileSize="text-xl"
+                      className="tracking-wide leading-tight lowercase shrink-0 px-0 justify-center lg:justify-start"
                       forceBaseline
                     />
-                    <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                    <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-center lg:justify-start">
                       <span>Hjärtat,</span>
                       <span>Lappalainen Hjertström, L-E,</span>
                       <Link
@@ -288,15 +297,15 @@ export default function InfoPageClient() {
                       </Link>
                     </div>
                   </div>
-                  <div className="flex gap-x-6 items-baseline">
+                  <div className="flex flex-col items-center lg:flex-row lg:items-baseline gap-x-6 w-full">
                     <WigglyButton
                       text="2025"
                       size="text-3xl"
-                      mobileSize="text-2xl"
-                      className="tracking-wide leading-tight lowercase shrink-0 px-0"
+                      mobileSize="text-xl"
+                      className="tracking-wide leading-tight lowercase shrink-0 px-0 justify-center lg:justify-start"
                       forceBaseline
                     />
-                    <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                    <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-center lg:justify-start">
                       <span>Gameplay,</span>
                       <span>Slöör, S, Omkonst,</span>
                       <Link
@@ -313,17 +322,17 @@ export default function InfoPageClient() {
           </div>
 
           <div className="flex-1">
-            <div className="flex flex-col items-start justify-center">
-              <span className="lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+            <div className="flex flex-col items-center lg:items-start justify-center w-full">
+              <span className="flex flex-col w-full items-center lg:items-baseline gap-x-4 gap-y-0">
                 <WigglyButton
                   text="colophon"
                   size="text-3xl"
-                  mobileSize="text-2xl"
-                  className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                  mobileSize="text-xl"
+                  className="lowercase justify-center lg:justify-start tracking-wider px-0 mb-4 leading-tight"
                   bold
                 />
-                <div className="col-span-2 flex flex-col gap-y-0">
-                  <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                <div className="col-span-2 flex flex-col gap-y-0 items-center lg:items-start">
+                  <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-center lg:justify-start">
                     <span className="text-foreground">Design & code:</span>
                     <Link
                       className="underline underline-offset-4 decoration-1 hover:no-underline"
@@ -332,7 +341,7 @@ export default function InfoPageClient() {
                       Joel Järvi
                     </Link>
                   </div>
-                  <div className="flex flex-wrap items-baseline gap-x-1 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman">
+                  <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-center lg:justify-start">
                     <span className="text-foreground">Typefaces:</span>
                     <span>Times New Roman</span>
                   </div>

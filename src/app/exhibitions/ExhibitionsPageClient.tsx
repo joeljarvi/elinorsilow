@@ -39,7 +39,7 @@ export default function ExhibitionsPageClient() {
       onClick={handleClick}
     >
       <div
-        className="fixed top-0 flex items-center justify-center w-full h-dvh"
+        className="fixed top-0 left-0 flex items-center justify-center w-full h-dvh"
         style={{ perspective: "800px" }}
       >
         {imageUrl && (
