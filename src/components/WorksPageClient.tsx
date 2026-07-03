@@ -27,19 +27,19 @@ export default function WorksPageClient() {
 
   return (
     <div
-      className="h-dvh w-full flex flex-col px-[9px] cursor-pointer transition-colors duration-300"
+      className="h-dvh w-full flex flex-col px-6 cursor-pointer transition-colors duration-300 mx-auto"
       style={moreFun ? { backgroundColor: moreFunBg } : undefined}
       onClick={handleClick}
     >
       <div
-        className="fixed top-0 flex items-center justify-center w-full h-dvh"
+        className="fixed top-0 flex items-center justify-center w-full h-dvh mx-auto"
         style={{ perspective: "800px" }}
       >
         {work?.image_url && (
           <motion.img
             src={work.image_url}
             alt={work.title.rendered}
-            className="max-h-[50dvh] lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
+            className="max-h-[45dvh] lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
             style={{}}
             onClick={(e) => {
               e.stopPropagation();
@@ -51,13 +51,13 @@ export default function WorksPageClient() {
 
       {work && (
         <div
-          className="fixed bottom-0 left-0 right-0 flex justify-center px-4 lg:px-0 py-2"
+          className="fixed bottom-0 left-0 right-0 flex justify-start w-full lg:justify-center px-6 lg:px-0 pb-2"
           onClick={(e) => {
             e.stopPropagation();
             setActiveWorkSlug(work.slug);
           }}
         >
-          <InfoBox work={work} centered />
+          <InfoBox work={work} />
         </div>
       )}
 

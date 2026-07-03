@@ -95,7 +95,7 @@ function NewNavOverlay({
           <WigglyButton
             key={f.value}
             text={f.label}
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className={`tracking-wide px-0 leading-tight  `}
             onClick={() => setCategoryFilter(f.value)}
             bold={active}
@@ -112,7 +112,7 @@ function NewNavOverlay({
           <WigglyButton
             key={s}
             text={s}
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className="tracking-wide leading-tight px-0 text-foreground"
             href={`#${id}`}
             bold={activeSection === id}
@@ -132,7 +132,7 @@ function NewNavOverlay({
               <WigglyButton
                 key={m}
                 text={m}
-                mobileSize="text-2xl"
+                mobileSize="text-xl"
                 className="tracking-wide px-0 text-foreground leading-tight"
                 onClick={() => setMode(m)}
                 bold={active}
@@ -147,7 +147,7 @@ function NewNavOverlay({
               <WigglyButton
                 key={s}
                 text={s}
-                mobileSize="text-2xl"
+                mobileSize="text-xl"
                 className="tracking-wide px-0 text-foreground leading-tight"
                 onClick={() => setSort(s)}
                 bold={active}
@@ -158,7 +158,7 @@ function NewNavOverlay({
           })}
           <WigglyButton
             text="settings"
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className="tracking-wide px-0 text-foreground leading-tight"
             onClick={() => setShowSettings((v) => !v)}
             bold={showSettings}
@@ -169,7 +169,7 @@ function NewNavOverlay({
             <>
               <WigglyButton
                 text="zoom in"
-                mobileSize="text-2xl"
+                mobileSize="text-xl"
                 className="tracking-wide px-0 text-foreground leading-tight"
                 onClick={() => setZoom(Math.max(0, zoom - 1))}
                 anchorFill="currentColor"
@@ -177,7 +177,7 @@ function NewNavOverlay({
               />
               <WigglyButton
                 text="zoom out"
-                mobileSize="text-2xl"
+                mobileSize="text-xl"
                 className="tracking-wide px-0 text-foreground leading-tight"
                 onClick={() => setZoom(Math.min(4, zoom + 1))}
                 anchorFill="currentColor"
@@ -185,7 +185,7 @@ function NewNavOverlay({
               />
               <WigglyButton
                 text="tidy up"
-                mobileSize="text-2xl"
+                mobileSize="text-xl"
                 className="tracking-wide px-0 text-foreground leading-tight"
                 onClick={() => setTidy(!tidy)}
                 bold={tidy}
@@ -205,7 +205,7 @@ function NewNavOverlay({
           <WigglyButton
             key={c.value}
             text={c.label}
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className="tracking-wide px-0 text-foreground leading-tight"
             onClick={() => setExCat(c.value)}
             bold={active}
@@ -225,12 +225,12 @@ function NewNavOverlay({
       {/* Row 1, Col 1: spacer — logo+menu floats here at z-[131] */}
 
       {/* Row 1, Col 2: nav links */}
-      <div className="col-start-1 col-span-2 mt-1 row-start-1 flex flex-col items-center text-center justify-baseline gap-y-2 pt-12">
+      <div className="col-start-2 col-span-1 mt-1 row-start-1 flex flex-col items-start text-left justify-baseline gap-y-2 pt-5.5">
         {NAV_LINKS.map(({ href, label, target, rel }) => (
           <WigglyButton
             key={href}
             text={label}
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className="tracking-wide px-0 text-foreground leading-tight"
             href={href}
             target={target}
@@ -243,15 +243,15 @@ function NewNavOverlay({
         ))}
       </div>
       {/* Row 2, Col 1: page-specific submenu */}
-      <div className="col-start-1 col-span-2 row-start-2 flex flex-col items-center text-center gap-y-2">
+      <div className="col-start-1 col-span-1 row-start-2 flex flex-col items-start text-left gap-y-2">
         {renderSubmenu()}
       </div>
       {/* Close button — bottom center */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-center px-6 pb-8">
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-4 justify-center px-6 pb-8 w-full">
         <WigglyButton
           text="close"
-          mobileSize="text-2xl"
-          className="tracking-wide px-0 text-foreground leading-tight"
+          mobileSize="text-xl"
+          className="col-start-2 tracking-wide px-0 text-foreground leading-tight"
           onClick={onClose}
           anchorFill="currentColor"
           bold
@@ -323,14 +323,14 @@ export default function DesktopNav() {
       {/* Main nav — z-[131], always above NewNavOverlay */}
       <div
         id="main-nav"
-        className={`fixed left-0 right-0 z-[131] flex flex-col items-center pt-2 lg:pt-0 pointer-events-none ${onInfo ? " max-lg:bg-blue-600" : ""}`}
+        className={`fixed left-0 right-0 z-[131] grid grid-cols-2 lg:flex flex-col  items-center pt-2 lg:pt-0 pointer-events-none `}
       >
         {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
-        <div className="flex flex-wrap items-baseline justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
+        <div className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
           <WigglyButton
             text="elinor silow"
             size="text-3xl"
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0"
             href="/"
             bold
@@ -339,23 +339,21 @@ export default function DesktopNav() {
             forceBaseline
             active
           />
-          <span className="font-timesNewRoman text-2xl lg:text-3xl text-foreground select-none leading-tight font-bold">
+          <span className="font-timesNewRoman text-xl lg:text-3xl text-foreground select-none leading-tight font-bold">
             ,{" "}
           </span>
           <WigglyButton
             text="menu"
             size="text-3xl"
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             className="tracking-wide leading-tight px-0 mx-0 ml-2 text-foreground"
             onClick={() => setNavOpen((v) => !v)}
             anchorFill="currentColor"
             forceBaseline
-            wiggleGradient={true}
-            active
           />
           {/* ":" on mobile when nav open */}
           {navOpen && (
-            <span className="lg:hidden font-timesNewRoman text-2xl text-foreground select-none font-bold leading-none">
+            <span className="lg:hidden font-timesNewRoman text-xl text-foreground select-none font-bold leading-none">
               :
             </span>
           )}
@@ -376,7 +374,7 @@ export default function DesktopNav() {
               <WigglyButton
                 text={label}
                 size="text-3xl"
-                mobileSize="text-2xl"
+                mobileSize="text-xl"
                 className={`tracking-wide leading-tight px-0 ml-0 ${navOpen ? "hidden lg:inline-flex" : "hidden"}`}
                 href={href}
                 target={target}

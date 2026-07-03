@@ -52,7 +52,7 @@ export default function HomeLayoutClient({
 
   return (
     <div
-      className="h-dvh w-full flex flex-col px-4 pt-4 cursor-pointer transition-colors duration-300"
+      className="h-dvh w-full flex flex-col px-6 pt-4 cursor-pointer transition-colors duration-300"
       onClick={advance}
     >
       <div className=" relative w-full hidden">
@@ -60,27 +60,27 @@ export default function HomeLayoutClient({
       </div>
       {/* Image — centered in available space between nav and InfoBox */}
       <div
-        className="fixed top-0 flex items-center justify-center w-full h-dvh "
+        className="fixed top-0 flex items-center justify-center w-full h-dvh mx-auto "
         style={{ perspective: "800px" }}
       >
         {work?.image_url && (
           <motion.img
             src={work.image_url}
             alt={work.title.rendered}
-            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8 max-w-full object-contain"
+            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8  object-contain object-center"
             style={{}}
           />
         )}
       </div>
 
       {work && (
-        <div className="fixed bottom-0 left-0 right-0 flex justify-center px-4 lg:px-0 py-2">
-          <InfoBox work={work} centered />
+        <div className="fixed bottom-0 left-0 right-0 flex justify-start lg:justify-center px-6 lg:px-0 pb-2 w-full">
+          <InfoBox work={work} />
         </div>
       )}
 
       <button
-        className="fixed top-8 right-8 z-10 pointer-events-auto"
+        className="hidden lg:block fixed top-8 right-8 z-10 pointer-events-auto"
         onClick={(e) => {
           e.stopPropagation();
           setTrumpetFrame((f) => (f % 3) + 1);

@@ -66,7 +66,7 @@ export default function InfoBox({
           <WigglyButton
             text={truncateTitle(work.title.rendered)}
             size="text-3xl"
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             bold
             className="px-0 tracking-widest leading-tight whitespace-break-spaces"
             forceBaseline
@@ -79,7 +79,7 @@ export default function InfoBox({
         ? [
             {
               key: "year",
-              node: <span className="font-bold">{work.acf.year}</span>,
+              node: <span className="">{work.acf.year}</span>,
             },
           ]
         : []),
@@ -108,10 +108,10 @@ export default function InfoBox({
 
     return (
       <div
-        className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
+        className={`text-foreground no-hide  ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
       >
         <span
-          className={`flex flex-wrap justify-center mx-auto items-baseline text-center font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide`}
+          className={`flex flex-wrap items-baseline font-timesNewRoman text-xl lg:text-3xl leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
         >
           {visibleParts.map((part, i) => {
             if (part.key === "year") return null;
@@ -165,7 +165,7 @@ export default function InfoBox({
           <WigglyButton
             text={truncateTitle(exhibition.title.rendered)}
             size="text-3xl"
-            mobileSize="text-2xl"
+            mobileSize="text-xl"
             bold
             className="px-0 tracking-wide whitespace-normal leading-tight"
             forceBaseline
@@ -178,7 +178,7 @@ export default function InfoBox({
         ? [
             {
               key: "year",
-              node: <span className="font-bold">{exhibition.acf.year}</span>,
+              node: <span className="">{exhibition.acf.year}</span>,
             },
           ]
         : []),
@@ -217,7 +217,7 @@ export default function InfoBox({
         className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
       >
         <span
-          className={`flex flex-wrap items-baseline font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide ${centered ? "lg:justify-center" : ""}`}
+          className={`flex flex-wrap items-baseline font-timesNewRoman text-xl lg:text-3xl leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
         >
           {visibleParts.map((part, i) => {
             if (part.key === "year") return null;

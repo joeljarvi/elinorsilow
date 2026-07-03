@@ -58,13 +58,13 @@ export default function ExhibitionsPageClient() {
 
       {ex && (
         <div
-          className="fixed bottom-0 left-0 right-0 flex lg:justify-center px-4 lg:px-0 py-2"
+          className="fixed bottom-0 left-0 right-0 flex justify-start lg:justify-center px-4 lg:px-0 py-2"
           onClick={(e) => {
             e.stopPropagation();
             setActiveExhibitionSlug(ex.slug);
           }}
         >
-          <InfoBox exhibition={ex} centered />
+          <InfoBox exhibition={ex} />
         </div>
       )}
 

@@ -169,30 +169,31 @@ export default function ExhibitionSlugModalClient({
           )}
 
           {slide?.type === "description" && (
-            <p className="font-timesNewRoman text-2xl lg:text-3xl leading-tight tracking-wide text-center max-w-2xl px-8">
+            <p className="font-timesNewRoman text-foreground text-3xl leading-[1.2] lg:leading-[1.1] lg:text-3xl tracking-wide text-center max-w-2xl px-8">
               {description}
             </p>
           )}
 
           {slide?.type === "works" && (
             <div
-              className="flex flex-col items-center gap-y-0 text-center"
+              className="flex flex-col items-center gap-y-4 text-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <p className="font-timesNewRoman  text-muted-foreground tracking-wide text-2xl lg:text-3xl ">
-                Works in this exhibition
-              </p>
               {works.map((w, i) => (
-                <button
+                <WigglyButton
                   key={i}
-                  className="font-timesNewRoman  tracking-wide text-2xl lg:text-3xl hover:text-muted-foreground transition-colors"
+                  text={w}
+                  size="text-3xl"
+                  mobileSize="text-3xl"
+                  className="tracking-wide px-0 text-foreground"
                   onClick={(e) => {
                     e.stopPropagation();
                     onOpenWorkByTitle?.(w);
                   }}
-                >
-                  {w}
-                </button>
+                  anchorFill="currentColor"
+                  forceBaseline
+                  active
+                />
               ))}
             </div>
           )}
@@ -211,10 +212,7 @@ export default function ExhibitionSlugModalClient({
 
           {slide?.type === "credits" && (
             <div className="flex flex-col items-center  text-center max-w-xl px-8">
-              <p className="font-timesNewRoman text-2xl lg:text-3xl text-muted-foreground tracking-wider ">
-                Credits
-              </p>
-              <p className="font-timesNewRoman text-2xl lg:text-3xl  tracking-wide">
+              <p className="font-timesNewRoman text-xl lg:text-3xl  tracking-wide">
                 {credits}
               </p>
             </div>
@@ -238,29 +236,37 @@ export default function ExhibitionSlugModalClient({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Thumbnails — visible after description slide (images, works, credits) */}
-        {slide?.type !== "meta" && slide?.type !== "description" && images.length > 0 && (() => {
-          const imageStartIdx = slides.findIndex((s) => s.type === "image");
-          return (
-            <div className="flex flex-wrap justify-center gap-1 pointer-events-none">
-              {images.map((img, i) => {
-                const targetIdx = imageStartIdx + i;
-                const active = clampedIndex === targetIdx;
-                return (
-                  <button
-                    key={img.id}
-                    className={`relative w-10 h-10 overflow-hidden pointer-events-auto shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-40"}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSlideIndex(targetIdx);
-                    }}
-                  >
-                    <Image src={img.url} alt={img.alt} fill className="object-cover" />
-                  </button>
-                );
-              })}
-            </div>
-          );
-        })()}
+        {slide?.type !== "meta" &&
+          slide?.type !== "description" &&
+          images.length > 0 &&
+          (() => {
+            const imageStartIdx = slides.findIndex((s) => s.type === "image");
+            return (
+              <div className="flex flex-wrap justify-center gap-1 pointer-events-none">
+                {images.map((img, i) => {
+                  const targetIdx = imageStartIdx + i;
+                  const active = clampedIndex === targetIdx;
+                  return (
+                    <button
+                      key={img.id}
+                      className={`relative w-10 h-10 overflow-hidden pointer-events-auto shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-40"}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSlideIndex(targetIdx);
+                      }}
+                    >
+                      <Image
+                        src={img.url}
+                        alt={img.alt}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
         {/* Meta info — only on title slide */}
         {slide?.type === "meta" && (
