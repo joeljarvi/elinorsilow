@@ -323,7 +323,7 @@ export default function DesktopNav() {
       {/* Main nav — z-[131], always above NewNavOverlay */}
       <div
         id="main-nav"
-        className={`fixed left-0 right-0 z-[131] grid grid-cols-2 lg:flex flex-col  items-center pt-2 lg:pt-0 pointer-events-none `}
+        className={`fixed left-0 right-0 z-[131] flex flex-col  items-center pt-2 lg:pt-0 pointer-events-none `}
       >
         {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
         <div className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
@@ -424,7 +424,7 @@ export default function DesktopNav() {
               return (
                 <Fragment key={c.value}>
                   {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
                       ,
                     </span>
                   )}
@@ -451,7 +451,7 @@ export default function DesktopNav() {
               return (
                 <Fragment key={m}>
                   {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
                       ,
                     </span>
                   )}
@@ -467,7 +467,7 @@ export default function DesktopNav() {
                 </Fragment>
               );
             })}
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
               ,
             </span>
             <WigglyButton
@@ -493,7 +493,7 @@ export default function DesktopNav() {
               anchorFill="currentColor"
               forceBaseline
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
               ,
             </span>
             <WigglyButton
@@ -504,7 +504,7 @@ export default function DesktopNav() {
               anchorFill="currentColor"
               forceBaseline
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
               ,
             </span>
             <WigglyButton
