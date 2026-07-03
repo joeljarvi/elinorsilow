@@ -126,75 +126,81 @@ function NewNavOverlay({
     if (onIndex) {
       return (
         <>
-          {INDEX_MODES.map((m) => {
-            const active = mode === m;
-            return (
-              <WigglyButton
-                key={m}
-                text={m}
-                mobileSize="text-xl"
-                className="tracking-wide px-0 text-foreground leading-tight"
-                onClick={() => setMode(m)}
-                bold={active}
-                anchorFill="currentColor"
-                forceBaseline
-              />
-            );
-          })}
-          {INDEX_SORTS.map((s) => {
-            const active = sort === s;
-            return (
-              <WigglyButton
-                key={s}
-                text={s}
-                mobileSize="text-xl"
-                className="tracking-wide px-0 text-foreground leading-tight"
-                onClick={() => setSort(s)}
-                bold={active}
-                anchorFill="currentColor"
-                forceBaseline
-              />
-            );
-          })}
-          <WigglyButton
-            text="settings"
-            mobileSize="text-xl"
-            className="tracking-wide px-0 text-foreground leading-tight"
-            onClick={() => setShowSettings((v) => !v)}
-            bold={showSettings}
-            anchorFill="currentColor"
-            forceBaseline
-          />
-          {showSettings && (
-            <>
-              <WigglyButton
-                text="zoom in"
-                mobileSize="text-xl"
-                className="tracking-wide px-0 text-foreground leading-tight"
-                onClick={() => setZoom(Math.max(0, zoom - 1))}
-                anchorFill="currentColor"
-                forceBaseline
-              />
-              <WigglyButton
-                text="zoom out"
-                mobileSize="text-xl"
-                className="tracking-wide px-0 text-foreground leading-tight"
-                onClick={() => setZoom(Math.min(4, zoom + 1))}
-                anchorFill="currentColor"
-                forceBaseline
-              />
-              <WigglyButton
-                text="tidy up"
-                mobileSize="text-xl"
-                className="tracking-wide px-0 text-foreground leading-tight"
-                onClick={() => setTidy(!tidy)}
-                bold={tidy}
-                active={tidy}
-                anchorFill="currentColor"
-                forceBaseline
-              />
-            </>
-          )}
+          <div className="flex flex-col gap-y-2">
+            {INDEX_MODES.map((m) => {
+              const active = mode === m;
+              return (
+                <WigglyButton
+                  key={m}
+                  text={m}
+                  mobileSize="text-xl"
+                  className="tracking-wide px-0 text-foreground leading-tight"
+                  onClick={() => setMode(m)}
+                  bold={active}
+                  anchorFill="currentColor"
+                  forceBaseline
+                />
+              );
+            })}
+          </div>
+          <div className="flex flex-col gap-y-2">
+            {INDEX_SORTS.map((s) => {
+              const active = sort === s;
+              return (
+                <WigglyButton
+                  key={s}
+                  text={s}
+                  mobileSize="text-xl"
+                  className="tracking-wide px-0 text-foreground leading-tight"
+                  onClick={() => setSort(s)}
+                  bold={active}
+                  anchorFill="currentColor"
+                  forceBaseline
+                />
+              );
+            })}
+          </div>
+          <div className="flex flex-col gap-y-2">
+            <WigglyButton
+              text="settings"
+              mobileSize="text-xl"
+              className="tracking-wide px-0 text-foreground leading-tight"
+              onClick={() => setShowSettings((v) => !v)}
+              bold={showSettings}
+              anchorFill="currentColor"
+              forceBaseline
+            />
+            {showSettings && (
+              <>
+                <WigglyButton
+                  text="zoom in"
+                  mobileSize="text-xl"
+                  className="tracking-wide px-0 text-foreground leading-tight"
+                  onClick={() => setZoom(Math.max(0, zoom - 1))}
+                  anchorFill="currentColor"
+                  forceBaseline
+                />
+                <WigglyButton
+                  text="zoom out"
+                  mobileSize="text-xl"
+                  className="tracking-wide px-0 text-foreground leading-tight"
+                  onClick={() => setZoom(Math.min(4, zoom + 1))}
+                  anchorFill="currentColor"
+                  forceBaseline
+                />
+                <WigglyButton
+                  text="tidy up"
+                  mobileSize="text-xl"
+                  className="tracking-wide px-0 text-foreground leading-tight"
+                  onClick={() => setTidy(!tidy)}
+                  bold={tidy}
+                  active={tidy}
+                  anchorFill="currentColor"
+                  forceBaseline
+                />
+              </>
+            )}
+          </div>
         </>
       );
     }

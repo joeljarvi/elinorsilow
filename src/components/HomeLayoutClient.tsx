@@ -80,7 +80,7 @@ export default function HomeLayoutClient({
       )}
 
       <button
-        className="hidden lg:block fixed top-8 right-8 z-10 pointer-events-auto"
+        className="hidden  fixed top-8 right-8 z-10 pointer-events-auto"
         onClick={(e) => {
           e.stopPropagation();
           setTrumpetFrame((f) => (f % 3) + 1);
