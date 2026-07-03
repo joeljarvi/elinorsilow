@@ -346,7 +346,7 @@ export default function DesktopNav() {
             text="menu"
             size="text-3xl"
             mobileSize="text-xl"
-            className="tracking-wide leading-tight px-0 mx-0 ml-2 text-foreground"
+            className="tracking-wide leading-tight px-0 mx-0 ml-1 text-foreground"
             onClick={() => setNavOpen((v) => !v)}
             anchorFill="currentColor"
             forceBaseline

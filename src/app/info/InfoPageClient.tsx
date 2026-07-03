@@ -71,28 +71,29 @@ export default function InfoPageClient() {
     title: string;
   }) {
     return (
-      <div className="flex flex-col gap-y-0 pt-0 items-start justify-center w-full">
-        <span className="flex flex-col lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+      <div className="flex flex-col gap-y-0 pt-0 items-start justify-start w-full">
+        <span className="flex flex-col  w-full items-baseline justify-start lg:items-center gap-x-4 gap-y-0">
           <WigglyButton
             text={title}
             size="text-3xl"
-            mobileSize="text-2xl"
-            className="lowercase col-start-1 col-span-1 justify-start tracking-wider px-0 mb-4 leading-tight"
+            mobileSize="text-xl"
+            className="lowercase col-start-1 col-span-1 justify-start lg:justify-center lg:text-center tracking-wider px-0 mb-4 leading-tight"
             bold
             forceBaseline
             anchorFill="currentColor"
             wiggleGradient
             active
           />
-          <div className="w-full col-span-2 flex flex-col gap-y-0">
+          <div className="w-full col-span-2 flex flex-col gap-y-0 items-baseline justify-start">
             {groupByYear(items).map(([year, exs]) => (
               <div key={year} className="flex gap-x-4 items-baseline mb-0">
                 <WigglyButton
                   text={year}
                   size="text-3xl"
-                  mobileSize="text-2xl"
+                  mobileSize="text-xl"
                   className="tracking-wide leading-tight px-0"
                   forceBaseline
+                  bold
                   anchorFill="currentColor"
                 />
                 <div className="flex flex-col gap-y-0">
@@ -101,13 +102,13 @@ export default function InfoPageClient() {
                     return (
                       <div
                         key={ex.id}
-                        className="flex flex-wrap items-baseline gap-x-0 text-2xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0"
+                        className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0"
                       >
                         {slug ? (
                           <WigglyButton
                             text={ex.title.rendered}
                             size="text-3xl"
-                            mobileSize="text-2xl"
+                            mobileSize="text-xl"
                             className="tracking-wide leading-tight items-baseline whitespace-normal px-0"
                             forceBaseline
                             onClick={() => {
@@ -121,13 +122,13 @@ export default function InfoPageClient() {
                           <WigglyButton
                             text={ex.title.rendered}
                             size="text-3xl"
-                            mobileSize="text-2xl"
+                            mobileSize="text-xl"
                             className="tracking-wide leading-tight whitespace-normal px-0"
                             forceBaseline
                             anchorFill="currentColor"
                           />
                         )}
-                        <span className="font-timesNewRoman text-2xl lg:text-3xl leading-[1.1]">
+                        <span className="font-timesNewRoman text-xl lg:text-3xl leading-[1.1]">
                           ,{" "}
                         </span>
                         <span className="leading-[1.1] whitespace-normal">
@@ -175,34 +176,42 @@ export default function InfoPageClient() {
 
           <div id="education" className="flex-1 mb-8">
             {educations.length > 0 && (
-              <div className="flex flex-col gap-y-0 items-start justify-start">
-                <span className="flex flex-col lg:grid grid-cols-3 w-full items-start justify-start gap-x-4">
+              <div className="flex flex-col gap-y-0 pt-0 items-start justify-start w-full">
+                <span className="flex flex-col w-full items-baseline justify-start lg:items-center gap-x-4 gap-y-0">
                   <WigglyButton
                     text="education"
                     size="text-3xl"
-                    mobileSize="text-2xl"
-                    className="lowercase justify-start tracking-wider px-0 mb-2 leading-tight"
+                    mobileSize="text-xl"
+                    className="lowercase col-start-1 col-span-1 justify-start lg:justify-center lg:text-center tracking-wider px-0 mb-4 leading-tight"
                     bold
                     forceBaseline
+                    anchorFill="currentColor"
+                    wiggleGradient
+                    active
                   />
-                  <div className="w-full col-span-2 ">
-                    {educations.map((edu) => (
-                      <div
-                        key={edu.id}
-                        className="flex lg:grid grid-cols-3 gap-x-4 items-baseline mb-1 "
-                      >
-                        <WigglyButton
-                          text={`${edu.acf.start_year}-${edu.acf.end_year}`}
-                          size="text-3xl"
-                          mobileSize="text-2xl"
-                          className="col-span-1 tracking-wide leading-tight lowercase shrink-0 px-0 w-36"
-                          forceBaseline
-                        />
-                        <span className="text-2xl lg:text-3xl tracking-wide font-timesNewRoman leading-tight col-span-3">
-                          {edu.acf.school}, {edu.acf.city}
-                        </span>
-                      </div>
-                    ))}
+                  <div className="w-full col-span-2 flex flex-col gap-y-0 items-baseline justify-start">
+                    {[...educations]
+                      .sort((a, b) => Number(b.acf.end_year) - Number(a.acf.end_year))
+                      .map((edu) => (
+                        <div key={edu.id} className="flex gap-x-4 items-baseline mb-0">
+                          <WigglyButton
+                            text={`${edu.acf.start_year}–${edu.acf.end_year}`}
+                            size="text-3xl"
+                            mobileSize="text-xl"
+                            className="tracking-wide leading-tight px-0"
+                            forceBaseline
+                            bold
+                            anchorFill="currentColor"
+                          />
+                          <div className="flex flex-col gap-y-0">
+                            <div className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0">
+                              <span className="leading-[1.1] whitespace-normal">
+                                {edu.acf.school}, {edu.acf.city}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 </span>
               </div>

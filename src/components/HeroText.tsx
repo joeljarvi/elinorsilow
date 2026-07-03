@@ -6,7 +6,7 @@ export default function HeroText() {
 
   return (
     <div className="font-timesNewRoman tracking-wide whitespace-normal max-w-4xl pt-8 mx-0 lg:mx-auto w-full ">
-      <p className="text-foreground text-xl leading-[1.1] lg:text-3xl text-left lg:text-center">
+      <p className="text-foreground text-xl leading-[1.2] lg:leading-[1.1] lg:text-3xl text-left lg:text-center">
         {heroBody}
       </p>
     </div>
