@@ -26,20 +26,20 @@ export default function HomeLayoutClient({
   const work = recentWorks[workIndex] ?? null;
 
   const advance = useCallback(() => {
-    setWorkIndex((idx) => {
-      const nextIndex = idx < recentWorks.length - 1 ? idx + 1 : 0;
-      const nextWork = recentWorks[nextIndex] ?? null;
-      if (nextWork?.acf?.category === "sculpture") {
-        setHomeBg(
-          SCULPTURE_COLORS[Math.floor(Math.random() * SCULPTURE_COLORS.length)],
-        );
-      } else {
-        setHomeBg(null);
-      }
-      return nextIndex;
-    });
+    setWorkIndex((idx) => (idx < recentWorks.length - 1 ? idx + 1 : 0));
     if (moreFun) refreshMoreFunBg();
-  }, [recentWorks, moreFun, refreshMoreFunBg, setHomeBg]);
+  }, [recentWorks.length, moreFun, refreshMoreFunBg]);
+
+  useEffect(() => {
+    const w = recentWorks[workIndex] ?? null;
+    if (w?.acf?.category === "sculpture") {
+      setHomeBg(
+        SCULPTURE_COLORS[Math.floor(Math.random() * SCULPTURE_COLORS.length)],
+      );
+    } else {
+      setHomeBg(null);
+    }
+  }, [workIndex, recentWorks, setHomeBg]);
 
   useEffect(() => {
     const id = setInterval(advance, 3000);

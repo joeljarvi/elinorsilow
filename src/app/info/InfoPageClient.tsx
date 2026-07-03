@@ -58,7 +58,7 @@ function HDiv({ className = "" }: { className?: string }) {
   );
 }
 
-export default function InfoPageClient() {
+export default function InfoPageClient({ bio = "" }: { bio?: string }) {
   const { educations, grants, soloExhibitions, groupExhibitions } = useInfo();
   const { setOpen } = useUI();
   const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
@@ -154,7 +154,7 @@ export default function InfoPageClient() {
       <div className="text-foreground flex flex-col w-full">
         {/* Hero */}
         <div id="bio" className="lg:max-w-[66%] lg:mx-auto mb-8 ">
-          <HeroText />
+          <HeroText bio={bio} />
         </div>
 
         {/* Row 1: Group Exhibitions | Solo Exhibitions | Education */}

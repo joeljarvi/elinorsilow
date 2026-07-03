@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useIndex } from "@/context/IndexContext";
@@ -30,61 +29,32 @@ function jitter(id: number | string): { x: number; y: number } {
   return { x, y };
 }
 
-function floatParams(id: number | string) {
-  const n = hash(id);
-  const ampX = ((n * 53 + 7) % 12) - 6;
-  const ampY = ((n * 97 + 13) % 16) - 8;
-  const duration = 3 + ((n * 17) % 20) / 10;
-  const delay = ((n * 31) % 20) / 10;
-  return { ampX, ampY, duration, delay };
-}
-
 const BATCH = 24;
 
 function GridItem({
-  id,
   baseOffset,
-  floating,
   className,
   onClick,
   children,
 }: {
-  id: number | string;
   baseOffset: { x: number; y: number };
-  floating: boolean;
   className: string;
   onClick: () => void;
   children: React.ReactNode;
 }) {
-  const { ampX, ampY, duration, delay } = floatParams(id);
   return (
-    <motion.button
+    <button
       className={className}
       onClick={onClick}
-      animate={
-        floating
-          ? {
-              x: [baseOffset.x, baseOffset.x + ampX, baseOffset.x],
-              y: [baseOffset.y, baseOffset.y + ampY, baseOffset.y],
-            }
-          : { x: baseOffset.x, y: baseOffset.y }
-      }
-      transition={
-        floating
-          ? { duration, delay, repeat: Infinity, ease: "easeInOut" }
-          : { duration: 0.3 }
-      }
-      whileHover={{ scale: 1.06 }}
-      whileTap={{ scale: 0.97 }}
+      style={{ transform: `translate(${baseOffset.x}px, ${baseOffset.y}px)` }}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }
 
 export default function IndexPageClient() {
-  const { mode, setMode, sort, setSort, tidy, setTidy, search, zoom, setZoom } =
-    useIndex();
+  const { mode, sort, tidy, search, zoom } = useIndex();
   const WORKS_COLS = [
     "grid-cols-1 lg:grid-cols-2",
     "grid-cols-2 lg:grid-cols-4",
@@ -182,17 +152,13 @@ export default function IndexPageClient() {
       ([entry]) => {
         if (entry.isIntersecting) setVisibleCount((c) => c + BATCH);
       },
-      { threshold: 0.1 },
+      { threshold: 0 },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
   const offset = (id: number | string) => (tidy ? { x: 0, y: 0 } : jitter(id));
-
-  const sep = (
-    <span className="text-muted-foreground font-timesNewRoman text-2xl">/</span>
-  );
 
   return (
     <>
@@ -205,9 +171,7 @@ export default function IndexPageClient() {
             {visibleWorks.slice(0, visibleCount).map((work, i) => (
               <GridItem
                 key={`${work.id}-${i}`}
-                id={i}
                 baseOffset={offset(i)}
-                floating={!tidy}
                 className="aspect-square overflow-hidden cursor-zoom-in  p-12 lg:p-12  "
                 onClick={() => setWorkSlug(work.slug)}
               >
@@ -230,9 +194,7 @@ export default function IndexPageClient() {
             {visibleExhibitions.slice(0, visibleCount).map((ex, i) => (
               <GridItem
                 key={`${ex.id}-${i}`}
-                id={i}
                 baseOffset={offset(i)}
-                floating={!tidy}
                 className="col-span-1 row-span-2 items-center justify-center aspect-square overflow-hidden block p-16 lg:p-8 "
                 onClick={() => setExhibitionSlug(ex.slug)}
               >
@@ -254,9 +216,7 @@ export default function IndexPageClient() {
               item.kind === "work" ? (
                 <GridItem
                   key={`work-${item.data.id}-${i}`}
-                  id={i}
                   baseOffset={offset(i)}
-                  floating={!tidy}
                   className="aspect-square overflow-hidden cursor-zoom-in p-0 lg:p-8"
                   onClick={() => setWorkSlug(item.data.slug)}
                 >
@@ -271,9 +231,7 @@ export default function IndexPageClient() {
               ) : (
                 <GridItem
                   key={`ex-${item.data.id}-${i}`}
-                  id={i}
                   baseOffset={offset(i)}
-                  floating={!tidy}
                   className="col-span-2 aspect-square overflow-hidden block p-0 lg:p-8"
                   onClick={() => setExhibitionSlug(item.data.slug)}
                 >

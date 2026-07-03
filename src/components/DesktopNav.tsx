@@ -24,7 +24,11 @@ const NAV_LINKS = [
 ];
 
 const INDEX_SORTS: IndexSort[] = ["latest", "year", "a-z"];
-const INDEX_MODES: IndexMode[] = ["works", "exhibitions", "all"];
+const INDEX_MODES: { label: string; value: IndexMode }[] = [
+  { label: "all works", value: "works" },
+  { label: "all exhibitions", value: "exhibitions" },
+  { label: "all", value: "all" },
+];
 
 const WORK_FILTERS: { label: string; value: CategoryFilter }[] = [
   { label: "all works", value: "all" },
@@ -96,9 +100,10 @@ function NewNavOverlay({
             key={f.value}
             text={f.label}
             mobileSize="text-xl"
-            className={`tracking-wide px-0 leading-tight  `}
+            className="tracking-wide px-0 text-foreground leading-tight"
             onClick={() => setCategoryFilter(f.value)}
             bold={active}
+            active={active}
             anchorFill="currentColor"
             forceBaseline
           />
@@ -108,6 +113,7 @@ function NewNavOverlay({
     if (onInfo) {
       return INFO_SECTIONS.map((s) => {
         const id = s.replace(/\s+/g, "-");
+        const active = activeSection === id;
         return (
           <WigglyButton
             key={s}
@@ -115,7 +121,8 @@ function NewNavOverlay({
             mobileSize="text-xl"
             className="tracking-wide leading-tight px-0 text-foreground"
             href={`#${id}`}
-            bold={activeSection === id}
+            bold={active}
+            active={active}
             anchorFill="currentColor"
             forceBaseline
             onClick={onClose}
@@ -127,23 +134,24 @@ function NewNavOverlay({
       return (
         <>
           <div className="flex flex-col gap-y-2">
-            {INDEX_MODES.map((m) => {
-              const active = mode === m;
+            {INDEX_MODES.map(({ label, value }) => {
+              const active = mode === value;
               return (
                 <WigglyButton
-                  key={m}
-                  text={m}
+                  key={value}
+                  text={label}
                   mobileSize="text-xl"
                   className="tracking-wide px-0 text-foreground leading-tight"
-                  onClick={() => setMode(m)}
+                  onClick={() => setMode(value)}
                   bold={active}
+                  active={active}
                   anchorFill="currentColor"
                   forceBaseline
                 />
               );
             })}
           </div>
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-2 mt-0">
             {INDEX_SORTS.map((s) => {
               const active = sort === s;
               return (
@@ -154,6 +162,7 @@ function NewNavOverlay({
                   className="tracking-wide px-0 text-foreground leading-tight"
                   onClick={() => setSort(s)}
                   bold={active}
+                  active={active}
                   anchorFill="currentColor"
                   forceBaseline
                 />
@@ -167,6 +176,7 @@ function NewNavOverlay({
               className="tracking-wide px-0 text-foreground leading-tight"
               onClick={() => setShowSettings((v) => !v)}
               bold={showSettings}
+              active={showSettings}
               anchorFill="currentColor"
               forceBaseline
             />
@@ -179,6 +189,7 @@ function NewNavOverlay({
                   onClick={() => setZoom(Math.max(0, zoom - 1))}
                   anchorFill="currentColor"
                   forceBaseline
+                  active
                 />
                 <WigglyButton
                   text="zoom out"
@@ -187,6 +198,7 @@ function NewNavOverlay({
                   onClick={() => setZoom(Math.min(4, zoom + 1))}
                   anchorFill="currentColor"
                   forceBaseline
+                  active
                 />
                 <WigglyButton
                   text="tidy up"
@@ -215,6 +227,7 @@ function NewNavOverlay({
             className="tracking-wide px-0 text-foreground leading-tight"
             onClick={() => setExCat(c.value)}
             bold={active}
+            active={active}
             anchorFill="currentColor"
             forceBaseline
           />
@@ -413,6 +426,7 @@ export default function DesktopNav() {
                     className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
                     onClick={() => setCategoryFilter(f.value)}
                     bold={active}
+                    active={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
@@ -440,6 +454,7 @@ export default function DesktopNav() {
                     className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
                     onClick={() => setExCat(c.value)}
                     bold={active}
+                    active={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
@@ -452,27 +467,25 @@ export default function DesktopNav() {
         {/* Index: mode filter + settings toggle */}
         {onIndex && navOpen && (
           <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto  w-full">
-            {INDEX_MODES.map((m, i) => {
-              const active = mode === m;
-              return (
-                <Fragment key={m}>
-                  {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
-                      ,
-                    </span>
-                  )}
-                  <WigglyButton
-                    text={m}
-                    size="text-3xl"
-                    className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
-                    onClick={() => setMode(m)}
-                    bold={active}
-                    anchorFill="currentColor"
-                    forceBaseline
-                  />
-                </Fragment>
-              );
-            })}
+            {INDEX_MODES.map(({ label, value }, i) => (
+              <Fragment key={value}>
+                {i > 0 && (
+                  <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
+                    ,
+                  </span>
+                )}
+                <WigglyButton
+                  text={label}
+                  size="text-3xl"
+                  className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
+                  onClick={() => setMode(value)}
+                  bold={mode === value}
+                  active={mode === value}
+                  anchorFill="currentColor"
+                  forceBaseline
+                />
+              </Fragment>
+            ))}
             <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
               ,
             </span>
@@ -482,6 +495,7 @@ export default function DesktopNav() {
               className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
               onClick={() => setShowSettings((v) => !v)}
               bold={showSettings}
+              active={showSettings}
               anchorFill="currentColor"
               forceBaseline
             />
@@ -498,6 +512,7 @@ export default function DesktopNav() {
               onClick={() => setZoom(Math.max(0, zoom - 1))}
               anchorFill="currentColor"
               forceBaseline
+              active
             />
             <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
               ,
@@ -509,6 +524,7 @@ export default function DesktopNav() {
               onClick={() => setZoom(Math.min(4, zoom + 1))}
               anchorFill="currentColor"
               forceBaseline
+              active
             />
             <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
               ,
@@ -518,15 +534,16 @@ export default function DesktopNav() {
               size="text-3xl"
               className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
               onClick={() => setTidy(!tidy)}
-              bold={tidy}
               anchorFill="currentColor"
               forceBaseline
+              bold={tidy}
+              active={tidy}
             />
           </div>
         )}
 
         {/* Info: section links */}
-        {onInfo && navOpen && (
+        {onInfo && (
           <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
             {INFO_SECTIONS.map((s, i) => (
               <Fragment key={s}>
@@ -538,9 +555,10 @@ export default function DesktopNav() {
                 <WigglyButton
                   text={s}
                   size="text-3xl"
-                  className="tracking-wide leading-tight px-0 lg:ml-2 "
+                  className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
                   href={`#${s.replace(/\s+/g, "-")}`}
                   bold={activeSection === s.replace(/\s+/g, "-")}
+                  active={activeSection === s.replace(/\s+/g, "-")}
                   anchorFill="currentColor"
                   forceBaseline
                   onClick={() => setNavOpen(false)}

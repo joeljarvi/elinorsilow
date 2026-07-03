@@ -20,7 +20,11 @@ export default function WorkSlugModalClient({
   onClose,
   showInfo,
 }: WorkSlugModalClientProps) {
-  const { filteredWorks, normalizeSlug, workLoading: contextLoading } = useWorks();
+  const {
+    filteredWorks,
+    normalizeSlug,
+    workLoading: contextLoading,
+  } = useWorks();
   const { showColorBg } = useUI();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,7 +74,10 @@ export default function WorkSlugModalClient({
       loadWorkByIndex(currentIndex + 1);
   }, [currentIndex, filteredWorks, loadWorkByIndex]);
 
-  const swipeHandlers = useSwipe({ onSwipedLeft: goNext, onSwipedRight: goPrev });
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: goNext,
+    onSwipedRight: goPrev,
+  });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -114,7 +121,7 @@ export default function WorkSlugModalClient({
           className="flex-shrink-0 pt-[9px]"
           onClick={(e) => e.stopPropagation()}
         >
-          <InfoBox work={work} />
+          <InfoBox centered work={work} />
         </div>
       )}
     </div>

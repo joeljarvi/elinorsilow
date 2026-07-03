@@ -1,5 +1,7 @@
 import InfoPageClient from "./InfoPageClient";
+import { getShortBio } from "../../../lib/sanity";
 
-export default function InfoPage() {
-  return <InfoPageClient />;
+export default async function InfoPage() {
+  const bio = await getShortBio();
+  return <InfoPageClient bio={bio} />;
 }
