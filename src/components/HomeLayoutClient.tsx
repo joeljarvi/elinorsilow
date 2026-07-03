@@ -60,14 +60,14 @@ export default function HomeLayoutClient({
       </div>
       {/* Image — centered in available space between nav and InfoBox */}
       <div
-        className="fixed top-0 left-0 flex items-center justify-center w-full h-dvh"
+        className="fixed top-0 left-0 flex items-start justify-start lg:justify-center w-full h-dvh pt-[var(--nav-height,0px)] pl-6 lg:pl-0"
         style={{ perspective: "800px" }}
       >
         {work?.image_url && (
           <motion.img
             src={work.image_url}
             alt={work.title.rendered}
-            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8  object-contain object-center"
+            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8 object-contain object-top pt-6 lg:pt-4"
             style={{}}
           />
         )}

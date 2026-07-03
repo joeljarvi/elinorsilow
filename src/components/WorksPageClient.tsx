@@ -32,14 +32,14 @@ export default function WorksPageClient() {
       onClick={handleClick}
     >
       <div
-        className="fixed top-0 left-0 flex items-center justify-center w-full h-dvh"
+        className="fixed top-0 left-0 flex items-start justify-start lg:justify-center w-full h-dvh pt-[var(--nav-height,0px)] pl-6 lg:pl-0"
         style={{ perspective: "800px" }}
       >
         {work?.image_url && (
           <motion.img
             src={work.image_url}
             alt={work.title.rendered}
-            className="max-h-[45dvh] lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
+            className="max-h-[45dvh] lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in object-top pt-6 lg:pt-4"
             style={{}}
             onClick={(e) => {
               e.stopPropagation();

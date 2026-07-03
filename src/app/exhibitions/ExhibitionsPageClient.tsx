@@ -39,14 +39,14 @@ export default function ExhibitionsPageClient() {
       onClick={handleClick}
     >
       <div
-        className="fixed top-0 left-0 flex items-center justify-center w-full h-dvh"
+        className="fixed top-0 left-0 flex items-start justify-start lg:justify-center w-full h-dvh pt-[var(--nav-height,0px)] pl-6 lg:pl-0"
         style={{ perspective: "800px" }}
       >
         {imageUrl && (
           <motion.img
             src={imageUrl}
             alt={ex!.title.rendered}
-            className="max-h-[33.3dvh] lg:max-w-full lg:max-h-[50dvh] max-w-full object-contain cursor-zoom-in"
+            className="max-h-[33.3dvh] lg:max-w-full lg:max-h-[50dvh] max-w-full object-contain object-top cursor-zoom-in pt-6 lg:pt-4"
             style={{}}
             onClick={(e) => {
               e.stopPropagation();
