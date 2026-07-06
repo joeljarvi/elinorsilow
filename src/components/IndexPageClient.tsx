@@ -163,10 +163,10 @@ export default function IndexPageClient() {
   return (
     <>
       {/* Grid */}
-      <div className="  ">
+      <div className=" ">
         {mode === "works" && (
           <div
-            className={`grid px-2 lg:px-0 py-2 lg: pt-6 gap-y-2 lg:gap-0  mx-auto ${WORKS_COLS[zoom]} `}
+            className={`grid px-4 lg:px-6 py-2 lg: pt-6 gap-y-2 lg:gap-0  mx-auto ${WORKS_COLS[zoom]} `}
           >
             {visibleWorks.slice(0, visibleCount).map((work, i) => (
               <GridItem
@@ -189,13 +189,13 @@ export default function IndexPageClient() {
 
         {mode === "exhibitions" && (
           <div
-            className={`grid ${EXHIBITION_COLS[zoom]} gap-0 max-w-7xl mx-auto`}
+            className={`grid ${EXHIBITION_COLS[zoom]} grid px-4 lg:px-6 py-2 lg: pt-6 gap-y-2 lg:gap-0  mx-auto`}
           >
             {visibleExhibitions.slice(0, visibleCount).map((ex, i) => (
               <GridItem
                 key={`${ex.id}-${i}`}
                 baseOffset={offset(i)}
-                className="col-span-1 row-span-1 items-center justify-center aspect-square overflow-hidden block p-16 lg:p-8 "
+                className="col-span-1 row-span-1 items-center justify-center aspect-square overflow-hidden block p-12 lg:p-12 "
                 onClick={() => setExhibitionSlug(ex.slug)}
               >
                 {ex.acf.image_1?.url && (
@@ -211,20 +211,22 @@ export default function IndexPageClient() {
         )}
 
         {mode === "all" && (
-          <div className={`grid ${WORKS_COLS[zoom]} gap-8`}>
+          <div
+            className={`grid ${WORKS_COLS[zoom]} grid px-4 lg:px-6 py-2 lg: pt-6 gap-y-2 lg:gap-0  mx-auto`}
+          >
             {visibleAll.slice(0, visibleCount).map((item, i) =>
               item.kind === "work" ? (
                 <GridItem
                   key={`work-${item.data.id}-${i}`}
                   baseOffset={offset(i)}
-                  className="aspect-square overflow-hidden cursor-zoom-in p-0 lg:p-8"
+                  className="aspect-square overflow-hidden cursor-zoom-in p-12 lg:p-12"
                   onClick={() => setWorkSlug(item.data.slug)}
                 >
                   {item.data.image_url && (
                     <img
                       src={item.data.image_url}
                       alt={item.data.title.rendered}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain object-center"
                     />
                   )}
                 </GridItem>
@@ -232,14 +234,14 @@ export default function IndexPageClient() {
                 <GridItem
                   key={`ex-${item.data.id}-${i}`}
                   baseOffset={offset(i)}
-                  className="col-span-2 aspect-square overflow-hidden block p-0 lg:p-8"
+                  className="col-span-2 aspect-square  block p-12 lg:p-12"
                   onClick={() => setExhibitionSlug(item.data.slug)}
                 >
                   {item.data.acf.image_1?.url && (
                     <img
                       src={item.data.acf.image_1.url}
                       alt={item.data.title.rendered}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain object-center"
                     />
                   )}
                 </GridItem>

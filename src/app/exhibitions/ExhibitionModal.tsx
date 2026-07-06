@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
+import CloseButton from "@/components/CloseButton";
 
 type ExhibitionModalProps = {
   slug: string;
@@ -34,7 +35,7 @@ export default function ExhibitionModal({
       {isOpen && (
         <motion.div
           key="overlay"
-          className="fixed inset-0 z-[200] h-dvh bg-background/40 backdrop-blur-xl w-full overflow-hidden"
+          className="fixed inset-0 z-[200]  bg-background/40 backdrop-blur-xl w-full overflow-hidden noise-bg"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -58,6 +59,15 @@ export default function ExhibitionModal({
               onOpenWorkByTitle={onOpenWorkByTitle}
             />
           </motion.div>
+
+          {/* Close — top right (rendered outside the scrollable modal wrapper so `fixed` anchors to the viewport) */}
+          <CloseButton
+            className="fixed top-0 right-0 z-[220]"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClose();
+            }}
+          />
         </motion.div>
       )}
     </AnimatePresence>

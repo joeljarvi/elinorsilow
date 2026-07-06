@@ -74,6 +74,10 @@ export default function ExhibitionSlugModalClient({
 
   useEffect(() => {
     if (!slug) return;
+    if (exhibition?.slug === slug) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     if (filteredExhibitions?.length > 0) {
       const ex = filteredExhibitions.find((e) => e.slug === slug);
@@ -87,7 +91,7 @@ export default function ExhibitionSlugModalClient({
       if (ex) setExhibition(ex);
       setLoading(false);
     });
-  }, [slug, getFromContext, filteredExhibitions]);
+  }, [slug, getFromContext, filteredExhibitions, exhibition]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -134,12 +138,12 @@ export default function ExhibitionSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className="fixed inset-1 z-[210] flex flex-col transition-colors duration-300"
-      style={moreFun ? { backgroundColor: moreFunBg } : undefined}
+      className="absolute inset-0 z-[210] flex flex-col transition-colors duration-300 h-dvh"
       onClick={() => {
         if (moreFun) refreshMoreFunBg();
         if (isImageSlide) {
-          onClose?.() ?? router.push("/index/exhibitions");
+          if (onClose) onClose();
+          else router.push("/index/exhibitions");
         } else {
           setSlideIndex((s) => Math.min(s + 1, totalSlides - 1));
         }
@@ -223,7 +227,7 @@ export default function ExhibitionSlugModalClient({
       {/* Slide counter — top left */}
       {totalSlides > 1 && (
         <div
-          className="fixed top-3 left-4 z-[220] font-timesNewRoman text-sm text-foreground pointer-events-none"
+          className="absolute top-3 left-4 z-[220] font-timesNewRoman text-sm text-foreground pointer-events-none"
           onClick={(e) => e.stopPropagation()}
         >
           {clampedIndex + 1} / {totalSlides}
@@ -232,7 +236,7 @@ export default function ExhibitionSlugModalClient({
 
       {/* Bottom bar */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-[220] pb-4 px-6 lg:px-4 pointer-events-none flex flex-col items-center gap-y-2"
+        className="absolute bottom-0 left-0 right-0 z-[220] pb-4 px-6 lg:px-4 pointer-events-none flex flex-col items-center gap-y-2"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Thumbnails — visible after description slide (images, works, credits) */}
@@ -279,37 +283,14 @@ export default function ExhibitionSlugModalClient({
             </div>
 
             {/* Desktop: justify-between with balanced spacer to keep InfoBox centered */}
-            <div className="hidden lg:flex justify-between items-end w-full">
-              <div className="w-24" />
+            <div className="hidden lg:flex justify-center items-end w-full">
               <div className="pointer-events-auto">
                 <InfoBox exhibition={exhibition} centered />
-              </div>
-              <div className="w-24 flex justify-end pointer-events-auto">
-                <WigglyButton
-                  text="close"
-                  size="text-3xl"
-                  mobileSize="text-2xl"
-                  className="tracking-wide text-muted-foreground"
-                  onClick={() => onClose?.() ?? router.push("/index/exhibitions")}
-                  active
-                />
               </div>
             </div>
           </>
         )}
       </div>
-
-      {/* Close — top right */}
-      <button
-        className="fixed top-3 right-3 z-[220] font-timesNewRoman text-2xl text-muted-foreground"
-        onClick={(e) => {
-          e.stopPropagation();
-          onClose?.() ?? router.push("/index/exhibitions");
-        }}
-        aria-label="Close"
-      >
-        ×
-      </button>
 
       {activeWorkSlug && (
         <WorkModal

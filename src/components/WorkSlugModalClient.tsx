@@ -8,6 +8,7 @@ import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
 import BlurredWorkBg from "@/components/BlurredWorkBg";
 import InfoBox from "@/components/InfoBox";
+import CloseButton from "@/components/CloseButton";
 
 type WorkSlugModalClientProps = {
   slug: string;
@@ -95,13 +96,9 @@ export default function WorkSlugModalClient({
   return (
     <div
       {...swipeHandlers}
-      className="relative w-full h-dvh flex flex-col p-[9px]"
+      className="relative w-full h-dvh flex flex-col p-2"
       onClick={onClose}
     >
-      {showColorBg && work.image_url && (
-        <BlurredWorkBg imageUrl={work.image_url} />
-      )}
-
       {/* Image */}
       <div className="relative flex-1 min-h-0">
         {work.image_url && (
@@ -118,7 +115,7 @@ export default function WorkSlugModalClient({
       {/* Info — bottom left */}
       {showInfo && (
         <div
-          className="flex-shrink-0 pt-[9px]"
+          className="flex-shrink-0 pt-2 mb-1 "
           onClick={(e) => e.stopPropagation()}
         >
           <InfoBox centered work={work} />
@@ -127,16 +124,13 @@ export default function WorkSlugModalClient({
 
       {/* Close — top right */}
       {onClose && (
-        <button
-          className="fixed top-3 right-3 z-[220] font-timesNewRoman text-2xl text-muted-foreground"
+        <CloseButton
+          className="fixed top-0 right-0 z-[220]"
           onClick={(e) => {
             e.stopPropagation();
             onClose();
           }}
-          aria-label="Close"
-        >
-          ×
-        </button>
+        />
       )}
     </div>
   );

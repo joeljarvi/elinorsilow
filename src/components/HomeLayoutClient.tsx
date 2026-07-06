@@ -8,9 +8,6 @@ import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import InfoBox from "./InfoBox";
 import HistoryClient from "./HistoryClient";
-import FixedCookieAccept from "./FixedCookieAccept";
-
-const SCULPTURE_COLORS = ["#f97316"]; // orange-500
 
 export default function HomeLayoutClient({
   recentWorks,
@@ -70,14 +67,14 @@ export default function HomeLayoutClient({
           <motion.img
             src={work.image_url}
             alt={work.title.rendered}
-            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8 object-contain object-top pt-6 lg:pt-4"
+            className="max-h-[50dvh] lg:max-h-[66.6dvh] pb-8 object-contain object-top pt-8 lg:pt-8"
             style={{}}
           />
         )}
       </div>
 
       {work && (
-        <div className="fixed bottom-0 left-0 right-0 flex justify-start lg:justify-center px-6 lg:px-0 pb-2 w-full">
+        <div className="fixed bottom-0 left-0 right-0 flex justify-start lg:justify-center px-6 lg:px-4 pb-6 lg:pb-4 w-full">
           <InfoBox work={work} />
         </div>
       )}

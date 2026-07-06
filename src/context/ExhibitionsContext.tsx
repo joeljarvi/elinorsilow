@@ -3,6 +3,7 @@
 import React, {
   createContext,
   useContext,
+  useCallback,
   useEffect,
   useState,
   ReactNode,
@@ -137,27 +138,31 @@ export function ExhibitionsProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, []);
 
-  const getExhibitionBySlug = async (slug: string) => {
-    // 1. Try context first (even if loading)
-    const existing = exhibitions.find((e) => e.slug === slug);
-    if (existing) return existing;
+  const getExhibitionBySlug = useCallback(
+    async (slug: string) => {
+      // 1. Try context first (even if loading)
+      const existing = exhibitions.find((e) => e.slug === slug);
+      if (existing) return existing;
 
-    // 2. Fetch fallback
-    try {
-      const fetched = await fetchExhibitionBySlug(slug);
+      // 2. Fetch fallback
+      try {
+        const fetched = await fetchExhibitionBySlug(slug);
+        if (!fetched) return null;
 
-      // 3. Cache it
-      setExhibitions((prev) => {
-        if (prev.some((e) => e.id === fetched.id)) return prev;
-        return [...prev, fetched];
-      });
+        // 3. Cache it
+        setExhibitions((prev) => {
+          if (prev.some((e) => e.id === fetched.id)) return prev;
+          return [...prev, fetched];
+        });
 
-      return fetched;
-    } catch (err) {
-      console.error("getExhibitionBySlug failed", err);
-      return null;
-    }
-  };
+        return fetched;
+      } catch (err) {
+        console.error("getExhibitionBySlug failed", err);
+        return null;
+      }
+    },
+    [exhibitions]
+  );
 
   // Available years from acf.year
   const availableYears = useMemo(() => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import { useUI } from "@/context/UIContext";
 import { useIndex, IndexSort, IndexMode } from "@/context/IndexContext";
 import { useWorks, CategoryFilter } from "@/context/WorksContext";
@@ -14,7 +15,7 @@ const NAV_LINKS = [
   { href: "/index/exhibitions", label: "exhibitions" },
   { href: "/index", label: "index" },
   { href: "/info", label: "info" },
-  { href: "/contact", label: "contact" },
+  { href: "mailto:elinor.silow@gmail.com", label: "contact" },
   {
     href: "https://www.instagram.com/elinorsilow",
     label: "instagram",
@@ -70,6 +71,10 @@ function NewNavOverlay({
   const [showSettings, setShowSettings] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const searchRef = useRef<HTMLInputElement>(null);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const onInfo = pathname === "/info";
   const onIndexAny = pathname.startsWith("/index");
@@ -110,10 +115,9 @@ function NewNavOverlay({
             key={s}
             text={s}
             mobileSize="text-xl"
-            className="tracking-wide leading-tight px-0 text-foreground items-baseline"
+            className="justify-start  px-2 w-full text-foreground "
             href={`#${id}`}
             bold={active}
-            active={active}
             anchorFill="currentColor"
             forceBaseline
             onClick={onClose}
@@ -125,7 +129,7 @@ function NewNavOverlay({
       return (
         <>
           {onIndexRoot && (
-            <div className="flex flex-col gap-y-2">
+            <div className="flex flex-col gap-y-0 w-full">
               {INDEX_MODES.map(({ label, value }) => {
                 const active = mode === value;
                 return (
@@ -133,10 +137,9 @@ function NewNavOverlay({
                     key={value}
                     text={label}
                     mobileSize="text-xl"
-                    className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+                    className="px-2 text-foreground  justify-start "
                     onClick={() => setMode(value)}
-                    bold
-                    active={active}
+                    bold={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
@@ -144,7 +147,7 @@ function NewNavOverlay({
               })}
             </div>
           )}
-          <div className="flex flex-col gap-y-2 mt-0">
+          <div className="flex flex-col gap-y-0 mt-0 w-full">
             {INDEX_SORTS.map((s) => {
               const active = sort === s;
               return (
@@ -152,10 +155,9 @@ function NewNavOverlay({
                   key={s}
                   text={s}
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+                  className=" px-2 w-full text-foreground  e justify-start"
                   onClick={() => setSort(s)}
-                  bold
-                  active={active}
+                  bold={active}
                   anchorFill="currentColor"
                   forceBaseline
                 />
@@ -163,63 +165,59 @@ function NewNavOverlay({
             })}
           </div>
           {onIndexRoot && (
-            <div className="flex flex-col gap-y-2">
+            <div className="flex flex-col gap-y-0 w-full">
               <input
                 ref={searchRef}
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="search..."
-                className="bg-transparent border-none outline-none font-timesNewRoman text-xl lowercase font-bold tracking-wide placeholder:text-foreground text-foreground px-0"
+                className="bg-transparent border-none outline-none justify-start pl-2 font-timesNewRoman text-xl lowercase font-bold placeholder:text-foreground text-foreground px-0"
               />
             </div>
           )}
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-0 w-full">
             <WigglyButton
               text="settings"
               mobileSize="text-xl"
-              className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+              className="px-2 text-foreground justify-start  "
               onClick={() => setShowSettings((v) => !v)}
               bold={showSettings}
-              active={showSettings}
               anchorFill="currentColor"
               forceBaseline
             />
             {showSettings && (
-              <>
+              <div className="flex flex-col gap-y-0 w-full">
                 <WigglyButton
                   text="zoom in"
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+                  className=" px-2 text-foreground  justify-start"
                   onClick={() => setZoom(Math.max(0, zoom - 1))}
                   anchorFill="currentColor"
                   forceBaseline
-                  active
                 />
                 <WigglyButton
                   text="zoom out"
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+                  className=" px-2 text-foreground  justify-start "
                   onClick={() => setZoom(Math.min(4, zoom + 1))}
                   anchorFill="currentColor"
                   forceBaseline
-                  active
                 />
                 <WigglyButton
                   text="tidy up"
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+                  className=" px-2 text-foreground justify-start  "
                   onClick={() => setTidy(!tidy)}
                   bold={tidy}
-                  active={tidy}
                   anchorFill="currentColor"
                   forceBaseline
                 />
-              </>
+              </div>
             )}
           </div>
           {onIndexWorks && (
-            <div className="flex flex-col gap-y-2 mt-0">
+            <div className="flex flex-col gap-y-0 mt-0">
               {WORK_FILTERS.map((f) => {
                 const active = categoryFilter === f.value;
                 const disabled = f.value === "drawing";
@@ -228,12 +226,11 @@ function NewNavOverlay({
                     key={f.value}
                     text={f.label}
                     mobileSize="text-xl"
-                    className={`tracking-wide px-0 leading-tight items-baseline ${disabled ? "opacity-50 cursor-none" : "text-foreground"}`}
+                    className={` px-2 justify-start ${disabled ? "opacity-50 cursor-none" : "text-foreground"}`}
                     onClick={
                       disabled ? undefined : () => setCategoryFilter(f.value)
                     }
                     bold={active}
-                    active={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
@@ -242,7 +239,7 @@ function NewNavOverlay({
             </div>
           )}
           {onIndexExhibitions && (
-            <div className="flex flex-col gap-y-2 mt-0">
+            <div className="flex flex-col gap-y-0 mt-0">
               {EX_CATS.map((c) => {
                 const active = exCat === c.value;
                 return (
@@ -250,10 +247,9 @@ function NewNavOverlay({
                     key={c.value}
                     text={c.label}
                     mobileSize="text-xl"
-                    className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+                    className="px-2  justify-start "
                     onClick={() => setExCat(c.value)}
                     bold={active}
-                    active={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
@@ -269,18 +265,18 @@ function NewNavOverlay({
 
   return (
     <div
-      className={`lg:hidden fixed inset-0 z-[125] ${pathname === "/info" ? "bg-blue-600" : "bg-[#B0916E]"} px-6 pb-4 pointer-events-auto grid grid-cols-2 gap-x-4 grid-rows-2 gap-y-0 h-dvh`}
+      className={`lg:hidden fixed inset-0 z-[125] ${pathname === "/info" ? "bg-blue-600 dark:bg-blue-950" : "bg-[#B0916E] dark:bg-orange-950"} px-6  pb-6 pointer-events-auto grid grid-cols-2 gap-6 grid-rows-2 h-dvh pt-4 `}
     >
       {/* Row 1, Col 1: spacer — logo+menu floats here at z-[131] */}
 
       {/* Row 1, Col 2: nav links */}
-      <div className="col-start-2 col-span-1 mt-1 row-start-1 flex flex-col items-start text-left justify-baseline gap-y-2 pt-5.5">
+      <div className="col-start-2 col-span-1  row-start-1 flex flex-col items-start text-left justify-baseline gap-y-0">
         {NAV_LINKS.map(({ href, label, target, rel }) => (
           <WigglyButton
             key={href}
             text={label}
             mobileSize="text-xl"
-            className="tracking-wide px-0 text-foreground leading-tight items-baseline"
+            className=" px-2 text-foreground bg-transparent justify-start items-baseline  border-foreground w-full "
             href={href}
             target={target}
             rel={rel}
@@ -290,17 +286,27 @@ function NewNavOverlay({
             forceBaseline
           />
         ))}
+        {mounted && (
+          <WigglyButton
+            text={theme === "dark" ? "light" : "dark"}
+            mobileSize="text-xl"
+            className=" px-2 text-foreground bg-transparent justify-start items-baseline   w-full "
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            anchorFill="currentColor"
+            forceBaseline
+          />
+        )}
       </div>
       {/* Row 2, Col 1: page-specific submenu */}
-      <div className="col-start-1 col-span-1 row-start-2 flex flex-col items-start text-left gap-y-2">
+      <div className="col-start-1 col-span-1 row-start-2 flex flex-col items-start text-left gap-y-0  pb-6">
         {renderSubmenu()}
       </div>
       {/* Close button — bottom center */}
-      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-4 justify-center px-6 pb-8 w-full">
+      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-4 justify-end px-6 pb-6 w-full ">
         <WigglyButton
           text="close"
           mobileSize="text-xl"
-          className="col-start-2 tracking-wide px-0 text-foreground leading-tight"
+          className="col-start-2 px-2  text-foreground justify-start "
           onClick={onClose}
           anchorFill="currentColor"
           bold
@@ -321,10 +327,10 @@ export default function DesktopNav() {
   const [navOpen, setNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const searchRef = useRef<HTMLInputElement>(null);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("sans-mode", sans);
-  }, [sans]);
+  useEffect(() => setMounted(true), []);
 
   const onIndexAny = pathname.startsWith("/index");
   const onIndexRoot = pathname === "/index";
@@ -371,18 +377,22 @@ export default function DesktopNav() {
     <>
       {/* Main nav — z-[131], always above NewNavOverlay */}
       <div
+        aria-label="Main navigation"
         id="main-nav"
-        className={`fixed left-0 right-0 z-[131] flex flex-col  items-center pt-2 lg:pt-0 pointer-events-none `}
+        className={`fixed left-0 right-0 z-[131] grid grid-cols-2 gap-6 lg:gap-0 lg:flex flex-col  items-center pt-4 lg:pt-4 pointer-events-none w-full mx-0 px-4   lg:mx-auto `}
       >
         {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
-        <div className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
+        <div
+          tabIndex={0}
+          className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-2  gap-x-0 w-full lg:col-span-1"
+        >
           {navOpen ? (
             <>
               <WigglyButton
                 text="e. silow"
                 size="text-3xl"
                 mobileSize="text-xl"
-                className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0 lg:hidden"
+                className="text-foreground justify-start pl-2 pr-0 mx-0 lg:hidden"
                 href="/"
                 bold
                 anchorFill="currentColor"
@@ -394,7 +404,7 @@ export default function DesktopNav() {
                 text="elinor silow"
                 size="text-3xl"
                 mobileSize="text-xl"
-                className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0 hidden lg:inline-flex"
+                className=" text-foreground pl-2 pr-0 mx-0 hidden lg:inline-flex"
                 href="/"
                 bold
                 anchorFill="currentColor"
@@ -408,7 +418,7 @@ export default function DesktopNav() {
               text="elinor silow"
               size="text-3xl"
               mobileSize="text-xl"
-              className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0"
+              className="justify-start pl-2 pr-0 text-foreground px-0 mx-0"
               href="/"
               bold
               anchorFill="currentColor"
@@ -417,92 +427,100 @@ export default function DesktopNav() {
               active
             />
           )}
-          <span className="font-timesNewRoman text-xl lg:text-3xl text-foreground select-none leading-tight font-bold">
+          <span className="font-timesNewRoman text-xl lg:text-3xl text-foreground select-none font-bold">
             ,{" "}
           </span>
           <WigglyButton
             text="menu"
             size="text-3xl"
             mobileSize="text-xl"
-            className="tracking-wide leading-tight px-0 mx-0 ml-1 text-foreground"
+            className="  px-0 mx-0 ml-2 text-foreground"
             onClick={() => setNavOpen((v) => !v)}
             anchorFill="currentColor"
             forceBaseline
           />
           {/* ":" on mobile when nav open */}
           {navOpen && (
-            <span className="lg:hidden font-timesNewRoman text-xl text-foreground select-none font-bold leading-none">
+            <span className="lg:hidden font-timesNewRoman text-xl text-foreground select-none font-bold ">
               :
             </span>
           )}
           {/* ":" on desktop before nav links */}
           {navOpen && (
-            <span className="hidden lg:inline font-timesNewRoman text-3xl select-none leading-tight mr-1.5">
+            <span className="hidden lg:inline font-timesNewRoman text-3xl select-none mr-2">
               {":"}
             </span>
           )}
           {/* Desktop nav links — hidden on mobile (NewNavOverlay handles mobile) */}
           {NAV_LINKS.map(({ href, label, target, rel }, idx) => (
             <Fragment key={href}>
-              {idx > 0 && navOpen && (
-                <span className="hidden lg:inline font-timesNewRoman text-3xl select-none leading-tight mr-1.5">
-                  ,{" "}
-                </span>
-              )}
               <WigglyButton
                 text={label}
                 size="text-3xl"
                 mobileSize="text-xl"
-                className={`tracking-wide leading-tight px-0 ml-0 ${navOpen ? "hidden lg:inline-flex" : "hidden"}`}
+                className={` px-0 ml-0 ${navOpen ? "hidden lg:inline-flex" : "hidden"}`}
                 href={href}
                 target={target}
                 rel={rel}
                 bold={pathname === href}
                 anchorFill="currentColor"
                 forceBaseline
+                active={pathname === href}
               />
+              {(idx < NAV_LINKS.length - 1 || mounted) && navOpen && (
+                <span className="hidden lg:inline font-timesNewRoman text-3xl select-none mr-1.5 lg:mr-2">
+                  ,{" "}
+                </span>
+              )}
             </Fragment>
           ))}
+          {mounted && (
+            <WigglyButton
+              text={theme === "dark" ? "light" : "dark"}
+              size="text-3xl"
+              mobileSize="text-xl"
+              className={` px-0 ml-0 ${navOpen ? "hidden lg:inline-flex" : "hidden"}`}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              anchorFill="currentColor"
+              forceBaseline
+              active={theme === "dark"}
+            />
+          )}
         </div>
 
         {/* Desktop submenus — flex-wrap rows below the nav row */}
 
         {/* Index: mode filter + settings toggle + search — root /index only */}
         {onIndexRoot && navOpen && (
-          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto  w-full">
-            {INDEX_MODES.map(({ label, value }, i) => (
+          <div className="hidden lg:flex  flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto  w-full mt-0">
+            {INDEX_MODES.map(({ label, value }) => (
               <Fragment key={value}>
-                {i > 0 && (
-                  <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
-                    ,
-                  </span>
-                )}
                 <WigglyButton
                   text={label}
                   size="text-3xl"
-                  className={`tracking-wide leading-tight px-0 lg:ml-2 ${mode === value ? "text-foreground" : "text-muted-foreground"}`}
+                  className={` px-0 lg:ml-2 text-foreground`}
                   onClick={() => setMode(value)}
-                  bold
                   active={mode === value}
                   anchorFill="currentColor"
                   forceBaseline
+                  bold={mode === value}
                 />
+                <span className="font-timesNewRoman text-3xl select-none text-foreground ">
+                  ,
+                </span>
               </Fragment>
             ))}
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
-              ,
-            </span>
             <WigglyButton
               text="settings"
               size="text-3xl"
-              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              className={` px-0 lg:ml-2 `}
               onClick={() => setShowSettings((v) => !v)}
-              bold
+              bold={showSettings}
               active={showSettings}
               anchorFill="currentColor"
               forceBaseline
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight ">
               ,
             </span>
             <input
@@ -518,82 +536,72 @@ export default function DesktopNav() {
 
         {/* Works: category filter + settings toggle — shown on /index/works */}
         {onIndexWorks && navOpen && (
-          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
-            {WORK_FILTERS.map((f, i) => {
+          <div className="hidden lg:flex flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {WORK_FILTERS.map((f) => {
               const active = categoryFilter === f.value;
               const disabled = f.value === "drawing";
               return (
                 <Fragment key={f.value}>
-                  {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
-                      ,
-                    </span>
-                  )}
                   <WigglyButton
                     text={f.label}
                     size="text-3xl"
-                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${disabled ? "text-muted-foreground cursor-none" : active ? "text-foreground" : "text-muted-foreground"}`}
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${disabled ? "opacity-60" : "opacity-100"} `}
                     onClick={
                       disabled ? undefined : () => setCategoryFilter(f.value)
                     }
-                    bold
                     active={active}
                     anchorFill="currentColor"
                     forceBaseline
+                    bold={active}
                   />
+                  <span className="font-timesNewRoman text-3xl select-none leading-tight ">
+                    ,
+                  </span>
                 </Fragment>
               );
             })}
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
-              ,
-            </span>
             <WigglyButton
               text="settings"
               size="text-3xl"
-              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              className={`tracking-wide leading-tight px-0 lg:ml-2 `}
               onClick={() => setShowSettings((v) => !v)}
-              bold
               active={showSettings}
               anchorFill="currentColor"
               forceBaseline
+              bold={showSettings}
             />
           </div>
         )}
 
         {/* Exhibitions: category filter + settings toggle — shown on /index/exhibitions */}
         {onIndexExhibitions && navOpen && (
-          <div className="hidden lg:flex -mt-2 gap-x-0 items-baseline justify-center pointer-events-auto ">
-            {EX_CATS.map((c, i) => {
+          <div className="hidden lg:flex  gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {EX_CATS.map((c) => {
               const active = exCat === c.value;
               return (
                 <Fragment key={c.value}>
-                  {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
-                      ,
-                    </span>
-                  )}
                   <WigglyButton
                     text={c.label}
                     size="text-3xl"
-                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 `}
                     onClick={() => setExCat(c.value)}
-                    bold
+                    bold={active}
                     active={active}
                     anchorFill="currentColor"
                     forceBaseline
                   />
+                  <span className="font-timesNewRoman text-3xl select-none leading-tight ">
+                    ,
+                  </span>
                 </Fragment>
               );
             })}
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
-              ,
-            </span>
             <WigglyButton
               text="settings"
               size="text-3xl"
-              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              className={`tracking-wide leading-tight px-0 lg:ml-2 `}
               onClick={() => setShowSettings((v) => !v)}
-              bold
+              bold={showSettings}
               active={showSettings}
               anchorFill="currentColor"
               forceBaseline
@@ -603,41 +611,37 @@ export default function DesktopNav() {
 
         {/* Index: settings sub-panel — below whichever submenu row is active */}
         {onIndexAny && navOpen && showSettings && (
-          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+          <div className="hidden lg:flex  flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
             <WigglyButton
               text="zoom in"
               size="text-3xl"
-              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
+              className=" px-0 lg:ml-2 "
               onClick={() => setZoom(Math.max(0, zoom - 1))}
               anchorFill="currentColor"
               forceBaseline
-              bold
-              active
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight">
               ,
             </span>
             <WigglyButton
               text="zoom out"
               size="text-3xl"
-              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
+              className="tracking-wide leading-tight px-0 lg:ml-2 "
               onClick={() => setZoom(Math.min(4, zoom + 1))}
               anchorFill="currentColor"
               forceBaseline
-              bold
-              active
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight ">
               ,
             </span>
             <WigglyButton
               text="tidy up"
               size="text-3xl"
-              className={`tracking-wide leading-tight px-0 lg:ml-2 ${tidy ? "text-foreground" : "text-muted-foreground"}`}
+              className={`tracking-wide leading-tight px-0 lg:ml-2 `}
               onClick={() => setTidy(!tidy)}
               anchorFill="currentColor"
               forceBaseline
-              bold
+              bold={tidy}
               active={tidy}
             />
           </div>
@@ -645,27 +649,27 @@ export default function DesktopNav() {
 
         {/* Info: section links */}
         {onInfo && (
-          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+          <div className="hidden lg:flex  flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto w-full ">
             {INFO_SECTIONS.map((s, i) => {
               const active = activeSection === s.replace(/\s+/g, "-");
               return (
                 <Fragment key={s}>
-                  {i > 0 && (
-                    <span className="font-timesNewRoman text-2xl select-none text-muted-foreground leading-tight ">
-                      ,
-                    </span>
-                  )}
                   <WigglyButton
                     text={s}
                     size="text-3xl"
-                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 `}
                     href={`#${s.replace(/\s+/g, "-")}`}
-                    bold
+                    bold={active}
                     active={active}
                     anchorFill="currentColor"
                     forceBaseline
                     onClick={() => setNavOpen(false)}
                   />
+                  {i < INFO_SECTIONS.length - 1 && (
+                    <span className="font-timesNewRoman text-2xl select-none  leading-tight ">
+                      ,
+                    </span>
+                  )}
                 </Fragment>
               );
             })}

@@ -68,7 +68,7 @@ export default function InfoBox({
             size="text-3xl"
             mobileSize="text-xl"
             bold
-            className="px-0 tracking-widest leading-tight whitespace-break-spaces"
+            className="px-0 tracking-wider leading-tight whitespace-break-spaces"
             forceBaseline
             wiggleGradient
             active
@@ -107,9 +107,7 @@ export default function InfoBox({
         : parts;
 
     return (
-      <div
-        className={`text-foreground no-hide  ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
-      >
+      <div className={`text-foreground no-hide  ${className}`}>
         <span
           className={`flex flex-wrap items-baseline font-timesNewRoman text-xl lg:text-3xl leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
         >

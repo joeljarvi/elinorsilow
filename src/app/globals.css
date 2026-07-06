@@ -64,7 +64,8 @@ html {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 :root {
-  --font-haas: "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-haas:
+    "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --radius: 0.625rem;
   --shadow-ui: none;
   --shadow-md: none;
@@ -260,9 +261,11 @@ a {
   vertical-align: middle;
 }
 
-.noise-bg {
-  position: relative;
-  isolation: isolate;
+@layer utilities {
+  :where(.noise-bg) {
+    position: relative;
+    isolation: isolate;
+  }
 }
 .noise-bg::before {
   content: "";
@@ -271,8 +274,8 @@ a {
   pointer-events: none;
   z-index: -1;
   mix-blend-mode: overlay;
-  opacity: 1;
-  background-image: url("/noise-texture-1.png");
+  opacity: 0.3;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZUZpbHRlciI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2VGaWx0ZXIpIi8+PC9zdmc+");
   background-repeat: repeat;
   background-size: 200px 200px;
 }
