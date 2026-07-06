@@ -124,6 +124,20 @@ export default function WorkSlugModalClient({
           <InfoBox centered work={work} />
         </div>
       )}
+
+      {/* Close — top right */}
+      {onClose && (
+        <button
+          className="fixed top-3 right-3 z-[220] font-timesNewRoman text-2xl text-muted-foreground"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          aria-label="Close"
+        >
+          ×
+        </button>
+      )}
     </div>
   );
 }

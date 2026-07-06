@@ -144,7 +144,7 @@ function transformWork(doc: any): Work {
   return {
     id: doc._id,
     slug: doc.slug,
-    title: { rendered: doc.title },
+    title: { rendered: (doc.title || "").normalize("NFC") },
     date: doc._createdAt || "",
     acf: {
       year: doc.year,
@@ -182,13 +182,14 @@ function transformExhibition(doc: any): Exhibition {
     });
   }
 
+  const title = (doc.title || "").normalize("NFC");
   return {
     id: doc._id,
     slug: doc.slug,
-    title: { rendered: doc.title },
+    title: { rendered: title },
     date: doc._createdAt || "",
     acf: {
-      title: doc.title,
+      title,
       year: doc.year || "",
       exhibition_type: doc.exhibition_type || "",
       location: doc.location || "",
@@ -206,7 +207,7 @@ function transformExhibitionList(doc: any): Exhibition_list {
   return {
     id: doc._id,
     slug: doc.slug,
-    title: { rendered: doc.title },
+    title: { rendered: (doc.title || "").normalize("NFC") },
     date: doc._createdAt || "",
     acf: {
       year: doc.year || "",
@@ -324,7 +325,7 @@ export async function getAllGrants(): Promise<Grant[]> {
         id: doc._id,
         slug: doc.slug || "",
         acf: {
-          title: doc.title || "",
+          title: (doc.title || "").normalize("NFC"),
           year: String(doc.year || ""),
         },
       }))

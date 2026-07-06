@@ -12,8 +12,8 @@ import PopUpGubbe from "./PopUpGubbe";
 import Image from "next/image";
 
 const NAV_LINKS = [
-  { href: "/works", label: "works" },
-  { href: "/exhibitions", label: "exhibitions" },
+  { href: "/index/works", label: "works" },
+  { href: "/index/exhibitions", label: "exhibitions" },
   { href: "/info", label: "info" },
   { href: "/contact", label: "contact" },
 ];

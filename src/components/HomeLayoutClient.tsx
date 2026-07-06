@@ -19,7 +19,7 @@ export default function HomeLayoutClient({
   recentWorks: Work[];
   updates: ActivityEntry[];
 }) {
-  const { moreFun, moreFunBg, refreshMoreFunBg, setHomeBg } = useUI();
+  const { moreFun, refreshMoreFunBg, setHomeBg } = useUI();
   const [workIndex, setWorkIndex] = useState(0);
   const [trumpetFrame, setTrumpetFrame] = useState(1);
 
@@ -30,21 +30,24 @@ export default function HomeLayoutClient({
     if (moreFun) refreshMoreFunBg();
   }, [recentWorks.length, moreFun, refreshMoreFunBg]);
 
-  useEffect(() => {
-    const w = recentWorks[workIndex] ?? null;
-    if (w?.acf?.category === "sculpture") {
-      setHomeBg(
-        SCULPTURE_COLORS[Math.floor(Math.random() * SCULPTURE_COLORS.length)],
-      );
-    } else {
-      setHomeBg(null);
-    }
-  }, [workIndex, recentWorks, setHomeBg]);
+  const retreat = useCallback(() => {
+    setWorkIndex((idx) => (idx > 0 ? idx - 1 : recentWorks.length - 1));
+    if (moreFun) refreshMoreFunBg();
+  }, [recentWorks.length, moreFun, refreshMoreFunBg]);
 
   useEffect(() => {
     const id = setInterval(advance, 3000);
     return () => clearInterval(id);
   }, [advance]);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "ArrowRight") advance();
+      else if (e.key === "ArrowLeft") retreat();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [advance, retreat]);
 
   useEffect(() => {
     return () => setHomeBg(null);

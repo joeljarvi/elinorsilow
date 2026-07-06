@@ -19,7 +19,9 @@ export default function ExhibitionModal({
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const handleClose = () => {
@@ -32,7 +34,7 @@ export default function ExhibitionModal({
       {isOpen && (
         <motion.div
           key="overlay"
-          className="fixed inset-0 z-[200] h-dvh bg-background/40 backdrop-blur-md w-full overflow-hidden"
+          className="fixed inset-0 z-[200] h-dvh bg-background/40 backdrop-blur-xl w-full overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -50,7 +52,11 @@ export default function ExhibitionModal({
             aria-modal="true"
             aria-labelledby="exhibition-modal-title"
           >
-            <ExhibitionSlugModalClient slug={slug} onClose={handleClose} onOpenWorkByTitle={onOpenWorkByTitle} />
+            <ExhibitionSlugModalClient
+              slug={slug}
+              onClose={handleClose}
+              onOpenWorkByTitle={onOpenWorkByTitle}
+            />
           </motion.div>
         </motion.div>
       )}

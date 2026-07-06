@@ -10,8 +10,8 @@ import WigglyButton from "./WigglyButton";
 
 const NAV_LINKS = [
   { href: "/", label: "home" },
-  { href: "/works", label: "works" },
-  { href: "/exhibitions", label: "exhibitions" },
+  { href: "/index/works", label: "works" },
+  { href: "/index/exhibitions", label: "exhibitions" },
   { href: "/index", label: "index" },
   { href: "/info", label: "info" },
   { href: "/contact", label: "contact" },
@@ -43,14 +43,7 @@ const EX_CATS: { label: string; value: ExCategory }[] = [
   { label: "solo exhibitions", value: "solo" },
 ];
 
-const INFO_SECTIONS = [
-  "bio",
-  "group exhibitions",
-  "solo exhibitions",
-  "education",
-  "grants",
-  "press",
-];
+const INFO_SECTIONS = ["bio", "exhibitions", "education", "grants", "press"];
 
 function NewNavOverlay({
   onClose,
@@ -61,16 +54,32 @@ function NewNavOverlay({
 }) {
   const { categoryFilter, setCategoryFilter } = useWorks();
   const { exCat, setExCat } = useExhibitions();
-  const { mode, setMode, sort, setSort, zoom, setZoom, tidy, setTidy } =
-    useIndex();
+  const {
+    mode,
+    setMode,
+    sort,
+    setSort,
+    zoom,
+    setZoom,
+    tidy,
+    setTidy,
+    search,
+    setSearch,
+  } = useIndex();
 
   const [showSettings, setShowSettings] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  const onWorks = pathname === "/works";
   const onInfo = pathname === "/info";
-  const onIndex = pathname === "/index";
-  const onExhibitions = pathname === "/exhibitions";
+  const onIndexAny = pathname.startsWith("/index");
+  const onIndexRoot = pathname === "/index";
+  const onIndexWorks = pathname === "/index/works";
+  const onIndexExhibitions = pathname === "/index/exhibitions";
+
+  useEffect(() => {
+    if (onIndexRoot) searchRef.current?.focus();
+  }, [onIndexRoot]);
 
   useEffect(() => {
     if (!onInfo) return;
@@ -92,24 +101,6 @@ function NewNavOverlay({
   }, [onInfo]);
 
   const renderSubmenu = () => {
-    if (onWorks) {
-      return WORK_FILTERS.map((f) => {
-        const active = categoryFilter === f.value;
-        return (
-          <WigglyButton
-            key={f.value}
-            text={f.label}
-            mobileSize="text-xl"
-            className="tracking-wide px-0 text-foreground leading-tight"
-            onClick={() => setCategoryFilter(f.value)}
-            bold={active}
-            active={active}
-            anchorFill="currentColor"
-            forceBaseline
-          />
-        );
-      });
-    }
     if (onInfo) {
       return INFO_SECTIONS.map((s) => {
         const id = s.replace(/\s+/g, "-");
@@ -130,27 +121,29 @@ function NewNavOverlay({
         );
       });
     }
-    if (onIndex) {
+    if (onIndexAny) {
       return (
         <>
-          <div className="flex flex-col gap-y-2">
-            {INDEX_MODES.map(({ label, value }) => {
-              const active = mode === value;
-              return (
-                <WigglyButton
-                  key={value}
-                  text={label}
-                  mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight"
-                  onClick={() => setMode(value)}
-                  bold={active}
-                  active={active}
-                  anchorFill="currentColor"
-                  forceBaseline
-                />
-              );
-            })}
-          </div>
+          {onIndexRoot && (
+            <div className="flex flex-col gap-y-2">
+              {INDEX_MODES.map(({ label, value }) => {
+                const active = mode === value;
+                return (
+                  <WigglyButton
+                    key={value}
+                    text={label}
+                    mobileSize="text-xl"
+                    className="tracking-wide px-0 text-foreground leading-tight"
+                    onClick={() => setMode(value)}
+                    bold
+                    active={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                );
+              })}
+            </div>
+          )}
           <div className="flex flex-col gap-y-2 mt-0">
             {INDEX_SORTS.map((s) => {
               const active = sort === s;
@@ -161,7 +154,7 @@ function NewNavOverlay({
                   mobileSize="text-xl"
                   className="tracking-wide px-0 text-foreground leading-tight"
                   onClick={() => setSort(s)}
-                  bold={active}
+                  bold
                   active={active}
                   anchorFill="currentColor"
                   forceBaseline
@@ -169,6 +162,18 @@ function NewNavOverlay({
               );
             })}
           </div>
+          {onIndexRoot && (
+            <div className="flex flex-col gap-y-2">
+              <input
+                ref={searchRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="search..."
+                className="bg-transparent border-none outline-none font-timesNewRoman text-xl lowercase font-bold tracking-wide placeholder:text-foreground text-foreground px-0"
+              />
+            </div>
+          )}
           <div className="flex flex-col gap-y-2">
             <WigglyButton
               text="settings"
@@ -213,26 +218,51 @@ function NewNavOverlay({
               </>
             )}
           </div>
+          {onIndexWorks && (
+            <div className="flex flex-col gap-y-2 mt-0">
+              {WORK_FILTERS.map((f) => {
+                const active = categoryFilter === f.value;
+                const disabled = f.value === "drawing";
+                return (
+                  <WigglyButton
+                    key={f.value}
+                    text={f.label}
+                    mobileSize="text-xl"
+                    className={`tracking-wide px-0 leading-tight ${disabled ? "opacity-50 cursor-none" : "text-foreground"}`}
+                    onClick={
+                      disabled ? undefined : () => setCategoryFilter(f.value)
+                    }
+                    bold={active}
+                    active={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                );
+              })}
+            </div>
+          )}
+          {onIndexExhibitions && (
+            <div className="flex flex-col gap-y-2 mt-0">
+              {EX_CATS.map((c) => {
+                const active = exCat === c.value;
+                return (
+                  <WigglyButton
+                    key={c.value}
+                    text={c.label}
+                    mobileSize="text-xl"
+                    className="tracking-wide px-0 text-foreground leading-tight"
+                    onClick={() => setExCat(c.value)}
+                    bold={active}
+                    active={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                );
+              })}
+            </div>
+          )}
         </>
       );
-    }
-    if (onExhibitions) {
-      return EX_CATS.map((c) => {
-        const active = exCat === c.value;
-        return (
-          <WigglyButton
-            key={c.value}
-            text={c.label}
-            mobileSize="text-xl"
-            className="tracking-wide px-0 text-foreground leading-tight"
-            onClick={() => setExCat(c.value)}
-            bold={active}
-            active={active}
-            anchorFill="currentColor"
-            forceBaseline
-          />
-        );
-      });
     }
     return null;
   };
@@ -287,36 +317,36 @@ export default function DesktopNav() {
   const { mode, setMode, tidy, setTidy, zoom, setZoom, search, setSearch } =
     useIndex();
 
-  const [showSearch, setShowSearch] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("sans-mode", sans);
   }, [sans]);
 
-  useEffect(() => {
-    if (showSearch) inputRef.current?.focus();
-  }, [showSearch]);
-
-  const onIndex = pathname === "/index";
-  const onWorks = pathname === "/works";
-  const onExhibitions = pathname === "/exhibitions";
+  const onIndexAny = pathname.startsWith("/index");
+  const onIndexRoot = pathname === "/index";
+  const onIndexWorks = pathname === "/index/works";
+  const onIndexExhibitions = pathname === "/index/exhibitions";
   const onInfo = pathname === "/info";
+
+  useEffect(() => {
+    if (onIndexRoot && navOpen) searchRef.current?.focus();
+  }, [onIndexRoot, navOpen]);
 
   const { categoryFilter, setCategoryFilter } = useWorks();
   const { exCat, setExCat } = useExhibitions();
 
   useEffect(() => {
-    if (!onIndex) return;
+    if (!onIndexAny) return;
     function handleScroll() {
       if (window.innerWidth < 1024) setNavOpen(false);
     }
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [onIndex]);
+  }, [onIndexAny]);
 
   useEffect(() => {
     if (!onInfo) return;
@@ -346,18 +376,47 @@ export default function DesktopNav() {
       >
         {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
         <div className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-6 lg:px-4 gap-x-0 w-full">
-          <WigglyButton
-            text="elinor silow"
-            size="text-3xl"
-            mobileSize="text-xl"
-            className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0"
-            href="/"
-            bold
-            anchorFill="currentColor"
-            wiggleGradient={true}
-            forceBaseline
-            active
-          />
+          {navOpen ? (
+            <>
+              <WigglyButton
+                text="e. silow"
+                size="text-3xl"
+                mobileSize="text-xl"
+                className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0 lg:hidden"
+                href="/"
+                bold
+                anchorFill="currentColor"
+                wiggleGradient={true}
+                forceBaseline
+                active
+              />
+              <WigglyButton
+                text="elinor silow"
+                size="text-3xl"
+                mobileSize="text-xl"
+                className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0 hidden lg:inline-flex"
+                href="/"
+                bold
+                anchorFill="currentColor"
+                wiggleGradient={true}
+                forceBaseline
+                active
+              />
+            </>
+          ) : (
+            <WigglyButton
+              text="elinor silow"
+              size="text-3xl"
+              mobileSize="text-xl"
+              className="tracking-wide leading-tight items-baseline text-foreground px-0 mx-0"
+              href="/"
+              bold
+              anchorFill="currentColor"
+              wiggleGradient={true}
+              forceBaseline
+              active
+            />
+          )}
           <span className="font-timesNewRoman text-xl lg:text-3xl text-foreground select-none leading-tight font-bold">
             ,{" "}
           </span>
@@ -408,93 +467,92 @@ export default function DesktopNav() {
 
         {/* Desktop submenus — flex-wrap rows below the nav row */}
 
-        {/* Works: category filter */}
-        {onWorks && navOpen && (
-          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
-            {WORK_FILTERS.map((f, i) => {
-              const active = categoryFilter === f.value;
-              return (
-                <Fragment key={f.value}>
-                  {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
-                      ,
-                    </span>
-                  )}
-                  <WigglyButton
-                    text={f.label}
-                    size="text-3xl"
-                    className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
-                    onClick={() => setCategoryFilter(f.value)}
-                    bold={active}
-                    active={active}
-                    anchorFill="currentColor"
-                    forceBaseline
-                  />
-                </Fragment>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Exhibitions: always-visible desktop category row */}
-        {onExhibitions && (
-          <div className="hidden lg:flex -mt-2 gap-x-0 items-baseline justify-center pointer-events-auto ">
-            {EX_CATS.map((c, i) => {
-              const active = exCat === c.value;
-              return (
-                <Fragment key={c.value}>
-                  {i > 0 && (
-                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
-                      ,
-                    </span>
-                  )}
-                  <WigglyButton
-                    text={c.label}
-                    size="text-3xl"
-                    className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
-                    onClick={() => setExCat(c.value)}
-                    bold={active}
-                    active={active}
-                    anchorFill="currentColor"
-                    forceBaseline
-                  />
-                </Fragment>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Index: mode filter + settings toggle */}
-        {onIndex && navOpen && (
+        {/* Index: mode filter + settings toggle + search — root /index only */}
+        {onIndexRoot && navOpen && (
           <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto  w-full">
             {INDEX_MODES.map(({ label, value }, i) => (
               <Fragment key={value}>
                 {i > 0 && (
-                  <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
+                  <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
                     ,
                   </span>
                 )}
                 <WigglyButton
                   text={label}
                   size="text-3xl"
-                  className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
+                  className={`tracking-wide leading-tight px-0 lg:ml-2 ${mode === value ? "text-foreground" : "text-muted-foreground"}`}
                   onClick={() => setMode(value)}
-                  bold={mode === value}
+                  bold
                   active={mode === value}
                   anchorFill="currentColor"
                   forceBaseline
                 />
               </Fragment>
             ))}
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
               ,
             </span>
             <WigglyButton
               text="settings"
               size="text-3xl"
-              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
+              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
               onClick={() => setShowSettings((v) => !v)}
-              bold={showSettings}
+              bold
+              active={showSettings}
+              anchorFill="currentColor"
+              forceBaseline
+            />
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+              ,
+            </span>
+            <input
+              ref={searchRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="search..."
+              className="bg-transparent border-none outline-none font-timesNewRoman text-3xl lowercase font-bold tracking-wide leading-tight placeholder:text-foreground text-foreground px-0 lg:ml-2 w-40"
+            />
+          </div>
+        )}
+
+        {/* Works: category filter + settings toggle — shown on /index/works */}
+        {onIndexWorks && navOpen && (
+          <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {WORK_FILTERS.map((f, i) => {
+              const active = categoryFilter === f.value;
+              const disabled = f.value === "drawing";
+              return (
+                <Fragment key={f.value}>
+                  {i > 0 && (
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+                      ,
+                    </span>
+                  )}
+                  <WigglyButton
+                    text={f.label}
+                    size="text-3xl"
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${disabled ? "text-muted-foreground cursor-none" : active ? "text-foreground" : "text-muted-foreground"}`}
+                    onClick={
+                      disabled ? undefined : () => setCategoryFilter(f.value)
+                    }
+                    bold
+                    active={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                </Fragment>
+              );
+            })}
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+              ,
+            </span>
+            <WigglyButton
+              text="settings"
+              size="text-3xl"
+              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              onClick={() => setShowSettings((v) => !v)}
+              bold
               active={showSettings}
               anchorFill="currentColor"
               forceBaseline
@@ -502,8 +560,49 @@ export default function DesktopNav() {
           </div>
         )}
 
-        {/* Index: settings sub-panel */}
-        {onIndex && navOpen && showSettings && (
+        {/* Exhibitions: category filter + settings toggle — shown on /index/exhibitions */}
+        {onIndexExhibitions && navOpen && (
+          <div className="hidden lg:flex -mt-2 gap-x-0 items-baseline justify-center pointer-events-auto ">
+            {EX_CATS.map((c, i) => {
+              const active = exCat === c.value;
+              return (
+                <Fragment key={c.value}>
+                  {i > 0 && (
+                    <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+                      ,
+                    </span>
+                  )}
+                  <WigglyButton
+                    text={c.label}
+                    size="text-3xl"
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    onClick={() => setExCat(c.value)}
+                    bold
+                    active={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                  />
+                </Fragment>
+              );
+            })}
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
+              ,
+            </span>
+            <WigglyButton
+              text="settings"
+              size="text-3xl"
+              className={`tracking-wide leading-tight px-0 lg:ml-2 ${showSettings ? "text-foreground" : "text-muted-foreground"}`}
+              onClick={() => setShowSettings((v) => !v)}
+              bold
+              active={showSettings}
+              anchorFill="currentColor"
+              forceBaseline
+            />
+          </div>
+        )}
+
+        {/* Index: settings sub-panel — below whichever submenu row is active */}
+        {onIndexAny && navOpen && showSettings && (
           <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
             <WigglyButton
               text="zoom in"
@@ -512,9 +611,10 @@ export default function DesktopNav() {
               onClick={() => setZoom(Math.max(0, zoom - 1))}
               anchorFill="currentColor"
               forceBaseline
+              bold
               active
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
               ,
             </span>
             <WigglyButton
@@ -524,19 +624,20 @@ export default function DesktopNav() {
               onClick={() => setZoom(Math.min(4, zoom + 1))}
               anchorFill="currentColor"
               forceBaseline
+              bold
               active
             />
-            <span className="font-timesNewRoman text-3xl select-none leading-tight text-foreground">
+            <span className="font-timesNewRoman text-3xl select-none leading-tight text-muted-foreground font-bold">
               ,
             </span>
             <WigglyButton
               text="tidy up"
               size="text-3xl"
-              className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
+              className={`tracking-wide leading-tight px-0 lg:ml-2 ${tidy ? "text-foreground" : "text-muted-foreground"}`}
               onClick={() => setTidy(!tidy)}
               anchorFill="currentColor"
               forceBaseline
-              bold={tidy}
+              bold
               active={tidy}
             />
           </div>
@@ -545,26 +646,29 @@ export default function DesktopNav() {
         {/* Info: section links */}
         {onInfo && (
           <div className="hidden lg:flex -mt-2 flex-wrap gap-x-0 items-baseline justify-center pointer-events-auto ">
-            {INFO_SECTIONS.map((s, i) => (
-              <Fragment key={s}>
-                {i > 0 && (
-                  <span className="font-timesNewRoman text-2xl select-none text-foreground leading-tight ">
-                    ,
-                  </span>
-                )}
-                <WigglyButton
-                  text={s}
-                  size="text-3xl"
-                  className="tracking-wide leading-tight px-0 lg:ml-2 text-foreground"
-                  href={`#${s.replace(/\s+/g, "-")}`}
-                  bold={activeSection === s.replace(/\s+/g, "-")}
-                  active={activeSection === s.replace(/\s+/g, "-")}
-                  anchorFill="currentColor"
-                  forceBaseline
-                  onClick={() => setNavOpen(false)}
-                />
-              </Fragment>
-            ))}
+            {INFO_SECTIONS.map((s, i) => {
+              const active = activeSection === s.replace(/\s+/g, "-");
+              return (
+                <Fragment key={s}>
+                  {i > 0 && (
+                    <span className="font-timesNewRoman text-2xl select-none text-muted-foreground leading-tight ">
+                      ,
+                    </span>
+                  )}
+                  <WigglyButton
+                    text={s}
+                    size="text-3xl"
+                    className={`tracking-wide leading-tight px-0 lg:ml-2 ${active ? "text-foreground" : "text-muted-foreground"}`}
+                    href={`#${s.replace(/\s+/g, "-")}`}
+                    bold
+                    active={active}
+                    anchorFill="currentColor"
+                    forceBaseline
+                    onClick={() => setNavOpen(false)}
+                  />
+                </Fragment>
+              );
+            })}
           </div>
         )}
       </div>
@@ -572,32 +676,6 @@ export default function DesktopNav() {
       {/* Mobile overlay — z-[125], behind logo/menu */}
       {navOpen && (
         <NewNavOverlay onClose={() => setNavOpen(false)} pathname={pathname} />
-      )}
-
-      {/* Search overlay */}
-      {showSearch && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center pointer-events-none w-full px-4 bg-background">
-          <div className="pointer-events-auto relative inline-flex items-center border-b-1 border-foreground w-full">
-            <input
-              ref={inputRef}
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="search..."
-              className="bg-transparent border-none outline-none font-timesNewRoman text-2xl lowercase font-normal tracking-wide placeholder:text-foreground text-foreground px-2 pr-8"
-            />
-            <button
-              onClick={() => {
-                setSearch("");
-                setShowSearch(false);
-              }}
-              className="absolute right-0 text-foreground text-2xl font-timesNewRoman"
-              aria-label="Close search"
-            >
-              ×
-            </button>
-          </div>
-        </div>
       )}
     </>
   );

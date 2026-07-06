@@ -32,7 +32,7 @@ export default function WorkModal({ slug, onClose, showInfo }: WorkModalProps) {
       {isOpen && (
         <motion.div
           key="backdrop"
-          className={`fixed inset-0 z-[200] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/40 backdrop-blur-md"}`}
+          className={`fixed inset-0 z-[200] cursor-none ${showColorBg ? "bg-background/10" : "bg-background/40 backdrop-blur-xl"}`}
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}

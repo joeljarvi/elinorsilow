@@ -139,7 +139,7 @@ export default function ExhibitionSlugModalClient({
       onClick={() => {
         if (moreFun) refreshMoreFunBg();
         if (isImageSlide) {
-          onClose?.() ?? router.push("/exhibitions");
+          onClose?.() ?? router.push("/index/exhibitions");
         } else {
           setSlideIndex((s) => Math.min(s + 1, totalSlides - 1));
         }
@@ -290,7 +290,7 @@ export default function ExhibitionSlugModalClient({
                   size="text-3xl"
                   mobileSize="text-2xl"
                   className="tracking-wide text-muted-foreground"
-                  onClick={() => onClose?.() ?? router.push("/exhibitions")}
+                  onClick={() => onClose?.() ?? router.push("/index/exhibitions")}
                   active
                 />
               </div>
@@ -299,13 +299,14 @@ export default function ExhibitionSlugModalClient({
         )}
       </div>
 
-      {/* Mobile close — top right */}
+      {/* Close — top right */}
       <button
-        className="lg:hidden fixed top-3 right-3 z-[220] font-timesNewRoman text-2xl text-muted-foreground"
+        className="fixed top-3 right-3 z-[220] font-timesNewRoman text-2xl text-muted-foreground"
         onClick={(e) => {
           e.stopPropagation();
-          onClose?.() ?? router.push("/exhibitions");
+          onClose?.() ?? router.push("/index/exhibitions");
         }}
+        aria-label="Close"
       >
         ×
       </button>

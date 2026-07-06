@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useMemo, useState, ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export type IndexMode = "works" | "exhibitions" | "all";
 export type IndexSort = "latest" | "year" | "a-z";
@@ -21,16 +22,35 @@ interface IndexContextValue {
 const IndexContext = createContext<IndexContextValue | undefined>(undefined);
 
 export function IndexProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<IndexMode>("works");
+  const pathname = usePathname();
+  const router = useRouter();
+  const mode: IndexMode =
+    pathname === "/index/works"
+      ? "works"
+      : pathname === "/index/exhibitions"
+        ? "exhibitions"
+        : "all";
+  const setMode = (m: IndexMode) => {
+    const dest =
+      m === "works"
+        ? "/index/works"
+        : m === "exhibitions"
+          ? "/index/exhibitions"
+          : "/index";
+    router.push(dest, { scroll: false });
+  };
+
   const [sort, setSort] = useState<IndexSort>("latest");
   const [tidy, setTidy] = useState(false);
   const [search, setSearch] = useState("");
   const [zoom, setZoom] = useState(2);
-  return (
-    <IndexContext.Provider value={{ mode, setMode, sort, setSort, tidy, setTidy, search, setSearch, zoom, setZoom }}>
-      {children}
-    </IndexContext.Provider>
+
+  const value = useMemo(
+    () => ({ mode, setMode, sort, setSort, tidy, setTidy, search, setSearch, zoom, setZoom }),
+    [mode, sort, tidy, search, zoom],
   );
+
+  return <IndexContext.Provider value={value}>{children}</IndexContext.Provider>;
 }
 
 export function useIndex() {

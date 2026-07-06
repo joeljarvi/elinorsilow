@@ -195,7 +195,7 @@ export default function IndexPageClient() {
               <GridItem
                 key={`${ex.id}-${i}`}
                 baseOffset={offset(i)}
-                className="col-span-1 row-span-2 items-center justify-center aspect-square overflow-hidden block p-16 lg:p-8 "
+                className="col-span-1 row-span-1 items-center justify-center aspect-square overflow-hidden block p-16 lg:p-8 "
                 onClick={() => setExhibitionSlug(ex.slug)}
               >
                 {ex.acf.image_1?.url && (

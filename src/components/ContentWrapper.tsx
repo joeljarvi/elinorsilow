@@ -7,7 +7,7 @@ import { useUI } from "@/context/UIContext";
 export default function ContentWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { homeBg } = useUI();
-  const noPaddingPaths = ["/", "/works", "/exhibitions"];
+  const noPaddingPaths = ["/"];
   const applyPadding = !noPaddingPaths.includes(pathname);
 
   useEffect(() => {
