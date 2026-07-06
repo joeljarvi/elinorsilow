@@ -218,18 +218,24 @@ export default async function RootLayout({
                 <NavProvider>
                   <UIProvider>
                     <IndexProvider>
-                      <NavSlotProvider>
-                        {/* Column shadow overlay — fixed, covers full viewport */}
+                      <ActivityProvider updates={updates}>
+                        <NavSlotProvider>
+                          <AnimationProvider>
+                            {/* Column shadow overlay — fixed, covers full viewport */}
 
-                        <NavWrapper />
-                        <NavSpacer />
+                            <NavWrapper />
+                            <NavSpacer />
 
-                        <CarouselProvider>
-                          <ContentWrapper>
-                            {children} {modal}
-                          </ContentWrapper>
-                        </CarouselProvider>
-                      </NavSlotProvider>
+                            {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
+                      <div className="fixed bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-background/0 z-50 pointer-events-none" /> */}
+                            <CarouselProvider>
+                              <ContentWrapper>
+                                {children} {modal}
+                              </ContentWrapper>
+                            </CarouselProvider>
+                          </AnimationProvider>
+                        </NavSlotProvider>
+                      </ActivityProvider>
                     </IndexProvider>
                   </UIProvider>
                 </NavProvider>
