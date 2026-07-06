@@ -11,15 +11,13 @@ import { UIProvider } from "@/context/UIContext";
 import { IndexProvider } from "@/context/IndexContext";
 import { NavSlotProvider } from "@/context/NavSlotContext";
 
-import BlurTextManager from "@/components/BlurTextManager";
 import NavWrapper from "@/components/NavWrapper";
-import DottedGrid from "@/components/DottedGrid";
 
 import NavSpacer from "@/components/NavSpacer";
 import ContentWrapper from "@/components/ContentWrapper";
 
 import { CarouselProvider } from "@/context/CarouselContext";
-import FixedFooter from "@/components/FixedCookieAccept";
+
 import { ActivityProvider } from "@/context/ActivityContext";
 import { getRecentActivity } from "../../lib/sanity";
 
@@ -220,26 +218,18 @@ export default async function RootLayout({
                 <NavProvider>
                   <UIProvider>
                     <IndexProvider>
-                    <ActivityProvider updates={updates}>
-                    <NavSlotProvider>
-                      <AnimationProvider>
-                      
-
+                      <NavSlotProvider>
                         {/* Column shadow overlay — fixed, covers full viewport */}
-                        <FixedFooter />
+
                         <NavWrapper />
                         <NavSpacer />
 
-                        {/* <div className="fixed top-0 left-0 w-full h-8 bg-gradient-to-b from-background to-background/0 z-50 pointer-events-none" />
-                      <div className="fixed bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-background/0 z-50 pointer-events-none" /> */}
                         <CarouselProvider>
                           <ContentWrapper>
                             {children} {modal}
                           </ContentWrapper>
                         </CarouselProvider>
-                      </AnimationProvider>
-                    </NavSlotProvider>
-                    </ActivityProvider>
+                      </NavSlotProvider>
                     </IndexProvider>
                   </UIProvider>
                 </NavProvider>

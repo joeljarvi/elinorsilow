@@ -6,7 +6,7 @@ import { useWorks } from "@/context/WorksContext";
 import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import useSwipe from "@/hooks/use-swipe";
-import BlurredWorkBg from "@/components/BlurredWorkBg";
+
 import InfoBox from "@/components/InfoBox";
 import CloseButton from "@/components/CloseButton";
 

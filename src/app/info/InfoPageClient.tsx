@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
 import HeroText from "@/components/HeroText";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import WigglyButton from "@/components/WigglyButton";
 import WigglyDivider from "@/components/WigglyDivider";
 
