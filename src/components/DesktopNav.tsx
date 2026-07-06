@@ -110,7 +110,7 @@ function NewNavOverlay({
             key={s}
             text={s}
             mobileSize="text-xl"
-            className="tracking-wide leading-tight px-0 text-foreground"
+            className="tracking-wide leading-tight px-0 text-foreground items-baseline"
             href={`#${id}`}
             bold={active}
             active={active}
@@ -133,7 +133,7 @@ function NewNavOverlay({
                     key={value}
                     text={label}
                     mobileSize="text-xl"
-                    className="tracking-wide px-0 text-foreground leading-tight"
+                    className="tracking-wide px-0 text-foreground leading-tight items-baseline"
                     onClick={() => setMode(value)}
                     bold
                     active={active}
@@ -152,7 +152,7 @@ function NewNavOverlay({
                   key={s}
                   text={s}
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight"
+                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
                   onClick={() => setSort(s)}
                   bold
                   active={active}
@@ -178,7 +178,7 @@ function NewNavOverlay({
             <WigglyButton
               text="settings"
               mobileSize="text-xl"
-              className="tracking-wide px-0 text-foreground leading-tight"
+              className="tracking-wide px-0 text-foreground leading-tight items-baseline"
               onClick={() => setShowSettings((v) => !v)}
               bold={showSettings}
               active={showSettings}
@@ -190,7 +190,7 @@ function NewNavOverlay({
                 <WigglyButton
                   text="zoom in"
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight"
+                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
                   onClick={() => setZoom(Math.max(0, zoom - 1))}
                   anchorFill="currentColor"
                   forceBaseline
@@ -199,7 +199,7 @@ function NewNavOverlay({
                 <WigglyButton
                   text="zoom out"
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight"
+                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
                   onClick={() => setZoom(Math.min(4, zoom + 1))}
                   anchorFill="currentColor"
                   forceBaseline
@@ -208,7 +208,7 @@ function NewNavOverlay({
                 <WigglyButton
                   text="tidy up"
                   mobileSize="text-xl"
-                  className="tracking-wide px-0 text-foreground leading-tight"
+                  className="tracking-wide px-0 text-foreground leading-tight items-baseline"
                   onClick={() => setTidy(!tidy)}
                   bold={tidy}
                   active={tidy}
@@ -228,7 +228,7 @@ function NewNavOverlay({
                     key={f.value}
                     text={f.label}
                     mobileSize="text-xl"
-                    className={`tracking-wide px-0 leading-tight ${disabled ? "opacity-50 cursor-none" : "text-foreground"}`}
+                    className={`tracking-wide px-0 leading-tight items-baseline ${disabled ? "opacity-50 cursor-none" : "text-foreground"}`}
                     onClick={
                       disabled ? undefined : () => setCategoryFilter(f.value)
                     }
@@ -250,7 +250,7 @@ function NewNavOverlay({
                     key={c.value}
                     text={c.label}
                     mobileSize="text-xl"
-                    className="tracking-wide px-0 text-foreground leading-tight"
+                    className="tracking-wide px-0 text-foreground leading-tight items-baseline"
                     onClick={() => setExCat(c.value)}
                     bold={active}
                     active={active}
@@ -280,7 +280,7 @@ function NewNavOverlay({
             key={href}
             text={label}
             mobileSize="text-xl"
-            className="tracking-wide px-0 text-foreground leading-tight"
+            className="tracking-wide px-0 text-foreground leading-tight items-baseline"
             href={href}
             target={target}
             rel={rel}
