@@ -384,7 +384,7 @@ export default function DesktopNav() {
         {/* Flex-wrap row: logo + "," + menu [+ ":" + nav links on desktop when open] */}
         <div
           tabIndex={0}
-          className="flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-2  gap-x-0 w-full lg:col-span-1"
+          className={`flex flex-wrap items-baseline justify-start lg:justify-center pointer-events-auto px-2  gap-x-0 w-full  ${navOpen ? "col-span-1" : "col-span-2"}`}
         >
           {navOpen ? (
             <>
