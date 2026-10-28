@@ -177,7 +177,7 @@ function InfoRow({
 }) {
   return (
     <div
-      className={`grid grid-cols-12 gap-x-4 gap-y-9 px-4 lg:px-0 font-stix leading-[1] text-primary ${textSize}`}
+      className={`grid grid-cols-12 gap-x-4 gap-y-9 font-stix leading-[1] text-primary ${textSize}`}
     >
       {section.lead && (
         <div className="hidden lg:block lg:col-start-1 lg:col-span-2 lg:row-start-1 ">
@@ -387,7 +387,7 @@ export default function InfoPageClient({
       {/* Desktop: starts a quarter of the screen down, level with the fixed
           view links (Works / Exhibitions / Info), so the first line of the
           about text shares the "Works" link's baseline. */}
-      <div className="flex flex-col gap-y-18  pb-18 mt-18 lg:px-0">
+      <div className="flex flex-col gap-y-18  pb-18 mt-18 px-0 lg:px-0">
         {sections.map((section) => (
           <InfoRow
             key={section.key}
