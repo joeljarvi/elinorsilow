@@ -11,18 +11,25 @@ html {
 
 @theme inline {
   --text-shadow-xl: 0 2px 8px rgb(0 0 0 / 0.75);
-  --font-directorMono: var(--font-directorMono);
-  --font-directorBold: var(--font-directorBold);
-  --font-directorLight: var(--font-directorLight);
-  --font-EBGaramond: var(--font-EBGaramond);
-  --font-EBGaramondItalic: var(--font-EBGaramondItalic);
-  --font-EBGaramondAC: var(--font-EBGaramondAC);
-  --font-bookish: var(--font-bookish);
-  --font-universNextPro: var(--font-universNextPro);
-  --font-universNextProExt: var(--font-universNextProExt);
-  --font-universCond: var(--font-universCond);
-  --font-universType: var(--font-universType);
+  --font-areal: var(--font-areal);
+  --font-arealMono: var(--font-arealMono);
+  --font-baskervilleNeo: var(--font-baskervilleNeo);
+  --font-caslonIonic: var(--font-caslonIonic);
+  --font-caslonIonicRounded: var(--font-caslonIonicRounded);
+  --font-gtAlpina: var(--font-gtAlpina);
+  --font-gtAlpinaCondensed: var(--font-gtAlpinaCondensed);
+  --font-gtAlpinaExtended: var(--font-gtAlpinaExtended);
+  --font-gtAlpinaFine: var(--font-gtAlpinaFine);
+  --font-gtAlpinaFineCondensed: var(--font-gtAlpinaFineCondensed);
+  --font-gtAlpinaFineExtended: var(--font-gtAlpinaFineExtended);
+  --font-gtAlpinaTypewriter: var(--font-gtAlpinaTypewriter);
+  --font-gtAmericaCompressed: var(--font-gtAmericaCompressed);
+  --font-gtAmericaCondensed: var(--font-gtAmericaCondensed);
+  --font-edictText: var(--font-edictText);
+  --font-stix: var(--font-stix);
   --font-timesNewRoman: "Times New Roman", Times, serif;
+  --font-arialRoundedMT:
+    "Arial Rounded MT Bold", "Arial Rounded MT", Arial, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -64,6 +71,8 @@ html {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 :root {
+  --font-areal: var(--font-areal);
+  --font-arealMono: var(--font-arealMono);
   --font-haas:
     "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --radius: 0.625rem;
@@ -73,12 +82,12 @@ html {
   --shadow-col-left: none;
   --shadow-col-right: none;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.381 0.176 304.987);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.381 0.176 304.987);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -111,8 +120,8 @@ html {
   --shadow-col-left: none;
   --shadow-col-right: none;
   --shadow-header: none;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: oklch(0.291 0.149 302.717);
+  --foreground: oklch(0.902 0.063 306.703);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -157,91 +166,39 @@ html {
   }
 }
 
-/* Fade everything except whitelisted elements */
-[data-hide-text="true"]
-  :where(.h1, .h2, .h3, .p, .small, p, h1, h2, h3, h4):not(.no-hide-text):not(
-    .no-hide-text *
-  ) {
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-.h1,
-.h2,
-.h3,
-.p,
-.small,
-button,
-span,
-p,
-h1,
-h2,
-h3,
-h4,
-a {
-  transition: opacity 1.8s ease-in-out;
-}
-
-/* Never fade these */
-.no-hide-text,
-.no-hide-text * {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-/* Hide shadows on buttons/selects when text is hidden */
-[data-hide-text="true"] button:not(.no-hide-text):not(.no-hide-text *),
-[data-hide-text="true"]
-  [data-slot="select-trigger"]:not(.no-hide-text):not(.no-hide-text *) {
-  box-shadow: none !important;
-}
-
-/* Blur all text and buttons except no-hide-text elements */
-[data-blur-text="true"]
-  :where(p, h1, h2, h3, h4, h5, h6, span, a, li, button):not(.no-hide-text):not(
-    .no-hide-text *
-  ) {
-  filter: blur(4px) !important;
-  transition: filter 0.4s ease;
-}
-
-/* Never blur images */
-[data-blur-text="true"] img {
-  filter: none !important;
-}
-
-/* Slow background zoom animation */
-@keyframes bg-zoom-in {
-  from {
-    transform: scale(1);
+/* Ink filters — the SVG filters live in components/InkBleedFilter.tsx
+   (rendered in the root layout). Plain classes rather than @utility so
+   they're always emitted, whether or not Tailwind's scan picks them up.
+   ink-bleed: slightly swollen, blotted letter edges.
+   ink-stain: the bleed plus a faint smear and stains around the text. */
+@layer utilities {
+  .ink-bleed {
+    filter: url(#ink-bleed);
   }
-  to {
-    transform: scale(1.08);
+  .ink-stain {
+    filter: url(#ink-stain);
   }
 }
 
-.bg-zoom-in {
-  animation: bg-zoom-in 18s ease-in-out infinite alternate;
+@utility my-text {
+  font-feature-settings: "ss07", "ss11", "ss03", "ss09";
 }
 
 @layer components {
   .h1 {
-    @apply font-bookish text-xl leading-snug whitespace-normal;
+    @apply text-xl my-text whitespace-normal;
   }
   .h2 {
-    @apply font-bookish text-lg lg:text-base leading-snug whitespace-normal;
+    @apply text-xl  my-text whitespace-normal;
   }
   .h3 {
-    @apply font-bookish text-[18px] lg:text-sm leading-snug whitespace-normal;
+    @apply font-arialRoundedMT text-[18px] lg:text-sm leading-snug whitespace-normal;
   }
   .h4 {
-    @apply font-bookish text-base lg:text-xs leading-snug whitespace-normal;
+    @apply font-arialRoundedMT text-base lg:text-xs leading-snug whitespace-normal;
   }
   .p {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 15px;
-    letter-spacing: 0.025em;
-    line-height: 19px;
+    @apply my-text text-2xl;
   }
   .p-small {
     font-family: "Times New Roman", Times, serif;
@@ -250,34 +207,10 @@ a {
     line-height: 14px;
   }
 }
-.font-timesNewRomanWide {
-  font-family: "Times New Roman", Times, serif;
-  display: inline-block;
-  transform: scaleX(1.5);
-  transform-origin: center center;
-}
+
 .text-trim {
   line-height: 1;
   vertical-align: middle;
-}
-
-@layer utilities {
-  :where(.noise-bg) {
-    position: relative;
-    isolation: isolate;
-  }
-}
-.noise-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  mix-blend-mode: overlay;
-  opacity: 0.3;
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZUZpbHRlciI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2VGaWx0ZXIpIi8+PC9zdmc+");
-  background-repeat: repeat;
-  background-size: 200px 200px;
 }
 
 /* globals.css */
@@ -287,20 +220,4 @@ a {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
-}
-
-/* Sans mode — override all text to Neue Haas / system sans-serif */
-html.sans-mode .font-timesNewRoman,
-html.sans-mode .p,
-html.sans-mode .p-small,
-html.sans-mode p,
-html.sans-mode span,
-html.sans-mode a,
-html.sans-mode button,
-html.sans-mode input,
-html.sans-mode h1,
-html.sans-mode h2,
-html.sans-mode h3,
-html.sans-mode h4 {
-  font-family: var(--font-haas) !important;
 }

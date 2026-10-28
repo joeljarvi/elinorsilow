@@ -29,6 +29,15 @@ interface UIContextValue {
   refreshMoreFunBg: () => void;
   homeBg: string | null;
   setHomeBg: (v: string | null) => void;
+  // Home page intro: the backdrop fades in, then the hero media, then the
+  // nav and news. Starts at "backdrop" so the server render already hides
+  // the nav on "/" (no flash); runs once per visit.
+  introPhase: IntroPhase;
+  // Site-wide image size setting (S / M / L), used by the works and
+  // exhibitions lists; remembered in this browser.
+  imageSize: ImageSize;
+  setImageSize: (s: ImageSize) => void;
+  setIntroPhase: (p: IntroPhase) => void;
   navVisible: boolean;
   setNavVisible: (v: boolean) => void;
   openDesktopNav: boolean;
@@ -97,6 +106,14 @@ function randomHsl() {
   return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
 }
 
+// Home page intro: the backdrop fades in, then the hero media, then the nav
+// and news ("done").
+// S — a quarter of the screen tall; M — 60% (the default); L — 78% and the
+// full width. All leave room for the open row's text below the image.
+export type ImageSize = "S" | "M" | "L";
+
+export type IntroPhase = "backdrop" | "media" | "done";
+
 const UIContext = createContext<UIContextValue | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
@@ -127,6 +144,24 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showAnchorsAll, setShowAnchorsAll] = useState(false);
   const [moreFunBg, setMoreFunBg] = useState(() => randomHsl());
   const [homeBg, setHomeBg] = useState<string | null>(null);
+  const [introPhase, setIntroPhase] = useState<IntroPhase>("backdrop");
+  // Starts at M on the server and first render (no hydration mismatch),
+  // then picks up the saved choice; saving is best-effort (storage can be
+  // unavailable, e.g. private browsing).
+  const [imageSize, setImageSizeState] = useState<ImageSize>("L");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("imageSize");
+      if (saved === "S" || saved === "M" || saved === "L")
+        setImageSizeState(saved);
+    } catch {}
+  }, []);
+  const setImageSize = (s: ImageSize) => {
+    setImageSizeState(s);
+    try {
+      localStorage.setItem("imageSize", s);
+    } catch {}
+  };
   const [openDesktopNav, setOpenDesktopNav] = useState(false);
   const [navVisible, setNavVisible] = useState(false);
 
@@ -213,6 +248,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
         refreshMoreFunBg: () => setMoreFunBg(randomHsl()),
         homeBg,
         setHomeBg,
+        introPhase,
+        setIntroPhase,
+        imageSize,
+        setImageSize,
         navVisible,
         setNavVisible,
         openDesktopNav,

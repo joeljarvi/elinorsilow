@@ -1,7 +1,6 @@
-import InfoPageClient from "./InfoPageClient";
-import { getShortBio } from "../../../lib/sanity";
+import { redirect } from "next/navigation";
 
-export default async function InfoPage() {
-  const bio = await getShortBio();
-  return <InfoPageClient bio={bio} />;
+// Info is a view of the home page now.
+export default function InfoPage() {
+  redirect("/?view=info");
 }

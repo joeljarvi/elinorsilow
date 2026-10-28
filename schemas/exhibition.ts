@@ -87,6 +87,13 @@ export default defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "upcoming",
+      title: "Upcoming exhibition",
+      type: "boolean",
+      description: "Switch on if this exhibition hasn't opened yet.",
+      initialValue: false,
+    }),
   ],
   preview: {
     select: { title: "title", subtitle: "year" },

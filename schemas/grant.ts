@@ -6,6 +6,12 @@ export default defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({
+      name: "institution",
+      title: "Institution",
+      type: "string",
+      description: "Who awarded it (shown after the title on /info).",
+    }),
     defineField({ name: "year", title: "Year", type: "string" }),
   ],
   preview: {

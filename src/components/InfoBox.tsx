@@ -41,6 +41,9 @@ export default function InfoBox({
   centered = false,
   titleOnly = false,
   hideTitle = false,
+  titleSize = "text-lg",
+  titleBold = true,
+  metaGrid = false,
 }: {
   work?: Work;
   exhibition?: Exhibition;
@@ -51,6 +54,11 @@ export default function InfoBox({
   centered?: boolean;
   titleOnly?: boolean;
   hideTitle?: boolean;
+  titleSize?: string;
+  titleBold?: boolean;
+  /** Metadata keeps a grid at lg too — year, materials and dimensions pinned to
+   *  cols 1, 4 and 8 of a 12-col row — instead of collapsing to one comma line. */
+  metaGrid?: boolean;
 }) {
   const { small } = useUI();
   const [cookieAccepted, setCookieAccepted] = useState(false);
@@ -65,10 +73,10 @@ export default function InfoBox({
         node: (
           <WigglyButton
             text={truncateTitle(work.title.rendered)}
-            size="text-3xl"
-            mobileSize="text-xl"
-            bold
-            className="px-0 tracking-wider leading-tight whitespace-break-spaces"
+            size={titleSize}
+            mobileSize={titleSize}
+            bold={titleBold}
+            className="px-4 mt-2 tracking-wider leading-tight whitespace-break-spaces"
             forceBaseline
             wiggleGradient
             active
@@ -79,7 +87,7 @@ export default function InfoBox({
         ? [
             {
               key: "year",
-              node: <span className="">{work.acf.year}</span>,
+              node: <span className="text-base">{work.acf.year}</span>,
             },
           ]
         : []),
@@ -88,7 +96,7 @@ export default function InfoBox({
             {
               key: "mat",
               node: (
-                <span className="lowercase whitespace-break-spaces">
+                <span className="lowercase whitespace-break-spaces text-base px-4">
                   {work.acf.materials}
                 </span>
               ),
@@ -107,12 +115,46 @@ export default function InfoBox({
         : parts;
 
     return (
-      <div className={`text-foreground no-hide  ${className}`}>
+      <div className={`text-foreground no-hide text-base   ${className}`}>
+        {/* Metadata on its own: mobile sets it as a two-column grid — year and
+            materials side by side, dimensions under the year — instead of the
+            single comma-run line desktop keeps. w-full so the tracks come from
+            the container rather than the content: as a shrink-to-fit box the
+            columns would sit somewhere different for every work. */}
+        {hideTitle && (
+          <div
+            className={`grid w-full grid-cols-2 gap-x-4 items-baseline font-timesNewRoman gap-y-2 text-base lg:text-lg leading-tight tracking-wide text-left ${metaGrid ? "lg:grid-cols-12 lg:gap-y-0" : "lg:hidden"}`}
+          >
+            {work.acf.year && (
+              <span
+                className={`col-start-1 row-start-1 px-4 ${metaGrid ? "pb-6 lg:pb-0 lg:col-start-1 lg:row-start-1" : ""}`}
+              >
+                {work.acf.year}
+              </span>
+            )}
+            {work.acf.materials && (
+              <span
+                className={`col-start-2 row-start-1 lowercase whitespace-break-spaces px-4 ${metaGrid ? "pb-6 lg:pb-0 lg:col-start-4 lg:col-span-4 lg:row-start-1" : ""}`}
+              >
+                {work.acf.materials}
+              </span>
+            )}
+            {work.acf.dimensions && (
+              <span
+                className={`col-start-1 row-start-2 px-4 ${metaGrid ? "pb-6 lg:pb-0 lg:col-start-11 lg:col-span-2 lg:row-start-1" : ""}`}
+              >
+                {work.acf.dimensions}
+              </span>
+            )}
+          </div>
+        )}
         <span
-          className={`flex flex-wrap items-baseline font-timesNewRoman text-xl lg:text-3xl leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
+          className={`${hideTitle ? (metaGrid ? "hidden" : "hidden lg:flex") : "flex"} flex-wrap items-baseline font-timesNewRoman text-lg lg:text-lg leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
         >
           {visibleParts.map((part, i) => {
-            if (part.key === "year") return null;
+            // The year normally rides along with the title; with the title
+            // hidden it has to render as a part of its own or it disappears.
+            if (part.key === "year" && !hideTitle) return null;
             const yearPart = visibleParts.find((p) => p.key === "year");
             if (part.key === "title") {
               return (
@@ -162,8 +204,8 @@ export default function InfoBox({
         node: (
           <WigglyButton
             text={truncateTitle(exhibition.title.rendered)}
-            size="text-3xl"
-            mobileSize="text-xl"
+            size="text-lg"
+            mobileSize="text-lg"
             bold
             className="px-0 tracking-wide whitespace-normal leading-tight"
             forceBaseline
@@ -215,10 +257,12 @@ export default function InfoBox({
         className={`text-foreground no-hide ${!cookieAccepted ? "mb-12" : "mb-4 lg:mb-4"} ${className}`}
       >
         <span
-          className={`flex flex-wrap items-baseline font-timesNewRoman text-xl lg:text-3xl leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
+          className={`flex flex-wrap items-baseline font-areal my-text leading-tight tracking-wide ${centered ? "justify-center text-center" : "justify-start text-left"}`}
         >
           {visibleParts.map((part, i) => {
-            if (part.key === "year") return null;
+            // The year normally rides along with the title; with the title
+            // hidden it has to render as a part of its own or it disappears.
+            if (part.key === "year" && !hideTitle) return null;
             const yearPart = visibleParts.find((p) => p.key === "year");
             if (part.key === "title") {
               return (

@@ -1,25 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useWorks } from "@/context/WorksContext";
 import WorkModal from "@/components/WorkModal";
-import InfoBox from "@/components/InfoBox";
 import { Exhibition } from "../../../lib/sanity";
-import useSwipe from "@/hooks/use-swipe";
-import { useRouter } from "next/navigation";
-import WigglyButton from "@/components/WigglyButton";
-import { useUI } from "@/context/UIContext";
+import { Button } from "@/components/ui/button";
+import MetaLine from "@/components/MetaLine";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 type Props = {
   slug: string;
   onClose?: () => void;
   onOpenWorkByTitle?: (title: string) => void;
 };
-
-const transition = { duration: 0.35, ease: [0.25, 1, 0.5, 1] as const };
 
 function getImages(exhibition: Exhibition) {
   return [
@@ -43,34 +44,23 @@ function getImages(exhibition: Exhibition) {
     }));
 }
 
-function getWorks(exhibition: Exhibition): string[] {
-  return [
-    exhibition.acf.work_1,
-    exhibition.acf.work_2,
-    exhibition.acf.work_3,
-    exhibition.acf.work_4,
-    exhibition.acf.work_5,
-    exhibition.acf.work_6,
-    exhibition.acf.work_7,
-    exhibition.acf.work_8,
-    exhibition.acf.work_9,
-    exhibition.acf.work_10,
-  ].filter(Boolean) as string[];
-}
-
-export default function ExhibitionSlugModalClient({
-  slug,
-  onClose,
-  onOpenWorkByTitle,
-}: Props) {
-  const router = useRouter();
+export default function ExhibitionSlugModalClient({ slug, onClose }: Props) {
   const { filteredExhibitions, getExhibitionBySlug: getFromContext } =
     useExhibitions();
   const { setActiveWorkSlug, activeWorkSlug } = useWorks();
-  const { moreFun, moreFunBg, refreshMoreFunBg } = useUI();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [loading, setLoading] = useState(true);
-  const [slideIndex, setSlideIndex] = useState(0);
+  const router = useRouter();
+  const close = () => (onClose ? onClose() : router.back());
+  // "overview": all images wrapping. "single": one image at a time in a
+  // full-height carousel. The metadata shows in both.
+  const [view, setView] = useState<"overview" | "single">("overview");
+  const [startIndex, setStartIndex] = useState(0);
+  const [api, setApi] = useState<CarouselApi>();
+  const openSingle = (i: number) => {
+    setStartIndex(i);
+    setView("single");
+  };
 
   useEffect(() => {
     if (!slug) return;
@@ -95,202 +85,176 @@ export default function ExhibitionSlugModalClient({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && onClose) onClose();
-      if (e.key === "ArrowRight") setSlideIndex((s) => s + 1);
-      if (e.key === "ArrowLeft") setSlideIndex((s) => Math.max(s - 1, 0));
+      // A work opened from this exhibition handles its own keys.
+      if (activeWorkSlug) return;
+      if (e.key === "Escape") onClose?.();
+      if (view === "single" && e.key === "ArrowLeft") api?.scrollPrev();
+      if (view === "single" && e.key === "ArrowRight") api?.scrollNext();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  const swipeHandlers = useSwipe({
-    onSwipedLeft: () => setSlideIndex((s) => s + 1),
-    onSwipedRight: () => setSlideIndex((s) => Math.max(s - 1, 0)),
-  });
+  }, [activeWorkSlug, onClose, view, api]);
 
   if (loading || !exhibition?.acf) return <div className="w-full h-dvh" />;
 
-  const description = exhibition.acf.description ?? "";
-  const works = getWorks(exhibition);
   const images = getImages(exhibition);
   const credits = exhibition.acf.credits ?? "";
-
-  type Slide =
-    | { type: "meta" }
-    | { type: "description" }
-    | { type: "works" }
-    | { type: "image"; url: string; alt: string; desc: string }
-    | { type: "credits" };
-
-  const slides: Slide[] = [
-    { type: "meta" },
-    ...(description ? [{ type: "description" as const }] : []),
-    ...images.map((img) => ({ type: "image" as const, ...img })),
-    ...(works.length > 0 ? [{ type: "works" as const }] : []),
-    ...(credits ? [{ type: "credits" as const }] : []),
+  // Venue is shown with the title, top left.
+  // "Stockholm, Group Exhibition, 2026" (MetaLine drops empty parts).
+  const meta = [
+    exhibition.acf.city,
+    exhibition.acf.exhibition_type &&
+      `${exhibition.acf.exhibition_type} Exhibition`,
+    exhibition.acf.year,
   ];
-  const totalSlides = slides.length;
-  const clampedIndex = Math.min(slideIndex, totalSlides - 1);
-  const slide = slides[clampedIndex];
-
-  const isImageSlide = slide?.type === "image";
 
   return (
+    // "Title, Venue" fixed top left, the metadata fixed bottom left over
+    // the images. The images start right below the title (pt-10 clears
+    // it); the overview gallery is at most 75vh and scrolls inside, the
+    // single carousel fills the rest of the height. Clicking outside the
+    // images closes the modal.
     <div
-      {...swipeHandlers}
-      className="absolute inset-0 z-[210] flex flex-col transition-colors duration-300 h-dvh"
-      onClick={() => {
-        if (moreFun) refreshMoreFunBg();
-        if (isImageSlide) {
-          if (onClose) onClose();
-          else router.push("/index/exhibitions");
-        } else {
-          setSlideIndex((s) => Math.min(s + 1, totalSlides - 1));
-        }
-      }}
+      className={`relative w-full h-full flex flex-col p-4 pt-20 lg:pt-10 overflow-y-auto scrollbar-hide ${view === "single" ? "gap-2 pb-2" : "gap-6"}`}
+      onClick={onClose}
     >
-      {/* Blurred first image background — persists across all slides */}
-
-      {/* Slide content */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={clampedIndex}
-          initial={{ opacity: 0, filter: "blur(8px)" }}
-          animate={{ opacity: 1, filter: "blur(0px)" }}
-          exit={{ opacity: 0, filter: "blur(8px)" }}
-          transition={transition}
-          className="flex-1 flex items-center justify-center"
+      {/* View toggle. Desktop: "Overview / Single", top center. Mobile:
+          one button, top right, naming the view it switches to. */}
+      {images.length > 0 && (
+        <button
+          type="button"
+          className="lg:hidden fixed top-4 right-4 z-20 font-gtAlpina text-sm cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (view === "overview") openSingle(0);
+            else setView("overview");
+          }}
         >
-          {slide?.type === "meta" && (
-            <WigglyButton
-              text={exhibition.title.rendered}
-              className="font-timesNewRoman font-normal tracking-wider text-foreground whitespace-break-spaces"
-              size="text-7xl"
-              mobileSize="text-4xl"
-              bold
-              active
-            />
-          )}
-
-          {slide?.type === "description" && (
-            <p className="font-timesNewRoman text-foreground text-2xl leading-[1.2] lg:leading-[1.1] lg:text-3xl tracking-wide text-center max-w-2xl px-8">
-              {description}
-            </p>
-          )}
-
-          {slide?.type === "works" && (
-            <div
-              className="flex flex-col items-center gap-y-4 text-center"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {works.map((w, i) => (
-                <WigglyButton
-                  key={i}
-                  text={w}
-                  size="text-3xl"
-                  mobileSize="text-2xl"
-                  className="tracking-wide px-0 text-foreground"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenWorkByTitle?.(w);
-                  }}
-                  anchorFill="currentColor"
-                  forceBaseline
-                  active
-                />
-              ))}
-            </div>
-          )}
-
-          {slide?.type === "image" && (
-            <div className="relative w-full h-full">
-              <Image
-                src={slide.url}
-                alt={slide.alt}
-                fill
-                className="object-contain object-center px-4 py-16 lg:object-top lg:pb-22 pointer-events-none"
-                priority
-              />
-            </div>
-          )}
-
-          {slide?.type === "credits" && (
-            <div className="flex flex-col items-center  text-center max-w-xl px-8">
-              <p className="font-timesNewRoman text-xl lg:text-3xl  tracking-wide">
-                {credits}
-              </p>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Slide counter — top left */}
-      {totalSlides > 1 && (
-        <div
-          className="absolute top-3 left-4 z-[220] font-timesNewRoman text-sm text-foreground pointer-events-none"
+          {view === "overview" ? "Single" : "Overview"}
+        </button>
+      )}
+      {images.length > 0 && (
+        <span
+          className="hidden lg:flex fixed top-4 left-1/2 -translate-x-1/2 z-20 items-baseline gap-1 font-gtAlpina text-sm"
           onClick={(e) => e.stopPropagation()}
         >
-          {clampedIndex + 1} / {totalSlides}
+          <button
+            type="button"
+            className={`cursor-pointer ${view === "overview" ? "" : "opacity-40 hover:opacity-100"}`}
+            aria-pressed={view === "overview"}
+            onClick={() => setView("overview")}
+          >
+            Overview
+          </button>
+          <span aria-hidden>/</span>
+          <button
+            type="button"
+            className={`cursor-pointer ${view === "single" ? "" : "opacity-40 hover:opacity-100"}`}
+            aria-pressed={view === "single"}
+            onClick={() => openSingle(0)}
+          >
+            Single
+          </button>
+        </span>
+      )}
+
+      {/* Above the images/carousel (z-20; they sit at the default level).
+          Mobile: "Title, Venue" and the metadata together, top left.
+          Desktop: this stack sits bottom left with just the metadata — the
+          title moves to the top left (lg:fixed takes it out of the stack). */}
+      <div className="fixed top-4 left-4 lg:top-auto lg:bottom-4 z-20 max-w-[60%] lg:max-w-[40%] flex flex-col gap-1 pointer-events-none">
+        <h2
+          id="exhibition-modal-title"
+          className="lg:fixed lg:top-4 lg:left-4 lg:max-w-[40%] font-gtAmericaCondensed uppercase text-sm leading-none"
+        >
+          {exhibition.title.rendered}
+          {exhibition.acf.location && (
+            <>
+              ,{" "}
+              <span className="font-gtAlpina normal-case">
+                {exhibition.acf.location}
+              </span>
+            </>
+          )}
+        </h2>
+        <MetaLine parts={meta} />
+      </div>
+
+      {images.length > 0 && view === "overview" && (
+        <div
+          className="flex flex-wrap content-start justify-center lg:justify-start gap-2 w-full shrink-0 my-auto lg:my-0 max-h-[75vh] overflow-y-auto scrollbar-hide"
+          // Images are sized from the gallery's 75vh: a third of it minus
+          // the two row gaps (gap-2 = 0.5rem each), so three rows fill it.
+          onClick={(e) => e.stopPropagation()}
+        >
+          {images.map((img, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={img.id}
+              src={`${img.url}?h=1200&auto=format`}
+              alt={img.alt || `${exhibition.title.rendered} — image ${i + 1}`}
+              loading={i === 0 ? "eager" : "lazy"}
+              className="block h-auto max-h-[calc((75vh-1rem)/3)] w-auto max-w-none shrink-0 cursor-zoom-in"
+              onClick={() => openSingle(i)}
+            />
+          ))}
         </div>
       )}
 
-      {/* Bottom bar */}
-      <div
-        className="absolute bottom-0 left-0 right-0 z-[220] pb-4 px-6 lg:px-4 pointer-events-none flex flex-col items-center gap-y-2"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Thumbnails — visible after description slide (images, works, credits) */}
-        {slide?.type !== "meta" &&
-          slide?.type !== "description" &&
-          images.length > 0 &&
-          (() => {
-            const imageStartIdx = slides.findIndex((s) => s.type === "image");
-            return (
-              <div className="flex flex-wrap justify-center gap-1 pointer-events-none">
-                {images.map((img, i) => {
-                  const targetIdx = imageStartIdx + i;
-                  const active = clampedIndex === targetIdx;
-                  return (
-                    <button
-                      key={img.id}
-                      className={`relative w-10 h-10 overflow-hidden pointer-events-auto shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-40"}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSlideIndex(targetIdx);
-                      }}
-                    >
-                      <Image
-                        src={img.url}
-                        alt={img.alt}
-                        fill
-                        className="object-cover"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          })()}
+      {/* Single — one image at a time, as tall as the space between the
+          header and the metadata allows (flex-1; the gaps around it are
+          tighter in this view); click the image (or use ←/→) for the next
+          one. */}
+      {images.length > 0 && view === "single" && (
+        <div
+          className="flex-1 min-h-0 flex items-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Carousel
+            setApi={setApi}
+            opts={{ loop: images.length > 1, startIndex }}
+            className="w-full h-full [&>[data-slot=carousel-content]]:h-full"
+          >
+            <CarouselContent className="h-full">
+              {images.map((img, i) => (
+                <CarouselItem
+                  key={img.id}
+                  className={`h-full flex items-center justify-center ${images.length > 1 ? "cursor-e-resize" : ""}`}
+                  onClick={() => api?.scrollNext()}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`${img.url}?h=1800&auto=format`}
+                    alt={
+                      img.alt || `${exhibition.title.rendered} — image ${i + 1}`
+                    }
+                    className="block max-h-full max-w-full w-auto h-auto object-contain"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </div>
+      )}
 
-        {/* Meta info — only on title slide */}
-        {slide?.type === "meta" && (
-          <>
-            {/* Mobile: InfoBox centered only */}
-            <div className="flex lg:hidden justify-center">
-              <div className="pointer-events-auto">
-                <InfoBox exhibition={exhibition} centered />
-              </div>
-            </div>
-
-            {/* Desktop: justify-between with balanced spacer to keep InfoBox centered */}
-            <div className="hidden lg:flex justify-center items-end w-full">
-              <div className="pointer-events-auto">
-                <InfoBox exhibition={exhibition} centered />
-              </div>
-            </div>
-          </>
+      {/* Back — mobile: bottom right; desktop: top right (bottom left
+          holds the metadata there). Portaled to <body> (z-[95]) so it sits
+          above the modal. Hidden while a work is open on top — its Close
+          takes this spot. On the plain exhibition page (no onClose) it goes
+          back in history. */}
+      {!activeWorkSlug &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <Button
+            variant="link"
+            size="sm"
+            className="fixed bottom-4 right-4 lg:bottom-auto lg:top-4 z-[95] text-sm font-gtAmericaCondensed font-black uppercase tracking-wide"
+            onClick={close}
+          >
+            Back
+          </Button>,
+          document.body,
         )}
-      </div>
 
       {activeWorkSlug && (
         <WorkModal

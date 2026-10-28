@@ -7,9 +7,17 @@ export default function NavSpacer() {
     const nav = document.getElementById("main-nav");
     if (!nav) return;
 
-    const observer = new ResizeObserver(([entry]) => {
-      document.documentElement.style.setProperty("--nav-height", `${entry.contentRect.height}px`);
-    });
+    // getBoundingClientRect() is border-box, so it includes the nav's own
+    // padding — contentRect would drop it and let content ride up under the nav.
+    const measure = () => {
+      document.documentElement.style.setProperty(
+        "--nav-height",
+        `${nav.getBoundingClientRect().height}px`,
+      );
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
     observer.observe(nav);
     return () => observer.disconnect();
   }, []);

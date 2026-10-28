@@ -1,7 +1,6 @@
-import IndexPageClient from "@/components/IndexPageClient";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
+// The works list is a view of the home page now.
 export default function IndexWorksPage() {
-  return <IndexPageClient />;
+  redirect("/?view=works");
 }

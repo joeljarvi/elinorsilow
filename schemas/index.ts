@@ -6,6 +6,8 @@ import short_bio from "./short_bio";
 import long_bio from "./long_bio";
 import education from "./education";
 import grant from "./grant";
+import news from "./news";
+import press from "./press";
 
 export const schemaTypes = [
   work,
@@ -16,4 +18,6 @@ export const schemaTypes = [
   long_bio,
   education,
   grant,
+  news,
+  press,
 ];

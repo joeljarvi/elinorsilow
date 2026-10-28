@@ -1,50 +1,102 @@
-import { Fragment } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 
 const LINK_PATTERN =
   /(\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b|https?:\/\/[^\s]+)/g;
 
-function renderWithLinks(text: string) {
-  const parts: React.ReactNode[] = [];
+// Typing speed per character.
+const TYPE_MS = 18;
+
+type Segment = { text: string; href?: string; external?: boolean };
+
+// Splits the text into plain runs and links (emails → mailto:, URLs open in
+// a new tab).
+function toSegments(text: string): Segment[] {
+  const segments: Segment[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
+  LINK_PATTERN.lastIndex = 0;
 
   while ((match = LINK_PATTERN.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      segments.push({ text: text.slice(lastIndex, match.index) });
     }
     const token = match[0];
-    const href = token.includes("@") ? `mailto:${token}` : token;
-    parts.push(
-      <a
-        key={match.index}
-        href={href}
-        {...(!token.includes("@") && {
-          target: "_blank",
-          rel: "noopener noreferrer",
-        })}
-        className="underline underline-offset-4 decoration-1 hover:no-underline"
-      >
-        {token}
-      </a>,
-    );
+    const isEmail = token.includes("@");
+    segments.push({
+      text: token,
+      href: isEmail ? `mailto:${token}` : token,
+      external: !isEmail,
+    });
     lastIndex = LINK_PATTERN.lastIndex;
   }
 
   if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+    segments.push({ text: text.slice(lastIndex) });
   }
 
-  return parts;
+  return segments;
 }
 
-export default function HeroText({ bio }: { bio: string }) {
+// Types itself out on load. The untyped rest stays in the layout
+// (invisible) so the text doesn't reflow while it types; screen readers get
+// the whole text at once.
+export default function HeroText({
+  bio,
+  className,
+}: {
+  bio: string;
+  className?: string;
+}) {
+  const [typed, setTyped] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setTyped(bio.length);
+      return;
+    }
+    setTyped(0);
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setTyped(i);
+      if (i >= bio.length) clearInterval(id);
+    }, TYPE_MS);
+    return () => clearInterval(id);
+  }, [bio]);
+
+  let offset = 0;
   return (
-    <div className="font-timesNewRoman tracking-wide whitespace-normal max-w-4xl pt-8 mx-0 lg:mx-auto w-full">
-      <p className="text-foreground text-xl leading-[1.2] lg:leading-[1.1] lg:text-3xl text-left lg:text-center">
-        {renderWithLinks(bio).map((part, i) => (
-          <Fragment key={i}>{part}</Fragment>
-        ))}
-      </p>
-    </div>
+    <p className={className} aria-label={bio}>
+      {toSegments(bio).map((seg, i) => {
+        const start = offset;
+        offset += seg.text.length;
+        const shown = Math.max(0, Math.min(seg.text.length, typed - start));
+        const content = (
+          <>
+            <span aria-hidden="true">{seg.text.slice(0, shown)}</span>
+            <span aria-hidden="true" className="invisible">
+              {seg.text.slice(shown)}
+            </span>
+          </>
+        );
+        return seg.href ? (
+          <a
+            key={i}
+            href={seg.href}
+            {...(seg.external && {
+              target: "_blank",
+              rel: "noopener noreferrer",
+            })}
+            className="underline underline-offset-2 decoration-2 hover:no-underline"
+          >
+            {content}
+          </a>
+        ) : (
+          <span key={i}>{content}</span>
+        );
+      })}
+    </p>
   );
 }

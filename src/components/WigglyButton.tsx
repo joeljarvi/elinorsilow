@@ -35,6 +35,12 @@ interface WigglyButtonProps {
   forceBoring?: boolean;
   loopingWave?: boolean;
   forceMono?: boolean;
+  // Render a plain <span> instead of a button/anchor, so the wiggle can live
+  // inside a real <Button> (or <Link>) without nesting interactive elements.
+  // The parent owns the click; this only owns the letters and their hover.
+  asSpan?: boolean;
+  // Font class for the letters, e.g. "font-areal". Defaults to Times.
+  font?: string;
 }
 
 type LetterDistortion = { rotate: number; y: number };
@@ -58,6 +64,8 @@ export default function WigglyButton({
   wiggleGradient = false,
   target,
   rel,
+  asSpan = false,
+  font = "font-timesNewRoman",
 }: WigglyButtonProps) {
   const [hovered, setHovered] = useState(false);
   const distortions = useRef<LetterDistortion[]>([]);
@@ -99,7 +107,8 @@ export default function WigglyButton({
         key={i}
         layout={justify}
         className={cn(
-          "inline-block leading-none font-timesNewRoman ",
+          "inline-block leading-none",
+          font,
           responsiveSize,
           bold ? "font-bold" : "font-normal",
         )}
@@ -132,7 +141,8 @@ export default function WigglyButton({
         key={i}
         layout={justify}
         className={cn(
-          "inline-block leading-none font-timesNewRoman tracking-wide",
+          "inline-block leading-none tracking-wide",
+          font,
           responsiveSize,
           bold ? "font-bold" : "font-normal",
         )}
@@ -152,6 +162,27 @@ export default function WigglyButton({
       </motion.span>
     );
   });
+
+  if (asSpan) {
+    return (
+      <span
+        data-no-reveal
+        className={cn(
+          // No pointer-events-auto or cursor here — the wrapping Button owns
+          // both. Sized to fill it so hovering anywhere on the box wiggles.
+          "inline-flex items-baseline tracking-wide w-full h-full",
+          justify ? "w-full" : "flex-wrap",
+          spread ? "justify-between" : "justify-center",
+          textShadow && "text-shadow-md",
+          className,
+        )}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {vertical ? verticalLetters : horizontalLetters}
+      </span>
+    );
+  }
 
   if (href) {
     return (

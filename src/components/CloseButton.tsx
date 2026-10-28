@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { Button } from "@/components/ui/button";
 
 type CloseButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -13,11 +14,11 @@ export default function CloseButton({ onClick, className }: CloseButtonProps) {
   useEffect(() => setMounted(true), []);
 
   const button = (
-    <button
-      type="button"
+    <Button
       aria-label="Close"
+      size="icon"
       onClick={onClick}
-      className={`flex items-center justify-center w-[50px] h-[50px] lg:w-[70px] lg:h-[70px] text-muted-foreground hover:text-foreground transition-colors ${className ?? ""}`}
+      className={`flex items-center justify-center   text-muted-foreground hover:text-foreground transition-colors ${className ?? ""}`}
     >
       <svg
         viewBox="0 0 24 24"
@@ -32,7 +33,7 @@ export default function CloseButton({ onClick, className }: CloseButtonProps) {
         <line x1="4" y1="4" x2="20" y2="20" />
         <line x1="20" y1="4" x2="4" y2="20" />
       </svg>
-    </button>
+    </Button>
   );
 
   // Portal straight to <body> — ancestors here use transform/backdrop-filter

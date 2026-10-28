@@ -1,7 +1,6 @@
-import IndexPageClient from "@/components/IndexPageClient";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
+// The index lives on the home page now.
 export default function IndexPage() {
-  return <IndexPageClient />;
+  redirect("/");
 }

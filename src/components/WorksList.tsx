@@ -14,7 +14,7 @@ export default function WorksList({ works, onSelect }: WorksListProps) {
       {works.map((work) => (
         <Button
           variant="ghost"
-          size="controls"
+          size="sm"
           key={work.id}
           onClick={() => onSelect(work)}
           className="w-full rounded-none justify-start"

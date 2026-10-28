@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useModalOpen from "@/hooks/use-modal-open";
 import { AnimatePresence, motion } from "framer-motion";
 import ExhibitionSlugModalClient from "@/app/exhibitions/ExhibitionSlugModalClient";
-import CloseButton from "@/components/CloseButton";
 
 type ExhibitionModalProps = {
   slug: string;
@@ -18,12 +18,7 @@ export default function ExhibitionModal({
 }: ExhibitionModalProps) {
   const [isOpen, setIsOpen] = useState(true);
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
+  useModalOpen();
 
   const handleClose = () => {
     window.history.replaceState(null, "", window.location.pathname);
@@ -35,7 +30,7 @@ export default function ExhibitionModal({
       {isOpen && (
         <motion.div
           key="overlay"
-          className="fixed inset-0 z-[200]  bg-background/40 backdrop-blur-xl w-full overflow-hidden noise-bg"
+          className="fixed inset-0 z-[90] bg-background overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -44,7 +39,7 @@ export default function ExhibitionModal({
           <motion.div
             key="modal"
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full h-full overflow-y-auto scrollbar-hide z-40 "
+            className="relative w-full h-full overflow-y-auto bg-background scrollbar-hide z-40 shadow "
             initial={{ y: "4%", opacity: 0 }}
             animate={{ y: "0%", opacity: 1 }}
             exit={{ y: "4%", opacity: 0 }}
@@ -59,15 +54,6 @@ export default function ExhibitionModal({
               onOpenWorkByTitle={onOpenWorkByTitle}
             />
           </motion.div>
-
-          {/* Close — top right (rendered outside the scrollable modal wrapper so `fixed` anchors to the viewport) */}
-          <CloseButton
-            className="fixed top-0 right-0 z-[220]"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClose();
-            }}
-          />
         </motion.div>
       )}
     </AnimatePresence>

@@ -18,9 +18,8 @@ export default function ContentWrapper({ children }: { children: React.ReactNode
     };
   }, [homeBg]);
 
-  return (
-    <div style={applyPadding ? { paddingTop: "var(--nav-height, 0px)" } : undefined}>
-      {children}
-    </div>
-  );
+  // A flat one-row offset (mt-12 — the height of a nav button) rather than the
+  // measured nav height: the nav's second row is a submenu that opens over the
+  // page, so content no longer reflows when it appears.
+  return <div className={applyPadding ? "mt-12" : undefined}>{children}</div>;
 }

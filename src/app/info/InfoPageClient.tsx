@@ -1,36 +1,12 @@
 "use client";
 import Link from "next/link";
 import { useInfo } from "@/context/InfoContext";
-import { Button } from "@/components/ui/button";
+import { useIndex } from "@/context/IndexContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useUI } from "@/context/UIContext";
-import HeroText from "@/components/HeroText";
-import { useEffect, useState } from "react";
-import WigglyButton from "@/components/WigglyButton";
-import WigglyDivider from "@/components/WigglyDivider";
-
-function ScrollHint() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 2000);
-    const onScroll = () => setVisible(false);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  return (
-    <p
-      className="lg:hidden fixed inset-0 flex items-center justify-center z-[50] pointer-events-none font-timesNewRoman font-bold text-xl lg:text-3xl bg-transparent"
-      style={{ opacity: visible ? 0.3 : 0, transition: "opacity 0.7s ease" }}
-    >
-      scroll
-    </p>
-  );
-}
+import type { Press } from "../../../lib/sanity";
+import { useState, type ReactNode } from "react";
+import BackToTop from "@/components/BackToTop";
 
 function groupByYear<T extends { acf: { year: number | string } }>(
   items: T[],
@@ -47,319 +23,379 @@ function groupByYear<T extends { acf: { year: number | string } }>(
   return Array.from(map.entries());
 }
 
-function HDiv({ className = "" }: { className?: string }) {
+// "kunstkritikk.se" from "https://kunstkritikk.se/hjartats-energi/".
+function siteName(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+// A line split into columns on the 12-col grid. Desktop: each cell at its
+// given cols. Mobile (4 cols): the first cell cols 1–2, then one col each;
+// cells marked mobileHidden are left out there.
+function Cols({
+  cells,
+}: {
+  cells: { content: ReactNode; className: string; mobileHidden?: boolean }[];
+}) {
   return (
-    <WigglyDivider
-      text="info"
-      size="text-[8px]"
-      className={`w-full  ${className}`}
-      active
-    />
+    <div className="h-9 hover:bg-purple-200 transition-colors duration-300 grid grid-cols-4 lg:grid-cols-12 gap-x-4 items-center leading-none">
+      {cells.map((c, i) => (
+        <span
+          key={i}
+          className={`${i === 0 ? "col-span-2" : "col-span-1"} truncate ${c.mobileHidden ? "hidden lg:block" : ""} ${c.className}`}
+        >
+          {c.content}
+        </span>
+      ))}
+    </div>
   );
 }
 
-export default function InfoPageClient({ bio = "" }: { bio?: string }) {
-  const { educations, grants, soloExhibitions, groupExhibitions } = useInfo();
+// Exhibition history: every exhibition ever, text only — the exhibitions
+// with pages (title opens the exhibition) and the archive ones from the CV,
+// newest year first; an archive entry with the same title as an exhibition
+// is left out (same show). Columns (desktop): title (3–5; opens it when
+// it has a page), venue (6–7), city (8–9), type (10–11), year (12).
+function ExhibitionHistory({ query = "" }: { query?: string }) {
   const { setOpen } = useUI();
-  const { findExhibitionSlug, setActiveExhibitionSlug } = useExhibitions();
-
-  const stack = "flex flex-col items-start lg:items-center";
-  const centerText = "justify-start lg:justify-center text-left lg:text-center";
-
-  function ExhibitionList({
-    items,
-    title,
-  }: {
-    items: typeof soloExhibitions;
-    title: string;
-  }) {
-    return (
-      <div className={`${stack} ${centerText} w-full`}>
-        <WigglyButton
-          text={title}
-          size="text-3xl"
-          mobileSize="text-xl"
-          className={`lowercase ${centerText} tracking-wider px-0 mb-4 leading-tight`}
-          bold
-          forceBaseline
-          anchorFill="currentColor"
-          wiggleGradient
-          active
-        />
-        <div className={`${stack} w-full `}>
-          {groupByYear(items).map(([year, exs]) => (
-            <div
-              key={year}
-              className={`flex flex-col items-start lg:flex-col  leading-tight justify-center lg:items-center ${centerText} gap-x-4 w-full mb-8`}
-            >
-              <WigglyButton
-                text={year}
-                size="text-3xl"
-                mobileSize="text-xl"
-                className={`tracking-wide leading-tight px-0 justify-start ${centerText}`}
-                forceBaseline
-                bold
-                anchorFill="currentColor"
-              />
-              <div className={`w-full ${stack}`}>
-                {exs.map((ex) => {
-                  const slug = findExhibitionSlug(ex.title.rendered);
-                  return (
-                    <div
-                      key={ex.id}
-                      className={`flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman  whitespace-normal justify-start  ${centerText}`}
-                    >
-                      <span className="inline-flex items-baseline whitespace-nowrap">
-                        {slug ? (
-                          <WigglyButton
-                            text={ex.title.rendered}
-                            size="text-3xl"
-                            mobileSize="text-xl"
-                            className="tracking-wide leading-tight items-baseline whitespace-normal px-0"
-                            forceBaseline
-                            onClick={() => {
-                              setActiveExhibitionSlug(slug);
-                              setOpen(false);
-                            }}
-                            active
-                            anchorFill="currentColor"
-                          />
-                        ) : (
-                          <WigglyButton
-                            text={ex.title.rendered}
-                            size="text-3xl"
-                            mobileSize="text-xl"
-                            className="tracking-wide leading-tight whitespace-normal px-0 text-foreground"
-                            forceBaseline
-                            anchorFill="currentColor"
-                          />
-                        )}
-                        <span className="mr-1.5 lg:mr-2">, </span>
-                      </span>
-                      <span className="leading-tight whitespace-normal ">
-                        {ex.acf.venue}, {ex.acf.city}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
+  const { exhibitions, exhibitionList, setActiveExhibitionSlug } =
+    useExhibitions();
+  const norm = (t: string) => t.trim().toLowerCase();
+  const titles = new Set(exhibitions.map((e) => norm(e.title.rendered)));
+  const entries = [
+    ...exhibitions.map((e) => ({
+      id: `ex-${e.id}`,
+      year: e.acf.year,
+      title: e.title.rendered,
+      venue: e.acf.location,
+      city: e.acf.city,
+      type: e.acf.exhibition_type
+        ? `${e.acf.exhibition_type.replace(/ Exhibition$/i, "")} Exhibition`
+        : "",
+      slug: e.slug as string | undefined,
+    })),
+    ...exhibitionList
+      .filter((e) => !titles.has(norm(e.title.rendered)))
+      .map((e) => ({
+        id: `archive-${e.id}`,
+        year: e.acf.year,
+        title: e.title.rendered,
+        venue: e.acf.venue,
+        city: e.acf.city,
+        type: e.acf.exhibition_type
+          ? `${e.acf.exhibition_type.replace(/ Exhibition$/i, "")} Exhibition`
+          : "",
+        slug: undefined as string | undefined,
+      })),
+  ].filter(
+    (e) =>
+      !query ||
+      [e.title, e.venue, e.city, e.type, e.year]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+  );
   return (
-    <section className="text-foreground relative w-full min-h-dvh px-6 lg:px-4 ">
-      <div className="text-foreground flex flex-col w-full">
-        {/* Hero */}
-        <div id="bio" className="lg:max-w-[66%] lg:mx-auto mb-16 ">
-          <HeroText bio={bio} />
-        </div>
-
-        {/* Row 1: Exhibitions | Education */}
-        <div className="flex flex-col justify-start gap-y-0 w-full">
-          <div id="exhibitions" className="flex-1 w-full mb-16">
-            {(soloExhibitions.length > 0 || groupExhibitions.length > 0) && (
-              <ExhibitionList
-                items={[...soloExhibitions, ...groupExhibitions]}
-                title="all exhibitions"
-              />
-            )}
-          </div>
-
-          <div id="education" className="flex-1 mb-16">
-            {educations.length > 0 && (
-              <div className="flex flex-col gap-y-0 pt-0 items-start lg:items-center justify-start w-full text-left lg:text-center">
-                <span className="flex flex-col w-full items-start lg:items-center justify-start gap-x-4 gap-y-0">
-                  <WigglyButton
-                    text="education"
-                    size="text-3xl"
-                    mobileSize="text-xl"
-                    className="lowercase col-start-1 col-span-1 justify-start lg:justify-center lg:text-center tracking-wider px-0 mb-4 leading-tight"
-                    bold
-                    forceBaseline
-                    anchorFill="currentColor"
-                    wiggleGradient
-                    active
-                  />
-                  <div className="w-full col-span-2 flex flex-col gap-y-0 items-start lg:items-center justify-start">
-                    {[...educations]
-                      .sort(
-                        (a, b) =>
-                          Number(b.acf.end_year) - Number(a.acf.end_year),
-                      )
-                      .map((edu) => (
-                        <div
-                          key={edu.id}
-                          className="flex flex-col items-start justify-start lg:flex-row lg:items-baseline lg:justify-center gap-x-4 mb-8 w-full text-left lg:text-center"
-                        >
-                          <WigglyButton
-                            text={`${edu.acf.start_year}–${edu.acf.end_year}`}
-                            size="text-3xl"
-                            mobileSize="text-xl"
-                            className="tracking-wide leading-tight mb-0 px-0 justify-start lg:justify-center"
-                            forceBaseline
-                            bold
-                            anchorFill="currentColor"
-                          />
-                          <div className="flex flex-col gap-y-0 items-start lg:items-center">
-                            <div className="flex flex-wrap items-baseline gap-x-0 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman px-0 justify-start lg:justify-center text-left lg:text-center">
-                              <span className="leading-[1.1] whitespace-normal">
-                                {edu.acf.school}, {edu.acf.city}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Row 2: Grants | Press | Colophon */}
-        <div className="flex flex-col gap-y-0 mb-4 lg:mt-8">
-          <div id="grants" className="flex-1 mb-16">
-            {grants.length > 0 && (
-              <div className="flex flex-col gap-y-0 items-start lg:items-center justify-start lg:justify-center w-full text-left lg:text-center">
-                <span className="flex flex-col w-full items-start lg:items-center gap-x-4 gap-y-0">
-                  <WigglyButton
-                    text="grants"
-                    size="text-3xl"
-                    mobileSize="text-xl"
-                    className="lowercase justify-start lg:justify-center tracking-wider px-0 mb-8 leading-tight"
-                    bold
-                  />
-                  <div className="w-full col-span-2 flex flex-col gap-y-0 items-start lg:items-center">
-                    {groupByYear(grants).map(([year, gs]) => (
-                      <div
-                        key={year}
-                        className="flex flex-col items-start justify-start lg:items-center lg:justify-center gap-x-6 mb-8 w-full text-left lg:text-center"
-                      >
-                        <WigglyButton
-                          text={year}
-                          size="text-3xl"
-                          mobileSize="text-xl"
-                          className="tracking-wide leading-tight lowercase shrink-0 px-0 justify-start mb-0 lg:justify-center"
-                          forceBaseline
-                          bold
-                        />
-                        <div className="flex flex-col gap-y-0 items-start lg:items-center">
-                          {gs.map((grant) => (
-                            <span
-                              key={grant.id}
-                              className="text-xl lg:text-3xl tracking-wide font-timesNewRoman leading-tight"
-                            >
-                              {grant.acf.title}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </span>
-              </div>
-            )}
-          </div>
-
-          <div id="press" className="flex-1 mb-16">
-            <div className="flex flex-col items-start lg:items-center justify-start lg:justify-center w-full text-left lg:text-center">
-              <span className="flex flex-col w-full items-start lg:items-center gap-x-4 gap-y-0">
-                <WigglyButton
-                  text="press"
-                  size="text-3xl"
-                  mobileSize="text-xl"
-                  className="lowercase justify-start lg:justify-center tracking-wider px-0 mb-4 leading-tight"
-                  bold
-                />
-                <div className="w-full col-span-2 flex flex-col gap-y-0 items-start lg:items-center">
-                  <div className="flex flex-col items-start justify-start lg:flex-row lg:items-baseline lg:justify-center gap-x-6 mb-0 w-full text-left lg:text-center">
-                    <WigglyButton
-                      text="2022"
-                      size="text-3xl"
-                      mobileSize="text-xl"
-                      className="tracking-wide leading-tight lowercase mb-0 shrink-0 px-0 justify-start lg:justify-center"
-                      forceBaseline
-                      bold
-                    />
-                    <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-start  mb-8 lg:justify-center">
-                      <span>Hjärtat,</span>
-                      <span>Lappalainen Hjertström, L-E,</span>
-                      <Link
-                        className="underline underline-offset-4 decoration-1 hover:no-underline"
-                        href="https://kunstkritikk.se/hjartats-energi/"
-                      >
-                        kunstkritikk.se
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-start justify-start lg:flex-row lg:items-baseline lg:justify-center gap-x-6 w-full text-left lg:text-center">
-                    <WigglyButton
-                      text="2025"
-                      size="text-3xl"
-                      mobileSize="text-xl"
-                      className="tracking-wide leading-tight lowercase shrink-0 px-0 mb-0 justify-start lg:justify-center"
-                      forceBaseline
-                      bold
-                    />
-                    <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-start mb-8 lg:justify-center">
-                      <span>Gameplay,</span>
-                      <span>Slöör, S, Omkonst,</span>
-                      <Link
-                        className="underline underline-offset-4 decoration-1 hover:no-underline"
-                        href="https://omkonst.se/25-gameplay.shtml"
-                      >
-                        omkonst.se
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </span>
-            </div>
-          </div>
-
-          <div className="flex-1 mb-16">
-            <div className="flex flex-col items-start lg:items-center justify-start lg:justify-center w-full text-left lg:text-center">
-              <span className="flex flex-col w-full items-start lg:items-center gap-x-4 gap-y-0">
-                <WigglyButton
-                  text="colophon"
-                  size="text-3xl"
-                  mobileSize="text-xl"
-                  className="lowercase justify-start lg:justify-center tracking-wider px-0 mb-4 leading-tight"
-                  bold
-                />
-                <div className="col-span-2 flex flex-col gap-y-0 items-start lg:items-center">
-                  <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-start lg:justify-center">
-                    <span className="text-foreground">Design & code:</span>
-                    <Link
-                      className="underline underline-offset-4 decoration-1 hover:no-underline"
-                      href="/"
+    <>
+      {groupByYear(entries.map((e) => ({ ...e, acf: { year: e.year } }))).map(
+        ([, es]) =>
+          es.map((e) => (
+            <Cols
+              key={e.id}
+              cells={[
+                {
+                  className: "lg:col-start-3 lg:col-span-3",
+                  content: e.slug ? (
+                    <button
+                      type="button"
+                      className="text-left italic underline underline-offset-4 decoration-[0.5px] cursor-pointer"
+                      onClick={() => {
+                        setActiveExhibitionSlug(e.slug!);
+                        setOpen(false);
+                      }}
                     >
-                      Joel Järvi
-                    </Link>
-                  </div>
-                  <div className="flex flex-wrap items-baseline gap-x-1 text-xl lg:text-3xl leading-tight tracking-wide font-timesNewRoman justify-start lg:justify-center">
-                    <span className="text-foreground">Typefaces:</span>
-                    <span>Times New Roman</span>
-                  </div>
-                </div>
-              </span>
-            </div>
-          </div>
-        </div>
+                      {e.title}
+                    </button>
+                  ) : (
+                    e.title
+                  ),
+                },
+                {
+                  className: "lg:col-start-6 lg:col-span-2",
+                  content: e.venue,
+                },
+                {
+                  className: "lg:col-start-8 lg:col-span-2",
+                  content: e.city,
+                  mobileHidden: true,
+                },
+                {
+                  className: "lg:col-start-10 lg:col-span-2",
+                  content: e.type,
+                  mobileHidden: true,
+                },
+                {
+                  className: "lg:col-start-12 lg:col-span-1 tabular-nums",
+                  content: e.year,
+                },
+              ]}
+            />
+          )),
+      )}
+    </>
+  );
+}
 
-        {/* Copyright */}
-        <div className="pt-4 pb-8">
-          <p className="font-timesNewRoman text-foreground text-xl leading-[1.2] lg:leading-[1.1] lg:text-3xl text-left lg:text-center lg:max-w-[66%] lg:mx-auto">
-            All content on this site, including images, text, and design, is the
-            intellectual property of Elinor Silow unless otherwise stated. No
-            part of this website may be copied, reproduced, distributed, or used
-            without explicit written permission from the copyright holder.
+type Section = {
+  key: string;
+  title: string;
+  count?: number;
+  body: ReactNode;
+  // Desktop: the header's columns (default col 3 onward); the body goes on
+  // the line below it.
+  headerCols?: string;
+  // Desktop: something in cols 1–2 on the header's line (the search).
+  lead?: ReactNode;
+};
+
+// Text sizes for the page's S / M / L setting.
+const TEXT_SIZES = { S: "text-sm", M: "text-lg", L: "text-2xl" } as const;
+
+// One section of the info page — the same type as the works and
+// exhibitions lists, always open and full width (col-span-12): its title
+// (and how many entries), then its content.
+function InfoRow({
+  section,
+  textSize,
+}: {
+  section: Section;
+  textSize: string;
+}) {
+  return (
+    <div
+      className={`grid grid-cols-12 gap-x-4 gap-y-9 px-4 lg:px-0 font-stix leading-[1] text-primary ${textSize}`}
+    >
+      {section.lead && (
+        <div className="hidden lg:block lg:col-start-1 lg:col-span-2 lg:row-start-1 ">
+          {section.lead}
+        </div>
+      )}
+      {section.title && (
+        <h2
+          className={`col-span-12 ${section.headerCols ?? " font-gtAmericaCondensed uppercase lg:col-start-3 lg:col-span-10"} lg:row-start-1 h-9 flex items-center whitespace-pre `}
+        >
+          {section.title}
+        </h2>
+      )}
+      {/* Desktop: the header in col 3 (where the lists start), the content
+          on the line below; a section without a header starts on the first
+          line. Mobile: the header above the content. */}
+      <div
+        // List sections: rows h-9 (Cols), alternating page background /
+        // purple-100 like the works and exhibitions lists.
+        className={`col-span-12 lg:col-start-1 ${section.title ? "lg:row-start-2" : "lg:row-start-1"} flex flex-col ${section.title ? "[&>*:nth-child(even):not(:hover)]:bg-purple-100" : ""}`}
+      >
+        {section.body}
+      </div>
+    </div>
+  );
+}
+
+export default function InfoPageClient({
+  bio = "",
+  press = [],
+}: {
+  bio?: string;
+  press?: Press[];
+}) {
+  const { educations, grants } = useInfo();
+  // Search (the nav's field, col 4 — the shared index search): filters the
+  // lists by any of their text.
+  const { search } = useIndex();
+  const q = search.trim().toLowerCase();
+  const matches = (...parts: (string | number | undefined | null)[]) =>
+    !q || parts.filter(Boolean).join(" ").toLowerCase().includes(q);
+  const shownGrants = grants.filter((g) =>
+    matches(g.acf.title, g.acf.institution, g.acf.year),
+  );
+  const shownEducations = educations.filter((e) =>
+    matches(e.acf.school, e.acf.city, e.acf.start_year, e.acf.end_year),
+  );
+  const shownPress = press.filter((p) =>
+    matches(p.title, p.author, p.link, p.year),
+  );
+
+  // The sections, in order; empty ones are left out.
+  const sections: Section[] = [
+    bio && {
+      key: "about",
+      // No header: just the bio.
+      title: "",
+      // Desktop: cols 3–6.
+      body: (
+        <div className="grid grid-cols-12 gap-x-4">
+          <p className="col-span-12 lg:col-start-3 lg:col-span-5 text-sm whitespace-pre-line leading-snug lg:leading-relaxed font-stix  ">
+            {bio}
           </p>
         </div>
+      ),
+    },
+    {
+      key: "exhibition-history",
+      title: "Exhibition history",
+      body: <ExhibitionHistory query={q} />,
+    },
+    shownGrants.length > 0 && {
+      key: "grants",
+      title: "Grants",
+      count: shownGrants.length,
+      body: groupByYear(shownGrants).map(([, gs]) =>
+        gs.map((grant) => (
+          <Cols
+            key={grant.id}
+            cells={[
+              {
+                className: "lg:col-start-3 lg:col-span-4",
+                content: grant.acf.title,
+              },
+              { className: "lg:col-span-3", content: grant.acf.institution },
+              {
+                className: "lg:col-start-10 lg:col-span-1 tabular-nums",
+                content: grant.acf.year,
+              },
+            ]}
+          />
+        )),
+      ),
+    },
+    shownEducations.length > 0 && {
+      key: "education",
+      title: "Education",
+      count: shownEducations.length,
+      body: [...shownEducations]
+        .sort((a, b) => Number(b.acf.end_year) - Number(a.acf.end_year))
+        .map((edu) => (
+          // School (3–6), city (7–9), years (10–11) — under the exhibition
+          // history's type column.
+          <Cols
+            key={edu.id}
+            cells={[
+              {
+                className: "lg:col-start-3 lg:col-span-4",
+                content: edu.acf.school,
+              },
+              { className: "lg:col-span-3", content: edu.acf.city },
+              {
+                className:
+                  "lg:col-start-10 lg:col-span-2 tabular-nums whitespace-nowrap",
+                content: [edu.acf.start_year, edu.acf.end_year]
+                  .filter(Boolean)
+                  .join("–"),
+              },
+            ]}
+          />
+        )),
+    },
+    shownPress.length > 0 && {
+      key: "press",
+      title: "Press",
+      count: shownPress.length,
+      // Title, author (3–6), site (7–9), year (11).
+      body: shownPress.map((item) => (
+        <Cols
+          key={item.id}
+          cells={[
+            {
+              className: "lg:col-start-3 lg:col-span-4",
+              content: [item.title, item.author].filter(Boolean).join(", "),
+            },
+            {
+              className: "lg:col-span-3",
+              content: item.link && (
+                <Link
+                  className="italic underline underline-offset-4 decoration-[0.5px]"
+                  href={item.link}
+                >
+                  {siteName(item.link)}
+                </Link>
+              ),
+            },
+            {
+              className: "lg:col-start-11 lg:col-span-1 tabular-nums",
+              content: item.year,
+            },
+          ]}
+        />
+      )),
+    },
+    {
+      key: "colophon",
+      title: "Colophon",
+      body: (
+        // Label (3–6), value (7–11).
+        <>
+          <Cols
+            cells={[
+              {
+                className: "lg:col-start-3 lg:col-span-4",
+                content: "Design & code",
+              },
+              {
+                className: "lg:col-span-5",
+                content: (
+                  <Link
+                    className="italic underline underline-offset-4 decoration-[0.5px]"
+                    href="/"
+                  >
+                    Joel Järvi
+                  </Link>
+                ),
+              },
+            ]}
+          />
+          <Cols
+            cells={[
+              {
+                className: "lg:col-start-3 lg:col-span-4",
+                content: "Typefaces",
+              },
+              {
+                className: "lg:col-span-5",
+                content: "STIX Two Text, GT America, GT Alpina",
+              },
+            ]}
+          />
+        </>
+      ),
+    },
+  ].filter(Boolean) as Section[];
+
+  // Text size for this page only: S / M / L (not the site-wide image size).
+  const [textSize, setTextSize] = useState<keyof typeof TEXT_SIZES>("S");
+
+  // A plain page that scrolls normally (desktop and mobile): every section
+  // open, one after another.
+  return (
+    <section className="text-foreground relative w-full min-h-dvh bg-background">
+      {/* Text size S / M / L — fixed top right, like the image size on the
+          works and exhibitions pages. */}
+
+      {/* Desktop: starts a quarter of the screen down, level with the fixed
+          view links (Works / Exhibitions / Info), so the first line of the
+          about text shares the "Works" link's baseline. */}
+      <div className="flex flex-col gap-y-18  pb-18 mt-18 lg:px-0">
+        {sections.map((section) => (
+          <InfoRow
+            key={section.key}
+            section={section}
+            textSize={TEXT_SIZES[textSize]}
+          />
+        ))}
+        <BackToTop />
       </div>
     </section>
   );

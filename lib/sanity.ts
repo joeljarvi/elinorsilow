@@ -79,6 +79,7 @@ export type Exhibition = {
     work_10?: string;
   };
   featured?: boolean;
+  upcoming?: boolean;
 };
 
 export type Education = {
@@ -99,6 +100,7 @@ export type Grant = {
   title?: { rendered: string };
   acf: {
     title: string;
+    institution?: string;
     year: string;
   };
 };
@@ -110,6 +112,27 @@ export type Biography = {
   acf: {
     bio: string;
   };
+};
+
+export type Press = {
+  id: string;
+  title: string;
+  author: string;
+  link: string;
+  year: string;
+};
+
+export type NewsItem = {
+  date?: string; // YYYY-MM-DD
+  name?: string;
+  link?: string;
+  location?: string;
+};
+
+export type News = {
+  current: NewsItem | null;
+  upcoming: NewsItem | null;
+  past: NewsItem | null;
 };
 
 export type LongBio = {
@@ -200,6 +223,7 @@ function transformExhibition(doc: any): Exhibition {
       ...works,
     },
     featured: doc.featured ?? false,
+    upcoming: doc.upcoming ?? false,
   };
 }
 
@@ -233,7 +257,7 @@ const WORK_FIELDS = `
 
 const EXHIBITION_FIELDS = `
   _id, "slug": slug.current, title, year, exhibition_type,
-  location, city, description, credits, related_works, featured, _createdAt,
+  location, city, description, credits, related_works, featured, upcoming, _createdAt,
   "images": images[]{
     alt, caption, description,
     "url": asset->url,
@@ -315,7 +339,7 @@ export async function getAllEducations(): Promise<Education[]> {
 export async function getAllGrants(): Promise<Grant[]> {
   const data = await client.fetch(
     `*[_type == "grant"] | order(year desc) {
-      _id, "slug": slug.current, title, year
+      _id, "slug": slug.current, title, institution, year
     }`,
     {},
     { next: { revalidate: 60 } }
@@ -326,8 +350,28 @@ export async function getAllGrants(): Promise<Grant[]> {
         slug: doc.slug || "",
         acf: {
           title: (doc.title || "").normalize("NFC"),
+          institution: doc.institution
+            ? String(doc.institution).normalize("NFC")
+            : undefined,
           year: String(doc.year || ""),
         },
+      }))
+    : [];
+}
+
+export async function getAllPress(): Promise<Press[]> {
+  const data = await client.fetch(
+    `*[_type == "press"] | order(year asc) { _id, title, author, link, year }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return Array.isArray(data)
+    ? data.map((doc: any) => ({
+        id: doc._id,
+        title: (doc.title || "").normalize("NFC"),
+        author: (doc.author || "").normalize("NFC"),
+        link: doc.link || "",
+        year: String(doc.year || ""),
       }))
     : [];
 }
@@ -341,6 +385,19 @@ export async function getShortBio(): Promise<string> {
   return data?.bio ?? "";
 }
 
+export async function getNews(): Promise<News> {
+  const data = await client.fetch(
+    `*[_type == "news"][0] { current, upcoming, past }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return {
+    current: data?.current ?? null,
+    upcoming: data?.upcoming ?? null,
+    past: data?.past ?? null,
+  };
+}
+
 export async function getLongBio(): Promise<string> {
   const data = await client.fetch(
     `*[_type == "long_bio"][0] { bio }`,
@@ -350,11 +407,57 @@ export async function getLongBio(): Promise<string> {
   return data?.bio ?? "";
 }
 
+export type MediaItem = {
+  url: string;
+  title: string; // title of the work/exhibition using the image
+  // Metadata of that work/exhibition, in display order, empty parts dropped.
+  // Work: title, materials, dimensions, year.
+  // Exhibition: title, venue, city, year.
+  meta: string[];
+  // Where "Read more" goes (e.g. the exhibition's page), if anywhere.
+  href?: string;
+};
+
+// The most recently uploaded images that are actually used by a document
+// (unused uploads are skipped), newest first.
+export async function getLatestMedia(limit = 30): Promise<MediaItem[]> {
+  const data = await client.fetch(
+    `*[_type == "sanity.imageAsset"] | order(_createdAt desc) [0...$scan] {
+      url,
+      "doc": *[references(^._id)][0]{
+        _type, title, year, materials, dimensions, location, city
+      }
+    }`,
+    { scan: limit * 2 },
+    { next: { revalidate: 60 } }
+  );
+  return Array.isArray(data)
+    ? data
+        .filter((d: any) => d.url && d.doc?.title)
+        .slice(0, limit)
+        .map((d: any) => {
+          const doc = d.doc;
+          const parts =
+            doc._type === "work"
+              ? [doc.title, doc.materials, doc.dimensions, doc.year]
+              : [doc.title, doc.location, doc.city, doc.year];
+          return {
+            url: d.url,
+            title: String(doc.title),
+            meta: parts
+              .filter((p: unknown) => p !== null && p !== undefined && p !== "")
+              .map(String),
+          };
+        })
+    : [];
+}
+
 export type ActivityEntry = {
   type: "work" | "exhibition" | "exhibition_list";
   title: string;
   slug: string;
   updatedAt: string;
+  image?: string;
 };
 
 export async function getLatestWorks(limit = 10): Promise<Work[]> {
@@ -375,15 +478,24 @@ export async function getFeaturedWorks(): Promise<Work[]> {
   return Array.isArray(data) ? data.map(transformWork) : [];
 }
 
+export async function getLatestExhibition(): Promise<Exhibition | null> {
+  const data = await client.fetch(
+    `*[_type == "exhibition"] | order(_createdAt desc) [0] { ${EXHIBITION_FIELDS} }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return data ? transformExhibition(data) : null;
+}
+
 export async function getRecentActivity(limit = 12): Promise<ActivityEntry[]> {
   const [works, exhibitions, exhibitionList] = await Promise.all([
     client.fetch(
-      `*[_type == "work"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt }`,
+      `*[_type == "work"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt, "image": image.asset->url }`,
       { limit },
       { next: { revalidate: 60 } }
     ),
     client.fetch(
-      `*[_type == "exhibition"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt }`,
+      `*[_type == "exhibition"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt, "image": images[0].asset->url }`,
       { limit },
       { next: { revalidate: 60 } }
     ),
@@ -395,8 +507,8 @@ export async function getRecentActivity(limit = 12): Promise<ActivityEntry[]> {
   ]);
 
   const combined: ActivityEntry[] = [
-    ...works.map((d: any) => ({ type: "work" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
-    ...exhibitions.map((d: any) => ({ type: "exhibition" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
+    ...works.map((d: any) => ({ type: "work" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt, image: d.image })),
+    ...exhibitions.map((d: any) => ({ type: "exhibition" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt, image: d.image })),
     ...exhibitionList.map((d: any) => ({ type: "exhibition_list" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
   ];
 
