@@ -13,9 +13,6 @@ html {
   --text-shadow-xl: 0 2px 8px rgb(0 0 0 / 0.75);
   --font-areal: var(--font-areal);
   --font-arealMono: var(--font-arealMono);
-  --font-baskervilleNeo: var(--font-baskervilleNeo);
-  --font-caslonIonic: var(--font-caslonIonic);
-  --font-caslonIonicRounded: var(--font-caslonIonicRounded);
   --font-gtAlpina: var(--font-gtAlpina);
   --font-gtAlpinaCondensed: var(--font-gtAlpinaCondensed);
   --font-gtAlpinaExtended: var(--font-gtAlpinaExtended);
@@ -25,7 +22,6 @@ html {
   --font-gtAlpinaTypewriter: var(--font-gtAlpinaTypewriter);
   --font-gtAmericaCompressed: var(--font-gtAmericaCompressed);
   --font-gtAmericaCondensed: var(--font-gtAmericaCondensed);
-  --font-edictText: var(--font-edictText);
   --font-stix: var(--font-stix);
   --font-timesNewRoman: "Times New Roman", Times, serif;
   --font-arialRoundedMT:

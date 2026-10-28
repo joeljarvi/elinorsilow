@@ -13,6 +13,7 @@ import { IndexProvider } from "@/context/IndexContext";
 import { NavSlotProvider } from "@/context/NavSlotContext";
 import ESNav from "@/components/ESNav";
 import UnderConstruction from "@/components/UnderConstruction";
+import ESScreenSaver from "@/components/ESScreenSaver";
 
 import NavWrapper from "@/components/NavWrapper";
 import InkBleedFilter from "@/components/InkBleedFilter";
@@ -95,41 +96,6 @@ const arealMono = localFont({
     },
   ],
   variable: "--font-arealMono",
-});
-
-const baskervilleNeo = localFont({
-  src: [
-    {
-      path: "../../public/fonts/BaskervilleNeo-Text.woff2",
-      weight: "400",
-      style: "normal",
-    },
-  ],
-  variable: "--font-baskervilleNeo",
-});
-
-// Caslon Ionic (trial) — only the Bold cut is included, so it's used for
-// every weight.
-const caslonIonic = localFont({
-  src: [
-    {
-      path: "../../public/fonts/CaslonIonic-Bold-Trial.otf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-caslonIonic",
-});
-
-const caslonIonicRounded = localFont({
-  src: [
-    {
-      path: "../../public/fonts/CaslonIonicRounded-Bold-Trial.otf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-caslonIonicRounded",
 });
 
 // GT Alpina (trial) — one family per width/cut, each with Thin–Bold and
@@ -574,30 +540,6 @@ const gtAmericaCondensed = localFont({
   preload: false,
 });
 
-// Edict Text (trial) — Book, Regular, Medium. Book is the lightest cut, so
-// it's registered as 300 (font-light).
-const edictText = localFont({
-  src: [
-    {
-      path: "../../public/fonts/EdictTextTrial-Book.otf",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/EdictTextTrial-Regular.otf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/EdictTextTrial-Medium.otf",
-      weight: "500",
-      style: "normal",
-    },
-  ],
-  variable: "--font-edictText",
-  preload: false,
-});
-
 // STIX Two Text (Google Fonts) — the site's text face (font-stix). A
 // variable font: every weight 400–700, plus italics.
 const stixTwoText = STIX_Two_Text({
@@ -622,7 +564,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${areal.variable} ${arealMono.variable} ${baskervilleNeo.variable} ${caslonIonic.variable} ${caslonIonicRounded.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${edictText.variable} ${stixTwoText.variable} antialiased`}
+        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${stixTwoText.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -645,6 +587,7 @@ export default async function RootLayout({
                               <InkBleedFilter />
                               <ESNav />
                               <UnderConstruction />
+                              <ESScreenSaver />
                               {children} {modal}
                             </CarouselProvider>
                           </AnimationProvider>

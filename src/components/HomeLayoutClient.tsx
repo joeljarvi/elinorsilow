@@ -362,7 +362,7 @@ export default function HomeLayoutClient({
         </AnimatePresence>
       </div>
       {/* Current / Upcoming / Past — from the "news" document in Sanity. */}
-      <div className="hidden fixed text-9xl font-caslonIonic bottom-2 left-4  items-center justify-center w-full ">
+      <div className="hidden fixed text-9xl bottom-2 left-4  items-center justify-center w-full ">
         ELINOR SILOW
       </div>
       <div

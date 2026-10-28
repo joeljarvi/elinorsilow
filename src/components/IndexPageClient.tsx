@@ -20,7 +20,12 @@ import { useIndex } from "@/context/IndexContext";
 import { Work, Exhibition } from "../../lib/sanity";
 import WorkModal from "./WorkModal";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
-import { ArrowLeft, ArrowRight, ChevronsUpDown, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsUpDown,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import PurpleBackdrop from "@/components/PurpleBackdrop";
 import MetaLine from "@/components/MetaLine";
@@ -246,7 +251,7 @@ function ListRow({
           : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[2.25rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
+      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[2.25rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
     >
       {/* Open purple row (desktop): its text keeps the purple background
           — the text line, and on exhibitions the description / credits
@@ -472,7 +477,7 @@ function ListRow({
                 aria-label="Previous image"
                 className="cursor-pointer"
               >
-                <ArrowLeft className="size-4" strokeWidth={1.5} />
+                <ChevronLeft className="size-4" strokeWidth={1.5} />
               </button>
               <button
                 type="button"
@@ -480,7 +485,7 @@ function ListRow({
                 aria-label="Next image"
                 className="cursor-pointer"
               >
-                <ArrowRight className="size-4" strokeWidth={1.5} />
+                <ChevronRight className="size-4" strokeWidth={1.5} />
               </button>
             </>
           )}
@@ -490,7 +495,7 @@ function ListRow({
               type="button"
               onPointerDown={onDragStart}
               aria-label="Drag to move"
-              className="hidden lg:block cursor-grab active:cursor-grabbing touch-none"
+              className="hidden lg:block lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity cursor-grab active:cursor-grabbing touch-none"
             >
               <ChevronsUpDown className="size-4" strokeWidth={1.5} />
             </button>
@@ -499,7 +504,7 @@ function ListRow({
             type="button"
             onClick={onToggle}
             aria-label="Close"
-            className="cursor-pointer"
+            className="lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity cursor-pointer"
           >
             <X className="size-4" strokeWidth={1.5} />
           </button>
@@ -634,7 +639,13 @@ export default function IndexPageClient() {
     const until = performance.now() + ms;
     const step = () => {
       const row = exRowRefs.current[key];
-      if (!row) return;
+      // Not rendered yet (e.g. just loaded further down the list): try
+      // again next frame.
+      if (!row) {
+        if (performance.now() < until)
+          stickRef.current = requestAnimationFrame(step);
+        return;
+      }
       // Center the row (image + text); if it's taller than the screen, put
       // its top at the top instead so the start of it is visible.
       const box = row.getBoundingClientRect();
@@ -749,7 +760,8 @@ export default function IndexPageClient() {
       setVisibleCount((c) => Math.max(c, pick + 1));
       const key = rowKey("works", visibleWorks[pick].id);
       openOnly(key);
-      stickToRow(key);
+      // Followed until the opening (row, text, image) has settled.
+      stickToRow(key, 3000);
       return;
     }
     // Exhibitions: all rows start closed.
