@@ -15,12 +15,27 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   serverExternalPackages: ["sanity", "@sanity/vision"],
+  // The index and info are views of the home page ("/?view=…"). Done here,
+  // not as pages calling redirect(): those prerender to no .html, which
+  // breaks the Vercel build (ENOENT …/index/exhibitions.html).
   async redirects() {
     return [
-      { source: "/works", destination: "/index/works", permanent: true },
+      { source: "/index", destination: "/", permanent: false },
+      {
+        source: "/index/works",
+        destination: "/?view=works",
+        permanent: false,
+      },
+      {
+        source: "/index/exhibitions",
+        destination: "/?view=exhibitions",
+        permanent: false,
+      },
+      { source: "/info", destination: "/?view=info", permanent: false },
+      { source: "/works", destination: "/?view=works", permanent: true },
       {
         source: "/exhibitions",
-        destination: "/index/exhibitions",
+        destination: "/?view=exhibitions",
         permanent: true,
       },
     ];

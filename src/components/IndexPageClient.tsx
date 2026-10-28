@@ -27,6 +27,7 @@ import MetaLine from "@/components/MetaLine";
 import LenisScroll from "@/components/LenisScroll";
 import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
+import { useLenis } from "lenis/react";
 import BackToTop from "@/components/BackToTop";
 import {
   useUI,
@@ -519,11 +520,18 @@ function exhibitionImageUrls(ex: Exhibition): string[] {
 // A list row that can be dragged to another place in the list (a
 // Reorder.Item), only from its handle: `children` gets the function that
 // starts the drag (ListRow's onDragStart).
+// Layout animations (rows sliding out of the dragged one's way) only while
+// dragging: otherwise they'd also run whenever a row opens and pushes the
+// rows below it, and make them flicker.
 function DraggableRow({
   value,
+  order,
   children,
 }: {
   value: string;
+  // While dragging: the list's current order (its changes animate);
+  // otherwise null (no layout animations).
+  order: string | null;
   children: (startDrag: (e: ReactPointerEvent) => void) => ReactNode;
 }) {
   const controls = useDragControls();
@@ -531,6 +539,7 @@ function DraggableRow({
     <Reorder.Item
       as="div"
       value={value}
+      layoutDependency={order ?? "idle"}
       dragListener={false}
       dragControls={controls}
       className="relative"
@@ -567,6 +576,18 @@ export default function IndexPageClient() {
   // The order rows have been dragged into (keys; see DraggableRow). Reset
   // when switching between works and exhibitions.
   const [rowOrder, setRowOrder] = useState<string[]>([]);
+  // A row is being dragged (until the pointer is released).
+  const [dragging, setDragging] = useState(false);
+  useEffect(() => {
+    if (!dragging) return;
+    const end = () => setDragging(false);
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+    return () => {
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+    };
+  }, [dragging]);
   // The rows that have been dragged: the page background from then on.
   const [movedRows, setMovedRows] = useState<Set<string>>(() => new Set());
   useEffect(() => {
@@ -607,6 +628,7 @@ export default function IndexPageClient() {
   // page toward it — so the view sticks to the row while it opens, the row
   // above closes, or the image changes size.
   const stickRef = useRef(0);
+  const lenis = useLenis();
   const stickToRow = (key: string, ms = 1200) => {
     cancelAnimationFrame(stickRef.current);
     const until = performance.now() + ms;
@@ -621,7 +643,9 @@ export default function IndexPageClient() {
         box.height < vh ? box.top + box.height / 2 - vh / 2 : box.top;
       // Ease most of the way each frame; the last frames land exactly.
       const last = performance.now() >= until;
-      window.scrollBy(0, last ? delta : delta * 0.25);
+      const by = last ? delta : delta * 0.25;
+      if (lenis) lenis.scrollTo(window.scrollY + by, { immediate: true });
+      else window.scrollBy(0, by);
       if (!last) stickRef.current = requestAnimationFrame(step);
     };
     stickRef.current = requestAnimationFrame(step);
@@ -703,7 +727,7 @@ export default function IndexPageClient() {
   useEffect(() => {
     if (!openOnEnter.current) return;
     // After the site's reveal (the rows fading in).
-    if (siteReveal !== "done") return;
+    if (siteReveal === "covered" || siteReveal === "rows") return;
     if (mode === "works") {
       if (visibleWorks.length === 0) return;
       openOnEnter.current = false;
@@ -790,7 +814,11 @@ export default function IndexPageClient() {
                     className="relative flex flex-col pb-24"
                   >
                     {keys.map((key, i) => (
-                      <DraggableRow key={key} value={key}>
+                      <DraggableRow
+                        key={key}
+                        value={key}
+                        order={dragging ? keys.join() : null}
+                      >
                         {(startDrag) => (
                           <ListRow
                             item={byKey.get(key)!}
@@ -818,6 +846,7 @@ export default function IndexPageClient() {
                                     setMovedRows((prev) =>
                                       new Set(prev).add(key),
                                     );
+                                    setDragging(true);
                                     startDrag(e);
                                   }
                                 : undefined
@@ -831,7 +860,8 @@ export default function IndexPageClient() {
               })()}
 
             <div ref={sentinelRef} className="h-1" />
-            <BackToTop />
+            {/* Not on exhibitions. */}
+            {mode !== "exhibitions" && <BackToTop />}
           </div>
         </div>
       </div>

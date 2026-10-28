@@ -39,8 +39,9 @@ interface UIContextValue {
   setImageSize: (s: ImageSize) => void;
   setIntroPhase: (p: IntroPhase) => void;
   // The site's reveal once the "under construction" overlay is closed:
-  // "covered" (overlay up; list rows and ESNav hidden) → "rows" (the rows
-  // fade in, staggered) → "done" (the featured work opens, ESNav shows).
+  // "covered" (overlay up; list rows and nav hidden) → "rows" (the rows
+  // fade in, staggered) → "done" (the featured work opens) → "nav" (ESNav
+  // and the links column fade in, staggered top to bottom — navReveal).
   siteReveal: SiteReveal;
   setSiteReveal: (r: SiteReveal) => void;
   navVisible: boolean;
@@ -119,7 +120,7 @@ export type ImageSize = "S" | "M" | "L";
 
 export type IntroPhase = "backdrop" | "media" | "done";
 
-export type SiteReveal = "covered" | "rows" | "done";
+export type SiteReveal = "covered" | "rows" | "done" | "nav";
 // The rows' reveal (seconds): each row's background fades in REVEAL_FADE,
 // REVEAL_STAGGER after the one above (the first REVEAL_ROWS rows; the rest
 // with the last of them), its text REVEAL_TEXT_AFTER after its background.
@@ -130,6 +131,19 @@ export const REVEAL_FADE = 0.4;
 export const REVEAL_MS =
   ((REVEAL_ROWS - 1) * REVEAL_STAGGER + REVEAL_TEXT_AFTER + REVEAL_FADE) *
   1000;
+// The nav comes last, once the featured work has opened (NAV_AFTER_MS
+// after "done"), its items NAV_STAGGER apart, top to bottom.
+export const NAV_AFTER_MS = 2000;
+export const NAV_STAGGER = 0.08;
+
+// A nav item's reveal: hidden until `shown`, then fading in after its place
+// in the top-to-bottom order (`step`).
+export function navReveal(shown: boolean, step: number) {
+  return {
+    className: `transition-opacity duration-500 ${shown ? "opacity-100" : "opacity-0 pointer-events-none"}`,
+    style: { transitionDelay: shown ? `${step * NAV_STAGGER}s` : "0s" },
+  };
+}
 
 const UIContext = createContext<UIContextValue | undefined>(undefined);
 

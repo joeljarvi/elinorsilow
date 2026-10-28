@@ -9,7 +9,7 @@ import {
   NewsItem,
   Press,
 } from "../../lib/sanity";
-import { useUI } from "@/context/UIContext";
+import { useUI, navReveal } from "@/context/UIContext";
 import HeroText from "./HeroText";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -158,8 +158,13 @@ export default function HomeLayoutClient({
     setHomeBg,
     introPhase,
     setIntroPhase,
+    siteReveal,
     openDesktopNav: menuOpen,
   } = useUI();
+  // The links column fades in last, item by item, after the top bar
+  // (ESNav, step 0) — see navReveal.
+  const navShown = siteReveal === "nav";
+  const reveal = (step: number) => navReveal(navShown, step);
   // The purple backdrop fades in first; the intro waits until that fade is
   // done (or BACKDROP_FALLBACK_MS passes without the image loading).
   const [backdropLoaded, setBackdropLoaded] = useState(false);
@@ -281,7 +286,8 @@ export default function HomeLayoutClient({
                 type="button"
                 onClick={() => setMode(v)}
                 aria-current={view === v ? "page" : undefined}
-                className={`h-9 flex items-center text-left cursor-pointer ${view === v ? "font-gtAmericaCondensed uppercase" : ""}`}
+                style={reveal(1 + VIEW_LINKS.findIndex((l) => l.view === v)).style}
+                className={`${reveal(1 + VIEW_LINKS.findIndex((l) => l.view === v)).className} h-9 flex items-center text-left cursor-pointer ${view === v ? "font-gtAmericaCondensed uppercase" : ""}`}
               >
                 {label}
               </button>
@@ -302,12 +308,14 @@ export default function HomeLayoutClient({
                       ? "Search info"
                       : "Search exhibitions"
                 }
-                className="h-9 w-full p-0 m-0 border-0 bg-transparent outline-none font-stix text-sm leading-none text-foreground placeholder:text-primary/50"
+                style={reveal(VIEW_LINKS.length + 1).style}
+                className={`${reveal(VIEW_LINKS.length + 1).className} h-9 w-full p-0 m-0 border-0 bg-transparent outline-none font-stix text-sm leading-none text-foreground placeholder:text-primary/50`}
               />
               {/* Contact, after the search (a line's gap). */}
               <a
                 href="mailto:elinor.silow@gmail.com"
-                className="mt-9 h-9 flex items-center"
+                style={reveal(VIEW_LINKS.length + 2).style}
+                className={`${reveal(VIEW_LINKS.length + 2).className} mt-9 h-9 flex items-center`}
               >
                 Email
               </a>
@@ -315,7 +323,8 @@ export default function HomeLayoutClient({
                 href="https://www.instagram.com/elinorsilow"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-9 flex items-center"
+                style={reveal(VIEW_LINKS.length + 3).style}
+                className={`${reveal(VIEW_LINKS.length + 3).className} h-9 flex items-center`}
               >
                 Instagram
               </a>

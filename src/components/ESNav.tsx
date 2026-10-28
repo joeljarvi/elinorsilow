@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUI } from "@/context/UIContext";
+import { useUI, navReveal } from "@/context/UIContext";
 import { useIndex, type HomeView } from "@/context/IndexContext";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -92,6 +92,9 @@ export default function ESNav() {
       ))}
     </div>
   );
+  // Home page: the nav fades in last, item by item (siteReveal "nav").
+  const navShown =
+    pathname !== "/" || (introPhase === "done" && siteReveal === "nav");
   const toggleOpen = () => {
     const next = !open;
     setOpenDesktopNav(next);
@@ -106,7 +109,7 @@ export default function ESNav() {
       {/* Mobile nav: "Elinor Silow" and "MENU" fixed across the top. Hidden during the home page intro (backdrop, then media),
           then fades in. Stays visible above modals (z-80 > their z-70). */}
       <div
-        className={`lg:hidden fixed top-0 left-0 z-80 w-full transition-opacity duration-700 ${pathname === "/" && (introPhase !== "done" || siteReveal !== "done") ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`lg:hidden fixed top-0 left-0 z-80 w-full ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* Fixed across the top, a 2-col grid (like the mobile list rows):
             "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) in
@@ -114,12 +117,17 @@ export default function ESNav() {
         <nav
           className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-sm font-gtAmericaCondensed uppercase font-normal tracking-normal leading-none text-foreground`}
         >
-          <Link href="/" className="justify-self-start">
+          <Link
+            href="/"
+            className={`justify-self-start ${navReveal(navShown, 0).className}`}
+            style={navReveal(navShown, 0).style}
+          >
             Elinor Silow
           </Link>
           <button
             type="button"
-            className="justify-self-start text-left uppercase cursor-pointer "
+            style={navReveal(navShown, 1).style}
+            className={`justify-self-start text-left uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
             onClick={toggleOpen}
             aria-expanded={open}
           >
@@ -131,15 +139,17 @@ export default function ESNav() {
           left, the links always visible in the grid (no MENU on desktop).
           Same intro fade and stacking above modals as the mobile nav. */}
       <nav
-        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 gap-x-4 px-4 h-9 bg-linear-to-b from-background to-transparent items-center transition-opacity duration-700 ${pathname === "/" && (introPhase !== "done" || siteReveal !== "done") ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 gap-x-4 px-4 h-9 bg-linear-to-b from-background to-transparent items-center ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* Image size S / M / L: top right (col 12, right edge). */}
         {showSizes &&
-          sizeButtons("col-start-12 row-start-1 justify-self-end py-1")}
+          sizeButtons(
+            `col-start-12 row-start-1 justify-self-end py-1 ${navReveal(navShown, 0).className}`,
+          )}
         {/* "Elinor Silow" (home), top left (cols 1–2). */}
         <Link
           href="/"
-          className={`col-start-1 col-span-2 row-start-1 justify-self-start py-1 whitespace-nowrap text-sm uppercase leading-none font-gtAmericaCondensed  text-foreground`}
+          className={`col-start-1 col-span-2 row-start-1 justify-self-start py-1 whitespace-nowrap text-sm uppercase leading-none font-gtAmericaCondensed  text-foreground ${navReveal(navShown, 0).className}`}
         >
           Elinor Silow
         </Link>

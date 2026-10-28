@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useUI, REVEAL_MS } from "@/context/UIContext";
+import { useUI, REVEAL_MS, NAV_AFTER_MS } from "@/context/UIContext";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,8 +9,8 @@ import { usePathname } from "next/navigation";
 // "Under construction" — a full-screen purple-100 panel over the whole site
 // (z-90, above ESNav's z-80) with the notice in the center and a × top
 // right that closes it (until the next page load). Closing it starts the
-// site's reveal (siteReveal): the list rows, then the featured work and
-// ESNav.
+// site's reveal (siteReveal): the list rows, then the featured work, then
+// the nav.
 export default function UnderConstruction() {
   const [open, setOpen] = useState(true);
   const { setSiteReveal } = useUI();
@@ -18,6 +18,7 @@ export default function UnderConstruction() {
     setOpen(false);
     setSiteReveal("rows");
     setTimeout(() => setSiteReveal("done"), REVEAL_MS);
+    setTimeout(() => setSiteReveal("nav"), REVEAL_MS + NAV_AFTER_MS);
   };
   // Not over Sanity Studio.
   const pathname = usePathname();
