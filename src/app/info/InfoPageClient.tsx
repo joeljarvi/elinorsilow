@@ -7,6 +7,7 @@ import { useUI } from "@/context/UIContext";
 import type { Press } from "../../../lib/sanity";
 import { useState, type ReactNode } from "react";
 import BackToTop from "@/components/BackToTop";
+import Ticker from "@/components/Ticker";
 
 function groupByYear<T extends { acf: { year: number | string } }>(
   items: T[],
@@ -47,7 +48,7 @@ function Cols({
           key={i}
           className={`${i === 0 ? "col-span-2" : "col-span-1"} truncate ${c.mobileHidden ? "hidden lg:block" : ""} ${c.className}`}
         >
-          {c.content}
+          <Ticker>{c.content}</Ticker>
         </span>
       ))}
     </div>
@@ -237,7 +238,7 @@ export default function InfoPageClient({
       title: "",
       // Desktop: cols 3–6.
       body: (
-        <div className="grid grid-cols-12 gap-x-4 px-3 lg:px-0">
+        <div className="grid grid-cols-12 gap-x-4 px-0 lg:px-0">
           <p className="col-span-12 lg:col-start-3 lg:col-span-5 text-sm whitespace-pre-line leading-snug lg:leading-relaxed font-stix  ">
             {bio}
           </p>

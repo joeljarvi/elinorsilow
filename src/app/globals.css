@@ -217,3 +217,11 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
+
+/* Ticker (components/Ticker.tsx): text too long for its box scrolls left by
+   one copy (+ gap) and loops. */
+@keyframes es-ticker {
+  to {
+    transform: translateX(var(--ticker-shift));
+  }
+}

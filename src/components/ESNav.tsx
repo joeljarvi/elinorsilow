@@ -61,7 +61,7 @@ export default function ESNav() {
   const pathname = usePathname();
   // The home page's current view; switching it (in place on "/", or going
   // to "/?view=…" from another page).
-  const { mode, setMode } = useIndex();
+  const { mode, setMode, search, setSearch } = useIndex();
   const viewActive = (v: HomeView) => pathname === "/" && mode === v;
   const worksLayout = pathname === "/" && mode === "works";
   // Image size buttons (the site-wide setting) — shown with the works /
@@ -115,7 +115,7 @@ export default function ESNav() {
             "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) in
             col 2. */}
         <nav
-          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-sm font-gtAmericaCondensed uppercase font-normal tracking-normal leading-none text-foreground`}
+          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-3xl font-gtAmericaCondensed uppercase font-normal tracking-normal leading-none text-foreground`}
         >
           <Link
             href="/"
@@ -155,8 +155,9 @@ export default function ESNav() {
         </Link>
       </nav>
       {/* Mobile menu — a full-height overlay (h-dvh, page background) with the links
-          stacked. Sits under the "Elinor Silow, CLOSE" line (z-80) so that
-          stays visible to close it. Picking a link closes the menu. */}
+          stacked, then search, then email and Instagram. Sits under the
+          "Elinor Silow, CLOSE" line (z-80) so that stays visible to close
+          it. Picking a link (or submitting a search) closes the menu. */}
       {open && (
         <nav className="lg:hidden fixed inset-x-0 top-0 h-dvh z-[75] flex flex-col items-start justify-center  gap-0 p-3 pb-16 bg-background text-foreground font-gtAmericaCondensed text-3xl leading-tight uppercase">
           <div className="relative flex flex-col items-start px-0 py-8">
@@ -174,6 +175,35 @@ export default function ESNav() {
                 {label}
               </button>
             ))}
+            {/* Search (the shared index search): filters the current
+                view's list; Enter closes the menu to show the results. */}
+            <form
+              className="mt-[1.25em] w-full"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setOpenDesktopNav(false);
+              }}
+            >
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
+                aria-label="Search"
+                className="w-full p-0 m-0 border-0 bg-transparent outline-none uppercase text-foreground placeholder:text-primary/50"
+              />
+            </form>
+            {/* Contact. */}
+            <a href="mailto:elinor.silow@gmail.com" className="mt-[1.25em]">
+              Email
+            </a>
+            <a
+              href="https://www.instagram.com/elinorsilow"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
           </div>
         </nav>
       )}

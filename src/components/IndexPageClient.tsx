@@ -34,6 +34,7 @@ import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
 import { useLenis } from "lenis/react";
 import BackToTop from "@/components/BackToTop";
+import Ticker from "@/components/Ticker";
 import {
   useUI,
   type ImageSize,
@@ -287,16 +288,16 @@ function ListRow({
             `col-span-1 ${open ? "italic font-bold" : ""} font-normal truncate lg:col-start-3 ${isWork ? "lg:col-span-2 font-bold" : "lg:col-span-3"} lg:row-start-1 ${infoFade}`
           }
         >
-          {item.title}
+          <Ticker>{item.title}</Ticker>
         </motion.span>
         <motion.span
           // Venue: cols 6–7. Materials (works): cols 5–7 (the title 3–4),
-          // always one line, cut off with "…". Mobile, open: it ends at
-          // the controls (× — and ← → on exhibitions) with a gap-x-3
-          // (the controls' width + 12px of right padding).
-          className={`order-1 lg:order-none col-span-1 ${open ? "block" : "hidden lg:block"} ${isWork ? "lg:col-start-5 lg:col-span-3" : "lg:col-start-6 lg:col-span-2"} ${open ? (!isWork && multi ? "pr-[5.25rem]" : "pr-7") : ""} lg:pr-0 min-w-0 max-w-full truncate lg:row-start-1 ${infoFade}`}
+          // always one line, cut off with "…". Mobile, open exhibitions with
+          // several images: it ends at the ‹ › controls with a gap-x-3
+          // (their width + 12px of right padding).
+          className={`order-1 lg:order-none col-span-1 ${open ? "block" : "hidden lg:block"} ${isWork ? "lg:col-start-5 lg:col-span-3" : "lg:col-start-6 lg:col-span-2"} ${open && !isWork && multi ? "pr-14" : ""} lg:pr-0 min-w-0 max-w-full truncate lg:row-start-1 ${infoFade}`}
         >
-          {item.place}
+          <Ticker>{item.place}</Ticker>
         </motion.span>
         {/* Open row: the description on row 3, in the title's column (3),
             (cols 3–5), fading in. */}
@@ -339,7 +340,7 @@ function ListRow({
           <motion.span
             className={`order-1 lg:order-none col-span-1 ${isWork ? "lg:col-start-8" : "lg:col-start-9"} lg:col-span-2 truncate lg:row-start-1 ${infoFade}`}
           >
-            {item.kind}
+            <Ticker>{item.kind}</Ticker>
           </motion.span>
         )}
         <motion.span
@@ -352,7 +353,7 @@ function ListRow({
           <motion.span
             className={`order-1 lg:order-none col-span-1 hidden lg:block capitalize lg:col-start-11 lg:col-span-2 truncate lg:row-start-1 ${infoFade}`}
           >
-            {item.category}
+            <Ticker>{item.category}</Ticker>
           </motion.span>
         )}
       </button>
@@ -504,7 +505,8 @@ function ListRow({
             type="button"
             onClick={onToggle}
             aria-label="Close"
-            className="lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity cursor-pointer"
+            // Desktop only (mobile closes by tapping the row's title line).
+            className="hidden lg:block lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity cursor-pointer"
           >
             <X className="size-4" strokeWidth={1.5} />
           </button>
@@ -663,12 +665,13 @@ export default function IndexPageClient() {
   };
   useEffect(() => () => cancelAnimationFrame(stickRef.current), []);
 
-  // Clicking a row toggles it (the others stay as they are); an opening
+  // Clicking a row toggles it (desktop: the others stay as they are); an opening
   // row is followed (stickToRow) through its reveal.
   const toggleRow = (key: string) => {
     const opening = !openRows.has(key);
     setOpenRows((prev) => {
-      const next = new Set(prev);
+      // Mobile: one open row at a time (opening one closes the others).
+      const next = new Set(desktop ? prev : []);
       if (opening) next.add(key);
       else next.delete(key);
       return next;
