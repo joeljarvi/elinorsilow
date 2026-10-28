@@ -11,7 +11,8 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 // width is split into equal columns — one per word, with an empty column
 // between each word — and each word's letters are spaced out across its
 // column (justify-between). A single word fills the whole width. The
-// letters move into place (layout animation).
+// letters move into place (layout animation). Mobile: plain left-aligned
+// text (no centering, no spreading).
 export default function ESTitle({
   title,
   delay = 0,
@@ -40,7 +41,7 @@ export default function ESTitle({
       className={`relative hidden z-10 pointer-events-none ${className}`}
     >
       <div
-        className={`w-full text-sm leading-none font-gtAmericaCondensed uppercase text-primary ${spread ? "grid" : "flex justify-center gap-x-[0.3em]"}`}
+        className={`w-full text-sm leading-none font-gtAmericaCondensed uppercase text-primary flex justify-start gap-x-[0.3em] ${spread ? "lg:grid lg:gap-x-0" : "lg:justify-center"}`}
         style={
           spread
             ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }
@@ -52,7 +53,7 @@ export default function ESTitle({
             key={i}
             layout
             transition={{ duration: 0.8, ease: EASE }}
-            className={`flex ${spread ? "justify-between" : ""}`}
+            className={`flex ${spread ? "lg:justify-between" : ""}`}
             // Spread: words in columns 1, 3, 5…; the columns between stay
             // empty.
             style={spread ? { gridColumn: i * 2 + 1 } : undefined}

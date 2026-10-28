@@ -201,7 +201,7 @@ function ListRow({
     const t = setTimeout(() => setInfoShown(true), INFO_AT * 1000);
     return () => clearTimeout(t);
   }, [open]);
-  const infoFade = `h-12 leading-12 lg:h-9 lg:leading-9 self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
+  const infoFade = `h-12 leading-12 lg:h-9 lg:leading-9 self-stretch text-left lg:self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
   // The open row's height (the screen minus 6rem), in px so it can animate
   // from the closed row's 36px.
   const vh = useViewportHeight();
@@ -247,7 +247,7 @@ function ListRow({
           : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-base lg:text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
+      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
     >
       {/* Open purple row (desktop): its text keeps the purple background
           — the text line, and on exhibitions the description / credits
@@ -264,11 +264,13 @@ function ListRow({
           className="hidden lg:block lg:col-start-1 lg:col-span-12 lg:row-start-3 bg-purple-100"
         />
       )}
-      <button
-        type="button"
+      <div
+        // A div, not a <button>: Safari doesn't apply display: contents to
+        // buttons, which then lay out (and center) the text as one box.
         // Closed: the click bubbles to the row (above), which opens it — so
         // do nothing here, or it would toggle twice. Open: toggles (mobile
         // closes it; the desktop picker is already there).
+        role="button"
         onClick={() => {
           if (open) onToggle();
         }}
@@ -280,17 +282,15 @@ function ListRow({
           className={
             // Mobile: the title's first line indented a third of the width.
             // Mobile: open (2-col grid) one column; closed (4-col) two.
-            `col-span-1 ${open ? "italic font-bold" : ""} font-normal truncate lg:col-start-3 ${isWork ? "lg:col-span-2 font-bold" : "lg:col-span-3"} lg:row-start-1 ${infoFade}`
+            `col-span-1 ${open ? "italic font-bold" : ""} ${open && !isWork && multi ? "pr-14 lg:pr-0" : ""} font-normal truncate lg:col-start-3 ${isWork ? "lg:col-span-2 font-bold" : "lg:col-span-3"} lg:row-start-1 ${infoFade}`
           }
         >
           <Ticker>{item.title}</Ticker>
         </motion.span>
         <motion.span
           // Venue: cols 6–7. Materials (works): cols 5–7 (the title 3–4),
-          // always one line, cut off with "…". Mobile, open exhibitions with
-          // several images: it ends at the ‹ › controls with a gap-x-3
-          // (their width + 12px of right padding).
-          className={`order-1 lg:order-none col-span-1 ${open ? "block" : "hidden lg:block"} ${isWork ? "lg:col-start-5 lg:col-span-3" : "lg:col-start-6 lg:col-span-2"} ${open && !isWork && multi ? "pr-14" : ""} lg:pr-0 min-w-0 max-w-full truncate lg:row-start-1 ${infoFade}`}
+          // always one line (a ticker when it doesn't fit).
+          className={`order-1 lg:order-none col-span-1 ${open ? "block" : "hidden lg:block"} ${isWork ? "lg:col-start-5 lg:col-span-3" : "lg:col-start-6 lg:col-span-2"} min-w-0 max-w-full truncate lg:row-start-1 ${infoFade}`}
         >
           <Ticker>{item.place}</Ticker>
         </motion.span>
@@ -333,7 +333,7 @@ function ListRow({
         {/* Type (exhibitions) / dimensions (works): cols 8–9, always. */}
         {item.kind && (
           <motion.span
-            className={`order-1 lg:order-none col-span-1 ${isWork ? "lg:col-start-8" : "lg:col-start-9"} lg:col-span-2 truncate lg:row-start-1 ${infoFade}`}
+            className={`order-1 lg:order-none col-span-1 ${open ? "" : "hidden lg:block"} ${isWork ? "lg:col-start-8" : "lg:col-start-9"} lg:col-span-2 truncate lg:row-start-1 ${infoFade}`}
           >
             <Ticker>{item.kind}</Ticker>
           </motion.span>
@@ -351,7 +351,7 @@ function ListRow({
             <Ticker>{item.category}</Ticker>
           </motion.span>
         )}
-      </button>
+      </div>
       {/* The images, below the row's text line (title / venue / type /
           year, row 1), taking the height left: works on row 3, exhibitions
           on row 2 with the description / credits under them (row 3). */}

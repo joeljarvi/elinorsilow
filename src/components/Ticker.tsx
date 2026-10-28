@@ -42,7 +42,9 @@ export default function Ticker({
       className={`block min-w-0 overflow-hidden whitespace-nowrap ${className}`}
     >
       <span
-        className="inline-flex"
+        // align-top: no baseline gap under it, so the line keeps its own
+        // height (and the text stays centered in its row).
+        className="inline-flex align-top"
         style={
           width
             ? ({

@@ -204,9 +204,11 @@ export default function ESNav() {
             >
               Instagram
             </a>
-            {/* Image size S / M / L (works / exhibitions views). */}
-            {showSizes && sizeButtons("mt-[1.25em] text-3xl!")}
           </div>
+          {/* Image size S / M / L (works / exhibitions views): along the
+              bottom of the menu, spread across its width. */}
+          {showSizes &&
+            sizeButtons("absolute inset-x-3 bottom-3 justify-between text-3xl!")}
         </nav>
       )}
     </>
