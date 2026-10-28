@@ -20,12 +20,7 @@ import { useIndex } from "@/context/IndexContext";
 import { Work, Exhibition } from "../../lib/sanity";
 import WorkModal from "./WorkModal";
 import ExhibitionModal from "@/app/exhibitions/ExhibitionModal";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsUpDown,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsUpDown, X } from "lucide-react";
 import Image from "next/image";
 import PurpleBackdrop from "@/components/PurpleBackdrop";
 import MetaLine from "@/components/MetaLine";
@@ -206,7 +201,7 @@ function ListRow({
     const t = setTimeout(() => setInfoShown(true), INFO_AT * 1000);
     return () => clearTimeout(t);
   }, [open]);
-  const infoFade = `h-9 leading-9 self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
+  const infoFade = `h-12 leading-12 lg:h-9 lg:leading-9 self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
   // The open row's height (the screen minus 6rem), in px so it can animate
   // from the closed row's 36px.
   const vh = useViewportHeight();
@@ -252,7 +247,7 @@ function ListRow({
           : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[2.25rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
+      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-base lg:text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
     >
       {/* Open purple row (desktop): its text keeps the purple background
           — the text line, and on exhibitions the description / credits
@@ -463,7 +458,7 @@ function ListRow({
           (row 1, h-9), centered on it like the text. */}
       {open && (
         <div
-          className="absolute top-0 right-0 px-3 lg:px-4 h-9  z-20 flex items-center gap-3 text-primary/50"
+          className="absolute top-0 right-0 px-3 lg:px-4 h-12 lg:h-9  z-20 flex items-center gap-3 text-primary/50"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Exhibitions with several images: ← / → (previous / next

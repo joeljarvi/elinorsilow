@@ -112,10 +112,10 @@ export default function ESNav() {
         className={`lg:hidden fixed top-0 left-0 z-80 w-full ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* Fixed across the top, a 2-col grid (like the mobile list rows):
-            "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) in
-            col 2. */}
+            "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) top
+            right. */}
         <nav
-          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-3xl font-gtAmericaCondensed uppercase font-normal tracking-normal leading-none text-foreground`}
+          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-12 lg:h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-3xl font-gtAmericaCondensed uppercase font-normal tracking-normal leading-none text-foreground`}
         >
           <Link
             href="/"
@@ -127,7 +127,7 @@ export default function ESNav() {
           <button
             type="button"
             style={navReveal(navShown, 1).style}
-            className={`col-start-2 row-start-1 justify-self-start text-left uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
+            className={`col-start-2 row-start-1 justify-self-end text-right uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
             onClick={toggleOpen}
             aria-expanded={open}
           >
@@ -204,6 +204,8 @@ export default function ESNav() {
             >
               Instagram
             </a>
+            {/* Image size S / M / L (works / exhibitions views). */}
+            {showSizes && sizeButtons("mt-[1.25em] text-3xl!")}
           </div>
         </nav>
       )}
