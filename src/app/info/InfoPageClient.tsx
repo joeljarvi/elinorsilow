@@ -282,7 +282,7 @@ export default function InfoPageClient({
       // Desktop: cols 3–6.
       body: (
         <div className="grid grid-cols-12 gap-x-4 px-0 lg:px-0">
-          <p className="col-span-12 lg:col-start-3 lg:col-span-5 font-gtAmericaCondensed text-3xl uppercase lg:normal-case lg:text-sm whitespace-pre-line leading-tight lg:leading-relaxed lg:font-stix  ">
+          <p className="col-span-12 lg:col-start-3 lg:col-span-5 font-gtAmericaCondensed text-3xl uppercase lg:normal-case lg:text-sm whitespace-pre-line text-justify leading-tight lg:leading-relaxed lg:font-stix  ">
             {bio}
           </p>
         </div>

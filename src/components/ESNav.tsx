@@ -68,7 +68,8 @@ export default function ESNav() {
   // exhibitions lists.
   const showSizes =
     pathname === "/" && (mode === "works" || mode === "exhibitions");
-  const sizeButtons = (className: string) => (
+  // afterPick: also run on a pick (the mobile menu closes itself).
+  const sizeButtons = (className: string, afterPick?: () => void) => (
     <div
       className={`flex gap-3 font-gtAmericaCondensed font-black uppercase tracking-tight text-sm leading-none text-primary ${className}`}
     >
@@ -76,7 +77,10 @@ export default function ESNav() {
         <button
           key={sz}
           type="button"
-          onClick={() => setImageSize(sz)}
+          onClick={() => {
+            setImageSize(sz);
+            afterPick?.();
+          }}
           aria-pressed={imageSize === sz}
           aria-label={
             sz === "S"
@@ -208,7 +212,10 @@ export default function ESNav() {
           {/* Image size S / M / L (works / exhibitions views): along the
               bottom of the menu, spread across its width. */}
           {showSizes &&
-            sizeButtons("absolute inset-x-3 bottom-3 justify-between text-3xl!")}
+            sizeButtons(
+              "absolute inset-x-3 bottom-3 justify-between text-3xl!",
+              () => setOpenDesktopNav(false),
+            )}
         </nav>
       )}
     </>
