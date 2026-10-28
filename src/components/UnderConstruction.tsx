@@ -1,15 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useUI, REVEAL_MS } from "@/context/UIContext";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // "Under construction" — a full-screen purple-100 panel over the whole site
 // (z-90, above ESNav's z-80) with the notice in the center and a × top
-// right that closes it (until the next page load).
+// right that closes it (until the next page load). Closing it starts the
+// site's reveal (siteReveal): the list rows, then the featured work and
+// ESNav.
 export default function UnderConstruction() {
   const [open, setOpen] = useState(true);
+  const { setSiteReveal } = useUI();
+  const close = () => {
+    setOpen(false);
+    setSiteReveal("rows");
+    setTimeout(() => setSiteReveal("done"), REVEAL_MS);
+  };
   // Not over Sanity Studio.
   const pathname = usePathname();
   if (!open || pathname.startsWith("/studio")) return null;
@@ -20,21 +29,21 @@ export default function UnderConstruction() {
         silow at{" "}
         <Link
           className="text-primary/50 hover:text-primary cursor-pointer"
-          href="instagram.com/elinorsilow"
+          href="https://instagram.com/elinorsilow"
         >
           instagram
         </Link>{" "}
         or{" "}
         <Link
           className="text-primary/50 hover:text-primary cursor-pointer"
-          href="mailto:elinorsilow@gmail.com"
+          href="mailto:elinor.silow@gmail.com"
         >
           email
         </Link>
       </p>
       <button
         type="button"
-        onClick={() => setOpen(false)}
+        onClick={close}
         aria-label="Close"
         className="absolute top-0 right-0 h-9 px-3 lg:px-4 flex items-center cursor-pointer"
       >

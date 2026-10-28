@@ -38,6 +38,11 @@ interface UIContextValue {
   imageSize: ImageSize;
   setImageSize: (s: ImageSize) => void;
   setIntroPhase: (p: IntroPhase) => void;
+  // The site's reveal once the "under construction" overlay is closed:
+  // "covered" (overlay up; list rows and ESNav hidden) → "rows" (the rows
+  // fade in, staggered) → "done" (the featured work opens, ESNav shows).
+  siteReveal: SiteReveal;
+  setSiteReveal: (r: SiteReveal) => void;
   navVisible: boolean;
   setNavVisible: (v: boolean) => void;
   openDesktopNav: boolean;
@@ -114,6 +119,18 @@ export type ImageSize = "S" | "M" | "L";
 
 export type IntroPhase = "backdrop" | "media" | "done";
 
+export type SiteReveal = "covered" | "rows" | "done";
+// The rows' reveal (seconds): each row's background fades in REVEAL_FADE,
+// REVEAL_STAGGER after the one above (the first REVEAL_ROWS rows; the rest
+// with the last of them), its text REVEAL_TEXT_AFTER after its background.
+export const REVEAL_STAGGER = 0.05;
+export const REVEAL_ROWS = 24;
+export const REVEAL_TEXT_AFTER = 0.25;
+export const REVEAL_FADE = 0.4;
+export const REVEAL_MS =
+  ((REVEAL_ROWS - 1) * REVEAL_STAGGER + REVEAL_TEXT_AFTER + REVEAL_FADE) *
+  1000;
+
 const UIContext = createContext<UIContextValue | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
@@ -145,6 +162,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [moreFunBg, setMoreFunBg] = useState(() => randomHsl());
   const [homeBg, setHomeBg] = useState<string | null>(null);
   const [introPhase, setIntroPhase] = useState<IntroPhase>("backdrop");
+  const [siteReveal, setSiteReveal] = useState<SiteReveal>("covered");
   // Starts at M on the server and first render (no hydration mismatch),
   // then picks up the saved choice; saving is best-effort (storage can be
   // unavailable, e.g. private browsing).
@@ -250,6 +268,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setHomeBg,
         introPhase,
         setIntroPhase,
+        siteReveal,
+        setSiteReveal,
         imageSize,
         setImageSize,
         navVisible,

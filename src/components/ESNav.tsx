@@ -54,6 +54,7 @@ export default function ESNav() {
     setOpenDesktopNav,
     setFilterOpen,
     introPhase,
+    siteReveal,
     imageSize,
     setImageSize,
   } = useUI();
@@ -105,7 +106,7 @@ export default function ESNav() {
       {/* Mobile nav: "Elinor Silow" and "MENU" fixed across the top. Hidden during the home page intro (backdrop, then media),
           then fades in. Stays visible above modals (z-80 > their z-70). */}
       <div
-        className={`lg:hidden fixed top-0 left-0 z-80 w-full transition-opacity duration-700 ${pathname === "/" && introPhase !== "done" ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`lg:hidden fixed top-0 left-0 z-80 w-full transition-opacity duration-700 ${pathname === "/" && (introPhase !== "done" || siteReveal !== "done") ? "opacity-0 pointer-events-none" : "opacity-100"}`}
       >
         {/* Fixed across the top, a 2-col grid (like the mobile list rows):
             "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) in
@@ -130,7 +131,7 @@ export default function ESNav() {
           left, the links always visible in the grid (no MENU on desktop).
           Same intro fade and stacking above modals as the mobile nav. */}
       <nav
-        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 gap-x-4 px-4 h-9 bg-linear-to-b from-background to-transparent items-center transition-opacity duration-700 ${pathname === "/" && introPhase !== "done" ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 gap-x-4 px-4 h-9 bg-linear-to-b from-background to-transparent items-center transition-opacity duration-700 ${pathname === "/" && (introPhase !== "done" || siteReveal !== "done") ? "opacity-0 pointer-events-none" : "opacity-100"}`}
       >
         {/* Image size S / M / L: top right (col 12, right edge). */}
         {showSizes &&

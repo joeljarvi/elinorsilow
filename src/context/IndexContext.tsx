@@ -37,24 +37,19 @@ const IndexContext = createContext<IndexContextValue | undefined>(undefined);
 export function IndexProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  // The home page ("/") is the index: it shows one view — exhibitions
-  // (default), works or info — switched in place, without a route change.
+  // The home page ("/") is the index: it shows one view — works
+  // (default), exhibitions or info — switched in place, without a route change.
   // The view is kept here and mirrored in the URL (?view=…), so links like
   // /?view=works (and the old /index/works, /info, which redirect there)
   // open on it. Read from the URL after mounting (not useSearchParams, which
   // would need a Suspense boundary around the whole layout).
-  const [view, setView] = useState<HomeView>("exhibitions");
+  const [view, setView] = useState<HomeView>("works");
   useEffect(() => {
     if (pathname !== "/") return;
     const v = new URLSearchParams(window.location.search).get("view");
     if (HOME_VIEWS.includes(v as HomeView)) setView(v as HomeView);
-    // No view in the URL: exhibitions on desktop, works on mobile.
-    else
-      setView(
-        window.matchMedia("(min-width: 1024px)").matches
-          ? "exhibitions"
-          : "works",
-      );
+    // No view in the URL: works.
+    else setView("works");
   }, [pathname]);
   const mode: IndexMode = view;
   const setMode = (next: IndexMode) => {

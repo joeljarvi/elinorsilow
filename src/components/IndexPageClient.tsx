@@ -28,7 +28,14 @@ import LenisScroll from "@/components/LenisScroll";
 import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
 import BackToTop from "@/components/BackToTop";
-import { useUI, type ImageSize } from "@/context/UIContext";
+import {
+  useUI,
+  type ImageSize,
+  REVEAL_STAGGER,
+  REVEAL_ROWS,
+  REVEAL_TEXT_AFTER,
+  REVEAL_FADE,
+} from "@/context/UIContext";
 
 const BATCH = 24;
 
@@ -118,6 +125,7 @@ function ListRow({
   onToggle,
   onDragStart,
   moved,
+  reveal,
 }: {
   item: RowItem;
   open: boolean;
@@ -136,6 +144,10 @@ function ListRow({
   onDragStart?: (e: ReactPointerEvent) => void;
   // Being / having been dragged: the page background, never striped.
   moved?: boolean;
+  // The site's reveal (siteReveal): "hidden" — no background or text yet;
+  // a number — its background fades in after that many seconds, then its
+  // text; undefined — shown.
+  reveal?: "hidden" | number;
 }) {
   const images = item.images;
   // The counter (and click-for-next) only when there's more than one.
@@ -210,6 +222,16 @@ function ListRow({
       onClick={() => {
         if (!open) onToggle();
       }}
+      // Reveal: background, then text, each fading in after its delay.
+      style={
+        typeof reveal === "number"
+          ? {
+              transitionProperty: "background-color, color",
+              transitionDuration: `${REVEAL_FADE}s`,
+              transitionDelay: `${reveal}s, ${reveal + REVEAL_TEXT_AFTER}s`,
+            }
+          : undefined
+      }
       initial={false}
       // L: the screen minus 6rem, the image filling what the text leaves;
       // S / M: as tall as the image and text (at most that).
@@ -223,7 +245,7 @@ function ListRow({
           : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`relative ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[2.25rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
+      className={`relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[2.25rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-9 overflow-hidden content-center"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center ${open ? "grid grid-cols-2 gap-x-2 gap-y-0" : "grid grid-cols-2 gap-x-2"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
     >
       {/* Open purple row (desktop): its text keeps the purple background
           — the text line, and on exhibitions the description / credits
@@ -558,7 +580,7 @@ export default function IndexPageClient() {
   // Image size (S / M / L): a site-wide setting, kept in UIContext. Each
   // view starts at its default — works M, exhibitions L — and the S / M / L
   // buttons change it from there.
-  const { imageSize, setImageSize } = useUI();
+  const { imageSize, setImageSize, siteReveal } = useUI();
   useEffect(() => {
     setImageSize(mode === "works" ? "M" : "L");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -680,6 +702,8 @@ export default function IndexPageClient() {
   // visibleCount reset above, which would otherwise undo the extra rows.)
   useEffect(() => {
     if (!openOnEnter.current) return;
+    // After the site's reveal (the rows fading in).
+    if (siteReveal !== "done") return;
     if (mode === "works") {
       if (visibleWorks.length === 0) return;
       openOnEnter.current = false;
@@ -706,7 +730,7 @@ export default function IndexPageClient() {
     }
     // Exhibitions: all rows start closed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, visibleWorks.length]);
+  }, [mode, visibleWorks.length, siteReveal]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -774,6 +798,14 @@ export default function IndexPageClient() {
                             tall={false}
                             striped={i % 2 === 1 && !movedRows.has(key)}
                             moved={movedRows.has(key)}
+                            reveal={
+                              siteReveal === "covered"
+                                ? "hidden"
+                                : siteReveal === "rows"
+                                  ? Math.min(i, REVEAL_ROWS - 1) *
+                                    REVEAL_STAGGER
+                                  : undefined
+                            }
                             size={imageSize}
                             rowRef={(el) => {
                               exRowRefs.current[key] = el;
