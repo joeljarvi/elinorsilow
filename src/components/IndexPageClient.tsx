@@ -179,21 +179,6 @@ function ListRow({
   // Opening, in steps (see ROW_S…): the text line fades in once the row
   // has grown.
   const [infoShown, setInfoShown] = useState(true);
-  // Mobile: when the description or credits run over more than one line
-  // (taller than a row), a row's gap (mt-9) between the two.
-  const descRef = useRef<HTMLParagraphElement>(null);
-  const creditsRef = useRef<HTMLParagraphElement>(null);
-  const [detailsTall, setDetailsTall] = useState(false);
-  useLayoutEffect(() => {
-    if (!open) return;
-    // More than one line: content (minus py-3) over 1.5 line heights.
-    const multiline = (el: HTMLElement | null) => {
-      if (!el) return false;
-      const line = parseFloat(getComputedStyle(el).lineHeight) || 20;
-      return el.scrollHeight - 24 > line * 1.5;
-    };
-    setDetailsTall(multiline(descRef.current) || multiline(creditsRef.current));
-  }, [open, description, item.credits]);
   // Layout effect: hidden before the opening row is painted (no flash).
   useLayoutEffect(() => {
     if (!open) return;
@@ -247,7 +232,7 @@ function ListRow({
           : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-9 lg:pb-0" : "text-primary/50"}`}
+      className={`group/row relative ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} ${moved ? "bg-background" : ""} ${striped && !open ? "bg-purple-100" : ""} ${open ? "" : striped ? "hover:bg-purple-200" : "hover:bg-purple-100"} ${open ? `${fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[2.25rem_minmax(0,max-content)_minmax(0,1fr)]" : "lg:grid-rows-[2.25rem_minmax(0,1fr)_minmax(4.5rem,max-content)]"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-12 lg:pb-0" : "text-primary/50"}`}
     >
       {/* Open purple row (desktop): its text keeps the purple background
           — the text line, and on exhibitions the description / credits
@@ -282,10 +267,10 @@ function ListRow({
           className={
             // Mobile: the title's first line indented a third of the width.
             // Mobile: open (2-col grid) one column; closed (4-col) two.
-            `col-span-1 ${open ? "italic font-bold" : ""} ${open && !isWork && multi ? "pr-14 lg:pr-0" : ""} font-normal truncate lg:col-start-3 ${isWork ? "lg:col-span-2 font-bold" : "lg:col-span-3"} lg:row-start-1 ${infoFade}`
+            `col-span-1 ${open ? "italic font-bold" : ""} font-normal flex items-center min-w-0 overflow-hidden lg:col-start-3 ${isWork ? "lg:col-span-2 font-bold" : "lg:col-span-3"} lg:row-start-1 ${infoFade}`
           }
         >
-          <Ticker>{item.title}</Ticker>
+          <Ticker className="w-full">{item.title}</Ticker>
         </motion.span>
         <motion.span
           // Venue: cols 6–7. Materials (works): cols 5–7 (the title 3–4),
@@ -305,9 +290,8 @@ function ListRow({
               ease: "easeOut",
               delay: isWork ? DETAILS_AT : IMAGES_AT + 0.5,
             }}
-            ref={descRef}
             data-lenis-prevent
-            className="order-3 col-span-2 lg:order-none lg:col-start-3 lg:col-span-4 lg:row-start-3 py-3 min-h-9 max-h-[20dvh] lg:max-h-none overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug"
+            className="order-3 col-span-2 lg:order-none lg:col-start-3 lg:col-span-4 lg:row-start-3 lg:py-3 min-h-12 lg:min-h-9 max-h-[20dvh] lg:max-h-none overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug"
           >
             {description}
           </motion.p>
@@ -323,9 +307,8 @@ function ListRow({
               ease: "easeOut",
               delay: isWork ? DETAILS_AT : IMAGES_AT + 0.5,
             }}
-            ref={creditsRef}
             data-lenis-prevent
-            className={`order-3 col-span-2 lg:order-none lg:col-start-9 lg:col-span-3 lg:row-start-3 ${description && detailsTall ? "mt-9 lg:mt-0" : ""} py-3 min-h-9 max-h-[20dvh] lg:max-h-none overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug`}
+            className={`order-3 col-span-2 lg:order-none lg:col-start-9 lg:col-span-3 lg:row-start-3 ${description ? "mt-12 lg:mt-0" : ""} lg:py-3 min-h-12 lg:min-h-9 max-h-[20dvh] lg:max-h-none overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug`}
           >
             {item.credits}
           </motion.p>
@@ -373,7 +356,7 @@ function ListRow({
             // line (works, desktop: two gaps — the empty row 2 between).
             // Exhibitions: right after the text line (row 2), the
             // description / credits below it.
-            className={`${isWork ? "order-3 mt-9 lg:-mt-6 lg:row-start-3" : "order-2 mt-9 lg:-my-3 lg:row-start-2"} -mx-3 px-3 lg:mx-0 lg:px-0 relative overflow-hidden min-h-0 col-span-2 lg:order-none lg:col-span-12 grid grid-cols-1 grid-rows-[minmax(0,1fr)] lg:grid-cols-12 lg:gap-x-4`}
+            className={`${isWork ? "order-3 mt-12 lg:-mt-6 lg:row-start-3" : `order-2 mt-12 ${description || item.credits ? "mb-12" : ""} lg:-my-3 lg:row-start-2`} -mx-3 px-3 lg:mx-0 lg:px-0 relative overflow-hidden min-h-0 col-span-2 lg:order-none lg:col-span-12 grid grid-cols-1 grid-rows-[minmax(0,1fr)] lg:grid-cols-12 lg:gap-x-4`}
           >
             {/* Open exhibition: its title on top of the image, vertically
                 centered on it (both centered in the image area), desktop
@@ -394,7 +377,7 @@ function ListRow({
                   ease: [0.22, 1, 0.36, 1],
                   delay: isWork ? TITLE_AT : IMAGES_AT,
                 }}
-                className={`col-start-1 bg-background row-start-1 min-h-0 h-full w-full flex flex-col items-start lg:items-center gap-2 ${fullscreen ? "lg:col-start-1 lg:col-span-12" : "lg:col-start-1 lg:col-span-12"}`}
+                className={`col-start-1 bg-background row-start-1 min-h-0 h-full w-full flex flex-col items-start lg:items-center gap-12 lg:gap-2 ${fullscreen ? "lg:col-start-1 lg:col-span-12" : "lg:col-start-1 lg:col-span-12"}`}
               >
                 {/* The image (click → next), centered in the space the row
                     has left for it and never taller than that; S / M at
@@ -427,7 +410,7 @@ function ListRow({
                       key={image}
                       src={`${image}?w=2000&auto=format`}
                       alt={`${item.title} — image ${imageIndex + 1}`}
-                      className={`block object-contain object-left lg:object-center ${size === "L" ? "w-full h-auto max-h-[50dvh] lg:h-full lg:max-h-none" : size === "S" ? "w-full lg:w-auto h-auto max-w-full max-h-[50dvh] lg:max-h-[20dvh]" : "w-full lg:w-auto h-auto max-w-full max-h-[50dvh] lg:max-h-[45dvh]"}`}
+                      className={`block object-contain object-left lg:object-center ${size === "L" ? "w-full h-auto lg:h-full" : size === "S" ? "w-full lg:w-auto h-auto max-w-full max-h-[50dvh] lg:max-h-[20dvh]" : "w-full lg:w-auto h-auto max-w-full max-h-[50dvh] lg:max-h-[45dvh]"}`}
                     />
                   </button>
                   {multi && cursor && (
@@ -444,7 +427,7 @@ function ListRow({
                     ("1 of 5"); on mobile "5 / 7", left-aligned under the
                     image. */}
                 <span
-                  className={`${multi ? "flex lg:hidden" : "hidden"} min-h-9 items-center tabular-nums`}
+                  className={`${multi ? "flex lg:hidden" : "hidden"} min-h-12 items-center tabular-nums`}
                 >
                   {imageIndex + 1} / {images.length}
                 </span>
@@ -458,7 +441,7 @@ function ListRow({
           (row 1, h-9), centered on it like the text. */}
       {open && (
         <div
-          className="absolute top-0 right-0 px-3 lg:px-4 h-12 lg:h-9  z-20 flex items-center gap-3 text-primary/50"
+          className="absolute top-0 right-0 px-3 lg:px-4 h-12 lg:h-9  z-20 hidden lg:flex items-center gap-3 text-primary/50"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Exhibitions with several images: ← / → (previous / next
@@ -647,8 +630,12 @@ export default function IndexPageClient() {
       // its top at the top instead so the start of it is visible.
       const box = row.getBoundingClientRect();
       const vh = window.innerHeight;
-      const delta =
-        box.height < vh ? box.top + box.height / 2 - vh / 2 : box.top;
+      // Mobile: its top just under the top bar (36px, ESNav h-9).
+      const delta = !desktop
+        ? box.top - 36
+        : box.height < vh
+          ? box.top + box.height / 2 - vh / 2
+          : box.top;
       // Ease most of the way each frame; the last frames land exactly.
       const last = performance.now() >= until;
       const by = last ? delta : delta * 0.25;

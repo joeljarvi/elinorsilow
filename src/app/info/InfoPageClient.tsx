@@ -35,12 +35,52 @@ function siteName(url: string) {
 
 // A line split into columns on the 12-col grid. Desktop: each cell at its
 // given cols. Mobile (4 cols): the first cell cols 1–2, then one col each;
-// cells marked mobileHidden are left out there.
+// cells marked mobileHidden are left out there. Collapsible (mobile): only
+// the first cell (the title) shows, with the last (the year) at the right
+// end of its line; tapping the line opens it — the other cells stacked
+// under it, a line each — and tapping again closes it.
 function Cols({
   cells,
+  collapsible = false,
 }: {
   cells: { content: ReactNode; className: string; mobileHidden?: boolean }[];
+  collapsible?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+  if (collapsible)
+    return (
+      <div
+        onClick={() => setOpen((v) => !v)}
+        className={`-mx-3 px-3 lg:mx-0 lg:px-0 ${open ? "" : "h-9"} lg:h-9 hover:bg-purple-200 transition-colors duration-300 flex flex-col lg:grid lg:grid-cols-12 gap-x-4 lg:items-center leading-none cursor-pointer lg:cursor-auto`}
+      >
+        {/* Mobile: the first line — the title, and the last cell (the
+            year) at its right end. Desktop: its cells sit in the grid
+            (lg:contents). */}
+        <div className="flex h-9 shrink-0 items-center gap-x-4 lg:contents">
+          <span
+            className={`flex flex-1 lg:flex-none items-center min-w-0 overflow-hidden ${cells[0].className}`}
+          >
+            <Ticker className="w-full">{cells[0].content}</Ticker>
+          </span>
+          <span className="lg:hidden shrink-0 tabular-nums">
+            {cells[cells.length - 1].content}
+          </span>
+        </div>
+        {/* The rest: stacked under it when open (mobile; the last cell is
+            already on the first line); in their columns on desktop. */}
+        {cells.slice(1).map((c, i) => {
+          const last = i === cells.length - 2;
+          return (
+            <span
+              key={i}
+              className={`${open && !last ? "flex" : "hidden"} lg:flex h-9 shrink-0 items-center min-w-0 overflow-hidden lg:h-auto ${c.className}`}
+            >
+              <Ticker className="w-full">{c.content}</Ticker>
+            </span>
+          );
+        })}
+      </div>
+    );
   return (
     <div className="-mx-3 px-3 lg:mx-0 lg:px-0 h-9 hover:bg-purple-200 transition-colors duration-300 grid grid-cols-4 lg:grid-cols-12 gap-x-4 items-center leading-none">
       {cells.map((c, i) => (
@@ -107,6 +147,7 @@ function ExhibitionHistory({ query = "" }: { query?: string }) {
           es.map((e) => (
             <Cols
               key={e.id}
+              collapsible
               cells={[
                 {
                   className: "lg:col-start-3 lg:col-span-3",
@@ -114,7 +155,9 @@ function ExhibitionHistory({ query = "" }: { query?: string }) {
                     <button
                       type="button"
                       className="text-left italic underline underline-offset-4 decoration-[0.5px] cursor-pointer"
-                      onClick={() => {
+                      onClick={(ev) => {
+                        // Opens the exhibition, not the line.
+                        ev.stopPropagation();
                         setActiveExhibitionSlug(e.slug!);
                         setOpen(false);
                       }}
@@ -187,7 +230,7 @@ function InfoRow({
       )}
       {section.title && (
         <h2
-          className={`col-span-12 px-3 lg:px-0 ${section.headerCols ?? " font-gtAmericaCondensed uppercase lg:col-start-3 lg:col-span-10"} lg:row-start-1 h-9 flex items-center whitespace-pre `}
+          className={`col-span-12 px-3 lg:px-0 ${section.headerCols ?? " font-gtAmericaCondensed uppercase lg:col-start-3 lg:col-span-10"} lg:row-start-1 h-9 flex items-center whitespace-pre max-lg:text-3xl`}
         >
           {section.title}
         </h2>
@@ -239,7 +282,7 @@ export default function InfoPageClient({
       // Desktop: cols 3–6.
       body: (
         <div className="grid grid-cols-12 gap-x-4 px-0 lg:px-0">
-          <p className="col-span-12 lg:col-start-3 lg:col-span-5 text-sm whitespace-pre-line leading-snug lg:leading-relaxed font-stix  ">
+          <p className="col-span-12 lg:col-start-3 lg:col-span-5 font-gtAmericaCondensed text-3xl uppercase lg:normal-case lg:text-sm whitespace-pre-line leading-tight lg:leading-relaxed lg:font-stix  ">
             {bio}
           </p>
         </div>
@@ -265,7 +308,8 @@ export default function InfoPageClient({
               },
               { className: "lg:col-span-3", content: grant.acf.institution },
               {
-                className: "lg:col-start-10 lg:col-span-1 tabular-nums",
+                className:
+                  "col-start-4 text-right lg:text-left lg:col-start-10 lg:col-span-1 tabular-nums",
                 content: grant.acf.year,
               },
             ]}
@@ -282,8 +326,10 @@ export default function InfoPageClient({
         .map((edu) => (
           // School (3–6), city (7–9), years (10–11) — under the exhibition
           // history's type column.
+          // Mobile: collapsible — school and years; tap to show the city.
           <Cols
             key={edu.id}
+            collapsible
             cells={[
               {
                 className: "lg:col-start-3 lg:col-span-4",
@@ -292,7 +338,7 @@ export default function InfoPageClient({
               { className: "lg:col-span-3", content: edu.acf.city },
               {
                 className:
-                  "lg:col-start-10 lg:col-span-2 tabular-nums whitespace-nowrap",
+                  "col-start-4 text-right lg:text-left lg:col-start-10 lg:col-span-2 tabular-nums whitespace-nowrap",
                 content: [edu.acf.start_year, edu.acf.end_year]
                   .filter(Boolean)
                   .join("–"),
@@ -388,7 +434,7 @@ export default function InfoPageClient({
       {/* Desktop: starts a quarter of the screen down, level with the fixed
           view links (Works / Exhibitions / Info), so the first line of the
           about text shares the "Works" link's baseline. */}
-      <div className="flex flex-col gap-y-18  pb-18 lg:mt-18 px-0 lg:px-0">
+      <div className="flex flex-col gap-y-24 lg:gap-y-18 pb-18 lg:mt-18 px-0 lg:px-0">
         {sections.map((section) => (
           <InfoRow
             key={section.key}

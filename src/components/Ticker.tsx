@@ -5,6 +5,9 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 // Pixels per second the text moves, and the space between its copies.
 const SPEED = 40;
 const GAP = 32;
+// The edge fade while scrolling: transparent → opaque over 12px each side.
+const FADE =
+  "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)";
 
 // One line of text that, when it doesn't fit its box, scrolls sideways as
 // a ticker instead of being cut off: the text, a gap, the text again,
@@ -40,6 +43,16 @@ export default function Ticker({
     <span
       ref={box}
       className={`block min-w-0 overflow-hidden whitespace-nowrap ${className}`}
+      // While it scrolls: the text fades out at both edges (a mask, so it
+      // fades into whatever is behind — page background or a purple row).
+      style={
+        width
+          ? {
+              maskImage: FADE,
+              WebkitMaskImage: FADE,
+            }
+          : undefined
+      }
     >
       <span
         // align-top: no baseline gap under it, so the line keeps its own
