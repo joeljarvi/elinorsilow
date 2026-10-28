@@ -119,7 +119,7 @@ export default function ESNav() {
         >
           <Link
             href="/"
-            className={`justify-self-start ${navReveal(navShown, 0).className}`}
+            className={`col-start-1 row-start-1 justify-self-start ${navReveal(navShown, 0).className}`}
             style={navReveal(navShown, 0).style}
           >
             Elinor Silow
@@ -127,7 +127,7 @@ export default function ESNav() {
           <button
             type="button"
             style={navReveal(navShown, 1).style}
-            className={`justify-self-start text-left uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
+            className={`col-start-2 row-start-1 justify-self-start text-left uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
             onClick={toggleOpen}
             aria-expanded={open}
           >
@@ -158,8 +158,8 @@ export default function ESNav() {
           stacked. Sits under the "Elinor Silow, CLOSE" line (z-80) so that
           stays visible to close it. Picking a link closes the menu. */}
       {open && (
-        <nav className="lg:hidden fixed inset-x-0 top-0 h-dvh z-[75] flex flex-col items-center justify-center  gap-0 p-4 pb-16 bg-background text-foreground font-gtAmericaCondensed text-3xl leading-tight uppercase">
-          <div className="relative flex flex-col items-center px-10 py-8">
+        <nav className="lg:hidden fixed inset-x-0 top-0 h-dvh z-[75] flex flex-col items-start justify-center  gap-0 p-3 pb-16 bg-background text-foreground font-gtAmericaCondensed text-3xl leading-tight uppercase">
+          <div className="relative flex flex-col items-start px-0 py-8">
             {VIEW_LINKS.map(({ view, label }) => (
               <button
                 key={view}

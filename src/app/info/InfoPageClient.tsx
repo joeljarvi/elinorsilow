@@ -41,7 +41,7 @@ function Cols({
   cells: { content: ReactNode; className: string; mobileHidden?: boolean }[];
 }) {
   return (
-    <div className="h-9 hover:bg-purple-200 transition-colors duration-300 grid grid-cols-4 lg:grid-cols-12 gap-x-4 items-center leading-none">
+    <div className="-mx-3 px-3 lg:mx-0 lg:px-0 h-9 hover:bg-purple-200 transition-colors duration-300 grid grid-cols-4 lg:grid-cols-12 gap-x-4 items-center leading-none">
       {cells.map((c, i) => (
         <span
           key={i}
@@ -177,7 +177,7 @@ function InfoRow({
 }) {
   return (
     <div
-      className={`grid grid-cols-12 gap-x-4 gap-y-9 font-stix leading-[1] text-primary ${textSize}`}
+      className={`grid grid-cols-12 gap-x-4 gap-y-9 px-0 lg:px-0 font-stix leading-[1] text-primary  ${textSize}`}
     >
       {section.lead && (
         <div className="hidden lg:block lg:col-start-1 lg:col-span-2 lg:row-start-1 ">
@@ -186,7 +186,7 @@ function InfoRow({
       )}
       {section.title && (
         <h2
-          className={`col-span-12 ${section.headerCols ?? " font-gtAmericaCondensed uppercase lg:col-start-3 lg:col-span-10"} lg:row-start-1 h-9 flex items-center whitespace-pre `}
+          className={`col-span-12 px-3 lg:px-0 ${section.headerCols ?? " font-gtAmericaCondensed uppercase lg:col-start-3 lg:col-span-10"} lg:row-start-1 h-9 flex items-center whitespace-pre `}
         >
           {section.title}
         </h2>
@@ -197,7 +197,7 @@ function InfoRow({
       <div
         // List sections: rows h-9 (Cols), alternating page background /
         // purple-100 like the works and exhibitions lists.
-        className={`col-span-12 lg:col-start-1 ${section.title ? "lg:row-start-2" : "lg:row-start-1"} flex flex-col ${section.title ? "[&>*:nth-child(even):not(:hover)]:bg-purple-100" : ""}`}
+        className={`col-span-12 px-3 lg:px-0 lg:col-start-1 ${section.title ? "lg:row-start-2" : "lg:row-start-1"} flex flex-col ${section.title ? "[&>*:nth-child(even):not(:hover)]:bg-purple-100" : ""}`}
       >
         {section.body}
       </div>
@@ -237,7 +237,7 @@ export default function InfoPageClient({
       title: "",
       // Desktop: cols 3–6.
       body: (
-        <div className="grid grid-cols-12 gap-x-4">
+        <div className="grid grid-cols-12 gap-x-4 px-3 lg:px-0">
           <p className="col-span-12 lg:col-start-3 lg:col-span-5 text-sm whitespace-pre-line leading-snug lg:leading-relaxed font-stix  ">
             {bio}
           </p>
@@ -365,7 +365,7 @@ export default function InfoPageClient({
               },
               {
                 className: "lg:col-span-5",
-                content: "STIX Two Text, GT America, GT Alpina",
+                content: "STIX Two Text, GT America",
               },
             ]}
           />
@@ -387,7 +387,7 @@ export default function InfoPageClient({
       {/* Desktop: starts a quarter of the screen down, level with the fixed
           view links (Works / Exhibitions / Info), so the first line of the
           about text shares the "Works" link's baseline. */}
-      <div className="flex flex-col gap-y-18  pb-18 mt-18 px-0 lg:px-0">
+      <div className="flex flex-col gap-y-18  pb-18 lg:mt-18 px-0 lg:px-0">
         {sections.map((section) => (
           <InfoRow
             key={section.key}

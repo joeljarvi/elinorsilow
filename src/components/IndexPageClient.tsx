@@ -779,7 +779,7 @@ export default function IndexPageClient() {
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
             "all": cols 2–3; exhibitions: cols 2–4. */}
-        <div className="lg:col-start-1 lg:col-span-12 lg:row-start-1 flex flex-col mt-24 lg:mt-0 lg:px-0">
+        <div className="lg:col-start-1 lg:col-span-12 lg:row-start-1 flex flex-col lg:px-0">
           <div>
             {(mode === "works" || mode === "exhibitions") &&
               (() => {

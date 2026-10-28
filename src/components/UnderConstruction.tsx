@@ -25,7 +25,7 @@ export default function UnderConstruction() {
   if (!open || pathname.startsWith("/studio")) return null;
   return (
     <div className="fixed inset-0 z-90 flex items-center justify-center bg-purple-100 text-primary font-gtAmericaCondensed uppercase text-sm">
-      <p className="max-w-sm">
+      <p className="max-w-xs lg:max-w-sm">
         this website is under construction. <br /> get in touch with elinor
         silow at{" "}
         <Link

@@ -347,6 +347,12 @@ export default function HomeLayoutClient({
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
+            {/* Mobile: the view's name, in the page (scrolls with it) —
+                col 1, under "Elinor Silow" with an empty row between, and
+                an empty row before the list. */}
+            <div className="lg:hidden mt-18 mb-9 h-9 px-3 flex items-center font-gtAmericaCondensed uppercase text-sm leading-none text-foreground">
+              {VIEW_LINKS.find((l) => l.view === view)?.label}
+            </div>
             {view === "info" ? (
               <InfoPageClient bio={bio} press={press} />
             ) : (
