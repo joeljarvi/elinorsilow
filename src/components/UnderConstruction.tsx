@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useUI, REVEAL_MS, NAV_AFTER_MS } from "@/context/UIContext";
+import {
+  useUI,
+  REVEAL_MS,
+  NAV_AFTER_MS,
+  HOME_NAV_AFTER_MS,
+} from "@/context/UIContext";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,12 +15,17 @@ import { usePathname } from "next/navigation";
 // (z-90, above ESNav's z-80) with the notice in the center and a × top
 // right that closes it (until the next page load). Closing it starts the
 // site's reveal (siteReveal): the list rows, then the featured work, then
-// the nav.
+// the nav. On the home page: the featured work, then the nav.
 export default function UnderConstruction() {
   const [open, setOpen] = useState(true);
   const { setSiteReveal } = useUI();
   const close = () => {
     setOpen(false);
+    if (pathname === "/") {
+      setSiteReveal("done");
+      setTimeout(() => setSiteReveal("nav"), HOME_NAV_AFTER_MS);
+      return;
+    }
     setSiteReveal("rows");
     setTimeout(() => setSiteReveal("done"), REVEAL_MS);
     setTimeout(() => setSiteReveal("nav"), REVEAL_MS + NAV_AFTER_MS);

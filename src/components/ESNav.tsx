@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
 import { useIndex, type HomeView } from "@/context/IndexContext";
+import FilterSettings from "./FilterMenu";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -39,35 +40,29 @@ function ThemeToggle({
   );
 }
 
-// The home page's views, switched in place (IndexContext): the mobile menu
-// here, and on desktop the column at the top left of the home page
-// (HomeLayoutClient).
-export const VIEW_LINKS: { view: HomeView; label: string }[] = [
-  { view: "works", label: "Works" },
-  { view: "exhibitions", label: "Exhibitions" },
-  { view: "info", label: "Info" },
+// The index section's views, in the menu.
+export const VIEW_LINKS: { view: HomeView; label: string; href: string }[] = [
+  { view: "works", label: "Works", href: "/index/works" },
+  { view: "exhibitions", label: "Exhibitions", href: "/index/exhibitions" },
+  { view: "info", label: "Info", href: "/index/info" },
 ];
 
 export default function ESNav() {
   const {
     openDesktopNav: open,
     setOpenDesktopNav,
+    filterOpen,
     setFilterOpen,
-    introPhase,
     siteReveal,
     imageSize,
     setImageSize,
   } = useUI();
   const pathname = usePathname();
-  // The home page's current view; switching it (in place on "/", or going
-  // to "/?view=…" from another page).
-  const { mode, setMode, search, setSearch } = useIndex();
-  const viewActive = (v: HomeView) => pathname === "/" && mode === v;
-  const worksLayout = pathname === "/" && mode === "works";
-  // Image size buttons (the site-wide setting) — shown with the works /
-  // exhibitions lists.
-  const showSizes =
-    pathname === "/" && (mode === "works" || mode === "exhibitions");
+  const { mode, search, setSearch } = useIndex();
+  const onIndex = pathname.startsWith("/index");
+  // List settings — shown with the works / exhibitions lists: the Filter menu
+  // on desktop, S / M / L in the mobile menu.
+  const showSizes = onIndex && mode !== "info";
   // afterPick: also run on a pick (the mobile menu closes itself).
   const sizeButtons = (className: string, afterPick?: () => void) => (
     <div
@@ -96,9 +91,9 @@ export default function ESNav() {
       ))}
     </div>
   );
-  // Home page: the nav fades in last, item by item (siteReveal "nav").
-  const navShown =
-    pathname !== "/" || (introPhase === "done" && siteReveal === "nav");
+  // Home and index pages: the nav fades in last, item by item (siteReveal
+  // "nav").
+  const navShown = !(pathname === "/" || onIndex) || siteReveal === "nav";
   const toggleOpen = () => {
     const next = !open;
     setOpenDesktopNav(next);
@@ -110,8 +105,8 @@ export default function ESNav() {
 
   return (
     <>
-      {/* Mobile nav: "Elinor Silow" and "MENU" fixed across the top. Hidden during the home page intro (backdrop, then media),
-          then fades in. Stays visible above modals (z-80 > their z-70). */}
+      {/* Mobile nav: "Elinor Silow" and "MENU" fixed across the top. Stays
+          visible above modals (z-80 > their z-70). */}
       <div
         className={`lg:hidden fixed top-0 left-0 z-80 w-full ${navShown ? "" : "pointer-events-none"}`}
       >
@@ -119,7 +114,7 @@ export default function ESNav() {
             "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) top
             right. */}
         <nav
-          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-12 lg:h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-3xl font-gtAmericaCondensed uppercase font-normal tracking-normal leading-none text-foreground`}
+          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-12 lg:h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-3xl  uppercase font-normal tracking-normal leading-none text-foreground`}
         >
           <Link
             href="/"
@@ -139,64 +134,96 @@ export default function ESNav() {
           </button>
         </nav>
       </div>
-      {/* Desktop nav, fixed at the top on every page: "Elinor Silow" top
-          left, the links always visible in the grid (no MENU on desktop).
-          Same intro fade and stacking above modals as the mobile nav. */}
+      {/* Desktop nav, fixed at the top on every page: "Elinor Silow" and
+          "Menu" (opens the menu panel) top left. Same stacking above modals
+          as the mobile nav. */}
       <nav
-        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 gap-x-4 px-4 h-9 bg-linear-to-b from-background to-transparent items-center ${navShown ? "" : "pointer-events-none"}`}
+        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 grid-rows-[2.25rem_auto] gap-x-4 px-4 bg-background items-center ${navShown ? "" : "pointer-events-none"}`}
       >
-        {/* Image size S / M / L: top right (col 12, right edge). */}
-        {showSizes &&
-          sizeButtons(
-            `col-start-12 row-start-1 justify-self-end py-1 ${navReveal(navShown, 0).className}`,
-          )}
-        {/* "Elinor Silow" (home), top left (cols 1–2). */}
-        <Link
-          href="/"
-          className={`col-start-1 col-span-2 row-start-1 justify-self-start py-1 whitespace-nowrap text-sm uppercase leading-none font-gtAmericaCondensed  text-foreground ${navReveal(navShown, 0).className}`}
-        >
-          Elinor Silow
-        </Link>
+        {/* Solid bar; only its bottom edge fades to transparent. */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-full h-3 bg-linear-to-b from-background to-transparent pointer-events-none"
+        />
+        {/* Filter: top center of the screen, with the works / exhibitions
+            lists. Opens the bar's second row: the settings (sort by, filter
+            by). */}
+        {showSizes && (
+          <button
+            type="button"
+            aria-expanded={filterOpen}
+            onClick={() => {
+              setFilterOpen(!filterOpen);
+              setOpenDesktopNav(false);
+            }}
+            style={navReveal(navShown, 2).style}
+            className={`absolute top-0 left-1/2 -translate-x-1/2 h-9 cursor-pointer font-areal font-medium text-xl uppercase text-neutral-800 ${navReveal(navShown, 2).className}`}
+          >
+            {filterOpen ? "Close" : "Filter"}
+          </button>
+        )}
+        {showSizes && filterOpen && (
+          <FilterSettings className="col-span-12 row-start-2" />
+        )}
+        {/* "Elinor Silow" (home) and "Menu", top left (cols 1–2). */}
+        <div className="col-start-1 col-span-2 row-start-1 flex items-baseline gap-x-2 py-1 whitespace-nowrap font-gensco text-2xl text-neutral-800">
+          <Link href="/" className={navReveal(navShown, 0).className}>
+            Elinor Silow,
+          </Link>
+          <button
+            type="button"
+            style={navReveal(navShown, 1).style}
+            className={`cursor-pointer font-areal font-medium text-xl uppercase ${navReveal(navShown, 1).className}`}
+            onClick={toggleOpen}
+            aria-expanded={open}
+          >
+            {open ? "Close" : "Menu"}
+          </button>
+        </div>
       </nav>
-      {/* Mobile menu — a full-height overlay (h-dvh, page background) with the links
+      {/* Menu — a full-height overlay (h-dvh, page background) with the links
           stacked, then search, then email and Instagram. Sits under the
           "Elinor Silow, CLOSE" line (z-80) so that stays visible to close
           it. Picking a link (or submitting a search) closes the menu. */}
       {open && (
-        <nav className="lg:hidden fixed inset-x-0 top-0 h-dvh z-[75] flex flex-col items-start justify-center  gap-0 p-3 pb-16 bg-background text-foreground font-gtAmericaCondensed text-3xl leading-tight uppercase">
+        <nav className="fixed inset-x-0 top-0 h-dvh z-[75] flex flex-col items-start justify-start   gap-0 p-3 lg:px-4 lg:pt-8 pb-16 bg-background text-neutral-800 font-areal text-xl uppercase font-medium leading-tight ">
           <div className="relative flex flex-col items-start px-0 py-8">
-            {VIEW_LINKS.map(({ view, label }) => (
-              <button
+            {VIEW_LINKS.map(({ view, label, href }) => (
+              <Link
                 key={view}
-                type="button"
-                aria-current={viewActive(view) ? "page" : undefined}
+                href={href}
+                scroll={false}
+                aria-current={pathname === href ? "page" : undefined}
                 className="uppercase cursor-pointer"
                 onClick={() => {
-                  setMode(view);
+                  setSearch("");
                   setOpenDesktopNav(false);
                 }}
               >
                 {label}
-              </button>
+              </Link>
             ))}
-            {/* Search (the shared index search): filters the current
-                view's list; Enter closes the menu to show the results. */}
-            <form
-              className="mt-[1.25em] w-full"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setOpenDesktopNav(false);
-              }}
-            >
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search"
-                aria-label="Search"
-                className="w-full p-0 m-0 border-0 bg-transparent outline-none uppercase text-foreground placeholder:text-primary/50"
-              />
-            </form>
+            {/* Search (the shared index search, index views only): filters
+                the current view's list; Enter closes the menu to show the
+                results. */}
+            {onIndex && (
+              <form
+                className="mt-[1.25em] w-full"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setOpenDesktopNav(false);
+                }}
+              >
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search"
+                  aria-label="Search"
+                  className="w-full p-0 m-0 border-0 bg-transparent outline-none uppercase text-foreground placeholder:text-primary/50"
+                />
+              </form>
+            )}
             {/* Contact. */}
             <a href="mailto:elinor.silow@gmail.com" className="mt-[1.25em]">
               Email
@@ -209,11 +236,12 @@ export default function ESNav() {
               Instagram
             </a>
           </div>
-          {/* Image size S / M / L (works / exhibitions views): along the
-              bottom of the menu, spread across its width. */}
+          {/* Mobile, image size S / M / L (works / exhibitions views): along
+              the bottom of the menu, spread across its width. Desktop has
+              them in the top bar. */}
           {showSizes &&
             sizeButtons(
-              "absolute inset-x-3 bottom-3 justify-between text-3xl!",
+              "lg:hidden absolute inset-x-3 bottom-3 justify-between text-3xl!",
               () => setOpenDesktopNav(false),
             )}
         </nav>

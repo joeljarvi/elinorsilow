@@ -9,11 +9,11 @@ import {
   ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import type { WorkSize } from "@/lib/workSize";
 
-// The views of the home page ("/"), switched in place.
+// The index section's views: /index/works, /index/exhibitions, /index/info.
 export type HomeView = "works" | "exhibitions" | "info";
 export type IndexMode = HomeView;
-const HOME_VIEWS: HomeView[] = ["works", "exhibitions", "info"];
 export type IndexSort = "latest" | "title" | "year";
 
 interface IndexContextValue {
@@ -21,6 +21,14 @@ interface IndexContextValue {
   setMode: (m: IndexMode) => void;
   sort: IndexSort;
   setSort: (s: IndexSort) => void;
+  // The lists' "by year" and "by size" filters ("all", or a year / a size).
+  yearFilter: string;
+  setYearFilter: (y: string) => void;
+  sizeFilter: WorkSize | "all";
+  setSizeFilter: (s: WorkSize | "all") => void;
+  // Goes up each time the lists should close all their open rows.
+  closeRowsSignal: number;
+  closeAllRows: () => void;
   tidy: boolean;
   setTidy: (t: boolean) => void;
   search: string;
@@ -37,29 +45,16 @@ const IndexContext = createContext<IndexContextValue | undefined>(undefined);
 export function IndexProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  // The home page ("/") is the index: it shows one view — works
-  // (default), exhibitions or info — switched in place, without a route change.
-  // The view is kept here and mirrored in the URL (?view=…), so links like
-  // /?view=works (and the old /index/works, /info, which redirect there)
-  // open on it. Read from the URL after mounting (not useSearchParams, which
-  // would need a Suspense boundary around the whole layout).
-  const [view, setView] = useState<HomeView>("works");
-  useEffect(() => {
-    if (pathname !== "/") return;
-    const v = new URLSearchParams(window.location.search).get("view");
-    if (HOME_VIEWS.includes(v as HomeView)) setView(v as HomeView);
-    // No view in the URL: works.
-    else setView("works");
-  }, [pathname]);
-  const mode: IndexMode = view;
+  // The current view comes from the URL (works outside the index section).
+  const mode: IndexMode =
+    pathname === "/index/exhibitions"
+      ? "exhibitions"
+      : pathname === "/index/info"
+        ? "info"
+        : "works";
   const setMode = (next: IndexMode) => {
     setSearch(""); // each view starts unfiltered
-    if (pathname === "/") {
-      setView(next);
-      window.history.replaceState(null, "", `/?view=${next}`);
-    } else {
-      router.push(`/?view=${next}`, { scroll: false });
-    }
+    router.push(`/index/${next}`, { scroll: false });
   };
 
   // Default sort per view: exhibitions by year, everything else latest.
@@ -69,6 +64,15 @@ export function IndexProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setSort(defaultSort);
   }, [defaultSort]);
+  // Each view has its own years, so these start over when switching views.
+  const [yearFilter, setYearFilter] = useState("all");
+  const [sizeFilter, setSizeFilter] = useState<WorkSize | "all">("all");
+  useEffect(() => {
+    setYearFilter("all");
+    setSizeFilter("all");
+  }, [mode]);
+  const [closeRowsSignal, setCloseRowsSignal] = useState(0);
+  const closeAllRows = () => setCloseRowsSignal((n) => n + 1);
   const [tidy, setTidy] = useState(true);
   const [search, setSearch] = useState("");
   const [zoom, setZoom] = useState(0);
@@ -81,6 +85,12 @@ export function IndexProvider({ children }: { children: ReactNode }) {
       setMode,
       sort,
       setSort,
+      yearFilter,
+      setYearFilter,
+      sizeFilter,
+      setSizeFilter,
+      closeRowsSignal,
+      closeAllRows,
       tidy,
       setTidy,
       search,
@@ -91,7 +101,7 @@ export function IndexProvider({ children }: { children: ReactNode }) {
       cycleWorksPerRow,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [mode, sort, setSort, tidy, search, zoom, worksPerRow, pathname],
+    [mode, sort, setSort, yearFilter, sizeFilter, closeRowsSignal, tidy, search, zoom, worksPerRow, pathname],
   );
 
   return (

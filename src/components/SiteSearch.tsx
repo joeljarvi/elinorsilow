@@ -30,8 +30,8 @@ const PAGES = [
   { title: "Works", href: "/index/works" },
   { title: "Exhibitions", href: "/index/exhibitions" },
   { title: "Index", href: "/index" },
-  { title: "Info", href: "/info" },
-  { title: "CV", href: "/info" },
+  { title: "Info", href: "/index/info" },
+  { title: "CV", href: "/index/info" },
   { title: "Privacy policy", href: "/privacy-policy" },
 ];
 
@@ -107,7 +107,7 @@ export default function SiteSearch({ className = "" }: { className?: string }) {
           detail: [e.acf.year, e.acf.venue, e.acf.city]
             .filter(Boolean)
             .join(", "),
-          open: () => router.push("/info#exhibitions"),
+          open: () => router.push("/index/info#exhibitions"),
         }),
       ),
       ...educations.map((e) =>
@@ -118,7 +118,7 @@ export default function SiteSearch({ className = "" }: { className?: string }) {
           detail: [`${e.acf.start_year}–${e.acf.end_year}`, e.acf.city]
             .filter(Boolean)
             .join(", "),
-          open: () => router.push("/info#education"),
+          open: () => router.push("/index/info#education"),
         }),
       ),
       ...grants.map((g) =>
@@ -127,7 +127,7 @@ export default function SiteSearch({ className = "" }: { className?: string }) {
           kind: "Grant",
           title: g.acf.title,
           detail: g.acf.year,
-          open: () => router.push("/info#grants"),
+          open: () => router.push("/index/info#grants"),
         }),
       ),
       ...PAGES.map((p) =>

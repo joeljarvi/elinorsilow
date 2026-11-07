@@ -29,15 +29,10 @@ interface UIContextValue {
   refreshMoreFunBg: () => void;
   homeBg: string | null;
   setHomeBg: (v: string | null) => void;
-  // Home page intro: the backdrop fades in, then the hero media, then the
-  // nav and news. Starts at "backdrop" so the server render already hides
-  // the nav on "/" (no flash); runs once per visit.
-  introPhase: IntroPhase;
   // Site-wide image size setting (S / M / L), used by the works and
   // exhibitions lists; remembered in this browser.
   imageSize: ImageSize;
   setImageSize: (s: ImageSize) => void;
-  setIntroPhase: (p: IntroPhase) => void;
   // The site's reveal once the "under construction" overlay is closed:
   // "covered" (overlay up; list rows and nav hidden) → "rows" (the rows
   // fade in, staggered) → "done" (the featured work opens) → "nav" (ESNav
@@ -118,8 +113,6 @@ function randomHsl() {
 // full width. All leave room for the open row's text below the image.
 export type ImageSize = "S" | "M" | "L";
 
-export type IntroPhase = "backdrop" | "media" | "done";
-
 export type SiteReveal = "covered" | "rows" | "done" | "nav";
 // The rows' reveal (seconds): each row's background fades in REVEAL_FADE,
 // REVEAL_STAGGER after the one above (the first REVEAL_ROWS rows; the rest
@@ -134,6 +127,8 @@ export const REVEAL_MS =
 // The nav comes last, once the featured work has opened (NAV_AFTER_MS
 // after "done"), its items NAV_STAGGER apart, top to bottom.
 export const NAV_AFTER_MS = 2000;
+// On the home page (no rows to wait for): once the work has faded in.
+export const HOME_NAV_AFTER_MS = 1000;
 export const NAV_STAGGER = 0.08;
 
 // A nav item's reveal: hidden until `shown`, then fading in after its place
@@ -175,7 +170,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showAnchorsAll, setShowAnchorsAll] = useState(false);
   const [moreFunBg, setMoreFunBg] = useState(() => randomHsl());
   const [homeBg, setHomeBg] = useState<string | null>(null);
-  const [introPhase, setIntroPhase] = useState<IntroPhase>("backdrop");
   const [siteReveal, setSiteReveal] = useState<SiteReveal>("covered");
   // Starts at M on the server and first render (no hydration mismatch),
   // then picks up the saved choice; saving is best-effort (storage can be
@@ -280,8 +274,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         refreshMoreFunBg: () => setMoreFunBg(randomHsl()),
         homeBg,
         setHomeBg,
-        introPhase,
-        setIntroPhase,
         siteReveal,
         setSiteReveal,
         imageSize,

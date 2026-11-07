@@ -540,6 +540,13 @@ const gtAmericaCondensed = localFont({
   preload: false,
 });
 
+// Gensco (font-gensco).
+const gensco = localFont({
+  src: "../../public/fonts/gensco-webfont.woff2",
+  variable: "--font-gensco",
+  preload: false,
+});
+
 // STIX Two Text (Google Fonts) — the site's text face (font-stix). A
 // variable font: every weight 400–700, plus italics.
 const stixTwoText = STIX_Two_Text({
@@ -564,7 +571,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${stixTwoText.variable} antialiased`}
+        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${gensco.variable} ${stixTwoText.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

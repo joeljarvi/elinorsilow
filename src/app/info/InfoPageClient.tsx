@@ -239,9 +239,7 @@ function InfoRow({
           on the line below; a section without a header starts on the first
           line. Mobile: the header above the content. */}
       <div
-        // List sections: rows h-9 (Cols), alternating page background /
-        // purple-100 like the works and exhibitions lists.
-        className={`col-span-12 px-3 lg:px-0 lg:col-start-1 ${section.title ? "lg:row-start-2" : "lg:row-start-1"} flex flex-col ${section.title ? "[&>*:nth-child(even):not(:hover)]:bg-purple-100" : ""}`}
+        className={`col-span-12 px-3 lg:px-0 lg:col-start-1 ${section.title ? "lg:row-start-2" : "lg:row-start-1"} flex flex-col`}
       >
         {section.body}
       </div>
