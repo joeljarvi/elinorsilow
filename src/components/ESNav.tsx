@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
 import { useIndex, type HomeView } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
@@ -94,6 +94,19 @@ export default function ESNav() {
   // Home and index pages: the nav fades in last, item by item (siteReveal
   // "nav").
   const navShown = !(pathname === "/" || onIndex) || siteReveal === "nav";
+  // An exhibition's or a work's own page: BACK, to where the visitor came
+  // from on the site (else the list it belongs to).
+  const router = useRouter();
+  const segments = pathname.split("/").filter(Boolean);
+  const exhibitionPage = segments[0] === "exhibitions" && segments.length === 2;
+  const workPage =
+    segments.length === 1 &&
+    !["index", "privacy-policy", "studio"].includes(segments[0]);
+  const showBack = exhibitionPage || workPage;
+  const goBack = () => {
+    if (document.referrer.startsWith(window.location.origin)) router.back();
+    else router.push(exhibitionPage ? "/index/exhibitions" : "/index/works");
+  };
   const toggleOpen = () => {
     const next = !open;
     setOpenDesktopNav(next);
@@ -123,6 +136,15 @@ export default function ESNav() {
           >
             Elinor Silow
           </Link>
+          {showBack && (
+            <button
+              type="button"
+              onClick={goBack}
+              className="col-start-2 row-start-1 justify-self-start text-xl font-areal font-medium text-neutral-800 uppercase cursor-pointer"
+            >
+              Back
+            </button>
+          )}
           <button
             type="button"
             style={navReveal(navShown, 1).style}
@@ -161,6 +183,21 @@ export default function ESNav() {
           >
             {filterOpen ? "Close" : "Filter"}
           </button>
+        )}
+        {/* BACK (an exhibition's or work's own page): top right, on the same
+            baseline as Menu — in a line box like the one Menu sits in (a
+            zero-width Gensco character sets it). */}
+        {showBack && (
+          <div className="col-start-12 row-start-1 justify-self-end flex items-baseline py-1 whitespace-nowrap font-gensco text-2xl text-neutral-800">
+            <span aria-hidden>{"\u200b"}</span>
+            <button
+              type="button"
+              onClick={goBack}
+              className="cursor-pointer font-areal font-medium text-xl uppercase"
+            >
+              Back
+            </button>
+          </div>
         )}
         {/* "Elinor Silow" (home) and "Menu", top left (cols 1–2). */}
         <div className="col-start-1 col-span-2 row-start-1 flex items-baseline gap-x-2 py-1 whitespace-nowrap font-gensco text-2xl text-neutral-800">

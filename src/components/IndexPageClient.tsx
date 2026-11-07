@@ -367,9 +367,12 @@ function ListRow({
       data-picker-anchor={open ? "" : undefined}
       // A closed row is clickable anywhere (not just on its text) to view
       // it. On the open row only the title line toggles (below), so clicks
-      // on its image / full-screen button don't.
+      // on its image / full-screen button don't. Exhibitions don't open in
+      // the list: a click goes straight to the exhibition's page (a full
+      // load — a client-side link would open the @modal pop-up instead).
       onClick={() => {
-        if (!open) onToggle();
+        if (!isWork && item.href) window.location.assign(item.href);
+        else if (!open) onToggle();
       }}
       // Works, desktop: dragging anywhere on the row moves it in the list.
       onPointerDown={canDrag ? onDragStart : undefined}
@@ -389,7 +392,7 @@ function ListRow({
         height: open ? "auto" : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`group/row relative border-b-2 border-b-neutral-800 ${canDrag ? "select-none lg:cursor-grab lg:active:cursor-grabbing lg:[&_*]:cursor-grab lg:active:[&_*]:cursor-grabbing" : ""}    ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} bg-background ${open ? "" : ""} ${open ? ` overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[auto_minmax(0,1fr)_auto] lg:gap-y-0" : "lg:grid-rows-[auto_auto_minmax(0,1fr)_minmax(4.5rem,max-content)_auto] lg:gap-y-0"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-0 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary" : "text-primary/50"}`}
+      className={`group/row relative border-b-2 border-b-neutral-800 ${canDrag ? "select-none lg:cursor-grab lg:active:cursor-grabbing lg:[&_*]:cursor-grab lg:active:[&_*]:cursor-grabbing" : ""}    ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} bg-background ${open ? "" : ""} ${open ? ` overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[auto_minmax(0,1fr)_auto] lg:gap-y-0" : `lg:grid-rows-[auto_auto_minmax(0,1fr)_minmax(4.5rem,max-content)_auto] lg:gap-y-0 ${isFullscreen ? "" : "lg:max-h-dvh"}`}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-0 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary" : "text-primary/50"}`}
     >
       <div
         // A div, not a <button>: Safari doesn't apply display: contents to
@@ -575,7 +578,7 @@ function ListRow({
                       }
                       src={`${image}?w=2000&auto=format`}
                       alt={`${item.title} — image ${imageIndex + 1}`}
-                      className={`block object-contain object-left-bottom lg:object-bottom ${isFullscreen ? "w-full h-full" : `w-full lg:w-auto h-auto max-w-full ${size === "S" ? "max-h-[33.3vh]" : size === "M" ? "max-h-[50vh]" : "max-h-[80vh]"}`}`}
+                      className={`block object-contain object-left-bottom lg:object-bottom ${isFullscreen ? "w-full h-full" : `w-full lg:w-auto h-auto max-w-full ${size === "S" ? "max-h-[33.3vh]" : size === "M" ? "max-h-[50vh]" : "max-h-[80vh]"} ${isWork ? "" : size === "S" ? "lg:max-h-[min(33.3vh,100%)]" : size === "M" ? "lg:max-h-[min(50vh,100%)]" : "lg:max-h-[min(80vh,100%)]"}`}`}
                     />
                   </button>
                   {multi && cursor && (
@@ -852,12 +855,6 @@ export default function IndexPageClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
   const exRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  // Entering a list (the page's first load, or switching between works and
-  // exhibitions) opens a row — see the effect after visibleExhibitions.
-  const openOnEnter = useRef(true);
-  useEffect(() => {
-    openOnEnter.current = true;
-  }, [mode]);
   // Reset (the Filter row): nothing open.
   useEffect(() => {
     if (closeRowsSignal > 0) openOnly(null);
@@ -999,43 +996,6 @@ export default function IndexPageClient() {
   useEffect(() => {
     setVisibleCount(BATCH);
   }, [mode, sort, visibleWorks.length, visibleExhibitions.length]);
-
-  // Entering the works list opens a row, once its items have loaded — a
-  // random featured work (else the latest); exhibitions start all closed.
-  // Loads enough rows to include it and brings it into view. (After the
-  // visibleCount reset above, which would otherwise undo the extra rows.)
-  useEffect(() => {
-    if (!openOnEnter.current) return;
-    // After the site's reveal (the rows fading in).
-    if (siteReveal === "covered" || siteReveal === "rows") return;
-    if (mode === "works") {
-      if (visibleWorks.length === 0) return;
-      openOnEnter.current = false;
-      // A random one of the works marked "Featured on home page"; if
-      // none are, the latest work (newest year, then most recently added).
-      const featured = visibleWorks
-        .map((w, i) => (w.featured ? i : -1))
-        .filter((i) => i >= 0);
-      let pick = 0;
-      if (featured.length) {
-        pick = featured[Math.floor(Math.random() * featured.length)];
-      } else {
-        visibleWorks.forEach((w, i) => {
-          const p = visibleWorks[pick];
-          const dy = (w.acf.year ?? 0) - (p.acf.year ?? 0);
-          if (dy > 0 || (dy === 0 && w.date > p.date)) pick = i;
-        });
-      }
-      setVisibleCount((c) => Math.max(c, pick + 1));
-      const key = rowKey("works", visibleWorks[pick].id);
-      openOnly(key);
-      // Followed until the opening (row, text, image) has settled.
-      stickToRow(key, 3000);
-      return;
-    }
-    // Exhibitions: all rows start closed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, visibleWorks.length, siteReveal]);
 
   useEffect(() => {
     const el = sentinelRef.current;
