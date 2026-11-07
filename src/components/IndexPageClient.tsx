@@ -30,7 +30,7 @@ import IndexNav from "@/components/IndexNav";
 import { useLenis } from "lenis/react";
 import BackToTop from "@/components/BackToTop";
 import Link from "next/link";
-import { workSize } from "@/lib/workSize";
+import { workMeasurements, workSize } from "@/lib/workSize";
 import Ticker from "@/components/Ticker";
 import {
   useUI,
@@ -76,7 +76,7 @@ type RowItem = {
   // "work" rows lay out a little differently when open (see ListRow).
   variant: "exhibition" | "work";
   title: string;
-  // Its own page, opened by "go to page ↗" at the row's right end.
+  // Its own page, opened by the ↗ shown after the title on hover.
   href?: string;
   place?: string;
   kind?: string;
@@ -117,7 +117,17 @@ function workRowItem(work: Work): RowItem {
   };
 }
 
-// "go to page ↗". Neither its press nor its click reaches the row (drag,
+// The scale reference next to a work: a Solstickan matchbox, 7.3 cm tall. The
+// picture is on a 440 × 440 file with empty margins; its box is `CROP` (px).
+const MATCHBOX_CM = 7.3;
+const MATCHBOX_FILE = 440;
+const MATCHBOX_CROP = { x: 80, y: 7, w: 280, h: 426 };
+// The space between a work's picture and the matchbox beside it.
+const MATCHBOX_GAP = 16;
+// CSS pixels per real centimetre on screen (96 per inch), for the scale label.
+const SCREEN_PX_PER_CM = 96 / 2.54;
+
+// The ↗ after a title. Neither its press nor its click reaches the row (drag,
 // toggle). Exhibitions need a full page load: a client-side link to
 // /exhibitions/… is intercepted by the @modal route and opens the pop-up.
 function PageLink({
@@ -140,10 +150,10 @@ function PageLink({
   };
   return isWork ? (
     <Link {...props} prefetch={false}>
-      go to page ↗
+      ↗
     </Link>
   ) : (
-    <a {...props}>go to page ↗</a>
+    <a {...props}>↗</a>
   );
 }
 
@@ -188,9 +198,14 @@ function ListRow({
   // stay closed and text-primary/50 even when selected.
   const open = openProp && images.length > 0;
   const isWork = item.variant === "work";
+  // Works, desktop: an open row can be dragged to another place in the list.
+  const canDrag = open && !!onDragStart;
   // Image size: the site-wide setting (S / M / L buttons, top right).
   const size: ImageSize = sizeSetting;
   const fullscreen = size === "L";
+  // S / M / L set the image's height limit (a share of the screen); open rows
+  // are as tall as their content.
+  const workMaxH = { S: 0.333, M: 0.5, L: 0.8 }[size];
   // Mobile: images at most 50dvh, the open row as tall as its content.
   const desktop = useIsDesktop();
   const description = item.description;
@@ -216,15 +231,113 @@ function ListRow({
     const t = setTimeout(() => setInfoShown(true), INFO_AT * 1000);
     return () => clearTimeout(t);
   }, [open]);
-  // Open: the title (row 1), its metadata on one line (row 2: year, then
-  // materials and dimensions, or venue, city and type), then the image (row 3);
-  // closed: just the title.
+  // Open: the title (row 1) and its metadata on one line (year, then materials
+  // and dimensions, or venue, city and type) — works: under the image (rows
+  // 2–3); exhibitions: above it (rows 2–3); closed: just the title.
   const stacked = open;
   const infoFade = `h-12 leading-12 lg:h-9 lg:leading-9 self-stretch text-left lg:self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
   // The open row's height (the screen minus 6rem), in px so it can animate
   // from the closed row's 36px.
   const vh = useViewportHeight();
   const image = images[imageIndex];
+  // Open work: the image and matchbox on the same scale (px per cm), as large
+  // as fits. The image's longest side is taken as the work's longest
+  // measurement, whichever way round its dimensions are written.
+  const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
+  const [boxWidth, setBoxWidth] = useState(0);
+  useEffect(() => {
+    const box = imageBox.current;
+    if (!open || !isWork || !box) return;
+    const observer = new ResizeObserver(() => setBoxWidth(box.clientWidth));
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [open, isWork]);
+  // The metadata line under the image starts where the picture does: its left
+  // padding, measured from the picture (object-contain: centered in the img on
+  // desktop, at its left on mobile) once laid out, and on every resize.
+  const imgRef = useRef<HTMLImageElement>(null);
+  // An image from the cache can finish loading before its onLoad is attached:
+  // take its size from it directly then.
+  useLayoutEffect(() => {
+    const img = imgRef.current;
+    if (open && img?.complete && img.naturalWidth)
+      setNatural({ w: img.naturalWidth, h: img.naturalHeight });
+  }, [open, imageIndex]);
+  const metaRef = useRef<HTMLSpanElement>(null);
+  const [metaInset, setMetaInset] = useState<number | null>(null);
+  // The picture's bottom right corner, relative to the row (for the matchbox).
+  const [picCorner, setPicCorner] = useState<{
+    right: number;
+    bottom: number;
+  } | null>(null);
+  useLayoutEffect(() => {
+    const img = imgRef.current;
+    const meta = metaRef.current;
+    if (!open || !img || !meta) return;
+    const measure = () => {
+      const r = img.getBoundingClientRect();
+      if (!img.naturalWidth || !r.width || !r.height) return;
+      const fit = Math.min(
+        r.width / img.naturalWidth,
+        r.height / img.naturalHeight,
+      );
+      const picWidth = img.naturalWidth * fit;
+      const left = desktop ? r.left + (r.width - picWidth) / 2 : r.left;
+      // object-bottom: the picture sits at the bottom of the img box.
+      const bottom = r.bottom;
+      setMetaInset(Math.max(0, left - meta.getBoundingClientRect().left));
+      const row = (
+        meta.offsetParent as HTMLElement | null
+      )?.getBoundingClientRect();
+      if (row)
+        setPicCorner({
+          right: left + picWidth - row.left,
+          bottom: bottom - row.top,
+        });
+    };
+    measure();
+    // Re-measured whenever something that can move the picture changes size:
+    // the picture, the metadata line, the image area (the window's width) and
+    // the row (its height animates as it opens, moving the picture without
+    // resizing it) — and once the fonts have loaded (the text lines above it).
+    const observer = new ResizeObserver(measure);
+    observer.observe(img);
+    observer.observe(meta);
+    if (imageBox.current) observer.observe(imageBox.current);
+    if (meta.offsetParent) observer.observe(meta.offsetParent);
+    let live = true;
+    document.fonts?.ready.then(() => live && measure());
+    return () => {
+      live = false;
+      observer.disconnect();
+    };
+  }, [open, imageIndex, natural, desktop]);
+  // The Filter panel's "Show scale" setting.
+  const { showScale } = useIndex();
+  const scaled = (() => {
+    const longest = workMeasurements(item.kind)[0];
+    if (!isWork || !open || !natural || !boxWidth || !vh || !longest)
+      return null;
+    const cm = longest / Math.max(natural.w, natural.h);
+    const workW = natural.w * cm;
+    const workH = natural.h * cm;
+    // The size's share of the screen.
+    const maxH = vh * workMaxH;
+    // Width: room for the matchbox (and its 16px gap) beside the picture — on
+    // both sides, as the picture is centered on desktop.
+    const matchW = (MATCHBOX_CM * MATCHBOX_CROP.w) / MATCHBOX_CROP.h;
+    const px = Math.min(
+      maxH / Math.max(workH, MATCHBOX_CM),
+      (boxWidth - 2 * MATCHBOX_GAP) / (workW + 2 * matchW),
+    );
+    // "1:13" (shown smaller than life), or "1.5:1" (larger).
+    const ratio = SCREEN_PX_PER_CM / px;
+    const label =
+      ratio >= 1
+        ? `1:${Math.round(ratio)}`
+        : `${(1 / ratio).toFixed(1).replace(/\.0$/, "")}:1`;
+    return { px, workW, workH, label };
+  })();
   // Fullscreen: the image box becomes a screen tall with py-4, in the page
   // (the row grows to fit), brought into view once the row has grown.
   const imageBox = useRef<HTMLDivElement>(null);
@@ -259,7 +372,7 @@ function ListRow({
         if (!open) onToggle();
       }}
       // Works, desktop: dragging anywhere on the row moves it in the list.
-      onPointerDown={onDragStart}
+      onPointerDown={canDrag ? onDragStart : undefined}
       // Reveal: background, then text, each fading in after its delay.
       style={
         typeof reveal === "number"
@@ -271,19 +384,12 @@ function ListRow({
           : undefined
       }
       initial={false}
-      // L: the screen minus 6rem, the image filling what the text leaves;
-      // S / M: as tall as the image and text (at most that).
+      // Open: as tall as its content (its image limited by S / M / L).
       animate={{
-        height: open
-          ? fullscreen && desktop && !isFullscreen
-            ? vh
-              ? vh - 96
-              : "calc(100vh - 6rem)"
-            : "auto"
-          : 36,
+        height: open ? "auto" : 36,
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`group/row relative ${onDragStart ? "select-none lg:cursor-grab lg:active:cursor-grabbing lg:[&_*]:cursor-grab lg:active:[&_*]:cursor-grabbing" : ""} border-b-2 border-b-neutral-800    ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} bg-background ${open ? "" : ""} ${open ? `${isFullscreen ? "" : fullscreen ? "lg:h-[calc(100vh-6rem)]" : "lg:max-h-[calc(100vh-6rem)]"} overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[auto_auto_minmax(0,1fr)] lg:gap-y-0" : "lg:grid-rows-[auto_auto_minmax(0,1fr)_minmax(4.5rem,max-content)_auto] lg:gap-y-0"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-3 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary pb-12 lg:pb-0" : "text-primary/50"}`}
+      className={`group/row relative border-b-2 border-b-neutral-800 ${canDrag ? "select-none lg:cursor-grab lg:active:cursor-grabbing lg:[&_*]:cursor-grab lg:active:[&_*]:cursor-grabbing" : ""}    ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} bg-background ${open ? "" : ""} ${open ? ` overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[auto_minmax(0,1fr)_auto] lg:gap-y-0" : "lg:grid-rows-[auto_auto_minmax(0,1fr)_minmax(4.5rem,max-content)_auto] lg:gap-y-0"}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-0 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary" : "text-primary/50"}`}
     >
       <div
         // A div, not a <button>: Safari doesn't apply display: contents to
@@ -303,20 +409,37 @@ function ListRow({
           className={
             // Mobile: the title's first line indented a third of the width.
             // Mobile: open (2-col grid) one column; closed (4-col) two.
-            `col-span-1 ${open ? "indent-0" : "indent-0 lg:group-hover/row:indent-2"} font-medium font-areal text-xl flex text-neutral-800 items-center min-w-0 overflow-hidden uppercase tracking-wide lg:col-start-1 px-4 lg:col-span-6 lg:row-start-1 ${infoFade}`
+            `col-span-1 ${open ? "indent-0" : "indent-0 lg:group-hover/row:indent-2"} font-medium font-areal uppercase text-xl  group/title flex text-neutral-800 items-center min-w-0 overflow-hidden  tracking-wide lg:col-start-1 px-2 lg:col-span-6 lg:row-start-1 ${infoFade}`
           }
         >
           {/* Mobile: a ticker when it doesn't fit. Desktop: cut off with "…". */}
           <Ticker className="w-full lg:hidden">{item.title}</Ticker>
-          <span className="hidden lg:block w-full truncate transition-[text-indent] duration-300">
+          <span className="hidden lg:block min-w-0 truncate transition-[text-indent] duration-300">
             {item.title}
           </span>
+          {/* Desktop, hovering the title: ↗ after it, opening its own page. */}
+          {item.href && (
+            <PageLink
+              href={item.href}
+              isWork={isWork}
+              label={`Open ${item.title}`}
+              className="hidden lg:block shrink-0 text-neutral-400 hover:text-neutral-800 cursor-pointer! opacity-0 group-hover/title:opacity-100 focus-visible:opacity-100 transition-[opacity,color]"
+            />
+          )}
         </motion.span>
         <motion.span
           // Venue / materials: cols 5–7 (the title 1–4); materials only
           // when open,
           // always one line (a ticker when it doesn't fit).
-          className={`order-1 font-gensco font-normal text-2xl text-neutral-800 lg:order-none col-span-1 ${open ? "block indent-4" : "hidden"} ${stacked ? "lg:col-start-1 lg:col-span-12 lg:px-4 lg:row-start-2" : "lg:col-start-5 lg:col-span-3 lg:row-start-1"} min-w-0 max-w-full truncate ${infoFade}`}
+          ref={metaRef}
+          // Starts under the picture's left edge (see metaInset).
+          style={
+            // Works only: exhibitions keep it top left, above the image.
+            isWork && open && metaInset !== null
+              ? { paddingLeft: metaInset, textIndent: 0 }
+              : undefined
+          }
+          className={`${isWork ? "order-3 mt-12 lg:mt-4" : "order-1"} font-gensco font-normal text-2xl text-neutral-800 lg:order-none col-span-1 ${open ? "block indent-4" : "hidden"} ${stacked ? `lg:col-start-1 lg:col-span-12 lg:px-4 ${isWork ? "lg:row-start-3" : "lg:row-start-2"}` : "lg:col-start-5 lg:col-span-3 lg:row-start-1"} min-w-0 max-w-full truncate ${infoFade}`}
         >
           <Ticker>
             {stacked
@@ -335,12 +458,12 @@ function ListRow({
               delay: isWork ? DETAILS_AT : IMAGES_AT + 0.5,
             }}
             data-lenis-prevent
-            className="order-3 col-span-2 px-4 lg:order-none lg:col-start-1 lg:col-span-5 lg:row-start-4 lg:py-3 min-h-12 lg:min-h-9 max-h-[20dvh] lg:max-h-none font-areal text-xl font-medium tracking-normal text-neutral-800 overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug"
+            className="order-4 mt-12 lg:mt-0 col-span-2 px-4 lg:order-none lg:col-start-1 lg:col-span-5 lg:row-start-4 lg:py-3 min-h-12 lg:min-h-9 max-h-[20dvh] lg:max-h-none font-areal text-xl font-medium tracking-normal text-neutral-800 overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug"
           >
             {description}
           </motion.p>
         )}
-        {/* Open row: the credits on row 5, below the description (cols 1–4), fading in with the
+        {/* Open row: the credits on row 4, beside the description (cols 7–10), fading in with the
             description. */}
         {open && item.credits && (
           <motion.p
@@ -352,7 +475,7 @@ function ListRow({
               delay: isWork ? DETAILS_AT : IMAGES_AT + 0.5,
             }}
             data-lenis-prevent
-            className={`order-3 col-span-2 px-4 lg:order-none font-areal font-medium text-sm tracking-normal text-neutral-800 lg:col-start-1 lg:col-span-4 lg:row-start-5 ${description ? "mt-12 lg:mt-0" : ""} lg:py-4 min-h-12 lg:min-h-9 max-h-[20dvh] lg:max-h-none overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug`}
+            className={`order-4 col-span-2 px-4 lg:order-none font-areal font-medium text-sm tracking-normal text-neutral-800 lg:col-start-7 lg:col-span-4 lg:row-start-4 ${description ? "mt-12 lg:mt-0" : ""} lg:py-4 min-h-12 lg:min-h-9 max-h-[20dvh] lg:max-h-none overflow-y-auto scrollbar-hide whitespace-pre-line leading-snug`}
           >
             {item.credits}
           </motion.p>
@@ -367,9 +490,9 @@ function ListRow({
           </motion.span>
         )}
       </div>
-      {/* The images, on row 3 (under the two text lines), taking the height
-          left; on exhibitions the description / credits are under them (row
-          4). */}
+      {/* The images, taking the height left. Works: on row 2 (under the
+          title), the metadata under them (row 3). Exhibitions: on row 3, under
+          the title and metadata, then the description / credits (rows 4–5). */}
       <AnimatePresence initial={false}>
         {open && image && (
           <motion.div
@@ -388,7 +511,7 @@ function ListRow({
             // line (works, desktop: two gaps — the empty row 2 between).
             // Exhibitions: right after the text line (row 2), the
             // description / credits below it.
-            className={`${isWork ? "order-3 mt-12 lg:mt-0 lg:row-start-3" : `order-2 mt-12 ${description || item.credits ? "mb-12" : ""} lg:my-0 lg:row-start-3`} -mx-3 px-3 lg:mx-0 lg:px-0 relative overflow-hidden min-h-0 col-span-2 lg:order-none lg:col-span-12 grid grid-cols-1 grid-rows-[minmax(0,1fr)] lg:grid-cols-12 lg:gap-x-4`}
+            className={`order-2 mt-12 ${isWork ? "lg:mt-0 lg:row-start-2" : "lg:mt-4 lg:row-start-3"} -mx-3 lg:mx-0 ${isWork ? "pl-2 pr-4 lg:px-4" : "pl-2 pr-3 lg:px-0"} relative overflow-hidden min-h-0 col-span-2 lg:order-none lg:col-span-12 grid grid-cols-1 grid-rows-[minmax(0,1fr)] lg:grid-cols-12 lg:gap-x-4`}
           >
             {image && (
               <motion.div
@@ -428,16 +551,31 @@ function ListRow({
                       });
                     }}
                     onMouseLeave={() => setCursor(null)}
-                    className={`flex items-center justify-start lg:justify-center w-full h-full ${multi ? "lg:cursor-none" : "cursor-default"}`}
+                    className={`flex items-end justify-start lg:justify-center w-full h-full ${multi ? "lg:cursor-none" : "cursor-default"}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       key={image}
+                      ref={imgRef}
                       // The row's drag, not the browser's image drag.
                       draggable={false}
+                      onLoad={(e) =>
+                        setNatural({
+                          w: e.currentTarget.naturalWidth,
+                          h: e.currentTarget.naturalHeight,
+                        })
+                      }
+                      style={
+                        scaled
+                          ? {
+                              width: scaled.workW * scaled.px,
+                              height: scaled.workH * scaled.px,
+                            }
+                          : undefined
+                      }
                       src={`${image}?w=2000&auto=format`}
                       alt={`${item.title} — image ${imageIndex + 1}`}
-                      className={`block object-contain object-left lg:object-center ${isFullscreen ? "w-full h-full" : size === "L" ? "w-full h-auto lg:h-full" : size === "S" ? "w-full lg:w-auto h-auto max-w-full max-h-[50dvh] lg:max-h-[20dvh]" : "w-full lg:w-auto h-auto max-w-full max-h-[50dvh] lg:max-h-[45dvh]"}`}
+                      className={`block object-contain object-left-bottom lg:object-bottom ${isFullscreen ? "w-full h-full" : `w-full lg:w-auto h-auto max-w-full ${size === "S" ? "max-h-[33.3vh]" : size === "M" ? "max-h-[50vh]" : "max-h-[80vh]"}`}`}
                     />
                   </button>
                   {multi && cursor && (
@@ -464,8 +602,9 @@ function ListRow({
         )}
       </AnimatePresence>
       {/* Open exhibition (desktop): Prev / Next (images, when several) and
-          Fullscreen, in a row at the bottom right of the ListRow (in fullscreen:
-          of the screen, so they stay in view). */}
+          Fullscreen, at the right of the ListRow on the picture's bottom line
+          (in fullscreen: the bottom right of the screen, so they stay in
+          view). */}
       {open && !isWork && image && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -475,7 +614,13 @@ function ListRow({
             ease: "easeOut",
             delay: IMAGES_AT + 0.5,
           }}
-          className={`${isFullscreen ? "fixed" : "absolute"} bottom-4 right-4 z-30 hidden lg:flex flex-row justify-end gap-x-3 text-xl font-areal font-medium uppercase text-neutral-800`}
+          // Their bottom on the picture's bottom (see picCorner).
+          style={
+            !isFullscreen && picCorner
+              ? { top: picCorner.bottom, bottom: "auto" }
+              : undefined
+          }
+          className={`${isFullscreen ? "fixed bottom-4" : `absolute bottom-4 ${picCorner ? "-translate-y-full" : ""}`} right-4 z-30 hidden lg:flex flex-row justify-end gap-x-3 text-xl font-areal font-medium uppercase text-neutral-800`}
         >
           {multi && (
             <>
@@ -507,21 +652,56 @@ function ListRow({
           </button>
         </motion.div>
       )}
-      {/* Desktop, while open or on hover: "go to page ↗" at the far right,
-          opening the item's own page. */}
-      {item.href && (
-        <PageLink
-          href={item.href}
-          isWork={isWork}
-          label={`Open ${item.title}`}
-          className={`absolute top-0 right-0 z-20 hidden lg:flex items-center h-9 px-4 whitespace-nowrap font-areal font-medium text-xl uppercase text-neutral-400 hover:text-neutral-800 cursor-pointer! ${open ? "" : "opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100"} transition-[opacity,color]`}
-        />
+      {/* Open work: its scale and the matchbox at that scale, beside the
+          picture on its right, its bottom on the picture's bottom. */}
+      {scaled && showScale && picCorner && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, ease: "easeOut", delay: TITLE_AT }}
+          style={{
+            left: picCorner.right + MATCHBOX_GAP,
+            // Bottom-aligned with the picture.
+            top: picCorner.bottom - MATCHBOX_CM * scaled.px,
+          }}
+          className="absolute z-10 flex items-start gap-x-4 pointer-events-none font-areal font-medium text-xl uppercase leading-none text-neutral-800"
+        >
+          {/* The scale ("1:14"), hidden for now. */}
+          <span className="hidden whitespace-nowrap">
+            Scale: {scaled.label}
+          </span>
+          <span
+            className="relative block shrink-0 overflow-hidden"
+            style={{
+              width:
+                (MATCHBOX_CM * scaled.px * MATCHBOX_CROP.w) / MATCHBOX_CROP.h,
+              height: MATCHBOX_CM * scaled.px,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              draggable={false}
+              src="/solstickan-440.png"
+              alt="Solstickan matchbox, for scale"
+              className="absolute max-w-none"
+              style={(() => {
+                const k = (MATCHBOX_CM * scaled.px) / MATCHBOX_CROP.h;
+                return {
+                  width: MATCHBOX_FILE * k,
+                  height: MATCHBOX_FILE * k,
+                  left: -MATCHBOX_CROP.x * k,
+                  top: -MATCHBOX_CROP.y * k,
+                };
+              })()}
+            />
+          </span>
+        </motion.div>
       )}
-      {/* Open row: CLOSE, on the text line (row 1, h-9) left of "go to page
-          ↗", centered on it like the text. */}
+      {/* Open row: the close cross, at the far right of the text line (row 1,
+          h-9), centered on it like the text. */}
       {open && (
         <div
-          className={`absolute top-0 ${item.href ? "right-40" : "right-0"} px-3 lg:px-4 h-12 lg:h-9  z-20 hidden lg:flex items-center gap-3 text-neutral-800`}
+          className={`absolute top-0 right-0 px-3 lg:px-4 h-12 lg:h-9  z-20 hidden lg:flex items-center gap-3 text-neutral-800`}
           onClick={(e) => e.stopPropagation()}
         >
           <button
@@ -529,9 +709,20 @@ function ListRow({
             onClick={onToggle}
             aria-label="Close"
             // Desktop only (mobile closes by tapping the row's title line).
-            className="hidden lg:block cursor-pointer! font-areal font-medium text-xl uppercase "
+            className="hidden lg:block cursor-pointer"
           >
-            close
+            {/* A cross, about 2px strokes. */}
+            <svg
+              aria-hidden
+              viewBox="0 0 20 20"
+              className="block size-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={3}
+            >
+              <line x1="1" y1="1" x2="19" y2="19" />
+              <line x1="19" y1="1" x2="1" y2="19" />
+            </svg>
           </button>
         </div>
       )}
@@ -614,8 +805,15 @@ function useIsDesktop() {
 }
 
 export default function IndexPageClient() {
-  const { mode, sort, search, yearFilter, sizeFilter, closeRowsSignal } =
-    useIndex();
+  const {
+    mode,
+    sort,
+    search,
+    yearFilter,
+    sizeFilter,
+    closeRowsSignal,
+    shuffleSeed,
+  } = useIndex();
   // Desktop (lg+), tracked live: the lists use the picker there.
   const desktop = useIsDesktop();
   // Exhibitions and works lists: the open rows (several can be open at
@@ -647,11 +845,10 @@ export default function IndexPageClient() {
     lastOpened.current = key;
   };
   // Image size (S / M / L): a site-wide setting, kept in UIContext. Each
-  // view starts at its default — works M, exhibitions L — and the S / M / L
-  // buttons change it from there.
+  // view starts at L, and the S / M / L buttons change it from there.
   const { imageSize, setImageSize, siteReveal } = useUI();
   useEffect(() => {
-    setImageSize(mode === "works" ? "M" : "L");
+    setImageSize("L");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
   const exRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -749,6 +946,17 @@ export default function IndexPageClient() {
     byYear: (t: T) => number,
   ): T[] {
     const copy = [...arr];
+    // Random: a stable shuffle (each item's place from a hash of it and the
+    // seed), so the order only changes on Randomize.
+    if (sort === "random") {
+      const rank = (t: T) => {
+        let h = shuffleSeed;
+        for (const c of byTitle(t) + byDate(t))
+          h = Math.imul(h ^ c.charCodeAt(0), 2654435761);
+        return h >>> 0;
+      };
+      return copy.sort((a, b) => rank(a) - rank(b));
+    }
     if (sort === "title")
       return copy.sort((a, b) => byTitle(a).localeCompare(byTitle(b)));
     if (sort === "year") return copy.sort((a, b) => byYear(b) - byYear(a));

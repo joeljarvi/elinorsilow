@@ -14,7 +14,7 @@ import type { WorkSize } from "@/lib/workSize";
 // The index section's views: /index/works, /index/exhibitions, /index/info.
 export type HomeView = "works" | "exhibitions" | "info";
 export type IndexMode = HomeView;
-export type IndexSort = "latest" | "title" | "year";
+export type IndexSort = "latest" | "title" | "year" | "random";
 
 interface IndexContextValue {
   mode: IndexMode;
@@ -26,6 +26,13 @@ interface IndexContextValue {
   setYearFilter: (y: string) => void;
   sizeFilter: WorkSize | "all";
   setSizeFilter: (s: WorkSize | "all") => void;
+  // Open works: show the scale and matchbox (the Filter panel's settings).
+  showScale: boolean;
+  setShowScale: (v: boolean) => void;
+  // "random" sort: the order comes from this seed; randomize() picks a new one
+  // (and switches to that sort).
+  shuffleSeed: number;
+  randomize: () => void;
   // Goes up each time the lists should close all their open rows.
   closeRowsSignal: number;
   closeAllRows: () => void;
@@ -71,6 +78,12 @@ export function IndexProvider({ children }: { children: ReactNode }) {
     setYearFilter("all");
     setSizeFilter("all");
   }, [mode]);
+  const [showScale, setShowScale] = useState(true);
+  const [shuffleSeed, setShuffleSeed] = useState(1);
+  const randomize = () => {
+    setShuffleSeed(Math.floor(Math.random() * 1e9) + 1);
+    setSort("random");
+  };
   const [closeRowsSignal, setCloseRowsSignal] = useState(0);
   const closeAllRows = () => setCloseRowsSignal((n) => n + 1);
   const [tidy, setTidy] = useState(true);
@@ -89,6 +102,10 @@ export function IndexProvider({ children }: { children: ReactNode }) {
       setYearFilter,
       sizeFilter,
       setSizeFilter,
+      showScale,
+      setShowScale,
+      shuffleSeed,
+      randomize,
       closeRowsSignal,
       closeAllRows,
       tidy,
@@ -101,7 +118,7 @@ export function IndexProvider({ children }: { children: ReactNode }) {
       cycleWorksPerRow,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [mode, sort, setSort, yearFilter, sizeFilter, closeRowsSignal, tidy, search, zoom, worksPerRow, pathname],
+    [mode, sort, setSort, yearFilter, sizeFilter, showScale, shuffleSeed, closeRowsSignal, tidy, search, zoom, worksPerRow, pathname],
   );
 
   return (

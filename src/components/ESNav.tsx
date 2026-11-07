@@ -114,11 +114,11 @@ export default function ESNav() {
             "Elinor Silow" (home) in col 1, "MENU" (opens the menu panel) top
             right. */}
         <nav
-          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-12 lg:h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-3xl  uppercase font-normal tracking-normal leading-none text-foreground`}
+          className={`fixed inset-x-0 top-0 grid grid-cols-2 gap-x-2 items-center h-12 lg:h-9 px-3 bg-linear-to-b from-background to-transparent whitespace-nowrap text-2xl   font-normal tracking-normal leading-none text-background`}
         >
           <Link
             href="/"
-            className={`col-start-1 row-start-1 justify-self-start ${navReveal(navShown, 0).className}`}
+            className={`col-start-1 row-start-1 justify-self-start text-neutral-800 font-gensco ${navReveal(navShown, 0).className}`}
             style={navReveal(navShown, 0).style}
           >
             Elinor Silow
@@ -126,7 +126,7 @@ export default function ESNav() {
           <button
             type="button"
             style={navReveal(navShown, 1).style}
-            className={`col-start-2 row-start-1 justify-self-end text-right uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
+            className={`col-start-2 row-start-1 justify-self-end text-xl font-areal font-medium text-right text-neutral-800 uppercase cursor-pointer ${navReveal(navShown, 1).className}`}
             onClick={toggleOpen}
             aria-expanded={open}
           >
@@ -138,7 +138,7 @@ export default function ESNav() {
           "Menu" (opens the menu panel) top left. Same stacking above modals
           as the mobile nav. */}
       <nav
-        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 grid-rows-[2.25rem_auto] gap-x-4 px-4 bg-background items-center ${navShown ? "" : "pointer-events-none"}`}
+        className={`hidden lg:grid fixed inset-x-0 top-0 z-80 grid-cols-12 h-9 gap-x-4 px-2 bg-background items-center ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* Solid bar; only its bottom edge fades to transparent. */}
         <div
@@ -146,12 +146,12 @@ export default function ESNav() {
           className="absolute inset-x-0 top-full h-3 bg-linear-to-b from-background to-transparent pointer-events-none"
         />
         {/* Filter: top center of the screen, with the works / exhibitions
-            lists. Opens the bar's second row: the settings (sort by, filter
-            by). */}
+            lists. Opens the Filter panel (FilterSettings), top right. */}
         {showSizes && (
           <button
             type="button"
             aria-expanded={filterOpen}
+            data-filter-toggle
             onClick={() => {
               setFilterOpen(!filterOpen);
               setOpenDesktopNav(false);
@@ -161,9 +161,6 @@ export default function ESNav() {
           >
             {filterOpen ? "Close" : "Filter"}
           </button>
-        )}
-        {showSizes && filterOpen && (
-          <FilterSettings className="col-span-12 row-start-2" />
         )}
         {/* "Elinor Silow" (home) and "Menu", top left (cols 1–2). */}
         <div className="col-start-1 col-span-2 row-start-1 flex items-baseline gap-x-2 py-1 whitespace-nowrap font-gensco text-2xl text-neutral-800">
@@ -181,6 +178,10 @@ export default function ESNav() {
           </button>
         </div>
       </nav>
+      {/* Filter panel (desktop): fixed top right, under the nav. */}
+      {showSizes && filterOpen && (
+        <FilterSettings onClose={() => setFilterOpen(false)} />
+      )}
       {/* Menu — a full-height overlay (h-dvh, page background) with the links
           stacked, then search, then email and Instagram. Sits under the
           "Elinor Silow, CLOSE" line (z-80) so that stays visible to close

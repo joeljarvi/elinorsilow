@@ -1,6 +1,7 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
+import { motion, useDragControls } from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -11,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useIndex, type IndexSort } from "@/context/IndexContext";
+import { useUI } from "@/context/UIContext";
 import type { WorkSize } from "@/lib/workSize";
 import { useWorks, type CategoryFilter } from "@/context/WorksContext";
 import { useExhibitions, type ExCategory } from "@/context/ExhibitionsContext";
@@ -19,6 +21,7 @@ const SORTS: { value: IndexSort; label: string }[] = [
   { value: "latest", label: "Latest" },
   { value: "title", label: "Title" },
   { value: "year", label: "Year" },
+  { value: "random", label: "Random" },
 ];
 const WORK_FILTERS: { value: CategoryFilter; label: string }[] = [
   { value: "painting", label: "Painting" },
@@ -65,7 +68,8 @@ function Setting<T extends string>({
     <Select value={value} onValueChange={(v) => onChange(v as T)}>
       <SelectTrigger
         aria-label={name}
-        className="w-full justify-start h-9 p-0 pl-4 bg-transparent rounded-none cursor-pointer font-areal font-medium text-xl tracking-normal uppercase text-neutral-800 w-full"
+        // Name and value on the left; the caret, larger, at the right end.
+        className="w-full justify-start [&>[data-slot=select-value]]:mr-auto [&>[data-slot=select-value]]:italic [&>svg]:size-5 [&>svg]:p-0 h-9 p-0 pl-0 bg-transparent rounded-none cursor-pointer font-areal font-medium text-xl tracking-normal uppercase text-neutral-800 border-b-2 border-b-neutral-800"
       >
         <span className="">{name}</span>
         <SelectValue />
@@ -73,13 +77,15 @@ function Setting<T extends string>({
       <SelectContent
         // Lenis (the page's smooth scrolling) takes the wheel otherwise.
         data-lenis-prevent
-        style={LIST_FADE}
-        className="w-auto min-w-[var(--radix-select-trigger-width)] pb-3 shadow-none font-arealMono text-base uppercase text-neutral-800"
+        // Above the Filter panel (z-[100]) and the nav (z-80). Set inline too:
+        // Radix copies the list's z-index to the wrapper it positions.
+        style={{ ...LIST_FADE, zIndex: 110 }}
+        className="z-[110] w-auto min-w-[var(--radix-select-trigger-width)] pb-3 shadow-none font-arealMono  text-base uppercase text-neutral-800"
       >
         {groups.map((g, i) => (
           <SelectGroup key={i}>
             {g.label && (
-              <SelectLabel className="pl-4 pt-3 pb-1 font-areal text-base indent-4 uppercase">
+              <SelectLabel className="pl-4 pt-3 pb-1 font-areal text-base italic indent-4 uppercase">
                 {g.label}
               </SelectLabel>
             )}
@@ -87,7 +93,7 @@ function Setting<T extends string>({
               <SelectItem
                 key={o.value}
                 value={o.value}
-                className="pl-4 pr-8  font-areal text-xl uppercase cursor-pointer"
+                className="pl-4 pr-8 data-[state=checked]:italic font-areal text-xl uppercase cursor-pointer"
               >
                 {o.label}
               </SelectItem>
@@ -100,15 +106,29 @@ function Setting<T extends string>({
 }
 
 // The works / exhibitions lists' settings, opened by the nav's Filter button:
-// sort by, filter by and search in a full-width 3-col grid (the nav's second
-// row), with a reset button above its right end (the nav's first row, top
-// right). Filter by is one select holding all the
-// filters, by category, year and size (works), so one applies at a time.
-export default function FilterSettings({
-  className = "",
-}: {
-  className?: string;
-}) {
+// a panel fixed at the top right (a quarter of the width, under the nav) with
+// search, sort by, filter by (category, year, size — works — each its own
+// select, so they combine), then settings (show scale, image size) and
+// reset. It can be dragged around by its
+// top line, which also has a cross that closes it.
+export default function FilterSettings({ onClose }: { onClose: () => void }) {
+  const drag = useDragControls();
+  // A press outside the panel closes it — not on its select lists (rendered
+  // elsewhere), not while one is open (that press just closes the list), and
+  // not on the nav's Filter button (which toggles it itself).
+  const panel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onPointer = (e: PointerEvent) => {
+      const target = e.target as Element | null;
+      if (panel.current?.contains(target)) return;
+      if (target?.closest("[data-slot=select-content], [data-filter-toggle]"))
+        return;
+      if (document.querySelector("[data-slot=select-content]")) return;
+      onClose();
+    };
+    document.addEventListener("pointerdown", onPointer);
+    return () => document.removeEventListener("pointerdown", onPointer);
+  }, [onClose]);
   const {
     mode,
     sort,
@@ -120,7 +140,11 @@ export default function FilterSettings({
     closeAllRows,
     search,
     setSearch,
+    showScale,
+    setShowScale,
+    randomize,
   } = useIndex();
+  const { imageSize, setImageSize } = useUI();
   const { allWorks, categoryFilter, setCategoryFilter } = useWorks();
   const { exhibitions: allExhibitions, exCat, setExCat } = useExhibitions();
   const exhibitions = mode === "exhibitions";
@@ -135,90 +159,150 @@ export default function FilterSettings({
         .filter((y) => Number(y) > 0),
     ),
   ].sort((a, b) => Number(b) - Number(a));
-  const category = exhibitions ? exCat : categoryFilter;
-  // The filter select's value: "all", or e.g. "year:2024".
-  const filter =
-    category !== "all"
-      ? `category:${category}`
-      : yearFilter !== "all"
-        ? `year:${yearFilter}`
-        : sizeFilter !== "all"
-          ? `size:${sizeFilter}`
-          : "all";
-  const setFilter = (next: string) => {
-    const [kind, value] = next.split(":");
-    const cat = kind === "category" ? value : "all";
-    if (exhibitions) setExCat(cat as ExCategory);
-    else setCategoryFilter(cat as CategoryFilter);
-    setYearFilter(kind === "year" ? value : "all");
-    setSizeFilter(kind === "size" ? (value as WorkSize) : "all");
-  };
-  const prefixed = (
-    kind: string,
-    options: { value: string; label: string }[],
-  ) => options.map((o) => ({ ...o, value: `${kind}:${o.value}` }));
+  const all = { value: "all", label: "All" };
   // Back to the view's defaults, with every row closed.
   const clear = () => {
     setSort(exhibitions ? "year" : "latest");
-    setFilter("all");
+    if (exhibitions) setExCat("all");
+    else setCategoryFilter("all");
+    setYearFilter("all");
+    setSizeFilter("all");
     setSearch("");
     closeAllRows();
   };
 
   return (
-    <div className={`relative grid grid-cols-3 gap-x-4 w-full ${className}`}>
-      <Setting
-        name="Sort by"
-        groups={[{ options: SORTS }]}
-        value={sort}
-        onChange={setSort}
-      />
-      <Setting
-        name="Filter by"
-        groups={[
-          { options: [{ value: "all", label: "All" }] },
-          {
-            label: "By category",
-            options: prefixed(
-              "category",
-              exhibitions ? EX_FILTERS : WORK_FILTERS,
-            ),
-          },
-          {
-            label: "By year",
-            options: prefixed(
-              "year",
-              years.map((y) => ({ value: y, label: y })),
-            ),
-          },
-          ...(exhibitions
-            ? []
-            : [{ label: "By size", options: prefixed("size", SIZE_FILTERS) }]),
-        ]}
-        value={filter}
-        onChange={setFilter}
-      />
+    <motion.div
+      drag
+      dragControls={drag}
+      dragListener={false}
+      dragMomentum={false}
+      ref={panel}
+      className="fixed top-4 right-4 z-[100] hidden lg:flex flex-col w-1/4 px-4 pb-4 pt-2 bg-background border-2 border-neutral-800 font-areal font-medium text-xl uppercase text-neutral-800"
+    >
+      {/* Top line: drag here to move the panel; the cross closes it. */}
+      <div
+        onPointerDown={(e) => drag.start(e)}
+        className="h-9 -mx-4 px-4 flex items-center justify-between cursor-grab active:cursor-grabbing touch-none select-none mb-4"
+      >
+        <span className="text-xl text-neutral-800 ">Filter settings</span>
+        <button
+          type="button"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={onClose}
+          aria-label="Close filter"
+          className="cursor-pointer"
+        >
+          <svg
+            aria-hidden
+            viewBox="0 0 20 20"
+            className="block size-3.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+          >
+            <line x1="1" y1="1" x2="19" y2="19" />
+            <line x1="19" y1="1" x2="1" y2="19" />
+          </svg>
+        </button>
+      </div>
       <input
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search"
         aria-label={`Search ${mode}`}
-        className="w-full h-9 pl-4 border-0 bg-transparent outline-none font-areal font-medium text-xl uppercase text-neutral-800 placeholder:text-neutral-800"
+        className="w-full h-9 border-x-0 border-b-2 border-b-neutral-800 bg-transparent outline-none uppercase placeholder:text-neutral-800 mb-8"
       />
-      {/* The active filter, on this row, under the reset button. */}
-      {filter !== "all" && (
-        <span className="absolute top-0 right-4 h-9 flex items-center pointer-events-none font-areal font-medium text-xl uppercase text-neutral-800">
-          {filter.split(":")[1]}
-        </span>
-      )}
-      <button
-        type="button"
-        onClick={clear}
-        className="absolute bottom-full right-0 h-9 cursor-pointer font-areal font-medium text-xl  uppercase text-neutral-800"
-      >
-        Reset
-      </button>
-    </div>
+      <Setting
+        name="Sort by"
+        groups={[{ options: SORTS }]}
+        value={sort}
+        onChange={setSort}
+      />
+      <span className="mt-8 h-9 flex items-center text-xl text-neutral-800 mb-4">
+        Filter by
+      </span>
+      <div className="flex flex-col gap-2">
+        {exhibitions ? (
+          <Setting
+            name="Category"
+            groups={[{ options: [all, ...EX_FILTERS] }]}
+            value={exCat}
+            onChange={(v) => setExCat(v as ExCategory)}
+          />
+        ) : (
+          <Setting
+            name="Category"
+            groups={[{ options: [all, ...WORK_FILTERS] }]}
+            value={categoryFilter}
+            onChange={(v) => setCategoryFilter(v as CategoryFilter)}
+          />
+        )}
+        <Setting
+          name="Year"
+          groups={[
+            { options: [all, ...years.map((y) => ({ value: y, label: y }))] },
+          ]}
+          value={yearFilter}
+          onChange={setYearFilter}
+        />
+        {!exhibitions && (
+          <Setting
+            name="Size"
+            groups={[{ options: [all, ...SIZE_FILTERS] }]}
+            value={sizeFilter}
+            onChange={(v) => setSizeFilter(v as WorkSize | "all")}
+          />
+        )}
+      </div>
+      <span className="mt-8 h-9 mb-4 flex items-center text-xl text-neutral-800">
+        Settings
+      </span>
+      <div className="flex flex-col gap-2">
+        {!exhibitions && (
+          <label className="h-9 flex items-center justify-between cursor-pointer border-b-2 border-b-neutral-800 ">
+            Show scale
+            <input
+              type="checkbox"
+              checked={showScale}
+              onChange={(e) => setShowScale(e.target.checked)}
+              className="size-4 accent-neutral-800 cursor-pointer"
+            />
+          </label>
+        )}
+        <div className="h-9 flex items-center gap-x-3 border-b-2 border-b-neutral-800">
+          <span className="mr-auto">Image size</span>
+          {(["S", "M", "L"] as const).map((sz) => (
+            <button
+              key={sz}
+              type="button"
+              onClick={() => setImageSize(sz)}
+              aria-pressed={imageSize === sz}
+              className={`cursor-pointer ${imageSize === sz ? "" : "opacity-40 hover:opacity-100"}`}
+            >
+              {sz}
+            </button>
+          ))}
+        </div>
+      </div>
+      {/* Reset, and Randomize (a new random order) at the bottom right. */}
+      <div className="mt-8 h-9 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={clear}
+          className="cursor-pointer uppercase"
+        >
+          Reset
+        </button>
+        <button
+          type="button"
+          onClick={randomize}
+          className="cursor-pointer uppercase"
+        >
+          Randomize
+        </button>
+      </div>
+    </motion.div>
   );
 }
