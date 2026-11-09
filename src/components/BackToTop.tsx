@@ -8,7 +8,7 @@ import { useLenis } from "lenis/react";
 export default function BackToTop() {
   const lenis = useLenis();
   return (
-    <div className="grid grid-cols-4 lg:grid-cols-12 gap-x-2 lg:gap-x-4 px-6 lg:px-0 h-9 items-center font-gtAmericaCondensed text-sm leading-none text-primary">
+    <div className="grid grid-cols-4 lg:grid-cols-12 gap-x-2 lg:gap-x-4 px-6 lg:px-0 h-9 items-center font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800">
       <button
         type="button"
         onClick={() =>

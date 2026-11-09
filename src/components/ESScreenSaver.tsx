@@ -15,7 +15,7 @@ const PINGPONG = [0, 1, 2, 1];
 // input), the cursor is hidden and one trumpet (TrumpetNav, frames 1–3, a
 // frame a second, h-18) appears, scaling up from its center, where the mouse
 // cursor last was (desktop), or at the bottom right (mobile, or before the
-// mouse has moved: bottom-6 right-6). text-primary, above everything
+// mouse has moved: bottom-6 right-6). text-neutral-800, above everything
 // (z-100); any input hides it.
 export default function ESScreenSaver() {
   const pathname = usePathname();
@@ -70,7 +70,7 @@ export default function ESScreenSaver() {
   return (
     <div
       aria-hidden
-      className={`fixed z-100 pointer-events-none text-primary ${at ? "-translate-x-1/2 -translate-y-1/2" : "bottom-6 right-6"}`}
+      className={`fixed z-100 pointer-events-none text-neutral-800 ${at ? "-translate-x-1/2 -translate-y-1/2" : "bottom-6 right-6"}`}
       style={at ? { left: at.x, top: at.y } : undefined}
     >
       {/* No cursor while it shows. */}
@@ -82,7 +82,7 @@ export default function ESScreenSaver() {
       >
         <TrumpetNav
           frame={PINGPONG[tick % PINGPONG.length]}
-          className="h-18 w-auto"
+          className="w-12 h-auto"
         />
       </motion.div>
     </div>

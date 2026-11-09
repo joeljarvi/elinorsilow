@@ -3,26 +3,15 @@ import Link from "next/link";
 import { useInfo } from "@/context/InfoContext";
 import { useIndex } from "@/context/IndexContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
-import { useUI } from "@/context/UIContext";
 import type { Press } from "../../../lib/sanity";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import BackToTop from "@/components/BackToTop";
-import Ticker from "@/components/Ticker";
+import TitleBlock from "@/components/TitleBlock";
 
-function groupByYear<T extends { acf: { year: number | string } }>(
-  items: T[],
-): [string, T[]][] {
-  const map = new Map<string, T[]>();
-  const sorted = [...items].sort(
-    (a, b) => Number(b.acf.year) - Number(a.acf.year),
-  );
-  for (const item of sorted) {
-    const y = item.acf.year.toString();
-    if (!map.has(y)) map.set(y, []);
-    map.get(y)!.push(item);
-  }
-  return Array.from(map.entries());
-}
+const byYearDesc =
+  <T,>(year: (t: T) => number | string) =>
+  (a: T, b: T) =>
+    Number(year(b)) - Number(year(a));
 
 // "kunstkritikk.se" from "https://kunstkritikk.se/hjartats-energi/".
 function siteName(url: string) {
@@ -33,89 +22,69 @@ function siteName(url: string) {
   }
 }
 
-// A line split into columns on the 12-col grid. Desktop: each cell at its
-// given cols. Mobile (4 cols): the first cell cols 1–2, then one col each;
-// cells marked mobileHidden are left out there. Collapsible (mobile): only
-// the first cell (the title) shows, with the last (the year) at the right
-// end of its line; tapping the line opens it — the other cells stacked
-// under it, a line each — and tapping again closes it.
-function Cols({
-  cells,
-  collapsible = false,
+// One entry: its first part (the title, maybe a link), then the rest joined
+// with commas.
+function Entry({
+  first,
+  rest,
 }: {
-  cells: { content: ReactNode; className: string; mobileHidden?: boolean }[];
-  collapsible?: boolean;
+  first: ReactNode;
+  rest: (string | number | undefined | null | ReactNode)[];
 }) {
-  const [open, setOpen] = useState(false);
-  if (collapsible)
-    return (
-      <div
-        onClick={() => setOpen((v) => !v)}
-        className={`-mx-3 px-3 lg:mx-0 lg:px-0 ${open ? "" : "h-9"} lg:h-9 hover:bg-purple-200 transition-colors duration-300 flex flex-col lg:grid lg:grid-cols-12 gap-x-4 lg:items-center leading-none cursor-pointer lg:cursor-auto`}
-      >
-        {/* Mobile: the first line — the title, and the last cell (the
-            year) at its right end. Desktop: its cells sit in the grid
-            (lg:contents). */}
-        <div className="flex h-9 shrink-0 items-center gap-x-4 lg:contents">
-          <span
-            className={`flex flex-1 lg:flex-none items-center min-w-0 overflow-hidden ${cells[0].className}`}
-          >
-            <Ticker className="w-full">{cells[0].content}</Ticker>
-          </span>
-          <span className="lg:hidden shrink-0 tabular-nums">
-            {cells[cells.length - 1].content}
-          </span>
-        </div>
-        {/* The rest: stacked under it when open (mobile; the last cell is
-            already on the first line); in their columns on desktop. */}
-        {cells.slice(1).map((c, i) => {
-          const last = i === cells.length - 2;
-          return (
-            <span
-              key={i}
-              className={`${open && !last ? "flex" : "hidden"} lg:flex h-9 shrink-0 items-center min-w-0 overflow-hidden lg:h-auto ${c.className}`}
-            >
-              <Ticker className="w-full">{c.content}</Ticker>
-            </span>
-          );
-        })}
-      </div>
-    );
+  const parts = rest.filter((p) => p !== undefined && p !== null && p !== "");
   return (
-    <div className="-mx-3 px-3 lg:mx-0 lg:px-0 h-9 hover:bg-purple-200 transition-colors duration-300 grid grid-cols-4 lg:grid-cols-12 gap-x-4 items-center leading-none">
-      {cells.map((c, i) => (
-        <span
-          key={i}
-          className={`${i === 0 ? "col-span-2" : "col-span-1"} truncate ${c.mobileHidden ? "hidden lg:block" : ""} ${c.className}`}
-        >
-          <Ticker>{c.content}</Ticker>
-        </span>
+    <p>
+      {first}
+      {parts.map((p, i) => (
+        <span key={i}>, {p}</span>
       ))}
-    </div>
+    </p>
   );
 }
 
-// Exhibition history: every exhibition ever, text only — the exhibitions
-// with pages (title opens the exhibition) and the archive ones from the CV,
-// newest year first; an archive entry with the same title as an exhibition
-// is left out (same show). Columns (desktop): title (3–5; opens it when
-// it has a page), venue (6–7), city (8–9), type (10–11), year (12).
-function ExhibitionHistory({ query = "" }: { query?: string }) {
-  const { setOpen } = useUI();
-  const { exhibitions, exhibitionList, setActiveExhibitionSlug } =
-    useExhibitions();
+const LINK = "underline underline-offset-4 decoration-1";
+
+type Section = {
+  key: string;
+  title: string;
+  count?: number;
+  body: ReactNode;
+};
+
+// The info page: its title at the top left (where the works / exhibitions
+// pages have theirs), then the sections one under another in a centered
+// column (max-w-xl): the bio, exhibition history, grants, education, press,
+// colophon.
+export default function InfoPageClient({
+  bio = "",
+  press = [],
+}: {
+  bio?: string;
+  press?: Press[];
+}) {
+  const { educations, grants } = useInfo();
+  const { exhibitions, exhibitionList } = useExhibitions();
+  // The shared index search filters the lists by any of their text.
+  const { search } = useIndex();
+  const q = search.trim().toLowerCase();
+  const matches = (...parts: (string | number | undefined | null)[]) =>
+    !q || parts.filter(Boolean).join(" ").toLowerCase().includes(q);
+
+  // Exhibition history: every exhibition ever — those with pages (the title
+  // opens it) and the archive ones from the CV, newest first; an archive
+  // entry with the same title as an exhibition is left out (same show).
   const norm = (t: string) => t.trim().toLowerCase();
   const titles = new Set(exhibitions.map((e) => norm(e.title.rendered)));
-  const entries = [
+  const type = (t?: string) =>
+    t ? `${t.replace(/ Exhibition$/i, "")} Exhibition` : "";
+  const history = [
     ...exhibitions.map((e) => ({
       id: `ex-${e.id}`,
       year: e.acf.year,
       title: e.title.rendered,
       venue: e.acf.location,
       city: e.acf.city,
-      type: e.acf.exhibition_type
-        ? `${e.acf.exhibition_type.replace(/ Exhibition$/i, "")} Exhibition`
-        : "",
+      type: type(e.acf.exhibition_type),
       slug: e.slug as string | undefined,
     })),
     ...exhibitionList
@@ -126,253 +95,98 @@ function ExhibitionHistory({ query = "" }: { query?: string }) {
         title: e.title.rendered,
         venue: e.acf.venue,
         city: e.acf.city,
-        type: e.acf.exhibition_type
-          ? `${e.acf.exhibition_type.replace(/ Exhibition$/i, "")} Exhibition`
-          : "",
+        type: type(e.acf.exhibition_type),
         slug: undefined as string | undefined,
       })),
-  ].filter(
-    (e) =>
-      !query ||
-      [e.title, e.venue, e.city, e.type, e.year]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(query),
-  );
-  return (
-    <>
-      {groupByYear(entries.map((e) => ({ ...e, acf: { year: e.year } }))).map(
-        ([, es]) =>
-          es.map((e) => (
-            <Cols
-              key={e.id}
-              collapsible
-              cells={[
-                {
-                  className: "lg:col-start-3 lg:col-span-3",
-                  content: e.slug ? (
-                    <button
-                      type="button"
-                      className="text-left italic underline underline-offset-4 decoration-[0.5px] cursor-pointer"
-                      onClick={(ev) => {
-                        // Opens the exhibition, not the line.
-                        ev.stopPropagation();
-                        setActiveExhibitionSlug(e.slug!);
-                        setOpen(false);
-                      }}
-                    >
-                      {e.title}
-                    </button>
-                  ) : (
-                    e.title
-                  ),
-                },
-                {
-                  className: "lg:col-start-6 lg:col-span-2",
-                  content: e.venue,
-                },
-                {
-                  className: "lg:col-start-8 lg:col-span-2",
-                  content: e.city,
-                  mobileHidden: true,
-                },
-                {
-                  className: "lg:col-start-10 lg:col-span-2",
-                  content: e.type,
-                  mobileHidden: true,
-                },
-                {
-                  className: "lg:col-start-12 lg:col-span-1 tabular-nums",
-                  content: e.year,
-                },
-              ]}
-            />
-          )),
-      )}
-    </>
-  );
-}
-
-type Section = {
-  key: string;
-  title: string;
-  count?: number;
-  body: ReactNode;
-  // Desktop: the header's columns (default col 3 onward); the body goes on
-  // the line below it.
-  headerCols?: string;
-  // Desktop: something in cols 1–2 on the header's line (the search).
-  lead?: ReactNode;
-};
-
-// Text sizes for the page's S / M / L setting.
-const TEXT_SIZES = { S: "text-sm", M: "text-lg", L: "text-2xl" } as const;
-
-// One section of the info page — the same type as the works and
-// exhibitions lists, always open and full width (col-span-12): its title
-// (and how many entries), then its content.
-function InfoRow({
-  section,
-  textSize,
-}: {
-  section: Section;
-  textSize: string;
-}) {
-  return (
-    <div
-      className={`grid grid-cols-12 gap-x-4 gap-y-9 px-0 lg:px-0 font-stix leading-[1] text-primary  ${textSize}`}
-    >
-      {section.lead && (
-        <div className="hidden lg:block lg:col-start-1 lg:col-span-2 lg:row-start-1 ">
-          {section.lead}
-        </div>
-      )}
-      {section.title && (
-        <h2
-          className={`col-span-12 px-3 lg:px-0 ${section.headerCols ?? " font-gtAmericaCondensed uppercase lg:col-start-3 lg:col-span-10"} lg:row-start-1 h-9 flex items-center whitespace-pre max-lg:text-3xl`}
-        >
-          {section.title}
-        </h2>
-      )}
-      {/* Desktop: the header in col 3 (where the lists start), the content
-          on the line below; a section without a header starts on the first
-          line. Mobile: the header above the content. */}
-      <div
-        className={`col-span-12 px-3 lg:px-0 lg:col-start-1 ${section.title ? "lg:row-start-2" : "lg:row-start-1"} flex flex-col`}
-      >
-        {section.body}
-      </div>
-    </div>
-  );
-}
-
-export default function InfoPageClient({
-  bio = "",
-  press = [],
-}: {
-  bio?: string;
-  press?: Press[];
-}) {
-  const { educations, grants } = useInfo();
-  // Search (the nav's field, col 4 — the shared index search): filters the
-  // lists by any of their text.
-  const { search } = useIndex();
-  const q = search.trim().toLowerCase();
-  const matches = (...parts: (string | number | undefined | null)[]) =>
-    !q || parts.filter(Boolean).join(" ").toLowerCase().includes(q);
-  const shownGrants = grants.filter((g) =>
-    matches(g.acf.title, g.acf.institution, g.acf.year),
-  );
-  const shownEducations = educations.filter((e) =>
-    matches(e.acf.school, e.acf.city, e.acf.start_year, e.acf.end_year),
-  );
+  ]
+    .filter((e) => matches(e.title, e.venue, e.city, e.type, e.year))
+    .sort(byYearDesc((e) => e.year));
+  const shownGrants = grants
+    .filter((g) => matches(g.acf.title, g.acf.institution, g.acf.year))
+    .sort(byYearDesc((g) => g.acf.year));
+  const shownEducations = educations
+    .filter((e) =>
+      matches(e.acf.school, e.acf.city, e.acf.start_year, e.acf.end_year),
+    )
+    .sort(byYearDesc((e) => e.acf.end_year));
   const shownPress = press.filter((p) =>
     matches(p.title, p.author, p.link, p.year),
   );
 
   // The sections, in order; empty ones are left out.
-  const sections: Section[] = [
+  const sections = [
     bio && {
       key: "about",
-      // No header: just the bio.
-      title: "",
-      // Desktop: cols 3–6.
+      title: "About",
       body: (
-        <div className="grid grid-cols-12 gap-x-4 px-0 lg:px-0">
-          <p className="col-span-12 lg:col-start-3 lg:col-span-5 font-gtAmericaCondensed text-3xl uppercase lg:normal-case lg:text-sm whitespace-pre-line text-justify leading-tight lg:leading-relaxed lg:font-stix  ">
-            {bio}
-          </p>
-        </div>
+        <>
+          <p className="text-justify whitespace-pre-line">{bio}</p>
+        </>
       ),
     },
-    {
+    history.length > 0 && {
       key: "exhibition-history",
       title: "Exhibition history",
-      body: <ExhibitionHistory query={q} />,
+      count: history.length,
+      body: history.map((e) => (
+        <Entry
+          key={e.id}
+          first={
+            e.slug ? (
+              <Link href={`/exhibitions/${e.slug}`} className={LINK}>
+                {e.title}
+              </Link>
+            ) : (
+              e.title
+            )
+          }
+          rest={[e.venue, e.city, e.type, e.year]}
+        />
+      )),
     },
     shownGrants.length > 0 && {
       key: "grants",
       title: "Grants",
       count: shownGrants.length,
-      body: groupByYear(shownGrants).map(([, gs]) =>
-        gs.map((grant) => (
-          <Cols
-            key={grant.id}
-            cells={[
-              {
-                className: "lg:col-start-3 lg:col-span-4",
-                content: grant.acf.title,
-              },
-              { className: "lg:col-span-3", content: grant.acf.institution },
-              {
-                className:
-                  "col-start-4 text-right lg:text-left lg:col-start-10 lg:col-span-1 tabular-nums",
-                content: grant.acf.year,
-              },
-            ]}
-          />
-        )),
-      ),
+      body: shownGrants.map((g) => (
+        <Entry
+          key={g.id}
+          first={g.acf.title}
+          rest={[g.acf.institution, g.acf.year]}
+        />
+      )),
     },
     shownEducations.length > 0 && {
       key: "education",
       title: "Education",
       count: shownEducations.length,
-      body: [...shownEducations]
-        .sort((a, b) => Number(b.acf.end_year) - Number(a.acf.end_year))
-        .map((edu) => (
-          // School (3–6), city (7–9), years (10–11) — under the exhibition
-          // history's type column.
-          // Mobile: collapsible — school and years; tap to show the city.
-          <Cols
-            key={edu.id}
-            collapsible
-            cells={[
-              {
-                className: "lg:col-start-3 lg:col-span-4",
-                content: edu.acf.school,
-              },
-              { className: "lg:col-span-3", content: edu.acf.city },
-              {
-                className:
-                  "col-start-4 text-right lg:text-left lg:col-start-10 lg:col-span-2 tabular-nums whitespace-nowrap",
-                content: [edu.acf.start_year, edu.acf.end_year]
-                  .filter(Boolean)
-                  .join("–"),
-              },
-            ]}
-          />
-        )),
+      body: shownEducations.map((e) => (
+        <Entry
+          key={e.id}
+          first={e.acf.school}
+          rest={[
+            e.acf.city,
+            [e.acf.start_year, e.acf.end_year].filter(Boolean).join("–"),
+          ]}
+        />
+      )),
     },
     shownPress.length > 0 && {
       key: "press",
       title: "Press",
       count: shownPress.length,
-      // Title, author (3–6), site (7–9), year (11).
-      body: shownPress.map((item) => (
-        <Cols
-          key={item.id}
-          cells={[
-            {
-              className: "lg:col-start-3 lg:col-span-4",
-              content: [item.title, item.author].filter(Boolean).join(", "),
-            },
-            {
-              className: "lg:col-span-3",
-              content: item.link && (
-                <Link
-                  className="italic underline underline-offset-4 decoration-[0.5px]"
-                  href={item.link}
-                >
-                  {siteName(item.link)}
-                </Link>
-              ),
-            },
-            {
-              className: "lg:col-start-11 lg:col-span-1 tabular-nums",
-              content: item.year,
-            },
+      body: shownPress.map((p) => (
+        <Entry
+          key={p.id}
+          first={p.title}
+          rest={[
+            p.author,
+            p.link && (
+              <Link href={p.link} className={LINK}>
+                {siteName(p.link)}
+              </Link>
+            ),
+            p.year,
           ]}
         />
       )),
@@ -381,64 +195,57 @@ export default function InfoPageClient({
       key: "colophon",
       title: "Colophon",
       body: (
-        // Label (3–6), value (7–11).
         <>
-          <Cols
-            cells={[
-              {
-                className: "lg:col-start-3 lg:col-span-4",
-                content: "Design & code",
-              },
-              {
-                className: "lg:col-span-5",
-                content: (
-                  <Link
-                    className="italic underline underline-offset-4 decoration-[0.5px]"
-                    href="/"
-                  >
-                    Joel Järvi
-                  </Link>
-                ),
-              },
+          <Entry
+            first="Design & code"
+            rest={[
+              <Link key="j" href="/" className={LINK}>
+                Joel Järvi
+              </Link>,
             ]}
           />
-          <Cols
-            cells={[
-              {
-                className: "lg:col-start-3 lg:col-span-4",
-                content: "Typefaces",
-              },
-              {
-                className: "lg:col-span-5",
-                content: "STIX Two Text, GT America",
-              },
-            ]}
-          />
+          <Entry first="Typefaces" rest={["Gensco"]} />
         </>
       ),
     },
   ].filter(Boolean) as Section[];
 
-  // Text size for this page only: S / M / L (not the site-wide image size).
-  const [textSize, setTextSize] = useState<keyof typeof TEXT_SIZES>("S");
-
-  // A plain page that scrolls normally (desktop and mobile): every section
-  // open, one after another.
   return (
-    <section className="text-foreground relative w-full min-h-dvh bg-background">
-      {/* Text size S / M / L — fixed top right, like the image size on the
-          works and exhibitions pages. */}
+    <section className="relative w-full min-h-dvh bg-background text-neutral-800">
+      {/* The page's title, at the top left (where the works and
+          exhibitions pages have theirs), scrolling with the page. */}
+      <TitleBlock
+        heading
+        title="Information, CV and Contact"
+        className="px-6 pt-10 lg:px-12 lg:pt-16"
+      />
 
-      {/* Desktop: starts a quarter of the screen down, level with the fixed
-          view links (Works / Exhibitions / Info), so the first line of the
-          about text shares the "Works" link's baseline. */}
-      <div className="flex flex-col gap-y-24 lg:gap-y-18 pb-18 lg:mt-18 px-0 lg:px-0">
+      {/* Contact, above the bio, spread across the column. */}
+      <p className=" flex flex-col lg:flex-row w-full gap-x-6 lg:gap-x-12 mb-6 px-12 mt-3 lg:mt-3 lg:px-24 font-gensco text-[18px] lg:text-[21px]">
+        <span className="flex gap-x-6">
+          IG:
+          <a
+            href="https://www.instagram.com/elinorsilow"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @elinorsilow
+          </a>
+        </span>
+        <span className="flex gap-x-6">
+          EMAIL:
+          <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>
+        </span>
+      </p>
+      {/* The sections, one under another, centered. */}
+      <div className="max-w-sm  mx-auto flex flex-col items-center gap-y-12 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight">
         {sections.map((section) => (
-          <InfoRow
-            key={section.key}
-            section={section}
-            textSize={TEXT_SIZES[textSize]}
-          />
+          <div key={section.key} className="w-full max-w-xl flex flex-col">
+            <h2 className="font-gensco normal-case text-[18px] lg:text-[21px] leading-tight indent-6 mb-6 lg:indent-12 lg:mb-6">
+              {section.title}
+            </h2>
+            {section.body}
+          </div>
         ))}
         <BackToTop />
       </div>

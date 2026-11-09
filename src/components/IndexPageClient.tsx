@@ -1,20 +1,7 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  type ReactNode,
-  type MouseEvent,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
-import {
-  motion,
-  AnimatePresence,
-  Reorder,
-  useDragControls,
-} from "framer-motion";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import { useIndex } from "@/context/IndexContext";
@@ -27,9 +14,11 @@ import MetaLine from "@/components/MetaLine";
 import LenisScroll from "@/components/LenisScroll";
 import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
+import TitleBlock from "@/components/TitleBlock";
 import { useLenis } from "lenis/react";
 import BackToTop from "@/components/BackToTop";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { workMeasurements, workSize } from "@/lib/workSize";
 import Ticker from "@/components/Ticker";
 import {
@@ -76,7 +65,7 @@ type RowItem = {
   // "work" rows lay out a little differently when open (see ListRow).
   variant: "exhibition" | "work";
   title: string;
-  // Its own page, opened by the ↗ shown after the title on hover.
+  // Its own page, opened by clicking the row.
   href?: string;
   place?: string;
   kind?: string;
@@ -127,36 +116,6 @@ const MATCHBOX_GAP = 16;
 // CSS pixels per real centimetre on screen (96 per inch), for the scale label.
 const SCREEN_PX_PER_CM = 96 / 2.54;
 
-// The ↗ after a title. Neither its press nor its click reaches the row (drag,
-// toggle). Exhibitions need a full page load: a client-side link to
-// /exhibitions/… is intercepted by the @modal route and opens the pop-up.
-function PageLink({
-  href,
-  isWork,
-  label,
-  className,
-}: {
-  href: string;
-  isWork: boolean;
-  label: string;
-  className: string;
-}) {
-  const props = {
-    href,
-    className,
-    "aria-label": label,
-    onPointerDown: (e: ReactPointerEvent) => e.stopPropagation(),
-    onClick: (e: MouseEvent) => e.stopPropagation(),
-  };
-  return isWork ? (
-    <Link {...props} prefetch={false}>
-      ↗
-    </Link>
-  ) : (
-    <a {...props}>↗</a>
-  );
-}
-
 // One row of the exhibitions / works list (see RowItem) — a drop-down: a text row on a
 // 12-col grid (title col 4, venue col 8, year col 11). It opens when it
 // scrolls into view (crosses a band near the top of the screen) or is
@@ -170,7 +129,6 @@ function ListRow({
   size: sizeSetting,
   rowRef,
   onToggle,
-  onDragStart,
   reveal,
 }: {
   item: RowItem;
@@ -183,9 +141,6 @@ function ListRow({
   size: ImageSize;
   rowRef: (el: HTMLDivElement | null) => void;
   onToggle: () => void;
-  // Desktop: pressing anywhere on the row can start dragging it to another
-  // place in the list (see DraggableRow).
-  onDragStart?: (e: ReactPointerEvent) => void;
   // The site's reveal (siteReveal): "hidden" — no background or text yet;
   // a number — its background fades in after that many seconds, then its
   // text; undefined — shown.
@@ -198,8 +153,7 @@ function ListRow({
   // stay closed and text-primary/50 even when selected.
   const open = openProp && images.length > 0;
   const isWork = item.variant === "work";
-  // Works, desktop: an open row can be dragged to another place in the list.
-  const canDrag = open && !!onDragStart;
+  const router = useRouter();
   // Image size: the site-wide setting (S / M / L buttons, top right).
   const size: ImageSize = sizeSetting;
   const fullscreen = size === "L";
@@ -235,6 +189,9 @@ function ListRow({
   // and dimensions, or venue, city and type) — works: under the image (rows
   // 2–3); exhibitions: above it (rows 2–3); closed: just the title.
   const stacked = open;
+  // The title (desktop): its whole text, wrapping onto more lines if it needs
+  // to (not cut off), at least a row tall.
+  const titleFade = `h-12 leading-12 lg:h-auto lg:min-h-9 lg:py-2 lg:leading-tight self-stretch text-left lg:self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
   const infoFade = `h-12 leading-12 lg:h-9 lg:leading-9 self-stretch text-left lg:self-center transition-opacity duration-500 ${infoShown || !open ? "opacity-100" : "opacity-0"}`;
   // The open row's height (the screen minus 6rem), in px so it can animate
   // from the closed row's 36px.
@@ -365,17 +322,10 @@ function ListRow({
       // The open row is the anchor: the picker (and the mobile follow)
       // center the whole row — image and text together — in the viewport.
       data-picker-anchor={open ? "" : undefined}
-      // A closed row is clickable anywhere (not just on its text) to view
-      // it. On the open row only the title line toggles (below), so clicks
-      // on its image / full-screen button don't. Exhibitions don't open in
-      // the list: a click goes straight to the exhibition's page (a full
-      // load — a client-side link would open the @modal pop-up instead).
+      // A row is clickable anywhere: it goes straight to the item's own page.
       onClick={() => {
-        if (!isWork && item.href) window.location.assign(item.href);
-        else if (!open) onToggle();
+        if (item.href) router.push(item.href);
       }}
-      // Works, desktop: dragging anywhere on the row moves it in the list.
-      onPointerDown={canDrag ? onDragStart : undefined}
       // Reveal: background, then text, each fading in after its delay.
       style={
         typeof reveal === "number"
@@ -389,10 +339,11 @@ function ListRow({
       initial={false}
       // Open: as tall as its content (its image limited by S / M / L).
       animate={{
-        height: open ? "auto" : 36,
+        // As tall as its content.
+        height: "auto",
       }}
       transition={{ duration: ROW_S, ease: [0.22, 1, 0.36, 1] }}
-      className={`group/row relative border-b-2 border-b-neutral-800 ${canDrag ? "select-none lg:cursor-grab lg:active:cursor-grabbing lg:[&_*]:cursor-grab lg:active:[&_*]:cursor-grabbing" : ""}    ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} bg-background ${open ? "" : ""} ${open ? ` overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[auto_minmax(0,1fr)_auto] lg:gap-y-0" : `lg:grid-rows-[auto_auto_minmax(0,1fr)_minmax(4.5rem,max-content)_auto] lg:gap-y-0 ${isFullscreen ? "" : "lg:max-h-dvh"}`}` : "cursor-pointer h-12 lg:h-9 overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-0 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary" : "text-primary/50"}`}
+      className={`group/row relative      ${reveal === "hidden" ? "bg-transparent! text-transparent!" : ""} bg-background ${open ? "" : ""} ${open ? ` overflow-hidden grid-rows-[3rem] ${isWork ? "lg:grid-rows-[auto_minmax(0,1fr)_auto] lg:gap-y-0" : `lg:grid-rows-[auto_auto_minmax(0,1fr)_minmax(4.5rem,max-content)_auto] lg:gap-y-0 ${isFullscreen ? "" : "lg:max-h-dvh"}`}` : "cursor-pointer h-auto overflow-hidden"} ${tall ? "lg:min-h-dvh" : ""} lg:content-center flex flex-col ${open ? "" : "justify-center"} lg:gap-3 px-0 lg:px-0 lg:grid lg:grid-cols-12  lg:gap-x-4 font-stix leading-[1] text-sm transition-colors duration-300 hover:text-primary  ${open ? "text-primary" : "text-primary/50"}`}
     >
       <div
         // A div, not a <button>: Safari doesn't apply display: contents to
@@ -412,23 +363,14 @@ function ListRow({
           className={
             // Mobile: the title's first line indented a third of the width.
             // Mobile: open (2-col grid) one column; closed (4-col) two.
-            `col-span-1 ${open ? "indent-0" : "indent-0 lg:group-hover/row:indent-2"} font-medium font-areal uppercase text-xl  group/title flex text-neutral-800 items-center min-w-0 overflow-hidden  tracking-wide lg:col-start-1 px-2 lg:col-span-6 lg:row-start-1 ${infoFade}`
+            `col-span-1 ${open ? "indent-0" : "indent-0 lg:group-hover/row:indent-2"} font-areal text-2xl  group/title flex text-neutral-800 items-center min-w-0 overflow-hidden  tracking-wide lg:col-start-1 px-2 lg:col-span-6 lg:row-start-1 ${titleFade}`
           }
         >
-          {/* Mobile: a ticker when it doesn't fit. Desktop: cut off with "…". */}
+          {/* Mobile: a ticker when it doesn't fit. Desktop: wraps. */}
           <Ticker className="w-full lg:hidden">{item.title}</Ticker>
-          <span className="hidden lg:block min-w-0 truncate transition-[text-indent] duration-300">
+          <span className="hidden lg:block min-w-0 transition-[text-indent] duration-300">
             {item.title}
           </span>
-          {/* Desktop, hovering the title: ↗ after it, opening its own page. */}
-          {item.href && (
-            <PageLink
-              href={item.href}
-              isWork={isWork}
-              label={`Open ${item.title}`}
-              className="hidden lg:block shrink-0 text-neutral-400 hover:text-neutral-800 cursor-pointer! opacity-0 group-hover/title:opacity-100 focus-visible:opacity-100 transition-[opacity,color]"
-            />
-          )}
         </motion.span>
         <motion.span
           // Venue / materials: cols 5–7 (the title 1–4); materials only
@@ -442,7 +384,7 @@ function ListRow({
               ? { paddingLeft: metaInset, textIndent: 0 }
               : undefined
           }
-          className={`${isWork ? "order-3 mt-12 lg:mt-4" : "order-1"} font-gensco font-normal text-2xl text-neutral-800 lg:order-none col-span-1 ${open ? "block indent-4" : "hidden"} ${stacked ? `lg:col-start-1 lg:col-span-12 lg:px-4 ${isWork ? "lg:row-start-3" : "lg:row-start-2"}` : "lg:col-start-5 lg:col-span-3 lg:row-start-1"} min-w-0 max-w-full truncate ${infoFade}`}
+          className={`${isWork ? "order-3 mt-12 lg:mt-4" : "order-1"} font-areal font-medium text-2xl text-neutral-800 lg:order-none col-span-1 ${open ? "block indent-4" : "hidden"} ${stacked ? `lg:col-start-1 lg:col-span-12 lg:px-4 ${isWork ? "lg:row-start-3" : "lg:row-start-2"}` : "lg:col-start-5 lg:col-span-3 lg:row-start-1"} min-w-0 max-w-full truncate ${infoFade}`}
         >
           <Ticker>
             {stacked
@@ -741,58 +683,6 @@ function exhibitionImageUrls(ex: Exhibition): string[] {
     .filter((url): url is string => Boolean(url));
 }
 
-// A list row that can be dragged to another place in the list (a
-// Reorder.Item): `children` gets the function that starts the drag (ListRow's
-// onDragStart, on the whole row). Starting takes real movement, so a plain
-// click still clicks; the click that ends a drag is swallowed, or dropping a
-// row would also open / close it.
-// Layout animations (rows sliding out of the dragged one's way) only while
-// dragging: otherwise they'd also run whenever a row opens and pushes the
-// rows below it, and make them flicker.
-function DraggableRow({
-  value,
-  order,
-  onMoveStart,
-  children,
-}: {
-  value: string;
-  // While dragging: the list's current order (its changes animate);
-  // otherwise null (no layout animations).
-  order: string | null;
-  // The row has actually started moving.
-  onMoveStart: () => void;
-  children: (startDrag: (e: ReactPointerEvent) => void) => ReactNode;
-}) {
-  const controls = useDragControls();
-  const justDragged = useRef(false);
-  return (
-    <Reorder.Item
-      as="div"
-      value={value}
-      layoutDependency={order ?? "idle"}
-      dragListener={false}
-      dragControls={controls}
-      onDragStart={() => {
-        justDragged.current = true;
-        onMoveStart();
-      }}
-      onDragEnd={() => {
-        setTimeout(() => {
-          justDragged.current = false;
-        }, 50);
-      }}
-      onClickCapture={(e) => {
-        if (!justDragged.current) return;
-        justDragged.current = false;
-        e.stopPropagation();
-      }}
-      className="relative"
-    >
-      {children((e) => controls.start(e))}
-    </Reorder.Item>
-  );
-}
-
 // lg+ (Tailwind's 1024px), tracked live. False on the server and first
 // render.
 function useIsDesktop() {
@@ -807,11 +697,137 @@ function useIsDesktop() {
   return desktop;
 }
 
+// One entry in a feed (see Feed): a work or an exhibition.
+type FeedItem = {
+  id: string;
+  title: string;
+  // "year, materials, dimensions" (works) / "year, venue, city, type"
+  // (exhibitions).
+  metadata: string;
+  href: string;
+  images: string[];
+};
+
+function workFeedItem(w: Work): FeedItem {
+  return {
+    id: w.id,
+    title: w.title.rendered,
+    metadata: [w.acf.year, w.acf.materials, w.acf.dimensions]
+      .filter(Boolean)
+      .join(", "),
+    href: `/${w.slug}`,
+    images: w.image_url ? [w.image_url] : [],
+  };
+}
+
+function exhibitionFeedItem(ex: Exhibition): FeedItem {
+  return {
+    id: ex.id,
+    title: ex.title.rendered,
+    metadata: [
+      ex.acf.year,
+      ex.acf.location,
+      ex.acf.city,
+      ex.acf.exhibition_type && `${ex.acf.exhibition_type} Exhibition`,
+    ]
+      .filter(Boolean)
+      .join(", "),
+    href: `/exhibitions/${ex.slug}`,
+    images: exhibitionImageUrls(ex),
+  };
+}
+
+// Works / exhibitions as a feed: one item under another, at least a screen
+// tall, its images centered in a column (a work has one, an exhibition all
+// of its own); clicking one opens its page. The title and metadata of the
+// item in view (the one crossing the middle of the screen) are fixed at the
+// top left and change as the page scrolls.
+function Feed({
+  items,
+  hidden,
+  size,
+  maxW = "max-w-1/2 lg:max-w-1/6",
+  gap = "",
+}: {
+  items: FeedItem[];
+  hidden: boolean;
+  // The images' width limit (a static Tailwind class).
+  maxW?: string;
+  // The space between one item and the next (a static Tailwind class).
+  gap?: string;
+  // The image size setting: the images' height limit.
+  size: ImageSize;
+}) {
+  const [active, setActive] = useState(0);
+  const refs = useRef<(HTMLElement | null)[]>([]);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries)
+          if (entry.isIntersecting)
+            setActive(Number((entry.target as HTMLElement).dataset.index));
+      },
+      // A line across the middle of the screen.
+      { rootMargin: "-50% 0px -50% 0px" },
+    );
+    refs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [items]);
+  const current = items[active];
+  const imageClass = `block w-auto h-auto ${maxW} ${size === "S" ? "max-h-[33.3dvh]" : size === "M" ? "max-h-[50dvh]" : "max-h-[80dvh]"}`;
+  return (
+    <>
+      {current && (
+        <div
+          className={`fixed top-9 lg:top-16 left-0 lg:left-0 px-6 lg:px-12 z-70 w-full pb-3 pt-3 bg-transparent text-neutral-800 pointer-events-none transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+        >
+          <TitleBlock
+            title={current.title}
+            metadata={current.metadata}
+            href={current.href}
+            textWidth="lg:max-w-1/3"
+          />
+        </div>
+      )}
+      <div
+        className={`flex flex-col ${gap} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"}`}
+      >
+        {items.map((item, i) => (
+          <Link
+            key={item.id}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            data-index={i}
+            href={item.href}
+            prefetch={false}
+            aria-label={item.title}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-6 px-3 lg:px-4 cursor-pointer ${item.images.length > 1 ? "py-[25dvh]" : ""}`}
+          >
+            {item.images.map((src, j) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={src}
+                src={`${src}?h=1600&auto=format`}
+                alt={j === 0 ? item.title : ""}
+                loading={i < 2 && j === 0 ? "eager" : "lazy"}
+                draggable={false}
+                className={imageClass}
+              />
+            ))}
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+}
+
 export default function IndexPageClient() {
   const {
     mode,
     sort,
     search,
+    worksLayout,
     yearFilter,
     sizeFilter,
     closeRowsSignal,
@@ -821,28 +837,9 @@ export default function IndexPageClient() {
   const desktop = useIsDesktop();
   // Exhibitions and works lists: the open rows (several can be open at
   // once; each click toggles one), and the one opened last.
-  // Keyed by the row's item (rowKey), so they stay open when rows are
-  // dragged to other places.
+  // Keyed by the row's item (rowKey).
   const [openRows, setOpenRows] = useState<Set<string>>(() => new Set());
   const lastOpened = useRef<string | null>(null);
-  // The order rows have been dragged into (keys; see DraggableRow). Reset
-  // when switching between works and exhibitions.
-  const [rowOrder, setRowOrder] = useState<string[]>([]);
-  // A row is being dragged (until the pointer is released).
-  const [dragging, setDragging] = useState(false);
-  useEffect(() => {
-    if (!dragging) return;
-    const end = () => setDragging(false);
-    window.addEventListener("pointerup", end);
-    window.addEventListener("pointercancel", end);
-    return () => {
-      window.removeEventListener("pointerup", end);
-      window.removeEventListener("pointercancel", end);
-    };
-  }, [dragging]);
-  useEffect(() => {
-    setRowOrder([]);
-  }, [mode]);
   const openOnly = (key: string | null) => {
     setOpenRows(new Set(key === null ? [] : [key]));
     lastOpened.current = key;
@@ -1016,82 +1013,63 @@ export default function IndexPageClient() {
           as a fixed backdrop (purple-100 shows while it loads), with the
           works grid as a rounded bg-background panel on it. `isolate` keeps
           the -z-10 backdrop above this div's background. */}
-      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-48">
+      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-2">
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
             "all": cols 2–3; exhibitions: cols 2–4. */}
         <div className="lg:col-start-1 lg:col-span-12 lg:row-start-1 flex flex-col lg:px-0">
           <div>
-            {(mode === "works" || mode === "exhibitions") &&
-              (() => {
-                // Works and exhibitions share the list (see ListRow): a
-                // plain drop-down on a normally scrolling page (desktop and
-                // mobile) — click a row to open it; the page then follows it
-                // to the middle of the screen (stickToRow).
-                // In the order the visitor has dragged them into
-                // (rowOrder), then the rest in the list's own order.
-                const byKey = new Map<string, RowItem>(
-                  mode === "works"
-                    ? visibleWorks
-                        .slice(0, visibleCount)
-                        .map((w) => [rowKey("works", w.id), workRowItem(w)])
-                    : visibleExhibitions
-                        .slice(0, visibleCount)
-                        .map((ex) => [
-                          rowKey("exhibitions", ex.id),
-                          exhibitionRowItem(ex),
-                        ]),
-                );
-                const keys = [
-                  ...rowOrder.filter((k) => byKey.has(k)),
-                  ...[...byKey.keys()].filter((k) => !rowOrder.includes(k)),
-                ];
-                return (
-                  <Reorder.Group
-                    as="div"
-                    axis="y"
-                    values={keys}
-                    onReorder={setRowOrder}
-                    className="relative flex flex-col pb-24"
+            {/* Works as a grid: two per row. Hovering a work covers it with
+                the page background, its title and metadata at the top left;
+                clicking it opens its page. */}
+            {mode === "works" && worksLayout === "grid" && (
+              <div className="grid grid-cols-2 auto-rows-[50vh] gap-x-6 gap-y-24 px-6 pt-16 pb-24 items-start">
+                {visibleWorks.slice(0, visibleCount).map((w) => (
+                  <Link
+                    key={w.id}
+                    href={`/${w.slug}`}
+                    prefetch={false}
+                    className="group relative h-full min-h-0 flex flex-col cursor-pointer"
                   >
-                    {keys.map((key, i) => (
-                      <DraggableRow
-                        key={key}
-                        value={key}
-                        order={dragging ? keys.join() : null}
-                        onMoveStart={() => setDragging(true)}
-                      >
-                        {(startDrag) => (
-                          <ListRow
-                            item={byKey.get(key)!}
-                            open={openRows.has(key)}
-                            tall={false}
-                            reveal={
-                              siteReveal === "covered"
-                                ? "hidden"
-                                : siteReveal === "rows"
-                                  ? Math.min(i, REVEAL_ROWS - 1) *
-                                    REVEAL_STAGGER
-                                  : undefined
-                            }
-                            size={imageSize}
-                            rowRef={(el) => {
-                              exRowRefs.current[key] = el;
-                            }}
-                            onToggle={() => toggleRow(key)}
-                            // Works, desktop: rows can be dragged around.
-                            onDragStart={
-                              mode === "works" && desktop
-                                ? startDrag
-                                : undefined
-                            }
-                          />
-                        )}
-                      </DraggableRow>
-                    ))}
-                  </Reorder.Group>
-                );
-              })()}
+                    {w.image_url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`${w.image_url}?w=1200&auto=format`}
+                        alt={w.title.rendered}
+                        loading="lazy"
+                        className="block w-auto h-auto max-w-full max-h-full object-contain object-left-top"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-background opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                      <TitleBlock
+                        title={w.title.rendered}
+                        metadata={workFeedItem(w).metadata}
+                      />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+            {/* Works as a feed (List). */}
+            {mode === "works" && worksLayout === "list" && (
+              <Feed
+                items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
+                hidden={siteReveal === "covered"}
+                size={imageSize}
+              />
+            )}
+            {/* Exhibitions as a feed, like the works (no grid). */}
+            {mode === "exhibitions" && (
+              <Feed
+                items={visibleExhibitions
+                  .slice(0, visibleCount)
+                  .map(exhibitionFeedItem)}
+                maxW="max-w-2/3"
+                gap="gap-y-12"
+                hidden={siteReveal === "covered"}
+                size={imageSize}
+              />
+            )}
 
             <div ref={sentinelRef} className="h-1" />
             {/* Not on exhibitions. */}

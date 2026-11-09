@@ -27,6 +27,9 @@ interface IndexContextValue {
   sizeFilter: WorkSize | "all";
   setSizeFilter: (s: WorkSize | "all") => void;
   // Open works: show the scale and matchbox (the Filter panel's settings).
+  // Works: a list of rows, or a grid of images.
+  worksLayout: "list" | "grid";
+  setWorksLayout: (l: "list" | "grid") => void;
   showScale: boolean;
   setShowScale: (v: boolean) => void;
   // "random" sort: the order comes from this seed; randomize() picks a new one
@@ -79,6 +82,7 @@ export function IndexProvider({ children }: { children: ReactNode }) {
     setSizeFilter("all");
   }, [mode]);
   const [showScale, setShowScale] = useState(true);
+  const [worksLayout, setWorksLayout] = useState<"list" | "grid">("list");
   const [shuffleSeed, setShuffleSeed] = useState(1);
   const randomize = () => {
     setShuffleSeed(Math.floor(Math.random() * 1e9) + 1);
@@ -102,6 +106,8 @@ export function IndexProvider({ children }: { children: ReactNode }) {
       setYearFilter,
       sizeFilter,
       setSizeFilter,
+      worksLayout,
+      setWorksLayout,
       showScale,
       setShowScale,
       shuffleSeed,
@@ -118,7 +124,7 @@ export function IndexProvider({ children }: { children: ReactNode }) {
       cycleWorksPerRow,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [mode, sort, setSort, yearFilter, sizeFilter, showScale, shuffleSeed, closeRowsSignal, tidy, search, zoom, worksPerRow, pathname],
+    [mode, sort, setSort, yearFilter, sizeFilter, worksLayout, showScale, shuffleSeed, closeRowsSignal, tidy, search, zoom, worksPerRow, pathname],
   );
 
   return (

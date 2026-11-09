@@ -540,11 +540,17 @@ const gtAmericaCondensed = localFont({
   preload: false,
 });
 
+// FM FreeSerif (font-fm). OTF for now.
+const fm = localFont({
+  src: "../../public/fonts/FM-FreeSerif.otf",
+  variable: "--font-fm",
+  preload: false,
+});
+
 // Gensco (font-gensco).
 const gensco = localFont({
   src: "../../public/fonts/gensco-webfont.woff2",
   variable: "--font-gensco",
-  preload: false,
 });
 
 // STIX Two Text (Google Fonts) — the site's text face (font-stix). A
@@ -562,16 +568,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal?: React.ReactNode;
 }>) {
   const updates = await getRecentActivity(20);
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${gensco.variable} ${stixTwoText.variable} antialiased`}
+        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${fm.variable} ${gensco.variable} ${stixTwoText.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -595,7 +599,7 @@ export default async function RootLayout({
                               <ESNav />
                               <UnderConstruction />
                               <ESScreenSaver />
-                              {children} {modal}
+                              {children}
                             </CarouselProvider>
                           </AnimationProvider>
                         </NavSlotProvider>

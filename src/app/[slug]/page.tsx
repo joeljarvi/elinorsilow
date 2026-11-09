@@ -1,14 +1,44 @@
-import WorkSlugModalClient from "@/components/WorkSlugModalClient";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getWorkBySlug } from "../../../lib/sanity";
+import TitleBlock from "@/components/TitleBlock";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const work = await getWorkBySlug((await params).slug);
+  return {
+    title: work ? `${work.title.rendered} — elinorsilow.com` : undefined,
+  };
+}
+
+// A work's own page: two columns — the title and "year, materials,
+// dimensions" at the top left of the first, the work in the second, a screen
+// tall. Mobile: the text above the work.
 export default async function WorkPage({ params }: Props) {
-  const { slug } = await params;
+  const work = await getWorkBySlug((await params).slug);
+  if (!work) notFound();
+  const metadata = [work.acf.year, work.acf.materials, work.acf.dimensions]
+    .filter(Boolean)
+    .join(", ");
   return (
-    <div className="min-h-screen grid grid-cols-6 lg:grid-cols-4 w-full max-w-7xl ">
-      <WorkSlugModalClient slug={slug} />
-    </div>
+    <main className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 px-3 lg:px-6 text-neutral-800">
+      <TitleBlock
+        heading
+        title={work.title.rendered}
+        metadata={metadata}
+        className="pt-6 pr-20 lg:pr-0 min-w-0"
+      />
+      {work.image_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`${work.image_url}?h=2000&auto=format`}
+          alt={work.title.rendered}
+          className="block w-full h-dvh object-contain object-top pt-6 pb-6"
+        />
+      )}
+    </main>
   );
 }
