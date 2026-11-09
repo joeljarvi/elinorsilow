@@ -125,7 +125,7 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
     <div
       // Lenis (the page's smooth scrolling) would take the wheel otherwise.
       data-lenis-prevent
-      className="fixed inset-x-0 top-9 lg:top-16 h-dvh z-[75] overflow-y-auto flex flex-col items-start gap-y-6 lg:gap-y-6 p-3 pt-6 px-6 lg:px-6 lg:pt-12 pb-16 bg-background text-neutral-800 font-gensco text-[18px] lg:text-[21px] uppercase font-medium leading-tight"
+      className="fixed inset-x-0 top-9 lg:top-auto lg:bottom-0 lg:right-auto h-dvh lg:h-auto lg:max-h-[calc(100dvh-4rem)] z-[75] overflow-y-auto flex flex-col items-start gap-y-6 lg:gap-y-6 p-3 pt-6 px-6 lg:px-6 lg:pt-0 pb-16 lg:pb-6 bg-background lg:bg-transparent text-neutral-800 font-gensco text-[18px] lg:text-[21px] uppercase font-medium leading-tight"
     >
       <input
         type="search"
@@ -168,7 +168,8 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
           />
         )}
       </div>
-      <div className="flex flex-col">
+      {/* Settings: hidden for now. */}
+      <div className="hidden">
         <h2 className="normal-case  mb-3 lg:mb-6">Settings</h2>
         {/* Not on mobile. */}
         {!exhibitions && (
@@ -192,7 +193,7 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
           onChange={setImageSize}
         />
       </div>
-      <div className="flex px-12  gap-x-3 lg:gap-x-6 ">
+      <div className="flex px-0  gap-x-3 lg:gap-x-6 ">
         <button
           type="button"
           onClick={clear}

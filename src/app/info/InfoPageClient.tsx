@@ -238,7 +238,7 @@ export default function InfoPageClient({
         </span>
       </p>
       {/* The sections, one under another, centered. */}
-      <div className="max-w-sm  mx-auto flex flex-col items-center gap-y-12 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight">
+      <div className="max-w-sm lg:max-w-xl  mx-auto flex flex-col items-center gap-y-12 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight">
         {sections.map((section) => (
           <div key={section.key} className="w-full max-w-xl flex flex-col">
             <h2 className="font-gensco normal-case text-[18px] lg:text-[21px] leading-tight indent-6 mb-6 lg:indent-12 lg:mb-6">

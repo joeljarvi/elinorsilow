@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import TrumpetNav from "./TrumpetNav";
 
 // Idle time before the screen saver shows, and how fast the trumpet plays.
-const IDLE_MS = 10_000;
+const IDLE_MS = 5_000;
 const FRAME_MS = 1000;
 // Frames 1 → 2 → 3 → 2 → 1 → …
 const PINGPONG = [0, 1, 2, 1];
