@@ -77,22 +77,22 @@ export default async function ExhibitionPage({ params }: Props) {
       {/* The title, fixed at the top left while the page scrolls, on the
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
-      <div className="fixed inset-x-0 top-0 z-70 px-3 lg:px-6 pt-6 pb-6 pr-20 lg:pr-24 bg-background pointer-events-none">
+      <div className="fixed inset-x-0 top-0 z-70 px-3 lg:px-6 pt-3 pb-3 lg:pt-6 lg:pb-6 pr-20 lg:pr-24 bg-background pointer-events-none">
         <TitleBlock heading title={ex.title.rendered} metadata={metadata} />
         <FadeEdge />
       </div>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
-      <div className="flex flex-col items-center gap-y-6 pt-36">
+      <div className="flex flex-col items-center gap-y-6 pt-36 lg:pt-36">
         {ex.acf.description && (
-          <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[21px] leading-tight">
+          <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">
             {ex.acf.description}
           </p>
         )}
         <ExhibitionImages images={images} title={ex.title.rendered} />
         {/* The credits, after the images — styled as the description. */}
         {ex.acf.credits && (
-          <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[21px] leading-tight">
+          <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">
             {ex.acf.credits}
           </p>
         )}
@@ -101,17 +101,20 @@ export default async function ExhibitionPage({ params }: Props) {
           image, its title and metadata showing on hover; clicking one opens
           it. */}
       {related.length > 0 && (
-        <section className="flex flex-col gap-y-6 max-w-2/3 mx-auto  min-h-dvh items-center justify-center">
-          <h2 className="font-gensco text-[21px] leading-tight">Related</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-12 gap-y-12">
-            {related.map((other) => {
+        <section className="flex flex-col gap-y-6 lg:max-w-2/3 mx-auto  min-h-dvh items-center justify-center">
+          <h2 className="font-gensco text-[18px] lg:text-[21px] leading-tight">
+            Related
+          </h2>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-12 gap-y-12">
+            {related.map((other, i) => {
               const cover = exhibitionImages(other)[0];
               return (
                 <Link
                   key={other.id}
                   href={`/exhibitions/${other.slug}`}
                   aria-label={other.title.rendered}
-                  className="group relative self-start"
+                  // Mobile: only the first two.
+                  className={`group relative self-start ${i > 1 ? "hidden lg:block" : ""}`}
                 >
                   {cover && (
                     // eslint-disable-next-line @next/next/no-img-element

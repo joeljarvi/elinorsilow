@@ -15,15 +15,19 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   serverExternalPackages: ["sanity", "@sanity/vision"],
+  // The works / exhibitions / info views live at /works, /exhibitions and
+  // /info. They used to be under /index/…, which can't work on Vercel (its
+  // Next.js runtime reads "/index/x" as "/x" and 404s). Old /index/… links
+  // are rewritten, not redirected: browsers may have cached the old
+  // permanent /works → /index/works redirect, and a redirect back would loop.
   async redirects() {
+    return [{ source: "/index", destination: "/works", permanent: false }];
+  },
+  async rewrites() {
     return [
-      { source: "/index", destination: "/index/works", permanent: false },
-      { source: "/info", destination: "/index/info", permanent: false },
-      { source: "/works", destination: "/index/works", permanent: true },
       {
-        source: "/exhibitions",
-        destination: "/index/exhibitions",
-        permanent: true,
+        source: "/index/:view(works|exhibitions|info)",
+        destination: "/:view",
       },
     ];
   },

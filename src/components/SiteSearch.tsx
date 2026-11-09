@@ -27,11 +27,10 @@ const normalize = (s: string) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 const PAGES = [
-  { title: "Works", href: "/index/works" },
-  { title: "Exhibitions", href: "/index/exhibitions" },
-  { title: "Index", href: "/index" },
-  { title: "Info", href: "/index/info" },
-  { title: "CV", href: "/index/info" },
+  { title: "Works", href: "/works" },
+  { title: "Exhibitions", href: "/exhibitions" },
+  { title: "Info", href: "/info" },
+  { title: "CV", href: "/info" },
   { title: "Privacy policy", href: "/privacy-policy" },
 ];
 
@@ -107,7 +106,7 @@ export default function SiteSearch({ className = "" }: { className?: string }) {
           detail: [e.acf.year, e.acf.venue, e.acf.city]
             .filter(Boolean)
             .join(", "),
-          open: () => router.push("/index/info#exhibitions"),
+          open: () => router.push("/info#exhibitions"),
         }),
       ),
       ...educations.map((e) =>
@@ -118,7 +117,7 @@ export default function SiteSearch({ className = "" }: { className?: string }) {
           detail: [`${e.acf.start_year}–${e.acf.end_year}`, e.acf.city]
             .filter(Boolean)
             .join(", "),
-          open: () => router.push("/index/info#education"),
+          open: () => router.push("/info#education"),
         }),
       ),
       ...grants.map((g) =>
@@ -127,7 +126,7 @@ export default function SiteSearch({ className = "" }: { className?: string }) {
           kind: "Grant",
           title: g.acf.title,
           detail: g.acf.year,
-          open: () => router.push("/index/info#grants"),
+          open: () => router.push("/info#grants"),
         }),
       ),
       ...PAGES.map((p) =>

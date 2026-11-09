@@ -11,10 +11,15 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import type { WorkSize } from "@/lib/workSize";
 
-// The index section's views: /index/works, /index/exhibitions, /index/info.
+// The index section's views: /works, /exhibitions, /info.
 export type HomeView = "works" | "exhibitions" | "info";
 export type IndexMode = HomeView;
 export type IndexSort = "latest" | "title" | "year" | "random";
+
+// The index section's paths (/works, /exhibitions, /info).
+export const INDEX_PATHS = ["/works", "/exhibitions", "/info"];
+export const isIndexPath = (pathname: string) =>
+  INDEX_PATHS.includes(pathname);
 
 interface IndexContextValue {
   mode: IndexMode;
@@ -45,7 +50,7 @@ interface IndexContextValue {
   setSearch: (s: string) => void;
   zoom: number;
   setZoom: (n: number) => void;
-  // Works per row in the /index/works grid on desktop (4 → 3 → 2 → 1).
+  // Works per row in the /works grid on desktop (4 → 3 → 2 → 1).
   worksPerRow: number;
   cycleWorksPerRow: () => void;
 }
@@ -57,14 +62,14 @@ export function IndexProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   // The current view comes from the URL (works outside the index section).
   const mode: IndexMode =
-    pathname === "/index/exhibitions"
+    pathname === "/exhibitions"
       ? "exhibitions"
-      : pathname === "/index/info"
+      : pathname === "/info"
         ? "info"
         : "works";
   const setMode = (next: IndexMode) => {
     setSearch(""); // each view starts unfiltered
-    router.push(`/index/${next}`, { scroll: false });
+    router.push(`/${next}`, { scroll: false });
   };
 
   // Default sort per view: exhibitions by year, everything else latest.

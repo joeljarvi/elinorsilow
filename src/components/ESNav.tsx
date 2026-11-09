@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
-import { useIndex, type HomeView } from "@/context/IndexContext";
+import {
+  useIndex,
+  isIndexPath,
+  type HomeView,
+} from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
 import FadeEdge from "./FadeEdge";
 import { useTheme } from "next-themes";
@@ -43,9 +47,9 @@ function ThemeToggle({
 
 // The index section's views, in the menu.
 export const VIEW_LINKS: { view: HomeView; label: string; href: string }[] = [
-  { view: "works", label: "Works", href: "/index/works" },
-  { view: "exhibitions", label: "Exhibitions", href: "/index/exhibitions" },
-  { view: "info", label: "Info", href: "/index/info" },
+  { view: "works", label: "Works", href: "/works" },
+  { view: "exhibitions", label: "Exhibitions", href: "/exhibitions" },
+  { view: "info", label: "Info", href: "/info" },
 ];
 
 export default function ESNav() {
@@ -58,7 +62,7 @@ export default function ESNav() {
   } = useUI();
   const pathname = usePathname();
   const { mode, setSearch } = useIndex();
-  const onIndex = pathname.startsWith("/index");
+  const onIndex = isIndexPath(pathname);
   // List settings — shown with the works / exhibitions lists: the Filter menu
   // on desktop, S / M / L in the mobile menu.
   const showSizes = onIndex && mode !== "info";
@@ -98,17 +102,26 @@ export default function ESNav() {
   const exhibitionPage = segments[0] === "exhibitions" && segments.length === 2;
   const workPage =
     segments.length === 1 &&
-    !["index", "privacy-policy", "studio"].includes(segments[0]);
+    ![
+      "works",
+      "exhibitions",
+      "info",
+      "privacy-policy",
+      "studio",
+    ].includes(segments[0]);
   const showBack = exhibitionPage || workPage;
   const goBack = () => {
     if (document.referrer.startsWith(window.location.origin)) router.back();
-    else router.push(exhibitionPage ? "/index/exhibitions" : "/index/works");
+    else router.push(exhibitionPage ? "/exhibitions" : "/works");
   };
   const toggleOpen = () => {
     const next = !open;
     setOpenDesktopNav(next);
     if (next) setFilterOpen(false);
   };
+
+  // Works in Vertical mode: the bar is transparent, with no fade under it.
+  const vertical = onIndex && mode === "works" && worksLayout === "list";
 
   // Sanity Studio has its own UI — no site nav (or logo) on top of it.
   // The home page has its own links — no nav there either.
@@ -122,7 +135,7 @@ export default function ESNav() {
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-6 right-3 lg:right-6 z-80 font-gensco text-[21px] leading-tight text-neutral-800 cursor-pointer"
+          className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
         >
           Back
         </button>
@@ -132,11 +145,11 @@ export default function ESNav() {
           with Works, Exhibitions and Info beside it; the current one
           underlined. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-9 pt-3 lg:h-16 px-3 lg:px-6 lg:pt-6 pb-0  bg-background ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-9 pt-3 lg:h-16 px-3 lg:px-6 lg:pt-6 pb-0 ${vertical ? "bg-transparent" : "bg-background"} ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* The page background fading out just below the bar, so the page
             fades as it scrolls under it. */}
-        <FadeEdge />
+        {!vertical && <FadeEdge />}
         <span className="flex flex-wrap items-baseline gap-x-6 font-gensco text-[18px] lg:text-[21px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
             href="/"

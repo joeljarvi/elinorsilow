@@ -15,6 +15,7 @@ import LenisScroll from "@/components/LenisScroll";
 import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
 import TitleBlock from "@/components/TitleBlock";
+import FadeEdge from "@/components/FadeEdge";
 import { useLenis } from "lenis/react";
 import BackToTop from "@/components/BackToTop";
 import Link from "next/link";
@@ -779,7 +780,7 @@ function Feed({
     <>
       {current && (
         <div
-          className={`fixed top-9 lg:top-16 left-0 lg:left-0 px-6 lg:px-12 z-70 w-full pb-3 pt-3 bg-transparent text-neutral-800 pointer-events-none transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+          className={`fixed top-9 lg:top-16 left-0 lg:left-0 px-6 lg:px-12 z-70 w-full pb-3 pt-3 max-lg:bg-background lg:bg-transparent text-neutral-800 pointer-events-none transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
         >
           <TitleBlock
             title={current.title}
@@ -787,6 +788,8 @@ function Feed({
             href={current.href}
             textWidth="lg:max-w-1/3"
           />
+          {/* Mobile: the background fading out below it. */}
+          <FadeEdge className="lg:hidden" />
         </div>
       )}
       <div

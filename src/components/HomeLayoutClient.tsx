@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useUI } from "@/context/UIContext";
 
 const LINKS = [
-  { href: "/index/works", label: "Works" },
-  { href: "/index/exhibitions", label: "Exhibitions" },
-  { href: "/index/info", label: "Info" },
+  { href: "/works", label: "Works" },
+  { href: "/exhibitions", label: "Exhibitions" },
+  { href: "/info", label: "Info" },
 ];
 
 // The home page: one column in the middle of the screen — the name, the bio

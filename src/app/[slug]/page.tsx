@@ -29,7 +29,7 @@ export default async function WorkPage({ params }: Props) {
         heading
         title={work.title.rendered}
         metadata={metadata}
-        className="pt-6 pr-20 lg:pr-0 min-w-0"
+        className="pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0"
       />
       {work.image_url && (
         // eslint-disable-next-line @next/next/no-img-element

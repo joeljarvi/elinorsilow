@@ -2,7 +2,12 @@
 
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useUI } from "@/context/UIContext";
-import { useIndex, IndexSort, IndexMode } from "@/context/IndexContext";
+import {
+  useIndex,
+  isIndexPath,
+  IndexSort,
+  IndexMode,
+} from "@/context/IndexContext";
 import { useWorks, CategoryFilter } from "@/context/WorksContext";
 import { useExhibitions, ExCategory } from "@/context/ExhibitionsContext";
 import { usePathname, useRouter } from "next/navigation";
@@ -55,8 +60,8 @@ const FILTER_COLS = [
 
 const NAV_LINKS = [
   { href: "/", label: "home" },
-  { href: "/index/works", label: "works" },
-  { href: "/index/exhibitions", label: "exhibitions" },
+  { href: "/works", label: "works" },
+  { href: "/exhibitions", label: "exhibitions" },
   { href: "/info", label: "info" },
   { href: "mailto:elinor.silow@gmail.com", label: "contact" },
   {
@@ -215,10 +220,10 @@ function NewNavOverlay({
   const searchRef = useRef<HTMLInputElement>(null);
 
   const onInfo = pathname === "/info";
-  const onIndexAny = pathname.startsWith("/index");
-  const onIndexRoot = pathname === "/index";
-  const onIndexWorks = pathname === "/index/works";
-  const onIndexExhibitions = pathname === "/index/exhibitions";
+  const onIndexAny = isIndexPath(pathname);
+  const onIndexRoot = false;
+  const onIndexWorks = pathname === "/works";
+  const onIndexExhibitions = pathname === "/exhibitions";
 
   useEffect(() => {
     if (onIndexRoot) searchRef.current?.focus();
@@ -410,10 +415,10 @@ export default function DesktopNav() {
   const [activeSection, setActiveSection] = useState<string>("");
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const onIndexAny = pathname.startsWith("/index");
-  const onIndexRoot = pathname === "/index";
-  const onIndexWorks = pathname === "/index/works";
-  const onIndexExhibitions = pathname === "/index/exhibitions";
+  const onIndexAny = isIndexPath(pathname);
+  const onIndexRoot = false;
+  const onIndexWorks = pathname === "/works";
+  const onIndexExhibitions = pathname === "/exhibitions";
   const onInfo = pathname === "/info";
 
   // The three pages that carry the filter row. It is always open there — there
@@ -438,7 +443,7 @@ export default function DesktopNav() {
   // onIndexAny is true from then on.
   const handleSearch = (value: string) => {
     setSearch(value);
-    if (value && !onIndexAny) router.push("/index");
+    if (value && !onIndexAny) router.push("/works");
   };
 
   useEffect(() => {

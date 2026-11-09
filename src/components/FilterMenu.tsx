@@ -133,7 +133,7 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search..."
         aria-label={`Search ${mode}`}
-        className="w-full h-auto border-0 px-6 bg-transparent outline-none uppercase placeholder:text-neutral-400"
+        className="w-full h-auto border-0 px-0 bg-transparent outline-none uppercase placeholder:text-neutral-400"
       />
       <div className="flex flex-col text-[18px] lg:text-[21px]">
         <h2 className="normal-case mb-3 lg:mb-6">Filter by</h2>
@@ -192,7 +192,7 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
           onChange={setImageSize}
         />
       </div>
-      <div className="flex  gap-x-3 lg:gap-x-6 ">
+      <div className="flex px-12  gap-x-3 lg:gap-x-6 ">
         <button
           type="button"
           onClick={clear}

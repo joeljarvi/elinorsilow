@@ -71,7 +71,7 @@ export default function ExhibitionImages({
           <button
             type="button"
             onClick={() => setOpen(null)}
-            className="fixed top-6 right-3 lg:right-6 font-gensco text-[21px] leading-tight text-neutral-800 cursor-pointer"
+            className="fixed top-3 lg:top-6 right-3 lg:right-6 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
           >
             Close
           </button>

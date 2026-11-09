@@ -3,7 +3,7 @@ import { connection } from "next/server";
 import { getAllPress, getShortBio } from "../../../lib/sanity";
 import IndexViews from "@/components/IndexViews";
 
-// /index/works, /index/exhibitions and /index/info: one layout, which shows
+// /works, /exhibitions and /info: one layout, which shows
 // the view for the current URL. The pages themselves render nothing.
 //
 // Must not be prerendered: Next writes a static /index/… page to
