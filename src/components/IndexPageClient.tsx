@@ -738,38 +738,6 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
   };
 }
 
-// The list's heading, fixed at the top right: each active filter (category,
-// year, size, search), gap-x-4 apart — or "All Works" — then how many match.
-// Works (list and grid) and exhibitions.
-function ActiveFilters({ totalItems }: { totalItems: number }) {
-  const { mode, yearFilter, sizeFilter, search } = useIndex();
-  const { categoryFilter } = useWorks();
-  const { exCat } = useExhibitions();
-  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
-  const category = mode === "exhibitions" ? exCat : categoryFilter;
-  const activeFilters = [
-    category !== "all" && cap(category),
-    yearFilter !== "all" && yearFilter,
-    mode === "works" && sizeFilter !== "all" && cap(sizeFilter),
-    search.trim() && `"${search.trim()}"`,
-  ].filter((f): f is string => Boolean(f));
-  // Fixed at the top right; down a step while the Filter menu is open.
-  const { filterOpen } = useUI();
-  return (
-    <h1
-      className={`fixed ${filterOpen ? "top-8" : "top-4"} right-0 p-8 z-70 flex flex-wrap justify-end gap-x-4 font-gensco text-[21px] text-neutral-800 pointer-events-none`}
-    >
-      <span className="uppercase">Category</span> <span>:</span>
-      {activeFilters.length ? (
-        activeFilters.map((f) => <span key={f}>{f}</span>)
-      ) : (
-        <span>All Works</span>
-      )}
-      <span>({totalItems})</span>
-    </h1>
-  );
-}
-
 // Works / exhibitions as a feed: one item under another, at least a screen
 // tall, its images centered in a column (a work has one, an exhibition all
 // of its own); clicking one opens its page. The title and metadata of the
@@ -810,48 +778,19 @@ function Feed({
     return () => observer.disconnect();
   }, [items]);
   const current = items[active];
-  // Desktop, with the Filter menu open: the title moves down to sit just
-  // below it (top-9 for one row of filters, top-13.5 for two, …).
-  const { filterOpen } = useUI();
-  const [menuBottom, setMenuBottom] = useState<number | null>(null);
-  useEffect(() => {
-    if (!filterOpen) {
-      setMenuBottom(null);
-      return;
-    }
-    const el = document.querySelector<HTMLElement>("[data-filter-menu]");
-    if (!el) return;
-    const sync = () =>
-      setMenuBottom(
-        window.matchMedia("(min-width: 1024px)").matches
-          ? el.getBoundingClientRect().bottom
-          : null,
-      );
-    sync();
-    const ro = new ResizeObserver(sync);
-    ro.observe(el);
-    window.addEventListener("resize", sync);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", sync);
-    };
-  }, [filterOpen]);
   const imageClass = `block w-auto h-auto ${maxW} ${size === "S" ? "max-h-[33.3dvh]" : size === "M" ? "max-h-[50dvh]" : "max-h-[80dvh]"}`;
   return (
     <>
       {current && (
         <div
-          className={`fixed top-9 lg:top-4 left-0 lg:left-0 px-6 lg:px-8 z-70 w-full pb-8 pt-8 bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
-          style={menuBottom !== null ? { top: menuBottom } : undefined}
+          className={`fixed top-0 lg:top-4 left-0 lg:left-0 px-3 py-3 lg:px-8 z-70 w-full lg:py-8 bg-background lg:bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
         >
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth=""
+            textWidth="max-w-xl"
           />
-          {/* Mobile: the background fading out below it. */}
-          <FadeEdge className="lg:hidden" />
         </div>
       )}
       <div
@@ -867,7 +806,7 @@ function Feed({
             href={item.href}
             prefetch={false}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-6 px-3 lg:px-4 cursor-pointer ${item.images.length > 1 ? "py-[25dvh]" : ""}`}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-1 px-3 lg:px-4 cursor-pointer ${item.images.length > 1 ? "py-[25dvh]" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -911,7 +850,7 @@ export default function IndexPageClient() {
   };
   // Image size (S / M / L): a site-wide setting, kept in UIContext. Each
   // view starts at L, and the S / M / L buttons change it from there.
-  const { imageSize, setImageSize, siteReveal } = useUI();
+  const { imageSize, setImageSize, siteReveal, filterOpen } = useUI();
   useEffect(() => {
     setImageSize("L");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1078,7 +1017,7 @@ export default function IndexPageClient() {
           as a fixed backdrop (purple-100 shows while it loads), with the
           works grid as a rounded bg-background panel on it. `isolate` keeps
           the -z-10 backdrop above this div's background. */}
-      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-2">
+      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-30">
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
             "all": cols 2–3; exhibitions: cols 2–4. */}
@@ -1086,14 +1025,14 @@ export default function IndexPageClient() {
           <div>
             {/* Works as a grid: just the images; clicking one opens its
                 page. */}
-            {(mode === "works" || mode === "exhibitions") && (
-              <ActiveFilters
-                totalItems={
-                  mode === "works"
-                    ? visibleWorks.length
-                    : visibleExhibitions.length
-                }
-              />
+            {/* Grid: in place of the feed's title block (top left), what
+                the grid shows and how it's sorted. */}
+            {mode === "works" && worksLayout === "grid" && (
+              // Same top, padding and type as the active filters (top right), so
+              // the two share a baseline.
+              <div className="fixed top-4 left-0 p-8 z-70 pointer-events-none hidden">
+                <TitleBlock title="Works" />
+              </div>
             )}
             {mode === "works" && worksLayout === "grid" && (
               <div className="grid grid-cols-4 lg:grid-cols-6  gap-x-1 gap-y-60 px-1 pt-2 pb-24 items-start">
@@ -1133,8 +1072,8 @@ export default function IndexPageClient() {
                   .slice(0, visibleCount)
                   .map(exhibitionFeedItem)}
                 totalItems={visibleExhibitions.length}
-                maxW="max-w-2/3"
-                gap="gap-y-12"
+                maxW="max-w-full lg:max-w-2/3"
+                gap="gap-y-30"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />

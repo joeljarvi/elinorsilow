@@ -2,18 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-// The images' height limits, in turn down the page, so the column varies
-// rather than every image being the same size.
-const HEIGHTS = [
-  "max-h-[80dvh]",
-  "max-h-[50dvh]",
-  "max-h-[66dvh]",
-  "max-h-[40dvh]",
-  "max-h-[90dvh]",
-  "max-h-[60dvh]",
-];
-
-// An exhibition's images, one under another (centered, at most 2/3 wide).
+// An exhibition's images, one under another (centered, at most full width
+// and 80vh tall).
 // Clicking one opens it in a lightbox: the image as tall as the screen
 // (minus py-6) on the page background, with Close at the top right; Esc or a
 // click outside the image closes it too.
@@ -37,29 +27,32 @@ export default function ExhibitionImages({
 
   return (
     <>
-      {images.map((img, i) => (
-        <button
-          key={img.url}
-          type="button"
-          onClick={() => setOpen(i)}
-          className="flex justify-center w-full cursor-zoom-in"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`${img.url}?w=2000&auto=format`}
-            alt={alt(i)}
-            loading={i < 2 ? "eager" : "lazy"}
-            className={`block w-auto h-auto max-w-full lg:max-w-2/3 ${HEIGHTS[i % HEIGHTS.length]}`}
-          />
-        </button>
-      ))}
+      {/* The images in their own column, gap-y-1 apart. */}
+      <div className="flex flex-col gap-y-1 w-full px-1 ">
+        {images.map((img, i) => (
+          <button
+            key={img.url}
+            type="button"
+            onClick={() => setOpen(i)}
+            className="flex justify-center w-full cursor-zoom-in"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`${img.url}?w=2000&auto=format`}
+              alt={alt(i)}
+              loading={i < 2 ? "eager" : "lazy"}
+              className="block w-auto h-auto max-w-full max-h-dvh lg:max-h-[80vh]"
+            />
+          </button>
+        ))}
+      </div>
       {open !== null && (
         <div
           role="dialog"
           aria-modal="true"
           aria-label={alt(open) || title}
           onClick={() => setOpen(null)}
-          className="fixed inset-0 z-[90] flex items-center justify-center px-6 py-6 bg-background"
+          className="fixed inset-0 z-[90] flex items-center justify-center px-6 py-1 bg-background"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

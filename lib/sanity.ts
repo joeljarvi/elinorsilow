@@ -376,6 +376,22 @@ export async function getAllPress(): Promise<Press[]> {
     : [];
 }
 
+// The home page's background images (the Hero document): uploaded images
+// and picked works' images, as { url, alt }.
+export async function getHeroImages(): Promise<{ url: string; alt: string }[]> {
+  const data = await client.fetch(
+    `*[_type == "hero"][0].images[]{
+      "url": coalesce(asset->url, @->image.asset->url),
+      "alt": coalesce(alt, @->title, "")
+    }`,
+    {},
+    { next: { revalidate: 60 } }
+  );
+  return Array.isArray(data)
+    ? data.filter((i: { url?: string }) => Boolean(i?.url))
+    : [];
+}
+
 export async function getShortBio(): Promise<string> {
   const data = await client.fetch(
     `*[_type == "short_bio"][0] { bio }`,

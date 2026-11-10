@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import FadeEdge from "./FadeEdge";
 import { useIndex } from "@/context/IndexContext";
 import { useUI, type ImageSize } from "@/context/UIContext";
 import type { WorkSize } from "@/lib/workSize";
@@ -47,8 +46,8 @@ function Setting<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-x-3 lg:gap-x-2 lg:gap-y-0 mb-0 ">
-      <span className="h-auto flex items-baseline whitespace-nowrap mb-0 text-neutral-400 font-bold text-[14px] tracking-wide">
+    <div className="flex flex-wrap items-baseline justify-start lg:justify-end gap-x-3 lg:gap-x-2 lg:gap-y-0 mb-0 w-full ">
+      <span className="h-auto flex items-baseline justify-start lg:justify-end whitespace-nowrap mb-0 text-neutral-800 font-bold text-[14px] tracking-wide">
         by {name}
       </span>
       <div className="flex flex-wrap gap-x-4 tracking-wide">
@@ -91,7 +90,10 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
     sizeFilter,
     setSizeFilter,
     closeAllRows,
+    search,
     setSearch,
+    worksLayout,
+    setWorksLayout,
     showScale,
     setShowScale,
     randomize,
@@ -123,18 +125,41 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    // The menu, fixed under the nav, with the shared fade below it (outside
-    // the scrolling box, which would clip it).
+    // The menu: mobile, along the bottom just above the nav bar (as tall as
+    // its contents); desktop, under the nav at the top right.
     <div
       data-filter-menu
-      className="fixed inset-x-0 top-9 lg:top-4 lg:w-full z-[75]"
+      className="fixed inset-x-0 top-auto bottom-8 left-0 right-0 lg:top-4 lg:bottom-auto lg:left-auto lg:w-full lg:max-w-1/2 z-[75]"
     >
       <div
         // Lenis (the page's smooth scrolling) would take the wheel otherwise.
         data-lenis-prevent
-        className="h-dvh lg:h-auto lg:max-h-[calc(100dvh-4rem)] overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap items-start lg:gap-x-8 gap-y-6 lg:gap-y-0 lg:px-1   bg-background text-neutral-400 font-alteHaas text-[18px] lg:text-[14px] uppercase  leading-tight"
+        className="h-auto max-h-[calc(100dvh-2.25rem)] lg:max-h-[calc(100dvh-4rem)] overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap items-start lg:justify-end lg:gap-x-8 gap-y-0 px-3 pt-3 pb-3  lg:pt-0.5 lg:px-1 bg-background lg:bg-transparent text-neutral-800 font-alteHaas text-[18px] lg:text-[14px] uppercase  leading-tight"
       >
-        <div className="flex flex-col lg:flex-row lg:flex-wrap lg:w-full lg:gap-x-8 text-[18px] lg:text-[21px] gap-y-2 lg:gap-y-0">
+        {/* Mobile: search and (works) Vertical / Grid — in the bar on
+            desktop. */}
+        <div className="lg:hidden flex flex-col gap-y-0 w-full px-3">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search..."
+            aria-label={`Search ${mode}`}
+            className="w-full text-[14px] font-alteHaas font-bold p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 mb-3"
+          />
+          {!exhibitions && (
+            <Setting
+              name="View"
+              options={[
+                { value: "list", label: "Vertical" },
+                { value: "grid", label: "Grid" },
+              ]}
+              value={worksLayout}
+              onChange={(v) => setWorksLayout(v as "list" | "grid")}
+            />
+          )}
+        </div>
+        <div className="flex flex-col lg:flex-row lg:flex-wrap lg:justify-end lg:w-full lg:gap-x-8 text-[18px] lg:text-[21px] gap-y-0">
           {exhibitions ? (
             <Setting
               name="Category"
@@ -199,13 +224,8 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
             value={imageSize}
             onChange={setImageSize}
           />
-          <div className="flex px-0  gap-x-4 lg:gap-x-4 text-[14px] font-alteHaas font-bold px-4  ">
-            {/* The filters already apply as they're picked: this closes the
-            overlay to show the result. */}
-          </div>
         </div>
       </div>
-      <FadeEdge />
     </div>
   );
 }

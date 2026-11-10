@@ -73,19 +73,18 @@ export default async function ExhibitionPage({ params }: Props) {
   const images = exhibitionImages(ex);
   const related = relatedExhibitions(ex, all);
   return (
-    <main className="flex flex-col px-3 lg:px-6 pb-6 text-neutral-800">
+    <main className="flex flex-col px-0 lg:px-6 pb-6 text-neutral-800">
       {/* The title, fixed at the top left while the page scrolls, on the
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
-      <div className="fixed inset-x-0 top-0 z-70 px-3 lg:px-6 pt-3 pb-3 lg:pt-6 lg:pb-6 pr-20 lg:pr-24 bg-background pointer-events-none">
+      <div className="fixed inset-x-0 top-0 z-70  p-4 lg:p-8    bg-background lg:bg-transparent pointer-events-none">
         <TitleBlock heading title={ex.title.rendered} metadata={metadata} />
-        <FadeEdge />
       </div>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
-      <div className="flex flex-col items-center gap-y-6 pt-36 lg:pt-36">
+      <div className="flex flex-col items-center gap-y-4 pt-30  lg:pt-30">
         {ex.acf.description && (
-          <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">
+          <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight px-4">
             {ex.acf.description}
           </p>
         )}
@@ -100,47 +99,6 @@ export default async function ExhibitionPage({ params }: Props) {
       {/* Related: three other exhibitions, side by side — each its first
           image, its title and metadata showing on hover; clicking one opens
           it. */}
-      {related.length > 0 && (
-        <section className="flex flex-col gap-y-6 lg:max-w-2/3 mx-auto  min-h-dvh items-center justify-center">
-          <h2 className="font-gensco text-[18px] lg:text-[21px] leading-tight">
-            Related
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-12 gap-y-12">
-            {related.map((other, i) => {
-              const cover = exhibitionImages(other)[0];
-              return (
-                <Link
-                  key={other.id}
-                  href={`/exhibitions/${other.slug}`}
-                  aria-label={other.title.rendered}
-                  // Mobile: only the first two.
-                  className={`group relative self-start ${i > 1 ? "hidden lg:block" : ""}`}
-                >
-                  {cover && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={`${cover.url}?w=1000&auto=format`}
-                      alt={other.title.rendered}
-                      loading="lazy"
-                      className="block w-auto h-auto max-w-full max-h-[40dvh] object-contain object-left-top"
-                    />
-                  )}
-                  {/* Its title and metadata, only on hover: the page
-                      background over the image, as in the works grid. */}
-                  <div
-                    className={`${cover ? "absolute inset-0 opacity-0 group-hover:opacity-100" : ""} bg-background transition-opacity duration-200 pointer-events-none`}
-                  >
-                    <TitleBlock
-                      title={other.title.rendered}
-                      metadata={exhibitionMetadata(other)}
-                    />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
     </main>
   );
 }

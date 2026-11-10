@@ -8,6 +8,7 @@ import education from "./education";
 import grant from "./grant";
 import news from "./news";
 import press from "./press";
+import hero from "./hero";
 
 export const schemaTypes = [
   work,
@@ -20,4 +21,5 @@ export const schemaTypes = [
   grant,
   news,
   press,
+  hero,
 ];
