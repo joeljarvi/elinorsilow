@@ -738,6 +738,38 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
   };
 }
 
+// The list's heading, fixed at the top right: each active filter (category,
+// year, size, search), gap-x-4 apart — or "All Works" — then how many match.
+// Works (list and grid) and exhibitions.
+function ActiveFilters({ totalItems }: { totalItems: number }) {
+  const { mode, yearFilter, sizeFilter, search } = useIndex();
+  const { categoryFilter } = useWorks();
+  const { exCat } = useExhibitions();
+  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  const category = mode === "exhibitions" ? exCat : categoryFilter;
+  const activeFilters = [
+    category !== "all" && cap(category),
+    yearFilter !== "all" && yearFilter,
+    mode === "works" && sizeFilter !== "all" && cap(sizeFilter),
+    search.trim() && `"${search.trim()}"`,
+  ].filter((f): f is string => Boolean(f));
+  // Fixed at the top right; down a step while the Filter menu is open.
+  const { filterOpen } = useUI();
+  return (
+    <h1
+      className={`fixed ${filterOpen ? "top-8" : "top-4"} right-0 p-8 z-70 flex flex-wrap justify-end gap-x-4 font-gensco text-[21px] text-neutral-800 pointer-events-none`}
+    >
+      <span className="uppercase">Category</span> <span>:</span>
+      {activeFilters.length ? (
+        activeFilters.map((f) => <span key={f}>{f}</span>)
+      ) : (
+        <span>All Works</span>
+      )}
+      <span>({totalItems})</span>
+    </h1>
+  );
+}
+
 // Works / exhibitions as a feed: one item under another, at least a screen
 // tall, its images centered in a column (a work has one, an exhibition all
 // of its own); clicking one opens its page. The title and metadata of the
@@ -749,8 +781,11 @@ function Feed({
   size,
   maxW = "max-w-1/2 lg:max-w-1/6",
   gap = "",
+  totalItems,
 }: {
   items: FeedItem[];
+  // How many items match the filters (items may be only the first page).
+  totalItems: number;
   hidden: boolean;
   // The images' width limit (a static Tailwind class).
   maxW?: string;
@@ -775,18 +810,45 @@ function Feed({
     return () => observer.disconnect();
   }, [items]);
   const current = items[active];
+  // Desktop, with the Filter menu open: the title moves down to sit just
+  // below it (top-9 for one row of filters, top-13.5 for two, …).
+  const { filterOpen } = useUI();
+  const [menuBottom, setMenuBottom] = useState<number | null>(null);
+  useEffect(() => {
+    if (!filterOpen) {
+      setMenuBottom(null);
+      return;
+    }
+    const el = document.querySelector<HTMLElement>("[data-filter-menu]");
+    if (!el) return;
+    const sync = () =>
+      setMenuBottom(
+        window.matchMedia("(min-width: 1024px)").matches
+          ? el.getBoundingClientRect().bottom
+          : null,
+      );
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    window.addEventListener("resize", sync);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", sync);
+    };
+  }, [filterOpen]);
   const imageClass = `block w-auto h-auto ${maxW} ${size === "S" ? "max-h-[33.3dvh]" : size === "M" ? "max-h-[50dvh]" : "max-h-[80dvh]"}`;
   return (
     <>
       {current && (
         <div
-          className={`fixed top-9 lg:top-16 left-0 lg:left-0 px-6 lg:px-12 z-70 w-full pb-3 pt-3 max-lg:bg-background lg:bg-transparent text-neutral-800 pointer-events-none transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+          className={`fixed top-9 lg:top-4 left-0 lg:left-0 px-6 lg:px-8 z-70 w-full pb-8 pt-8 bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+          style={menuBottom !== null ? { top: menuBottom } : undefined}
         >
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth="lg:max-w-1/3"
+            textWidth=""
           />
           {/* Mobile: the background fading out below it. */}
           <FadeEdge className="lg:hidden" />
@@ -1022,17 +1084,25 @@ export default function IndexPageClient() {
             "all": cols 2–3; exhibitions: cols 2–4. */}
         <div className="lg:col-start-1 lg:col-span-12 lg:row-start-1 flex flex-col lg:px-0">
           <div>
-            {/* Works as a grid: two per row. Hovering a work covers it with
-                the page background, its title and metadata at the top left;
-                clicking it opens its page. */}
+            {/* Works as a grid: just the images; clicking one opens its
+                page. */}
+            {(mode === "works" || mode === "exhibitions") && (
+              <ActiveFilters
+                totalItems={
+                  mode === "works"
+                    ? visibleWorks.length
+                    : visibleExhibitions.length
+                }
+              />
+            )}
             {mode === "works" && worksLayout === "grid" && (
-              <div className="grid grid-cols-2 auto-rows-[50vh] gap-x-6 gap-y-24 px-6 pt-16 pb-24 items-start">
+              <div className="grid grid-cols-4 lg:grid-cols-6  gap-x-1 gap-y-60 px-1 pt-2 pb-24 items-start">
                 {visibleWorks.slice(0, visibleCount).map((w) => (
                   <Link
                     key={w.id}
                     href={`/${w.slug}`}
                     prefetch={false}
-                    className="group relative h-full min-h-0 flex flex-col cursor-pointer"
+                    className="relative h-full min-h-0 flex flex-col cursor-pointer col-span-2"
                   >
                     {w.image_url && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -1040,15 +1110,9 @@ export default function IndexPageClient() {
                         src={`${w.image_url}?w=1200&auto=format`}
                         alt={w.title.rendered}
                         loading="lazy"
-                        className="block w-auto h-auto max-w-full max-h-full object-contain object-left-top"
+                        className="block w-1/2 h-auto max-w-full max-h-full object-contain object-left-top"
                       />
                     )}
-                    <div className="absolute inset-0 bg-background opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                      <TitleBlock
-                        title={w.title.rendered}
-                        metadata={workFeedItem(w).metadata}
-                      />
-                    </div>
                   </Link>
                 ))}
               </div>
@@ -1057,6 +1121,7 @@ export default function IndexPageClient() {
             {mode === "works" && worksLayout === "list" && (
               <Feed
                 items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
+                totalItems={visibleWorks.length}
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
@@ -1067,6 +1132,7 @@ export default function IndexPageClient() {
                 items={visibleExhibitions
                   .slice(0, visibleCount)
                   .map(exhibitionFeedItem)}
+                totalItems={visibleExhibitions.length}
                 maxW="max-w-2/3"
                 gap="gap-y-12"
                 hidden={siteReveal === "covered"}

@@ -27,11 +27,10 @@ export default function TitleBlock({
     <div
       className={`flex flex-col font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 ${className}`}
     >
-      <Title className={`uppercase ${textWidth}`}>{title}</Title>
+      <Title className={`uppercase indent-8 ${textWidth}`}>{title}</Title>
       {(metadata || href) && (
-        <p className={`indent-6 lg:indent-12 ${textWidth}`}>
-          {metadata},
-          {/* "Read more" at the end of the metadata. */}
+        <p className={`indent-6 lg:indent-16 ${textWidth}`}>
+          {metadata},{/* "Read more" at the end of the metadata. */}
           {href && (
             <>
               {metadata && " "}

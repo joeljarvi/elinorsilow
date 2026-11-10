@@ -189,6 +189,11 @@ export function UIProvider({ children }: { children: ReactNode }) {
     } catch {}
   };
   const [openDesktopNav, setOpenDesktopNav] = useState(false);
+  // The nav menu (Works, Exhibitions, Info) starts open on desktop.
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 1024px)").matches)
+      setOpenDesktopNav(true);
+  }, []);
   const [navVisible, setNavVisible] = useState(false);
 
   const [showWorksMenu, setShowWorksMenu] = useState(false);

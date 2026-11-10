@@ -4,11 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
-import {
-  useIndex,
-  isIndexPath,
-  type HomeView,
-} from "@/context/IndexContext";
+import { useIndex, isIndexPath, type HomeView } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
 import FadeEdge from "./FadeEdge";
 import { useTheme } from "next-themes";
@@ -61,19 +57,19 @@ export default function ESNav() {
     siteReveal,
   } = useUI();
   const pathname = usePathname();
-  const { mode, setSearch } = useIndex();
+  const { mode, search, setSearch } = useIndex();
   const onIndex = isIndexPath(pathname);
   // List settings — shown with the works / exhibitions lists: the Filter menu
   // on desktop, S / M / L in the mobile menu.
   const showSizes = onIndex && mode !== "info";
-  // Works: "Vertical, Grid" — like the Filter menu's options (the current
+  // Works: "Vertical" and "Grid" — like the Filter menu's options (the current
   // one solid, the other faded).
   const { worksLayout, setWorksLayout } = useIndex();
   const layoutButtons = (className: string, afterPick?: () => void) => (
-    <div className={`flex gap-x-1 ${className}`}>
+    <div className={`flex gap-x-4 ${className}`}>
       {(
         [
-          ["list", "Vertical,"],
+          ["list", "Vertical"],
           ["grid", "Grid"],
         ] as const
       ).map(([l, label]) => (
@@ -85,7 +81,7 @@ export default function ESNav() {
             setWorksLayout(l);
             afterPick?.();
           }}
-          className={`cursor-pointer ${worksLayout === l ? "" : "opacity-40 hover:opacity-100"}`}
+          className={`cursor-pointer uppercase ${worksLayout === l ? "" : "opacity-40 hover:opacity-100"}`}
         >
           {label}
         </button>
@@ -102,13 +98,9 @@ export default function ESNav() {
   const exhibitionPage = segments[0] === "exhibitions" && segments.length === 2;
   const workPage =
     segments.length === 1 &&
-    ![
-      "works",
-      "exhibitions",
-      "info",
-      "privacy-policy",
-      "studio",
-    ].includes(segments[0]);
+    !["works", "exhibitions", "info", "privacy-policy", "studio"].includes(
+      segments[0],
+    );
   const showBack = exhibitionPage || workPage;
   const goBack = () => {
     if (document.referrer.startsWith(window.location.origin)) router.back();
@@ -135,7 +127,7 @@ export default function ESNav() {
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
+          className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-400 cursor-pointer"
         >
           Back
         </button>
@@ -145,12 +137,13 @@ export default function ESNav() {
           with Works, Exhibitions and Info beside it; the current one
           underlined. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-9 pt-3 lg:h-16 px-3 lg:px-6 lg:pt-6 pb-0 ${vertical ? "bg-transparent" : "bg-background"} ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-9 pt-3 lg:h-auto px-3 lg:px-1 lg:pt-0 pb-0 ${vertical ? "bg-background" : "bg-background"} ${navShown ? "bg-background" : "pointer-events-none"}`}
       >
         {/* The page background fading out just below the bar, so the page
             fades as it scrolls under it. */}
-        {!vertical && <FadeEdge />}
-        <span className="flex flex-wrap items-baseline gap-x-6 font-gensco text-[18px] lg:text-[21px] leading-tight whitespace-nowrap text-neutral-800">
+        {/* Not while the Filter menu is open (it has its own fade). */}
+        {!vertical && !filterOpen && <FadeEdge />}
+        <span className="flex flex-wrap items-baseline gap-x-4 font-alteHaas font-bold uppercase text-[14px] tracking-wide leading-tight whitespace-nowrap text-neutral-400">
           <Link
             href="/"
             style={navReveal(navShown, 0).style}
@@ -158,17 +151,18 @@ export default function ESNav() {
           >
             Elinor Silow
           </Link>
-          <span className="flex  items-baseline gap-x-6 justify-between lg:justify-start ">
+          <span className="flex  items-baseline gap-x-4 justify-between lg:justify-start ">
             <button
               type="button"
               style={navReveal(navShown, 1).style}
-              className={`cursor-pointer ${navReveal(navShown, 1).className}`}
+              className={`cursor-pointer uppercase ${navReveal(navShown, 1).className}`}
               onClick={toggleOpen}
               aria-expanded={open}
             >
-              {open ? "Menu:" : "Menu"}
+              {open ? "Menu" : "Menu"}
             </button>
-            <span className="flex gap-x-1">
+            <span className="flex gap-x-4 font-alteHaas font-bold uppercase">
+              <span className="font-alteHaas font-bold">:</span>
               {open &&
                 VIEW_LINKS.map(({ view, label, href }, i) => (
                   <Link
@@ -177,17 +171,14 @@ export default function ESNav() {
                     scroll={false}
                     onClick={() => {
                       setSearch("");
-                      setOpenDesktopNav(false);
+                      // Desktop: the menu stays open.
+                      if (!window.matchMedia("(min-width: 1024px)").matches)
+                        setOpenDesktopNav(false);
                     }}
                     aria-current={pathname === href ? "page" : undefined}
-                    className={
-                      pathname === href
-                        ? "underline underline-offset-4 decoration-1"
-                        : "opacity-50"
-                    }
+                    className={pathname === href ? "" : "opacity-50  "}
                   >
                     {label}
-                    {i < VIEW_LINKS.length - 1 && ","}
                   </Link>
                 ))}
             </span>
@@ -197,30 +188,49 @@ export default function ESNav() {
             the button stays above it to close it) — at the right, on the
             same baseline as the name and Menu; mobile: the bottom right. */}
         {showSizes && (
-          <div className="flex items-baseline gap-x-6 max-lg:fixed max-lg:bottom-6 max-lg:right-3 font-gensco text-[18px] lg:text-[21px] leading-tight  text-neutral-800">
+          <div className="flex items-baseline gap-x-4 max-lg:fixed max-lg:bottom-6 max-lg:right-2 font-alteHaas font-bold uppercase text-[14px] tracking-wide leading-tight whitespace-nowrap text-neutral-400">
+            {mode === "works" &&
+              layoutButtons(
+                `hidden lg:flex ${navReveal(navShown, 3).className}`,
+              )}
+            {/* Search (the shared index search: filters the list), left of
+                Filter. */}
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              aria-label={`Search ${mode}`}
+              style={navReveal(navShown, 2).style}
+              className={`w-32 p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
+            />
             <button
               type="button"
               aria-expanded={filterOpen}
               data-filter-toggle
               onClick={() => {
                 setFilterOpen(!filterOpen);
-                setOpenDesktopNav(false);
+                // Mobile: the menu closes (desktop keeps it open).
+                if (!window.matchMedia("(min-width: 1024px)").matches)
+                  setOpenDesktopNav(false);
               }}
               style={navReveal(navShown, 2).style}
-              className={`cursor-pointer  ${navReveal(navShown, 2).className}`}
+              className={`cursor-pointer uppercase  ${navReveal(navShown, 2).className}`}
             >
-              {filterOpen ? "Close" : "Filter+"}
+              {filterOpen ? "Filter-" : "Filter+"}
             </button>
+            {/* Desktop, works: Vertical / Grid next to Filter, in the bar's
+                type (Alte Haas). */}
           </div>
         )}
       </nav>
-      {/* Works: Vertical / Grid, fixed in the bottom right corner (mobile:
-          top right, in the nav bar's line). */}
+      {/* Mobile, works: Vertical / Grid, fixed at the top right (desktop has
+          them in the bar, next to Filter). */}
       {showSizes &&
         !showBack &&
         mode === "works" &&
         layoutButtons(
-          `fixed top-3 right-3 lg:top-auto lg:right-6 lg:bottom-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 ${navShown ? "" : "pointer-events-none"} ${navReveal(navShown, 3).className}`,
+          `lg:hidden fixed top-3 right-3 z-80 font-gensco text-[18px] leading-tight text-neutral-400 ${navShown ? "" : "pointer-events-none"} ${navReveal(navShown, 3).className}`,
         )}
       {/* Filter overlay: full height, under the nav (like the menu). */}
       {showSizes && filterOpen && (

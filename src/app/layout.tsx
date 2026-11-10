@@ -547,6 +547,23 @@ const fm = localFont({
   preload: false,
 });
 
+// Alte Haas Grotesk (font-alteHaas): regular and bold.
+const alteHaas = localFont({
+  src: [
+    {
+      path: "../../public/fonts/altehaasgroteskregular-webfont.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/altehaasgroteskbold-webfont.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-alteHaas",
+});
+
 // Gensco (font-gensco).
 const gensco = localFont({
   src: "../../public/fonts/gensco-webfont.woff2",
@@ -575,7 +592,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${fm.variable} ${gensco.variable} ${stixTwoText.variable} antialiased`}
+        className={`${areal.variable} ${arealMono.variable} ${gtAlpina.variable} ${gtAlpinaCondensed.variable} ${gtAlpinaExtended.variable} ${gtAlpinaFine.variable} ${gtAlpinaFineCondensed.variable} ${gtAlpinaFineExtended.variable} ${gtAlpinaTypewriter.variable} ${gtAmericaCompressed.variable} ${gtAmericaCondensed.variable} ${fm.variable} ${gensco.variable} ${alteHaas.variable} ${stixTwoText.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

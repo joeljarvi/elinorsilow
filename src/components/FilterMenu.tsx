@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import FadeEdge from "./FadeEdge";
 import { useIndex } from "@/context/IndexContext";
 import { useUI, type ImageSize } from "@/context/UIContext";
 import type { WorkSize } from "@/lib/workSize";
@@ -46,20 +47,21 @@ function Setting<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-x-3 lg:gap-x-6 mb-0 px-3">
-      <span className="h-auto flex items-center font-gensco text-[18px] lg:text-[21px] whitespace-nowrap mb-0 text-neutral-800">
-        {name}:
+    <div className="flex flex-wrap gap-x-3 lg:gap-x-2 lg:gap-y-0 mb-0 ">
+      <span className="h-auto flex items-baseline whitespace-nowrap mb-0 text-neutral-400 font-bold text-[14px] tracking-wide">
+        by {name}
       </span>
-      <div className="flex flex-wrap gap-x-1">
+      <div className="flex flex-wrap gap-x-4 tracking-wide">
+        <span className="text-[14px] font-bold">:</span>
         {options.map((o) => (
           <button
             key={o.value}
             type="button"
             aria-pressed={value === o.value}
             onClick={() => onChange(o.value)}
-            className={`h-auto text-xl cursor-pointer  ${value === o.value ? "" : "opacity-40 hover:opacity-100"}`}
+            className={`h-auto  cursor-pointer font-bold text-[14px] uppercase  ${value === o.value ? "" : "opacity-40 hover:opacity-100"}`}
           >
-            {o.label},
+            {o.label}
           </button>
         ))}
       </div>
@@ -89,7 +91,6 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
     sizeFilter,
     setSizeFilter,
     closeAllRows,
-    search,
     setSearch,
     showScale,
     setShowScale,
@@ -122,95 +123,89 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
   };
 
   return (
+    // The menu, fixed under the nav, with the shared fade below it (outside
+    // the scrolling box, which would clip it).
     <div
-      // Lenis (the page's smooth scrolling) would take the wheel otherwise.
-      data-lenis-prevent
-      className="fixed inset-x-0 top-9 lg:top-auto lg:bottom-0 lg:right-auto h-dvh lg:h-auto lg:max-h-[calc(100dvh-4rem)] z-[75] overflow-y-auto flex flex-col items-start gap-y-6 lg:gap-y-6 p-3 pt-6 px-6 lg:px-6 lg:pt-0 pb-16 lg:pb-6 bg-background lg:bg-transparent text-neutral-800 font-gensco text-[18px] lg:text-[21px] uppercase font-medium leading-tight"
+      data-filter-menu
+      className="fixed inset-x-0 top-9 lg:top-4 lg:w-full z-[75]"
     >
-      <input
-        type="search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search..."
-        aria-label={`Search ${mode}`}
-        className="w-full h-auto border-0 px-0 bg-transparent outline-none uppercase placeholder:text-neutral-400"
-      />
-      <div className="flex flex-col text-[18px] lg:text-[21px]">
-        <h2 className="normal-case mb-3 lg:mb-6">Filter by</h2>
-
-        {exhibitions ? (
-          <Setting
-            name="Category"
-            options={[ALL, ...EX_FILTERS]}
-            value={exCat}
-            onChange={(v) => setExCat(v as ExCategory)}
-          />
-        ) : (
-          <Setting
-            name="Category"
-            options={[ALL, ...WORK_FILTERS]}
-            value={categoryFilter}
-            onChange={(v) => setCategoryFilter(v as CategoryFilter)}
-          />
-        )}
-        <Setting
-          name="Year"
-          options={[ALL, ...years.map((y) => ({ value: y, label: y }))]}
-          value={yearFilter}
-          onChange={setYearFilter}
-        />
-        {!exhibitions && (
-          <Setting
-            name="Size"
-            options={[ALL, ...SIZE_FILTERS]}
-            value={sizeFilter}
-            onChange={(v) => setSizeFilter(v as WorkSize | "all")}
-          />
-        )}
-      </div>
-      {/* Settings: hidden for now. */}
-      <div className="hidden">
-        <h2 className="normal-case  mb-3 lg:mb-6">Settings</h2>
-        {/* Not on mobile. */}
-        {!exhibitions && (
-          <div className="hidden lg:block">
+      <div
+        // Lenis (the page's smooth scrolling) would take the wheel otherwise.
+        data-lenis-prevent
+        className="h-dvh lg:h-auto lg:max-h-[calc(100dvh-4rem)] overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap items-start lg:gap-x-8 gap-y-6 lg:gap-y-0 lg:px-1   bg-background text-neutral-400 font-alteHaas text-[18px] lg:text-[14px] uppercase  leading-tight"
+      >
+        <div className="flex flex-col lg:flex-row lg:flex-wrap lg:w-full lg:gap-x-8 text-[18px] lg:text-[21px] gap-y-2 lg:gap-y-0">
+          {exhibitions ? (
             <Setting
-              name="Show scale"
-              options={[
-                { value: "on", label: "On" },
-                { value: "off", label: "Off" },
-              ]}
-              value={showScale ? "on" : "off"}
-              extra="Matchbox, Option 2, Option 3"
-              onChange={(v) => setShowScale(v === "on")}
+              name="Category"
+              options={[ALL, ...EX_FILTERS]}
+              value={exCat}
+              onChange={(v) => setExCat(v as ExCategory)}
             />
-          </div>
-        )}
-        <Setting
-          name="Image size"
-          options={IMAGE_SIZES}
-          value={imageSize}
-          onChange={setImageSize}
-        />
-      </div>
-      <div className="flex px-0  gap-x-3 lg:gap-x-6 ">
-        <button
-          type="button"
-          onClick={clear}
-          className="h-auto text-[18px] lg:text-[21px] cursor-pointer uppercase"
-        >
-          Clear
-        </button>
-        {/* The filters already apply as they're picked: this closes the
+          ) : (
+            <Setting
+              name="Category"
+              options={[ALL, ...WORK_FILTERS]}
+              value={categoryFilter}
+              onChange={(v) => setCategoryFilter(v as CategoryFilter)}
+            />
+          )}
+          <Setting
+            name="Year"
+            options={[ALL, ...years.map((y) => ({ value: y, label: y }))]}
+            value={yearFilter}
+            onChange={setYearFilter}
+          />
+          {!exhibitions && (
+            <Setting
+              name="Size"
+              options={[ALL, ...SIZE_FILTERS]}
+              value={sizeFilter}
+              onChange={(v) => setSizeFilter(v as WorkSize | "all")}
+            />
+          )}
+          {/* Clear: back to the view's defaults — after the filters, pushed to
+            the right end of the row. */}
+          <button
+            type="button"
+            onClick={clear}
+            className="self-start lg:self-auto lg:ml-auto font-alteHaas font-bold text-[14px] uppercase cursor-pointer"
+          >
+            Clear
+          </button>
+        </div>
+        {/* Settings: hidden for now. */}
+        <div className="hidden">
+          <h2 className="normal-case  mb-3 lg:mb-6">Settings</h2>
+          {/* Not on mobile. */}
+          {!exhibitions && (
+            <div className="hidden lg:block">
+              <Setting
+                name="Show scale"
+                options={[
+                  { value: "on", label: "On" },
+                  { value: "off", label: "Off" },
+                ]}
+                value={showScale ? "on" : "off"}
+                extra="Matchbox, Option 2, Option 3"
+                onChange={(v) => setShowScale(v === "on")}
+              />
+            </div>
+          )}
+
+          <Setting
+            name="Image size"
+            options={IMAGE_SIZES}
+            value={imageSize}
+            onChange={setImageSize}
+          />
+          <div className="flex px-0  gap-x-4 lg:gap-x-4 text-[14px] font-alteHaas font-bold px-4  ">
+            {/* The filters already apply as they're picked: this closes the
             overlay to show the result. */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="h-auto text-[18px] lg:text-[21px] cursor-pointer uppercase"
-        >
-          Apply filters
-        </button>
+          </div>
+        </div>
       </div>
+      <FadeEdge />
     </div>
   );
 }
