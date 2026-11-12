@@ -217,12 +217,16 @@ export default function InfoPageClient({
       <TitleBlock
         heading
         title="Information, CV and Contact"
-        className="px-6 pt-10 lg:px-12 lg:pt-16"
+        className="px-2 pt-6 lg:px-1 lg:pt-6"
       />
 
       {/* Contact, above the bio, spread across the column. */}
-      <p className=" flex flex-col lg:flex-row w-full gap-x-6 lg:gap-x-12 mb-6 px-12 mt-3 lg:mt-3 lg:px-24 font-gensco text-[18px] lg:text-[21px]">
+      <p className=" flex flex-col  w-full gap-x-6 lg:gap-x-12 mb-6 px-2 mt-0 lg:mt-0 lg:px-2 font-gensco text-[18px] lg:text-[21px] leading-tight gap-y-0">
         <span className="flex gap-x-6">
+          EMAIL:
+          <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>
+        </span>
+        <span className="flex gap-x-6 mb- ">
           IG:
           <a
             href="https://www.instagram.com/elinorsilow"
@@ -232,16 +236,12 @@ export default function InfoPageClient({
             @elinorsilow
           </a>
         </span>
-        <span className="flex gap-x-6">
-          EMAIL:
-          <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>
-        </span>
       </p>
       {/* The sections, one under another, centered. */}
-      <div className="max-w-sm lg:max-w-xl  mx-auto flex flex-col items-center gap-y-12 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight">
+      <div className="max-w-full lg:max-w-xl  mx-auto flex flex-col items-center gap-y-12 lg:gap-y-24 pl-1 pr-6 lg:px-6 pt-16 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight ">
         {sections.map((section) => (
-          <div key={section.key} className="w-full max-w-xl flex flex-col">
-            <h2 className="font-gensco normal-case text-[18px] lg:text-[21px] leading-tight indent-6 mb-6 lg:indent-12 lg:mb-6">
+          <div key={section.key} className="w-full max-w-xl flex flex-col ">
+            <h2 className="font-gensco normal-case text-[18px] lg:text-[21px] leading-tight indent-4 mb-4 lg:indent-12 lg:mb-6">
               {section.title}
             </h2>
             {section.body}

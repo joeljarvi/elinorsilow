@@ -47,18 +47,18 @@ function Setting<T extends string>({
 }) {
   return (
     <div className="flex flex-wrap items-baseline justify-start lg:justify-end gap-x-3 lg:gap-x-2 lg:gap-y-0 mb-0 w-full ">
-      <span className="h-auto flex items-baseline justify-start lg:justify-end whitespace-nowrap mb-0 text-neutral-800 font-bold text-[14px] tracking-wide">
+      <span className="h-auto flex items-baseline justify-start lg:justify-end whitespace-nowrap mb-0 text-neutral-800 tracking-wide">
         by {name}
       </span>
       <div className="flex flex-wrap gap-x-4 tracking-wide">
-        <span className="text-[14px] font-bold">:</span>
+        <span className="">:</span>
         {options.map((o) => (
           <button
             key={o.value}
             type="button"
             aria-pressed={value === o.value}
             onClick={() => onChange(o.value)}
-            className={`h-auto  cursor-pointer font-bold text-[14px] uppercase  ${value === o.value ? "" : "opacity-40 hover:opacity-100"}`}
+            className={`h-auto  cursor-pointer uppercase  ${value === o.value ? "" : "opacity-40 hover:opacity-100"}`}
           >
             {o.label}
           </button>
@@ -125,16 +125,16 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    // The menu: mobile, along the bottom just above the nav bar (as tall as
-    // its contents); desktop, under the nav at the top right.
+    // The menu, fixed at the bottom (as tall as its contents); desktop, at
+    // the bottom right (the right half).
     <div
       data-filter-menu
-      className="fixed inset-x-0 top-auto bottom-8 left-0 right-0 lg:top-4 lg:bottom-auto lg:left-auto lg:w-full lg:max-w-1/2 z-[75]"
+      className="fixed inset-x-0 bottom-0 left-0 right-0 lg:left-auto lg:w-full lg:max-w-1/2 z-[75]"
     >
       <div
         // Lenis (the page's smooth scrolling) would take the wheel otherwise.
         data-lenis-prevent
-        className="h-auto max-h-[calc(100dvh-2.25rem)] lg:max-h-[calc(100dvh-4rem)] overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap items-start lg:justify-end lg:gap-x-8 gap-y-0 px-3 pt-3 pb-3  lg:pt-0.5 lg:px-1 bg-background lg:bg-transparent text-neutral-800 font-alteHaas text-[18px] lg:text-[14px] uppercase  leading-tight"
+        className="h-auto max-h-[calc(100dvh-2.25rem)] lg:max-h-[calc(100dvh-4rem)] overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap items-start lg:justify-end lg:gap-x-8 gap-y-0 px-3 pt-3 pb-3  lg:pt-0.5 lg:px-1 bg-background lg:bg-transparent text-neutral-800 font-gensco text-[18px] lg:text-[21px] uppercase  leading-tight"
       >
         {/* Mobile: search and (works) Vertical / Grid — in the bar on
             desktop. */}
@@ -145,32 +145,30 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
             aria-label={`Search ${mode}`}
-            className="w-full text-[14px] font-alteHaas font-bold p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 mb-3"
+            className="w-full p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 mb-3"
           />
-          {!exhibitions && (
-            <Setting
-              name="View"
-              options={[
-                { value: "list", label: "Vertical" },
-                { value: "grid", label: "Grid" },
-              ]}
-              value={worksLayout}
-              onChange={(v) => setWorksLayout(v as "list" | "grid")}
-            />
-          )}
+          <Setting
+            name="View"
+            options={[
+              { value: "grid", label: "List" },
+              { value: "list", label: "Image" },
+            ]}
+            value={worksLayout}
+            onChange={(v) => setWorksLayout(v as "list" | "grid")}
+          />
         </div>
         <div className="flex flex-col lg:flex-row lg:flex-wrap lg:justify-end lg:w-full lg:gap-x-8 text-[18px] lg:text-[21px] gap-y-0">
           {exhibitions ? (
             <Setting
               name="Category"
-              options={[ALL, ...EX_FILTERS]}
+              options={[{ value: "all", label: "All exhibitions" }, ...EX_FILTERS]}
               value={exCat}
               onChange={(v) => setExCat(v as ExCategory)}
             />
           ) : (
             <Setting
               name="Category"
-              options={[ALL, ...WORK_FILTERS]}
+              options={[{ value: "all", label: "All works" }, ...WORK_FILTERS]}
               value={categoryFilter}
               onChange={(v) => setCategoryFilter(v as CategoryFilter)}
             />
@@ -194,7 +192,7 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={clear}
-            className="self-start lg:self-auto lg:ml-auto font-alteHaas font-bold text-[14px] uppercase cursor-pointer"
+            className="self-start lg:self-auto lg:ml-auto uppercase cursor-pointer"
           >
             Clear
           </button>

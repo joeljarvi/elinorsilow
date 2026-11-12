@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import "lenis/dist/lenis.css";
 
@@ -25,8 +25,18 @@ function PauseWhileModalOpen() {
   return null;
 }
 
-// Smooth (Lenis) scrolling for the page it's rendered on.
+// Smooth (Lenis) scrolling for the page it's rendered on — desktop only
+// (lg+); mobile keeps the browser's native scrolling.
 export default function LenisScroll() {
+  const [desktop, setDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  if (!desktop) return null;
   return (
     <ReactLenis root>
       <PauseWhileModalOpen />

@@ -734,8 +734,124 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
       .filter(Boolean)
       .join(", "),
     href: `/exhibitions/${ex.slug}`,
-    images: exhibitionImageUrls(ex),
+    // The first four only (the rest are on its page).
+    images: exhibitionImageUrls(ex).slice(0, 4),
   };
+}
+
+// The active filters (category, year, size, search), fixed at the top right
+// on the title block's line and in its type: "Works filtered by : all", or
+// each active filter as a button (clicking one clears that filter).
+// Where the fixed headings sit — the feed's title block (top left) and the
+// active filters (top right) — shared so the two keep the same height and
+// baseline.
+const HEADING_TOP = "top-6 lg:top-6 px-1 py-0 lg:px-1 lg:py-0";
+
+// The category toggle's steps, in order (each click moves to the next).
+const WORK_CATEGORY_STEPS = [
+  { value: "all", label: "all" },
+  { value: "painting", label: "Paintings" },
+  { value: "drawing", label: "Drawings" },
+  { value: "sculpture", label: "Sculptures" },
+  { value: "textile", label: "Textiles" },
+] as const;
+const EX_CATEGORY_STEPS = [
+  { value: "all", label: "all" },
+  { value: "solo", label: "Solo" },
+  { value: "group", label: "Group" },
+] as const;
+
+function ActiveFilters() {
+  const {
+    mode,
+    yearFilter,
+    setYearFilter,
+    sizeFilter,
+    setSizeFilter,
+    search,
+    setSearch,
+  } = useIndex();
+  const { categoryFilter, setCategoryFilter } = useWorks();
+  const { exCat, setExCat } = useExhibitions();
+  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  const exhibitions = mode === "exhibitions";
+  // The category: a toggle — all → each main category in turn → all.
+  const steps: readonly { value: string; label: string }[] = exhibitions
+    ? EX_CATEGORY_STEPS
+    : WORK_CATEGORY_STEPS;
+  const category = exhibitions ? exCat : categoryFilter;
+  const stepIndex = Math.max(
+    0,
+    steps.findIndex((st) => st.value === category),
+  );
+  const setCategory = (v: string) =>
+    exhibitions
+      ? setExCat(v as typeof exCat)
+      : setCategoryFilter(v as typeof categoryFilter);
+  const nextCategory = () =>
+    setCategory(steps[(stepIndex + 1) % steps.length].value);
+  // The other active filters (year, size, search): each a button that
+  // clears it.
+  const filters = [
+    yearFilter !== "all" && {
+      key: "year",
+      label: yearFilter,
+      clear: () => setYearFilter("all"),
+    },
+    !exhibitions &&
+      sizeFilter !== "all" && {
+        key: "size",
+        label: cap(sizeFilter),
+        clear: () => setSizeFilter("all"),
+      },
+    search.trim() && {
+      key: "search",
+      label: `"${search.trim()}"`,
+      clear: () => setSearch(""),
+    },
+  ].filter((f): f is { key: string; label: string; clear: () => void } =>
+    Boolean(f),
+  );
+  const anyFilter = category !== "all" || filters.length > 0;
+  return (
+    <div
+      className={`fixed ${HEADING_TOP} right-4 z-[100] hidden lg:flex flex-wrap items-baseline justify-end gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight normal-case text-neutral-800`}
+    >
+      <span>{exhibitions ? "Exhibitions" : "Works"} filtered by :</span>
+      <button
+        type="button"
+        onClick={nextCategory}
+        aria-label="Next category"
+        className="cursor-pointer hover:underline"
+      >
+        {steps[stepIndex].label}
+      </button>
+      {filters.map((f) => (
+        <button
+          key={f.key}
+          type="button"
+          onClick={f.clear}
+          aria-label={`Clear ${f.key} filter`}
+          className="cursor-pointer uppercase hover:line-through"
+        >
+          {f.label}
+        </button>
+      ))}
+      {/* Clear: every filter at once (only when something is filtered). */}
+      {anyFilter && (
+        <button
+          type="button"
+          onClick={() => {
+            setCategory("all");
+            filters.forEach((f) => f.clear());
+          }}
+          className="cursor-pointer uppercase opacity-50 hover:opacity-100"
+        >
+          Clear
+        </button>
+      )}
+    </div>
+  );
 }
 
 // Works / exhibitions as a feed: one item under another, at least a screen
@@ -748,6 +864,7 @@ function Feed({
   hidden,
   size,
   maxW = "max-w-1/2 lg:max-w-1/6",
+  sameWidth = false,
   gap = "",
   totalItems,
 }: {
@@ -757,6 +874,9 @@ function Feed({
   hidden: boolean;
   // The images' width limit (a static Tailwind class).
   maxW?: string;
+  // Every image the same width (maxW wide, at most the screen height less
+  // 4rem).
+  sameWidth?: boolean;
   // The space between one item and the next (a static Tailwind class).
   gap?: string;
   // The image size setting: the images' height limit.
@@ -778,19 +898,27 @@ function Feed({
     return () => observer.disconnect();
   }, [items]);
   const current = items[active];
-  const imageClass = `block w-auto h-auto ${maxW} ${size === "S" ? "max-h-[33.3dvh]" : size === "M" ? "max-h-[50dvh]" : "max-h-[80dvh]"}`;
+  const imageClass = sameWidth
+    ? // Capped at 75% of the screen height (a tall work keeps its
+      // proportions inside the same-width box).
+      `block w-full h-auto ${maxW} max-h-[75dvh] object-contain`
+    : `block w-auto h-auto ${maxW} max-h-[calc(100dvh-4rem)]`;
   return (
     <>
       {current && (
         <div
-          className={`fixed top-0 lg:top-4 left-0 lg:left-0 px-3 py-3 lg:px-8 z-70 w-full lg:py-8 bg-background lg:bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+          className={`fixed ${HEADING_TOP} left-0 lg:left-0 z-70 w-full bg-background lg:bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 px-0
+           lg:px-0  transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
         >
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth="max-w-xl"
+            textWidth="max-w-sm lg:max-w-xl"
           />
+          {/* The page background fading out below it (mobile, where it has a
+              background). */}
+          <FadeEdge className="lg:hidden" />
         </div>
       )}
       <div
@@ -806,7 +934,7 @@ function Feed({
             href={item.href}
             prefetch={false}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-1 px-3 lg:px-4 cursor-pointer ${item.images.length > 1 ? "py-[25dvh]" : ""}`}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-2 px-2 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[25dvh]" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -1023,50 +1151,55 @@ export default function IndexPageClient() {
             "all": cols 2–3; exhibitions: cols 2–4. */}
         <div className="lg:col-start-1 lg:col-span-12 lg:row-start-1 flex flex-col lg:px-0">
           <div>
-            {/* Works as a grid: just the images; clicking one opens its
-                page. */}
-            {/* Grid: in place of the feed's title block (top left), what
-                the grid shows and how it's sorted. */}
+            {/* Works as a list ("List" in the nav — the layout's "grid"
+                setting; "Image" is the feed): every work's title, a link to its page, one under
+                another, centered. Alte Haas, 48px, uppercase. */}
             {mode === "works" && worksLayout === "grid" && (
-              // Same top, padding and type as the active filters (top right), so
-              // the two share a baseline.
-              <div className="fixed top-4 left-0 p-8 z-70 pointer-events-none hidden">
-                <TitleBlock title="Works" />
-              </div>
-            )}
-            {mode === "works" && worksLayout === "grid" && (
-              <div className="grid grid-cols-4 lg:grid-cols-6  gap-x-1 gap-y-60 px-1 pt-2 pb-24 items-start">
-                {visibleWorks.slice(0, visibleCount).map((w) => (
-                  <Link
-                    key={w.id}
-                    href={`/${w.slug}`}
-                    prefetch={false}
-                    className="relative h-full min-h-0 flex flex-col cursor-pointer col-span-2"
-                  >
-                    {w.image_url && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={`${w.image_url}?w=1200&auto=format`}
-                        alt={w.title.rendered}
-                        loading="lazy"
-                        className="block w-1/2 h-auto max-w-full max-h-full object-contain object-left-top"
-                      />
-                    )}
-                  </Link>
+              <ul className="flex flex-col items-center gap-y-0 px-3 lg:px-4 pt-8 pb-24 font-alteHaas  text-[32px] leading-[1.2] lg:leading-[1.1] lg:text-[48px] uppercase font-bold text-center text-purple-300">
+                {visibleWorks.map((w) => (
+                  <li key={w.id}>
+                    <Link
+                      href={`/${w.slug}`}
+                      prefetch={false}
+                      className="hover:text-purple-900 transition-all"
+                    >
+                      {w.title.rendered}
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
-            {/* Works as a feed (List). */}
+            {/* Works as a feed (Image). */}
             {mode === "works" && worksLayout === "list" && (
               <Feed
                 items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
                 totalItems={visibleWorks.length}
+                // Works: all the same width, a third of the screen.
+                maxW="max-w-1/3"
+                sameWidth
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
             )}
             {/* Exhibitions as a feed, like the works (no grid). */}
-            {mode === "exhibitions" && (
+            {/* Exhibitions as a list (List): every exhibition's title, a
+                link to its page — as the works list. */}
+            {mode === "exhibitions" && worksLayout === "grid" && (
+              <ul className="min-h-dvh flex flex-col items-center justify-end gap-y-0 px-3 lg:px-4 pt-6 pb-24 font-alteHaas font-bold text-[32px] leading-[1.2] lg:leading-[1.1] lg:text-[48px]  uppercase text-center text-neutral-800">
+                {visibleExhibitions.map((ex) => (
+                  <li key={ex.id}>
+                    <Link
+                      href={`/exhibitions/${ex.slug}`}
+                      prefetch={false}
+                      className="hover:text-purple-900 transition-all"
+                    >
+                      {ex.title.rendered}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {mode === "exhibitions" && worksLayout === "list" && (
               <Feed
                 items={visibleExhibitions
                   .slice(0, visibleCount)
@@ -1088,6 +1221,8 @@ export default function IndexPageClient() {
 
       {(mode === "works" || mode === "exhibitions") && (
         <>
+          {/* The active filters, top right (Image mode only). */}
+          {worksLayout !== "grid" && <ActiveFilters />}
           <LenisScroll />
           {/* Column labels for the list, fixed across the top. */}
           <IndexNav mode={mode} />

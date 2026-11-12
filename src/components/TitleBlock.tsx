@@ -29,7 +29,7 @@ export default function TitleBlock({
     >
       <Title className={`uppercase  ${textWidth}`}>{title}</Title>
       {(metadata || href) && (
-        <p className={`pl-3 lg:pl-8 ${textWidth}`}>
+        <p className={`pl-0 lg:pl-4 ${textWidth}`}>
           {metadata},{/* "Read more" at the end of the metadata. */}
           {href && (
             <>

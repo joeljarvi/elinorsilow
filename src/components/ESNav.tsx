@@ -53,7 +53,6 @@ export default function ESNav() {
     setOpenDesktopNav,
     filterOpen,
     setFilterOpen,
-    siteReveal,
   } = useUI();
   const pathname = usePathname();
   const { mode, search, setSearch } = useIndex();
@@ -61,35 +60,25 @@ export default function ESNav() {
   // List settings — shown with the works / exhibitions lists: the Filter menu
   // on desktop, S / M / L in the mobile menu.
   const showSizes = onIndex && mode !== "info";
-  // Works: "Vertical" and "Grid" — like the Filter menu's options (the current
-  // one solid, the other faded).
+  // Works and exhibitions: the List / Image view toggle.
   const { worksLayout, setWorksLayout } = useIndex();
   const layoutButtons = (className: string, afterPick?: () => void) => (
-    <div className={`flex gap-x-4 ${className}`}>
-      {(
-        [
-          ["list", "Vertical"],
-          ["grid", "Grid"],
-        ] as const
-      ).map(([l, label]) => (
-        <button
-          key={l}
-          type="button"
-          aria-pressed={worksLayout === l}
-          onClick={() => {
-            setWorksLayout(l);
-            afterPick?.();
-          }}
-          className={`cursor-pointer uppercase ${worksLayout === l ? "" : "opacity-40 hover:opacity-100"}`}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
+    // One toggle: shows the current view and switches to the other.
+    <button
+      type="button"
+      onClick={() => {
+        setWorksLayout(worksLayout === "grid" ? "list" : "grid");
+        afterPick?.();
+      }}
+      aria-label={`Switch to ${worksLayout === "grid" ? "image" : "list"} view`}
+      className={`cursor-pointer normal-case ${className}`}
+    >
+      {worksLayout === "grid" ? "List" : "Image"}
+    </button>
   );
-  // Home and index pages: the nav fades in last, item by item (siteReveal
-  // "nav").
-  const navShown = !(pathname === "/" || onIndex) || siteReveal === "nav";
+  // The nav shows right away on every page (it used to fade in last on the
+  // home and index pages).
+  const navShown = true;
   // An exhibition's or a work's own page: BACK, to where the visitor came
   // from on the site (else the list it belongs to).
   const router = useRouter();
@@ -111,9 +100,6 @@ export default function ESNav() {
     if (next) setFilterOpen(false);
   };
 
-  // Works in Vertical mode: the bar is transparent, with no fade under it.
-  const vertical = onIndex && mode === "works" && worksLayout === "list";
-
   // Sanity Studio has its own UI — no site nav (or logo) on top of it.
   if (pathname.startsWith("/studio")) return null;
 
@@ -130,35 +116,37 @@ export default function ESNav() {
           Back
         </button>
       )}
-      {/* The nav, a bar fixed across the top (purple-400): "Elinor Silow"
-          (home) and Menu together at the top left. Menu opens to "Menu:"
-          with Works, Exhibitions and Info beside it; the current one
-          underlined. Stays above modals (z-80 > their z-70). */}
+      {/* The nav, a bar fixed across the top (mobile and desktop alike):
+          "Elinor Silow" (home) and Menu at the top left. Desktop: Menu opens
+          to "Menu:" with Works, Exhibitions and Info beside it; mobile: it
+          opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 bottom-0 lg:bottom-auto lg:top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-8 pt-2 lg:h-auto px-3 lg:px-1 lg:pt-0 pb-0 ${vertical ? " lg:bg-background " : "bg-background"} ${navShown ? "bg-background" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-1 lg:px-1 lg:h-6 pt-0 pb-0 bg-background lg:bg-background ${navShown ? "" : "pointer-events-none"}`}
       >
-        <span className="flex flex-wrap items-baseline gap-x-4 font-alteHaas font-bold uppercase text-[14px] leading-tight whitespace-nowrap text-neutral-800">
-          {/* Mobile: centered in the bar (Menu at the left, Filter at the
-              right); desktop: first, at the left. */}
+        <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
             href="/"
             style={navReveal(navShown, 0).style}
-            className={`max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2 max-lg:top-2 ${navReveal(navShown, 0).className}`}
+            className={navReveal(navShown, 0).className}
           >
             Elinor Silow
           </Link>
-          <span className="flex font-alteHaas font-bold text-[14px]  items-baseline gap-x-4 justify-between lg:justify-start ">
+          {/* Menu (and, open, ": Works Exhibitions Info"), next to the logo
+              at the left; normal case. */}
+          <span className="flex font-gensco font-normal text-[18px] lg:text-[21px]  items-baseline gap-x-4 justify-between normal-case lg:justify-start">
             <button
               type="button"
               style={navReveal(navShown, 1).style}
-              className={`cursor-pointer uppercase ${navReveal(navShown, 1).className}`}
+              // Mobile, on the works / exhibitions lists: at the right instead,
+              // next to the List / Image toggle.
+              className={`cursor-pointer normal-case ${showSizes ? "hidden lg:inline" : ""} ${navReveal(navShown, 1).className}`}
               onClick={toggleOpen}
               aria-expanded={open}
             >
               {open ? "Menu" : "Menu"}
             </button>
-            <span className="hidden lg:flex items-baseline gap-x-4 font-alteHaas font-bold uppercase">
-              <span className="font-alteHaas font-bold ">:</span>
+            <span className="hidden lg:flex items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] font-normal normal-case">
+              <span className=" ">:</span>
               {open &&
                 VIEW_LINKS.map(({ view, label, href }, i) => (
                   <Link
@@ -185,7 +173,7 @@ export default function ESNav() {
             same baseline as the name and Menu. Mobile: just Filter (search
             and Vertical / Grid are in the Filter menu there). */}
         {showSizes && (
-          <div className="flex items-baseline gap-x-4 font-alteHaas font-bold uppercase text-[14px] tracking-wide leading-tight whitespace-nowrap text-neutral-800">
+          <div className="flex items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
             {/* Search (the shared index search: filters the list), left of
                 Vertical / Grid. */}
             <input
@@ -195,12 +183,20 @@ export default function ESNav() {
               placeholder="Search..."
               aria-label={`Search ${mode}`}
               style={navReveal(navShown, 2).style}
-              className={`hidden lg:block w-32 p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
+              className={`hidden lg:block w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
             />
-            {mode === "works" &&
-              layoutButtons(
-                `hidden lg:flex ${navReveal(navShown, 3).className}`,
-              )}
+            {/* List / Image toggle: works and exhibitions — at the right
+                of the bar, mobile and desktop. */}
+            {layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
+            {/* Mobile: Menu, next to the toggle (at the left on desktop). */}
+            <button
+              type="button"
+              className="lg:hidden cursor-pointer normal-case"
+              onClick={toggleOpen}
+              aria-expanded={open}
+            >
+              Menu
+            </button>
             <button
               type="button"
               aria-expanded={filterOpen}
@@ -212,18 +208,20 @@ export default function ESNav() {
                   setOpenDesktopNav(false);
               }}
               style={navReveal(navShown, 2).style}
-              className={`cursor-pointer uppercase  ${navReveal(navShown, 2).className}`}
+              // Hidden for now: the category is toggled from the list's
+              // heading instead.
+              className={`hidden cursor-pointer   ${navReveal(navShown, 2).className}`}
             >
               {filterOpen ? "Filter-" : "Filter+"}
             </button>
           </div>
         )}
       </nav>
-      {/* Mobile: Menu opens an overlay (page background, under the bar so
-          Menu stays on top to close it) with Works, Exhibitions and Info
-          stacked; picking one closes it. */}
+      {/* Mobile: Menu opens a full-screen overlay (page background, under the
+          bar so Menu stays on top to close it) with Works, Exhibitions and
+          Info stacked; picking one closes it. */}
       {open && !showBack && (
-        <nav className="lg:hidden fixed bottom-8 left-0 w-full right-0 z-[75] flex flex-col items-start gap-y-0 px-3 pt-3 pb-0 bg-background font-alteHaas font-bold uppercase text-[48px] leading-[1] text-neutral-800">
+        <nav className="lg:hidden fixed inset-0 bottom-0 left-0 z-[75] flex flex-col items-start gap-y-0 px-2 pt-6 pb-0 bg-background font-alteHaas font-bold uppercase text-[48px] leading-none text-neutral-800">
           {VIEW_LINKS.map(({ view, label, href }) => (
             <Link
               key={view}
@@ -234,7 +232,9 @@ export default function ESNav() {
                 setOpenDesktopNav(false);
               }}
               aria-current={pathname === href ? "page" : undefined}
-              className={pathname === href ? "" : "opacity-50"}
+              className={
+                pathname === href ? "text-purple-950" : "text-purple-200"
+              }
             >
               {label}
             </Link>

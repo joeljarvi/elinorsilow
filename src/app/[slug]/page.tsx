@@ -14,9 +14,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// A work's own page: two columns — the title and "year, materials,
-// dimensions" at the top left of the first, the work in the second, a screen
-// tall. Mobile: the text above the work.
+// A work's own page: the title and "year, materials, dimensions" at the top
+// left, the work centered in the viewport.
 export default async function WorkPage({ params }: Props) {
   const work = await getWorkBySlug((await params).slug);
   if (!work) notFound();
@@ -24,19 +23,21 @@ export default async function WorkPage({ params }: Props) {
     .filter(Boolean)
     .join(", ");
   return (
-    <main className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 px-3 lg:px-6 text-neutral-800">
+    <main className="relative h-dvh flex items-center justify-center px-3 lg:px-6 text-neutral-800">
+      {/* Title and metadata at the top left, out of the way of the image. */}
       <TitleBlock
         heading
         title={work.title.rendered}
         metadata={metadata}
-        className="pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0"
+        className="absolute top-0 left-0 px-3 lg:px-6 pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0"
       />
+      {/* The work, centered in the viewport. */}
       {work.image_url && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={`${work.image_url}?h=2000&auto=format`}
           alt={work.title.rendered}
-          className="block w-full h-dvh object-contain object-top pt-6 pb-6"
+          className="block w-auto h-auto max-w-full max-h-[75dvh] object-contain"
         />
       )}
     </main>
