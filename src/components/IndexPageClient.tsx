@@ -940,7 +940,7 @@ function Feed({
             href={item.href}
             prefetch={false}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-1 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[33.3dvh]" : ""}`}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-1 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[33.3dvh] lg:py-[25vh]" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
