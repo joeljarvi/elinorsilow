@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
 import { useIndex, isIndexPath, type HomeView } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
+import FadeEdge from "./FadeEdge";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -111,7 +112,7 @@ export default function ESNav() {
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
+          className="fixed top-0 lg:top-0 right-1 lg:right-1 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
         >
           Back
         </button>
@@ -121,11 +122,16 @@ export default function ESNav() {
           to "Menu:" with Works, Exhibitions and Info beside it; mobile: it
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-1 lg:px-1 lg:h-6 pt-0 pb-0 bg-background lg:bg-background ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-1 lg:px-1 lg:h-6 pt-0 pb-0 bg-background lg:bg-transparent ${navShown ? "" : "pointer-events-none"}`}
       >
+        {/* Mobile, in List mode (works / exhibitions): the page background
+            fading out below the bar. */}
+        {showSizes && worksLayout === "grid" && (
+          <FadeEdge className="lg:hidden" />
+        )}
         <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
-            href="/"
+            href="/exhibitions"
             style={navReveal(navShown, 0).style}
             className={navReveal(navShown, 0).className}
           >
@@ -137,9 +143,8 @@ export default function ESNav() {
             <button
               type="button"
               style={navReveal(navShown, 1).style}
-              // Mobile, on the works / exhibitions lists: at the right instead,
-              // next to the List / Image toggle.
-              className={`cursor-pointer normal-case ${showSizes ? "hidden lg:inline" : ""} ${navReveal(navShown, 1).className}`}
+              // Mobile: at the right of the bar instead.
+              className={`cursor-pointer normal-case hidden lg:inline ${navReveal(navShown, 1).className}`}
               onClick={toggleOpen}
               aria-expanded={open}
             >
@@ -172,31 +177,37 @@ export default function ESNav() {
             the button stays above it to close it) — at the right, on the
             same baseline as the name and Menu. Mobile: just Filter (search
             and Vertical / Grid are in the Filter menu there). */}
-        {showSizes && (
-          <div className="flex items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
-            {/* Search (the shared index search: filters the list), left of
+        {/* Right side: (works / exhibitions) search, List / Image and Filter;
+            mobile, Menu (on every page). */}
+        <div className="flex items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
+          {showSizes && (
+            <>
+              {/* Search (the shared index search: filters the list), left of
                 Vertical / Grid. */}
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
-              aria-label={`Search ${mode}`}
-              style={navReveal(navShown, 2).style}
-              className={`hidden lg:block w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
-            />
-            {/* List / Image toggle: works and exhibitions — at the right
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                aria-label={`Search ${mode}`}
+                style={navReveal(navShown, 2).style}
+                className={`hidden lg:block w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
+              />
+              {/* List / Image toggle: works and exhibitions — at the right
                 of the bar, mobile and desktop. */}
-            {layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
-            {/* Mobile: Menu, next to the toggle (at the left on desktop). */}
-            <button
-              type="button"
-              className="lg:hidden cursor-pointer normal-case"
-              onClick={toggleOpen}
-              aria-expanded={open}
-            >
-              Menu
-            </button>
+              {layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
+            </>
+          )}
+          {/* Mobile: Menu, next to the toggle (at the left on desktop). */}
+          <button
+            type="button"
+            className="lg:hidden cursor-pointer normal-case"
+            onClick={toggleOpen}
+            aria-expanded={open}
+          >
+            Menu
+          </button>
+          {showSizes && (
             <button
               type="button"
               aria-expanded={filterOpen}
@@ -214,8 +225,8 @@ export default function ESNav() {
             >
               {filterOpen ? "Filter-" : "Filter+"}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </nav>
       {/* Mobile: Menu opens a full-screen overlay (page background, under the
           bar so Menu stays on top to close it) with Works, Exhibitions and

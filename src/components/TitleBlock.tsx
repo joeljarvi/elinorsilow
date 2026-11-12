@@ -11,7 +11,7 @@ export default function TitleBlock({
   href,
   heading = false,
   className = "",
-  textWidth = "",
+  textWidth = "lg:max-w-xl",
 }: {
   title: string;
   metadata?: string;
@@ -19,7 +19,7 @@ export default function TitleBlock({
   // The page's h1 (a work's own page), else a p.
   heading?: boolean;
   className?: string;
-  // A width limit for the title and metadata.
+  // A width limit for the title and metadata (default: max-w-xl on desktop).
   textWidth?: string;
 }) {
   const Title = heading ? "h1" : "p";
@@ -29,7 +29,7 @@ export default function TitleBlock({
     >
       <Title className={`uppercase  ${textWidth}`}>{title}</Title>
       {(metadata || href) && (
-        <p className={`pl-0 lg:pl-4 ${textWidth}`}>
+        <p className={`pl-0 lg:pl-0 ${textWidth}`}>
           {metadata},{/* "Read more" at the end of the metadata. */}
           {href && (
             <>

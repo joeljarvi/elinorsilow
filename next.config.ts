@@ -21,7 +21,11 @@ const nextConfig: NextConfig = {
   // are rewritten, not redirected: browsers may have cached the old
   // permanent /works → /index/works redirect, and a redirect back would loop.
   async redirects() {
-    return [{ source: "/index", destination: "/works", permanent: false }];
+    return [
+      { source: "/index", destination: "/works", permanent: false },
+      // The exhibitions are the home page.
+      { source: "/", destination: "/exhibitions", permanent: false },
+    ];
   },
   async rewrites() {
     return [

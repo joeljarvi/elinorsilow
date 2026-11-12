@@ -77,18 +77,24 @@ export default async function ExhibitionPage({ params }: Props) {
       {/* The title, fixed at the top left while the page scrolls, on the
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
-      <div className="fixed inset-x-0 top-0 z-70  p-4 lg:p-8    bg-background lg:bg-transparent pointer-events-none">
+      <div className="fixed inset-x-0 top-0 z-70  px-1     bg-background lg:bg-transparent pointer-events-none">
         <TitleBlock heading title={ex.title.rendered} metadata={metadata} />
       </div>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
-      <div className="flex flex-col items-center gap-y-4 pt-30  lg:pt-30">
-        {ex.acf.description && (
-          <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight px-4">
-            {ex.acf.description}
-          </p>
-        )}
-        <ExhibitionImages images={images} title={ex.title.rendered} />
+      <div className="flex flex-col items-center gap-y-2">
+        {/* The description and the first image share the first screen. */}
+        <ExhibitionImages
+          images={images}
+          title={ex.title.rendered}
+          intro={
+            ex.acf.description && (
+              <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">
+                {ex.acf.description}
+              </p>
+            )
+          }
+        />
         {/* The credits, after the images — styled as the description. */}
         {ex.acf.credits && (
           <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">

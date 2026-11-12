@@ -34,22 +34,22 @@ export default function UnderConstruction() {
   const pathname = usePathname();
   if (!open || pathname.startsWith("/studio")) return null;
   return (
-    <div className="fixed inset-0 z-90 flex items-center justify-center bg-purple-100 text-primary font-gtAmericaCondensed uppercase text-sm">
+    <div className="fixed inset-0 z-90 flex items-center justify-center bg-background font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800">
       <p className="max-w-xs lg:max-w-sm">
-        this website is under construction. <br /> get in touch with elinor
-        silow at{" "}
+        This website is under construction. <br /> Get in touch with Elinor
+        Silow at{" "}
         <Link
-          className="text-primary/50 hover:text-primary cursor-pointer"
+          className="text-neutral-600 hover:text-neutral-800 cursor-pointer"
           href="https://instagram.com/elinorsilow"
         >
-          instagram
+          Instagram
         </Link>{" "}
         or{" "}
         <Link
-          className="text-primary/50 hover:text-primary cursor-pointer"
+          className=" text-neutral-600 hover:text-neutral-800 cursor-pointer"
           href="mailto:elinor.silow@gmail.com"
         >
-          email
+          Email
         </Link>
       </p>
       <button

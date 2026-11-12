@@ -23,13 +23,13 @@ export default async function WorkPage({ params }: Props) {
     .filter(Boolean)
     .join(", ");
   return (
-    <main className="relative h-dvh flex items-center justify-center px-3 lg:px-6 text-neutral-800">
+    <main className="relative h-dvh flex items-center justify-center px-1 lg:px-6 text-neutral-800">
       {/* Title and metadata at the top left, out of the way of the image. */}
       <TitleBlock
         heading
         title={work.title.rendered}
         metadata={metadata}
-        className="absolute top-0 left-0 px-3 lg:px-6 pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0"
+        className="absolute top-0 left-0 px-1 lg:px-1 pt-0 lg:pt-0 pr-20 lg:pr-0 min-w-0"
       />
       {/* The work, centered in the viewport. */}
       {work.image_url && (

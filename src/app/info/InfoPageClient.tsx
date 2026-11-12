@@ -217,11 +217,11 @@ export default function InfoPageClient({
       <TitleBlock
         heading
         title="Information, CV and Contact"
-        className="px-2 pt-6 lg:px-1 lg:pt-6"
+        className="px-1 pt-6 lg:px-1 lg:pt-6"
       />
 
       {/* Contact, above the bio, spread across the column. */}
-      <p className=" flex flex-col  w-full gap-x-6 lg:gap-x-12 mb-6 px-2 mt-0 lg:mt-0 lg:px-2 font-gensco text-[18px] lg:text-[21px] leading-tight gap-y-0">
+      <p className=" flex flex-col  w-full gap-x-6 lg:gap-x-12 mb-6 px-1 mt-0 lg:mt-0 lg:px-2 font-gensco text-[18px] lg:text-[21px] leading-tight gap-y-0">
         <span className="flex gap-x-6">
           EMAIL:
           <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>

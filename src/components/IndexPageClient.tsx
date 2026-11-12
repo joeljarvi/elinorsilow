@@ -742,6 +742,12 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
 // The active filters (category, year, size, search), fixed at the top right
 // on the title block's line and in its type: "Works filtered by : all", or
 // each active filter as a button (clicking one clears that filter).
+// The List view's titles (works and exhibitions alike): stacked, centered,
+// Alte Haas Bold, uppercase; each a link (TITLE_LINK).
+const TITLE_LIST =
+  "flex min-h-dvh flex-col items-center justify-start gap-y-0 px-3 lg:px-4 pt-8 pb-0 font-alteHaas font-bold text-[32px] lg:text-[48px] leading-[1.2] lg:leading-[1.1] uppercase text-center text-purple-900 ";
+const TITLE_LINK = "hover:text-purple-300 transition-all";
+
 // Where the fixed headings sit — the feed's title block (top left) and the
 // active filters (top right) — shared so the two keep the same height and
 // baseline.
@@ -815,7 +821,7 @@ function ActiveFilters() {
   const anyFilter = category !== "all" || filters.length > 0;
   return (
     <div
-      className={`fixed ${HEADING_TOP} right-4 z-[100] hidden lg:flex flex-wrap items-baseline justify-end gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight normal-case text-neutral-800`}
+      className={`fixed ${HEADING_TOP} right-4 z-70 hidden lg:flex flex-wrap items-baseline justify-end gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight normal-case text-neutral-800`}
     >
       <span>{exhibitions ? "Exhibitions" : "Works"} filtered by :</span>
       <button
@@ -899,9 +905,9 @@ function Feed({
   }, [items]);
   const current = items[active];
   const imageClass = sameWidth
-    ? // Capped at 75% of the screen height (a tall work keeps its
+    ? // Capped at 90% of the screen height on mobile, 75% on desktop (a tall work keeps its
       // proportions inside the same-width box).
-      `block w-full h-auto ${maxW} max-h-[75dvh] object-contain`
+      `block w-full h-auto ${maxW} max-h-[90dvh] lg:max-h-[75dvh] object-contain`
     : `block w-auto h-auto ${maxW} max-h-[calc(100dvh-4rem)]`;
   return (
     <>
@@ -934,7 +940,7 @@ function Feed({
             href={item.href}
             prefetch={false}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-2 px-2 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[25dvh]" : ""}`}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-1 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[33.3dvh]" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -1145,7 +1151,7 @@ export default function IndexPageClient() {
           as a fixed backdrop (purple-100 shows while it loads), with the
           works grid as a rounded bg-background panel on it. `isolate` keeps
           the -z-10 backdrop above this div's background. */}
-      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-30">
+      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-[33.3dvh]">
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
             "all": cols 2–3; exhibitions: cols 2–4. */}
@@ -1155,13 +1161,13 @@ export default function IndexPageClient() {
                 setting; "Image" is the feed): every work's title, a link to its page, one under
                 another, centered. Alte Haas, 48px, uppercase. */}
             {mode === "works" && worksLayout === "grid" && (
-              <ul className="flex flex-col items-center gap-y-0 px-3 lg:px-4 pt-8 pb-24 font-alteHaas  text-[32px] leading-[1.2] lg:leading-[1.1] lg:text-[48px] uppercase font-bold text-center text-purple-300">
+              <ul className={TITLE_LIST}>
                 {visibleWorks.map((w) => (
                   <li key={w.id}>
                     <Link
                       href={`/${w.slug}`}
                       prefetch={false}
-                      className="hover:text-purple-900 transition-all"
+                      className={TITLE_LINK}
                     >
                       {w.title.rendered}
                     </Link>
@@ -1185,13 +1191,13 @@ export default function IndexPageClient() {
             {/* Exhibitions as a list (List): every exhibition's title, a
                 link to its page — as the works list. */}
             {mode === "exhibitions" && worksLayout === "grid" && (
-              <ul className="min-h-dvh flex flex-col items-center justify-end gap-y-0 px-3 lg:px-4 pt-6 pb-24 font-alteHaas font-bold text-[32px] leading-[1.2] lg:leading-[1.1] lg:text-[48px]  uppercase text-center text-neutral-800">
+              <ul className={TITLE_LIST}>
                 {visibleExhibitions.map((ex) => (
                   <li key={ex.id}>
                     <Link
                       href={`/exhibitions/${ex.slug}`}
                       prefetch={false}
-                      className="hover:text-purple-900 transition-all"
+                      className={TITLE_LINK}
                     >
                       {ex.title.rendered}
                     </Link>

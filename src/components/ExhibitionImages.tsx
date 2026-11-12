@@ -1,18 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { PAGE_TOP } from "@/lib/layout";
 
-// An exhibition's images, one under another (centered, at most full width
-// and 80vh tall).
+// An exhibition's images, one under another: the first fitting the first
+// screen under the intro, the rest each as big as in the lightbox.
 // Clicking one opens it in a lightbox: the image as tall as the screen
 // (minus py-6) on the page background, with Close at the top right; Esc or a
 // click outside the image closes it too.
 export default function ExhibitionImages({
   images,
   title,
+  intro,
 }: {
   images: { url: string; alt?: string }[];
   title: string;
+  // Above the first image, in the first screen (the description).
+  intro?: ReactNode;
 }) {
   const [open, setOpen] = useState<number | null>(null);
   useEffect(() => {
@@ -27,24 +31,52 @@ export default function ExhibitionImages({
 
   return (
     <>
-      {/* The images in their own column, gap-y-1 apart. */}
-      <div className="flex flex-col gap-y-1 w-full px-1 ">
-        {images.map((img, i) => (
+      {/* The first screen: the intro (description) at PAGE_TOP (a third of
+          the way down; a quarter on desktop),
+          then the first image filling what's left down to the bottom of the
+          viewport. */}
+      <div
+        className={`h-dvh w-full flex flex-col items-center gap-y-2 ${PAGE_TOP} pb-1 px-1`}
+      >
+        {intro}
+        {images[0] && (
           <button
-            key={img.url}
             type="button"
-            onClick={() => setOpen(i)}
-            className="flex justify-center w-full cursor-zoom-in"
+            onClick={() => setOpen(0)}
+            className="flex-1 min-h-0 w-full flex justify-center cursor-zoom-in"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`${img.url}?w=2000&auto=format`}
-              alt={alt(i)}
-              loading={i < 2 ? "eager" : "lazy"}
-              className="block w-auto h-auto max-w-full max-h-dvh lg:max-h-[80vh]"
+              src={`${images[0].url}?w=2000&auto=format`}
+              alt={alt(0)}
+              loading="eager"
+              className="block h-full w-auto max-w-full object-contain"
             />
           </button>
-        ))}
+        )}
+      </div>
+      {/* The rest, one under another, gap-y-1 apart — each as big as in the
+          lightbox (the screen less its px-1 / py-1). */}
+      <div className="flex flex-col gap-y-1 w-full px-1 pt-1">
+        {images.slice(1).map((img, k) => {
+          const i = k + 1;
+          return (
+            <button
+              key={img.url}
+              type="button"
+              onClick={() => setOpen(i)}
+              className="flex justify-center w-full cursor-zoom-in"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${img.url}?w=2000&auto=format`}
+                alt={alt(i)}
+                loading={i < 2 ? "eager" : "lazy"}
+                className="block w-auto h-auto max-w-full max-h-[calc(100dvh-0.5rem)]"
+              />
+            </button>
+          );
+        })}
       </div>
       {open !== null && (
         <div
@@ -52,7 +84,7 @@ export default function ExhibitionImages({
           aria-modal="true"
           aria-label={alt(open) || title}
           onClick={() => setOpen(null)}
-          className="fixed inset-0 z-[90] flex items-center justify-center px-6 py-1 bg-background"
+          className="fixed inset-0 z-[90] flex items-center justify-center px-1 py-1 bg-background"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -64,7 +96,7 @@ export default function ExhibitionImages({
           <button
             type="button"
             onClick={() => setOpen(null)}
-            className="fixed top-3 lg:top-6 right-3 lg:right-6 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
+            className="fixed top-0 lg:top-6 right-1 lg:right-6 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
           >
             Close
           </button>
