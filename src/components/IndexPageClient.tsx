@@ -1150,8 +1150,10 @@ export default function IndexPageClient() {
                 // mobile, a sixth on desktop.
                 maxW="max-w-2/3 lg:max-w-1/6"
                 sameWidth
-                // The title block at most max-w-2xl (! beats its max-w-6xl).
-                titleClassName="max-w-2xl!"
+                // The title block at most 2/3 of the screen on mobile (clear of
+                // the filters, top right), max-w-2xl on desktop (! beats its
+                // max-w-6xl).
+                titleClassName="max-w-2/3! lg:max-w-2xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
@@ -1165,8 +1167,10 @@ export default function IndexPageClient() {
                 totalItems={visibleExhibitions.length}
                 maxW="max-w-full lg:max-w-2/3"
                 gap="gap-y-30"
-                // The title block at most max-w-2xl (! beats its max-w-6xl).
-                titleClassName="max-w-2xl!"
+                // The title block at most 2/3 of the screen on mobile (clear of
+                // the filters, top right), max-w-2xl on desktop (! beats its
+                // max-w-6xl).
+                titleClassName="max-w-2/3! lg:max-w-2xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />

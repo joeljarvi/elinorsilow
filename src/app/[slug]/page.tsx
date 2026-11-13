@@ -27,7 +27,7 @@ export default async function WorkPage({ params }: Props) {
   return (
     <BackdropClose
       fallback="/works"
-      className="relative h-dvh flex items-center justify-center px-1 lg:px-6 text-neutral-800 cursor-pointer"
+      className="relative h-dvh flex items-center justify-center px-3 lg:px-6 text-neutral-800 cursor-pointer"
     >
       {/* Title and metadata at the top left, out of the way of the image. */}
       <TitleBlock
@@ -35,7 +35,7 @@ export default async function WorkPage({ params }: Props) {
         stacked
         title={work.title.rendered}
         metadata={metadata}
-        className="absolute top-0 left-0 h-12 lg:h-18 flex justify-center text-[18px]! px-1 lg:px-6 pt-0 lg:pt-6 pr-20 lg:pr-0 min-w-0 max-w-md"
+        className="absolute top-0 left-0 h-12 lg:h-18 flex justify-center text-[18px]! px-3 lg:px-6 pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0 max-w-md"
       />
       {/* The work, centered in the viewport. */}
       {work.image_url && (
@@ -43,7 +43,7 @@ export default async function WorkPage({ params }: Props) {
         <img
           src={`${work.image_url}?h=2000&auto=format`}
           alt={work.title.rendered}
-          className="block w-auto h-auto max-w-full max-h-[calc(100vh-4rem)] object-contain cursor-default"
+          className="block w-auto h-auto max-w-full max-h-[75dvh] lg:max-h-[calc(100vh-4rem)] object-contain cursor-default"
         />
       )}
     </BackdropClose>

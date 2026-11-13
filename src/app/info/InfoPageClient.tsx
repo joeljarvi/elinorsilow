@@ -232,7 +232,7 @@ export default function InfoPageClient({
       <div className="flex flex-col max-w-4xl pl-3 pr-12 lg:px-6 pt-3 lg:pt-6 pb-24 font-gensco text-[18px] lg:text-[24px] leading-tight">
         {sections.map((section) => (
           <div key={section.key} className="flex flex-col mb-6">
-            <h2 className="font-gensco normal-case text-[18px] lg:text-[24px] leading-tight indent-3 mb-3 lg:indent-6 lg:mb-3">
+            <h2 className="font-gensco normal-case text-[18px] lg:text-[24px] leading-tight indent-0 mb-3 lg:indent-0 lg:mb-3">
               {section.title}
             </h2>
             {section.body}

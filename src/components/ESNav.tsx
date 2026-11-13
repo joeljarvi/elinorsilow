@@ -77,6 +77,8 @@ export default function ESNav() {
   // List / Grid beside it to switch between the index's two views.
   const { worksLayout, setWorksLayout } = useIndex();
   const indexOn = worksLayout !== "image";
+  // The active filters: works and exhibitions, hidden in the index.
+  const showFilters = showSizes && !(mode === "works" && indexOn);
   const indexViews: WorksLayout[] = ["list", "grid"];
   const layoutButtons = (className: string) => (
     <span className={`items-baseline gap-x-3 normal-case ${className}`}>
@@ -150,7 +152,7 @@ export default function ESNav() {
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-0 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[18px] leading-tight text-neutral-800 cursor-pointer"
+          className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[18px] leading-tight text-neutral-800 cursor-pointer"
         >
           Back
         </button>
@@ -232,16 +234,18 @@ export default function ESNav() {
                 layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
             </>
           )}
-          {/* Info: Instagram, at the right of the bar — desktop. */}
+          {/* Info: Instagram, at the right of the bar ("IG" on mobile). */}
           {pathname === "/info" && (
             <a
               href="https://www.instagram.com/elinorsilow"
               target="_blank"
               rel="noopener noreferrer"
               style={navReveal(navShown, 2).style}
-              className={`hidden lg:block normal-case ${navReveal(navShown, 2).className}`}
+              aria-label="Instagram"
+              className={`normal-case ${navReveal(navShown, 2).className}`}
             >
-              Instagram
+              <span className="lg:hidden">IG</span>
+              <span className="hidden lg:inline">Instagram</span>
             </a>
           )}
           {showSizes && (
@@ -297,9 +301,10 @@ export default function ESNav() {
         </nav>
       )}
       {/* The active filters (category cycling), fixed at the top right —
-          desktop; hidden in the index (List / Grid). */}
-      {showSizes && !showBack && !(mode === "works" && indexOn) && (
-        <ActiveFilters className="fixed top-6 right-6 z-70 hidden lg:flex font-gensco text-[18px] leading-tight text-neutral-800" />
+          mobile and desktop; hidden in the index (List / Grid). z-71: above
+          the feed's title block (z-70), under the mobile menu (z-75). */}
+      {showFilters && !showBack && (
+        <ActiveFilters className="fixed top-3 right-3 lg:top-6 lg:right-6 z-[71] flex font-gensco text-[18px] leading-tight text-neutral-800" />
       )}
       {/* Filter overlay: full height, under the nav (like the menu). */}
       {showSizes && filterOpen && (

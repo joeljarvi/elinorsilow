@@ -78,16 +78,16 @@ export default async function ExhibitionPage({ params }: Props) {
   const images = exhibitionImages(ex);
   const related = relatedExhibitions(ex, all);
   return (
-    <main className="flex flex-col px-0 lg:px-6 pb-6 text-neutral-800">
+    <main className="flex flex-col px-3 lg:px-6 pb-6 text-neutral-800">
       {/* The title, fixed at the top left while the page scrolls, on the
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
-      <div className="fixed inset-x-0 top-4 z-70  px-4     bg-background lg:bg-transparent pointer-events-none">
+      <div className="fixed inset-x-0 top-0 pt-3 lg:pt-6 z-70  px-3 lg:px-6     bg-background lg:bg-transparent pointer-events-none">
         <TitleBlock
           heading
           title={ex.title.rendered}
           metadata={metadata}
-          className="text-[18px]! max-w-md!"
+          className="text-[18px]! max-w-md! mb-3 lg:mb-0"
         />
       </div>
       {/* The description, then all the images, one under another — centered,
@@ -99,7 +99,7 @@ export default async function ExhibitionPage({ params }: Props) {
           title={ex.title.rendered}
           intro={
             ex.acf.description && (
-              <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
+              <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line lg:text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
                 {ex.acf.description}
               </p>
             )
