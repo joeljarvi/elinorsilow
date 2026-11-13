@@ -137,7 +137,8 @@ export default function ESNav() {
   // The exhibitions list: the bar keeps its background, with the fade under
   // it, on desktop too.
   const onExhibitions = pathname === "/exhibitions";
-  // The works index (List / Grid): the bar on the page background.
+  // The works index (List / Grid) and /info: the bar on the page
+  // background.
   const inIndex = showSizes && mode === "works" && indexOn;
 
   // Sanity Studio has its own UI — no site nav (or logo) on top of it.
@@ -167,7 +168,7 @@ export default function ESNav() {
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
         ref={navRef}
-        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3  ${inIndex ? "bg-background" : onExhibitions ? "" : "lg:bg-neutral-200"} ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3  ${inIndex || pathname === "/info" ? "bg-background" : onExhibitions ? "" : "lg:bg-neutral-200"} ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* A separator line along the top of the bar, mx-3 in from the
             edges. */}
@@ -190,7 +191,15 @@ export default function ESNav() {
               onClick={toggleOpen}
               aria-expanded={open}
             >
-              {open ? "Menu" : "Menu"}
+              {/* Mobile: "Close" while the menu overlay is open. */}
+              {open ? (
+                <>
+                  <span className="lg:hidden">Close</span>
+                  <span className="hidden lg:inline">Menu</span>
+                </>
+              ) : (
+                "Menu"
+              )}
             </button>
             <span className="hidden lg:flex items-baseline gap-x-3 font-gensco text-[18px] font-normal normal-case">
               <span className=" ">:</span>
@@ -238,7 +247,10 @@ export default function ESNav() {
               {/* Index (and, on, List / Grid): works only — at the right
                 of the bar, mobile and desktop. */}
               {mode === "works" &&
-                layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
+                layoutButtons(
+                  // Hidden on mobile while the menu overlay is open.
+                  `${open ? "hidden lg:flex" : "flex"} ${navReveal(navShown, 3).className}`,
+                )}
             </>
           )}
           {/* Info: Instagram, at the right of the bar ("IG" on mobile). */}
@@ -299,7 +311,8 @@ export default function ESNav() {
               </a>
             </div>
           </div>
-          <div className="flex flex-col">
+          {/* Works, Exhibitions, Info — centered vertically on the screen. */}
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 flex flex-col">
             {VIEW_LINKS.map(({ view, label, href }) => (
               <Link
                 key={view}
@@ -310,9 +323,6 @@ export default function ESNav() {
                   setOpenDesktopNav(false);
                 }}
                 aria-current={pathname === href ? "page" : undefined}
-                className={
-                  pathname === href ? "text-neutral-800" : "text-neutral-800"
-                }
               >
                 {label}
               </Link>
