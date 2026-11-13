@@ -9,6 +9,7 @@ import {
 import TitleBlock from "@/components/TitleBlock";
 import FadeEdge from "@/components/FadeEdge";
 import ExhibitionImages from "@/components/ExhibitionImages";
+import ScrollToTop from "@/components/ScrollToTop";
 
 // An exhibition's images (image_1 … image_10), in order.
 function exhibitionImages(ex: Exhibition) {
@@ -99,27 +100,31 @@ export default async function ExhibitionPage({ params }: Props) {
           className="text-[18px]! max-w-1/3 mb-3 lg:mb-0"
         />
       </div>
+      {/* Back to top, fixed at the bottom left — desktop. */}
+      <ScrollToTop className="hidden lg:block fixed bottom-6 left-6 z-80 font-gensco text-[18px] leading-tight text-neutral-800" />
       {/* Prev / Next, fixed at the bottom right. */}
-      {(prev || next) && (
-        <nav className="fixed bottom-3 right-3 lg:bottom-6 lg:right-6 z-80 flex items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800">
-          {prev && (
-            <Link
-              href={`/exhibitions/${prev.slug}`}
-              aria-label={`Previous: ${prev.title.rendered}`}
-            >
-              Prev
-            </Link>
-          )}
-          {next && (
-            <Link
-              href={`/exhibitions/${next.slug}`}
-              aria-label={`Next: ${next.title.rendered}`}
-            >
-              Next
-            </Link>
-          )}
-        </nav>
-      )}
+      <nav className="fixed bottom-3 right-3 lg:bottom-6 lg:right-6 z-80 flex items-baseline gap-x-12 font-gensco text-[18px] leading-tight text-neutral-800">
+        {(prev || next) && (
+          <span className="flex items-baseline gap-x-3">
+            {prev && (
+              <Link
+                href={`/exhibitions/${prev.slug}`}
+                aria-label={`Previous: ${prev.title.rendered}`}
+              >
+                Prev
+              </Link>
+            )}
+            {next && (
+              <Link
+                href={`/exhibitions/${next.slug}`}
+                aria-label={`Next: ${next.title.rendered}`}
+              >
+                Next
+              </Link>
+            )}
+          </span>
+        )}
+      </nav>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
       <div className="flex flex-col items-center gap-y-2">
