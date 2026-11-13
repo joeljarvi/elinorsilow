@@ -773,6 +773,7 @@ function Feed({
   sameWidth = false,
   align = "center",
   gap = "",
+  top = "",
   titleClassName = "",
   totalItems,
 }: {
@@ -790,6 +791,8 @@ function Feed({
   align?: "center" | "left";
   // The space between one item and the next (a static Tailwind class).
   gap?: string;
+  // The space above the first item (a static Tailwind class).
+  top?: string;
   // Extra classes for the fixed title block (a static Tailwind class).
   titleClassName?: string;
   // The image size setting: the images' height limit.
@@ -843,7 +846,7 @@ function Feed({
         </div>
       )}
       <div
-        className={`flex flex-col ${gap} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"}`}
+        className={`flex flex-col ${gap} ${top} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"}`}
       >
         {items.map((item, i) => (
           // Not a real link (no address shown in the browser's corner on
@@ -1151,9 +1154,9 @@ export default function IndexPageClient() {
                 maxW="max-w-2/3 lg:max-w-1/6"
                 sameWidth
                 // The title block at most 2/3 of the screen on mobile (clear of
-                // the filters, top right), max-w-2xl on desktop (! beats its
+                // the filters, top right), max-w-5xl on desktop (! beats its
                 // max-w-6xl).
-                titleClassName="max-w-2/3! lg:max-w-2xl!"
+                titleClassName="max-w-2/3! lg:max-w-5xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
@@ -1167,10 +1170,12 @@ export default function IndexPageClient() {
                 totalItems={visibleExhibitions.length}
                 maxW="max-w-full lg:max-w-2/3"
                 gap="gap-y-30"
+                // Mobile: a third of the screen above the first exhibition.
+                top="pt-[33.3dvh] lg:pt-0"
                 // The title block at most 2/3 of the screen on mobile (clear of
-                // the filters, top right), max-w-2xl on desktop (! beats its
+                // the filters, top right), max-w-5xl on desktop (! beats its
                 // max-w-6xl).
-                titleClassName="max-w-2/3! lg:max-w-2xl!"
+                titleClassName="max-w-2/3! lg:max-w-5xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />

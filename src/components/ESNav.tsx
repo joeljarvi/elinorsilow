@@ -122,9 +122,14 @@ export default function ESNav() {
       segments[0],
     );
   const showBack = exhibitionPage || workPage;
+  // An exhibition's page: always the exhibitions list (Prev / Next step
+  // between exhibitions, so history would just retrace them). A work's page:
+  // where the visitor came from, else the works.
   const goBack = () => {
-    if (document.referrer.startsWith(window.location.origin)) router.back();
-    else router.push(exhibitionPage ? "/exhibitions" : "/works");
+    if (exhibitionPage) router.push("/exhibitions");
+    else if (document.referrer.startsWith(window.location.origin))
+      router.back();
+    else router.push("/works");
   };
   const toggleOpen = () => {
     const next = !open;

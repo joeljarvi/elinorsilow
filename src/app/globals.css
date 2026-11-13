@@ -119,8 +119,14 @@ html {
   --shadow-col-left: none;
   --shadow-col-right: none;
   --shadow-header: none;
-  --background: oklch(0.291 0.149 302.717);
-  --foreground: oklch(0.902 0.063 306.703);
+  /* neutral-950 background, neutral-200 text. */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.922 0 0);
+  /* The site's text is set in text-neutral-800 (and inactive links in
+     text-neutral-300) for light mode; in dark mode those swap to
+     neutral-200 (and neutral-700), so every page reads light on dark. */
+  --color-neutral-800: oklch(0.922 0 0);
+  --color-neutral-300: oklch(0.371 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);

@@ -46,6 +46,8 @@ const LINK = "underline underline-offset-4 decoration-1";
 type Section = {
   key: string;
   title: string;
+  // The heading as a link (e.g. "Elinor Silow" → home).
+  href?: string;
   count?: number;
   body: ReactNode;
 };
@@ -177,6 +179,7 @@ export default function InfoPageClient({
     bio && {
       key: "about",
       title: "Elinor Silow",
+      href: "/works",
       body: (
         <>
           <p className=" whitespace-pre-line">{bio}</p>
@@ -233,7 +236,11 @@ export default function InfoPageClient({
         {sections.map((section) => (
           <div key={section.key} className="flex flex-col mb-6">
             <h2 className="font-gensco normal-case text-[18px] lg:text-[24px] leading-tight indent-0 mb-3 lg:indent-0 lg:mb-3">
-              {section.title}
+              {section.href ? (
+                <Link href={section.href}>{section.title}</Link>
+              ) : (
+                section.title
+              )}
             </h2>
             {section.body}
           </div>

@@ -598,6 +598,10 @@ export default async function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
+          // A new key: the site has no theme toggle now, so it follows the
+          // device; a choice saved by the old toggle ("theme") would keep
+          // overriding that.
+          storageKey="es-theme"
           disableTransitionOnChange
         >
           <WorksProvider>

@@ -13,7 +13,7 @@ const PINGPONG = [0, 1, 2, 1];
 
 // Screen saver: after IDLE_MS without the mouse moving (or any other
 // input), the cursor is hidden and one trumpet (TrumpetNav, frames 1–3, a
-// frame a second, w-12; w-18 on desktop) appears, scaling up from its center, where the mouse
+// frame a second, w-12) appears, scaling up from its center, where the mouse
 // cursor last was, or at the bottom right before the mouse has moved
 // (bottom-6 right-6). Desktop only — hidden on mobile. text-neutral-800, above everything
 // (z-100); any input hides it.
@@ -82,7 +82,7 @@ export default function ESScreenSaver() {
       >
         <TrumpetNav
           frame={PINGPONG[tick % PINGPONG.length]}
-          className="w-12 lg:w-18 h-auto"
+          className="w-12 h-auto"
         />
       </motion.div>
     </div>

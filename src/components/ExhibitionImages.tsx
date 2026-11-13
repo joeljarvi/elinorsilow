@@ -13,11 +13,14 @@ export default function ExhibitionImages({
   images,
   title,
   intro,
+  outro,
 }: {
   images: { url: string; alt?: string; caption?: string }[];
   title: string;
   // Above the first image, in the first screen (the description).
   intro?: ReactNode;
+  // After the last image, at its left edge on desktop (the credits).
+  outro?: ReactNode;
 }) {
   const [open, setOpen] = useState<number | null>(null);
   useEffect(() => {
@@ -41,37 +44,50 @@ export default function ExhibitionImages({
     <>
       {/* The intro (description) at PAGE_TOP (a third of the way down; a
           quarter on desktop), then the first image — as big as the rest
-          (at most the screen less 6rem, as on a work's page). */}
-      <div
-        className={`w-full flex flex-col items-center gap-y-2 ${PAGE_TOP} px-1`}
-      >
-        {intro}
-        {images[0] && (
-          <figure className="w-full flex flex-col">
-            <button
-              type="button"
-              onClick={() => setOpen(0)}
-              className="w-full flex justify-center cursor-zoom-in"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${images[0].url}?w=2000&auto=format`}
-                alt={alt(0)}
-                loading="eager"
-                className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
-              />
-            </button>
-            {caption(0)}
-          </figure>
-        )}
+          (at most the screen less 6rem, as on a work's page). Desktop: the
+          two share a box as wide as the image (w-fit, centered), so the
+          intro starts at the image's left edge; the intro (and the caption)
+          take that width without widening it (w-0 min-w-full). */}
+      <div className={`w-full flex flex-col items-center ${PAGE_TOP} px-1`}>
+        <div className="w-full lg:w-fit flex flex-col gap-y-2">
+          {intro && <div className="lg:w-0 lg:min-w-full">{intro}</div>}
+          {images[0] && (
+            <figure className="w-full flex flex-col">
+              <button
+                type="button"
+                onClick={() => setOpen(0)}
+                className="w-full flex justify-center cursor-zoom-in"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${images[0].url}?w=2000&auto=format`}
+                  alt={alt(0)}
+                  loading="eager"
+                  className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
+                />
+              </button>
+              <div className="lg:w-0 lg:min-w-full">{caption(0)}</div>
+            </figure>
+          )}
+          {/* Only one image: the outro after it. */}
+          {outro && images.length <= 1 && (
+            <div className="lg:w-0 lg:min-w-full pt-6">{outro}</div>
+          )}
+        </div>
       </div>
       {/* The rest, one under another, gap-y-3 apart on mobile, gap-y-6 on
-          desktop — each at most the screen less 6rem. */}
+          desktop — each at most the screen less 6rem, with its caption;
+          after the last, the outro. Desktop: each in a box as wide as the
+          image (as the first), so the caption / outro start at its left
+          edge. */}
       <div className="flex flex-col gap-y-3 lg:gap-y-6 w-full px-1 pt-3 lg:pt-6">
         {images.slice(1).map((img, k) => {
           const i = k + 1;
           return (
-            <figure key={img.url} className="w-full flex flex-col">
+            <figure
+              key={img.url}
+              className="w-full lg:w-fit lg:mx-auto flex flex-col"
+            >
               <button
                 type="button"
                 onClick={() => setOpen(i)}
@@ -85,7 +101,10 @@ export default function ExhibitionImages({
                   className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
                 />
               </button>
-              {caption(i)}
+              <div className="lg:w-0 lg:min-w-full">{caption(i)}</div>
+              {outro && i === images.length - 1 && (
+                <div className="lg:w-0 lg:min-w-full pt-6">{outro}</div>
+              )}
             </figure>
           );
         })}
@@ -96,7 +115,7 @@ export default function ExhibitionImages({
           aria-modal="true"
           aria-label={alt(open) || title}
           onClick={() => setOpen(null)}
-          className="fixed inset-0 z-[90] flex items-center justify-center px-1 py-1 bg-background"
+          className="fixed inset-0 z-[90] flex items-center justify-center p-3 lg:px-6 lg:py-6  bg-background"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

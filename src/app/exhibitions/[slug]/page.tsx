@@ -77,6 +77,15 @@ export default async function ExhibitionPage({ params }: Props) {
   const metadata = exhibitionMetadata(ex);
   const images = exhibitionImages(ex);
   const related = relatedExhibitions(ex, all);
+  // Prev / Next: the exhibitions in the list's order (newest first),
+  // wrapping around at either end.
+  const at = all.findIndex((other) => other.id === ex.id);
+  const step = (by: number) =>
+    all.length > 1 && at !== -1
+      ? all[(at + by + all.length) % all.length]
+      : null;
+  const prev = step(-1);
+  const next = step(1);
   return (
     <main className="flex flex-col px-3 lg:px-6 pb-6 text-neutral-800">
       {/* The title, fixed at the top left while the page scrolls, on the
@@ -87,9 +96,30 @@ export default async function ExhibitionPage({ params }: Props) {
           heading
           title={ex.title.rendered}
           metadata={metadata}
-          className="text-[18px]! max-w-md! mb-3 lg:mb-0"
+          className="text-[18px]! max-w-1/3 mb-3 lg:mb-0"
         />
       </div>
+      {/* Prev / Next, fixed at the bottom right. */}
+      {(prev || next) && (
+        <nav className="fixed bottom-3 right-3 lg:bottom-6 lg:right-6 z-80 flex items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800">
+          {prev && (
+            <Link
+              href={`/exhibitions/${prev.slug}`}
+              aria-label={`Previous: ${prev.title.rendered}`}
+            >
+              Prev
+            </Link>
+          )}
+          {next && (
+            <Link
+              href={`/exhibitions/${next.slug}`}
+              aria-label={`Next: ${next.title.rendered}`}
+            >
+              Next
+            </Link>
+          )}
+        </nav>
+      )}
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
       <div className="flex flex-col items-center gap-y-2">
@@ -104,13 +134,16 @@ export default async function ExhibitionPage({ params }: Props) {
               </p>
             )
           }
+          // The credits, after the last image, at its left edge (desktop)
+          // — styled as the description.
+          outro={
+            ex.acf.credits && (
+              <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
+                {ex.acf.credits}
+              </p>
+            )
+          }
         />
-        {/* The credits, after the images — styled as the description. */}
-        {ex.acf.credits && (
-          <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
-            {ex.acf.credits}
-          </p>
-        )}
       </div>
       {/* Related: three other exhibitions, side by side — each its first
           image, its title and metadata showing on hover; clicking one opens
