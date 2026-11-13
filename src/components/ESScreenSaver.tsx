@@ -14,8 +14,8 @@ const PINGPONG = [0, 1, 2, 1];
 // Screen saver: after IDLE_MS without the mouse moving (or any other
 // input), the cursor is hidden and one trumpet (TrumpetNav, frames 1–3, a
 // frame a second, w-12; w-18 on desktop) appears, scaling up from its center, where the mouse
-// cursor last was (desktop), or at the bottom right (mobile, or before the
-// mouse has moved: bottom-6 right-6). text-neutral-800, above everything
+// cursor last was, or at the bottom right before the mouse has moved
+// (bottom-6 right-6). Desktop only — hidden on mobile. text-neutral-800, above everything
 // (z-100); any input hides it.
 export default function ESScreenSaver() {
   const pathname = usePathname();
@@ -63,10 +63,10 @@ export default function ESScreenSaver() {
     return () => clearInterval(t);
   }, [idle]);
 
-  // Not over Sanity Studio.
-  if (!idle || pathname.startsWith("/studio")) return null;
+  // Desktop only, and not over Sanity Studio.
+  if (!idle || !desktop || pathname.startsWith("/studio")) return null;
 
-  const at = desktop ? cursor.current : null;
+  const at = cursor.current;
   return (
     <div
       aria-hidden

@@ -170,7 +170,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showAnchorsAll, setShowAnchorsAll] = useState(false);
   const [moreFunBg, setMoreFunBg] = useState(() => randomHsl());
   const [homeBg, setHomeBg] = useState<string | null>(null);
-  const [siteReveal, setSiteReveal] = useState<SiteReveal>("covered");
+  // Starts revealed ("nav") while the under-construction overlay is off;
+  // with the overlay back, start at "covered".
+  const [siteReveal, setSiteReveal] = useState<SiteReveal>("nav");
   // Starts at M on the server and first render (no hydration mismatch),
   // then picks up the saved choice; saving is best-effort (storage can be
   // unavailable, e.g. private browsing).

@@ -271,9 +271,10 @@ export default function ESNav() {
       </nav>
       {/* Mobile: Menu opens a full-screen overlay (page background, under the
           bar so Menu stays on top to close it) with Works, Exhibitions and
-          Info stacked, then Email; picking a link closes it. */}
+          Info stacked, then Email — above the bar (pb-15: its h-12 plus
+          pb-3), which would cover the last line; picking a link closes it. */}
       {open && !showBack && (
-        <nav className="lg:hidden fixed  bottom-0 left-0 z-[75] flex flex-col items-start justify-end gap-y-0 px-3 pt-10 pb-3 bg-background font-gensco text-[36px] leading-none text-neutral-800 w-full h-full">
+        <nav className="lg:hidden fixed  bottom-0 left-0 z-[75] flex flex-col items-start justify-end gap-y-0 px-3 pt-10 pb-15 bg-background font-gensco text-[36px] leading-none text-neutral-800 w-full h-full">
           {VIEW_LINKS.map(({ view, label, href }) => (
             <Link
               key={view}

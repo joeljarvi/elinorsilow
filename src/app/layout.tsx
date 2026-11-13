@@ -12,7 +12,7 @@ import { UIProvider } from "@/context/UIContext";
 import { IndexProvider } from "@/context/IndexContext";
 import { NavSlotProvider } from "@/context/NavSlotContext";
 import ESNav from "@/components/ESNav";
-import UnderConstruction from "@/components/UnderConstruction";
+// The "under construction" overlay (UnderConstruction) is off for now.
 import ESScreenSaver from "@/components/ESScreenSaver";
 
 import NavWrapper from "@/components/NavWrapper";
@@ -614,7 +614,6 @@ export default async function RootLayout({
                             <CarouselProvider>
                               <InkBleedFilter />
                               <ESNav />
-                              <UnderConstruction />
                               <ESScreenSaver />
                               {children}
                             </CarouselProvider>
