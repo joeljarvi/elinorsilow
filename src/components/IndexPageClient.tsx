@@ -16,8 +16,8 @@ import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
 import TitleBlock from "@/components/TitleBlock";
 import FadeEdge from "@/components/FadeEdge";
+import { useCssHeightVar } from "@/lib/useCssHeightVar";
 import { useLenis } from "lenis/react";
-import BackToTop from "@/components/BackToTop";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { workMeasurements, workSize } from "@/lib/workSize";
@@ -739,126 +739,23 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
   };
 }
 
-// The active filters (category, year, size, search), fixed at the bottom
-// right, level with the title block (bottom left) and in its type: "Works filtered by : all", or
-// each active filter as a button (clicking one clears that filter).
+// The works grid (desktop, 32 columns): where each of the 6 works in a row
+// starts — each 2 columns wide with 4 empty columns between (cols 1–2, 7–8,
+// 13–14, 19–20, 25–26, 31–32).
+const GRID_START = [
+  "lg:col-start-1",
+  "lg:col-start-7",
+  "lg:col-start-13",
+  "lg:col-start-19",
+  "lg:col-start-25",
+  "lg:col-start-31",
+];
+
 // The List view's titles (works and exhibitions alike): stacked, centered,
-// Alte Haas Bold, uppercase; each a link (TITLE_LINK).
+// Gensco 36px, normal case (as the mobile menu); each a link (TITLE_LINK).
 const TITLE_LIST =
-  "flex min-h-dvh flex-col items-center justify-start gap-y-0 px-3 lg:px-4 pt-8 pb-0 font-alteHaas font-bold text-[32px] lg:text-[48px] leading-[1.2] lg:leading-[1.1] uppercase text-center text-purple-900 ";
+  "flex min-h-dvh flex-col items-start justify-start gap-y-0 px-3 lg:px-6 pt-3 lg:pt-6 pb-0 font-gensco text-[24px] leading-[1.3] lg:text-[28px] lg:leading-tight normal-case text-left text-neutral-800 ";
 const TITLE_LINK = "hover:text-purple-300 transition-all";
-
-// The works grid (desktop, 24 columns): where each work in a row starts —
-// the first at the left edge (cols 1–4), the second centered (11–14), the
-// third at the right edge (21–24).
-const GRID_START = ["lg:col-start-1", "lg:col-start-11", "lg:col-start-21"];
-
-// The category toggle's steps, in order (each click moves to the next).
-const WORK_CATEGORY_STEPS = [
-  { value: "all", label: "all" },
-  { value: "painting", label: "Paintings" },
-  { value: "drawing", label: "Drawings" },
-  { value: "sculpture", label: "Sculptures" },
-  { value: "textile", label: "Textiles" },
-] as const;
-const EX_CATEGORY_STEPS = [
-  { value: "all", label: "all" },
-  { value: "solo", label: "Solo" },
-  { value: "group", label: "Group" },
-] as const;
-
-function ActiveFilters() {
-  const {
-    mode,
-    yearFilter,
-    setYearFilter,
-    sizeFilter,
-    setSizeFilter,
-    search,
-    setSearch,
-  } = useIndex();
-  const { categoryFilter, setCategoryFilter } = useWorks();
-  const { exCat, setExCat } = useExhibitions();
-  const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
-  const exhibitions = mode === "exhibitions";
-  // The category: a toggle — all → each main category in turn → all.
-  const steps: readonly { value: string; label: string }[] = exhibitions
-    ? EX_CATEGORY_STEPS
-    : WORK_CATEGORY_STEPS;
-  const category = exhibitions ? exCat : categoryFilter;
-  const stepIndex = Math.max(
-    0,
-    steps.findIndex((st) => st.value === category),
-  );
-  const setCategory = (v: string) =>
-    exhibitions
-      ? setExCat(v as typeof exCat)
-      : setCategoryFilter(v as typeof categoryFilter);
-  const nextCategory = () =>
-    setCategory(steps[(stepIndex + 1) % steps.length].value);
-  // The other active filters (year, size, search): each a button that
-  // clears it.
-  const filters = [
-    yearFilter !== "all" && {
-      key: "year",
-      label: yearFilter,
-      clear: () => setYearFilter("all"),
-    },
-    !exhibitions &&
-      sizeFilter !== "all" && {
-        key: "size",
-        label: cap(sizeFilter),
-        clear: () => setSizeFilter("all"),
-      },
-    search.trim() && {
-      key: "search",
-      label: `"${search.trim()}"`,
-      clear: () => setSearch(""),
-    },
-  ].filter((f): f is { key: string; label: string; clear: () => void } =>
-    Boolean(f),
-  );
-  const anyFilter = category !== "all" || filters.length > 0;
-  return (
-    <div
-      className={`fixed bottom-6 right-6 z-70 hidden lg:flex flex-wrap items-baseline justify-end gap-x-4 font-gensco text-[18px] leading-tight normal-case text-neutral-800`}
-    >
-      <span>{exhibitions ? "Exhibitions" : "Works"} filtered by :</span>
-      <button
-        type="button"
-        onClick={nextCategory}
-        aria-label="Next category"
-        className="cursor-pointer hover:underline"
-      >
-        {steps[stepIndex].label}
-      </button>
-      {filters.map((f) => (
-        <button
-          key={f.key}
-          type="button"
-          onClick={f.clear}
-          aria-label={`Clear ${f.key} filter`}
-          className="cursor-pointer uppercase hover:line-through"
-        >
-          {f.label}
-        </button>
-      ))}
-      {/* Clear: every filter at once (only when something is filtered). */}
-      {anyFilter && (
-        <button
-          type="button"
-          onClick={() => {
-            setCategory("all");
-            filters.forEach((f) => f.clear());
-          }}
-          className="cursor-pointer uppercase opacity-50 hover:opacity-100"
-        >
-          Clear
-        </button>
-      )}
-    </div>
-  );
-}
 
 // Works / exhibitions as a feed: one item under another, at least a screen
 // tall, its images centered in a column (a work has one, an exhibition all
@@ -871,7 +768,9 @@ function Feed({
   size,
   maxW = "max-w-1/2 lg:max-w-1/6",
   sameWidth = false,
+  align = "center",
   gap = "",
+  titleClassName = "",
   totalItems,
 }: {
   items: FeedItem[];
@@ -883,13 +782,23 @@ function Feed({
   // Every image the same width (maxW wide, at most the screen height less
   // 4rem).
   sameWidth?: boolean;
+  // Where each item's images sit: centered (works) or at the left
+  // (exhibitions).
+  align?: "center" | "left";
   // The space between one item and the next (a static Tailwind class).
   gap?: string;
+  // Extra classes for the fixed title block (a static Tailwind class).
+  titleClassName?: string;
   // The image size setting: the images' height limit.
   size: ImageSize;
 }) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLElement | null)[]>([]);
+  const router = useRouter();
+  // The title block's height, as --title-h (exhibition images fit between
+  // it and the nav bar).
+  const titleRef = useRef<HTMLDivElement>(null);
+  useCssHeightVar(titleRef, "--title-h", Boolean(items[active]));
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -907,40 +816,49 @@ function Feed({
   const imageClass = sameWidth
     ? // Capped at two-thirds of the screen height (a tall work keeps its
       // proportions inside the same-width box).
-      `block w-full h-auto ${maxW} max-h-[66.6vh] object-contain transition-opacity duration-200 hover:opacity-50`
-    : // Exhibitions: each image the screen's height less 18 units (4.5rem)
-      // at the top and 24 (6rem) at the bottom (a wide one scaled down
-      // inside).
-      `block w-auto h-[calc(100dvh-10.5rem)] ${maxW} object-contain`;
+      `block w-full h-auto ${maxW} max-h-[66.6vh] object-contain ${align === "left" ? "object-left" : ""} transition-opacity duration-200 hover:opacity-50`
+    : // Exhibitions: each image at most the screen's height less the
+      // title block (top) and the nav bar (bottom) — their measured heights.
+      `block w-auto h-auto ${maxW} max-h-[calc(100dvh-var(--title-h,0px)-var(--nav-h,0px))] object-contain ${align === "left" ? "object-left" : ""}`;
   return (
     <>
       {current && (
         <div
-          // Fixed at the bottom left (Image mode).
-          className={`fixed bottom-6 left-6 right-6 z-70 bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+          ref={titleRef}
+          // Fixed at the top left (Image mode).
+          className={`fixed top-0 left-0  z-70 w-full bg-background   text-neutral-800 pointer-events-none flex flex-col gap-y-0 pb-3 px-3 pt-3 lg:p-6 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
         >
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth="max-w-sm lg:max-w-sm"
+            textWidth="max-w-full pr-6 lg:pr-0 lg:max-w-xl"
+            className={titleClassName}
           />
+          {/* Mobile: the page background fading out above it. */}
+          <FadeEdge className="hidden" />
         </div>
       )}
       <div
         className={`flex flex-col ${gap} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"}`}
       >
         {items.map((item, i) => (
-          <Link
+          // Not a real link (no address shown in the browser's corner on
+          // hover): clicking (or Enter) opens the item's page.
+          <div
             key={item.id}
             ref={(el) => {
               refs.current[i] = el;
             }}
             data-index={i}
-            href={item.href}
-            prefetch={false}
+            role="link"
+            tabIndex={0}
+            onClick={() => router.push(item.href)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") router.push(item.href);
+            }}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-6 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "pt-18 pb-24" : ""}`}
+            className={`min-h-dvh flex flex-col ${align === "left" ? "items-start" : "items-center"} justify-center gap-y-3 lg:gap-y-6 px-3 lg:px-6 cursor-pointer ${item.images.length > 1 ? "py-6" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -953,7 +871,7 @@ function Feed({
                 className={imageClass}
               />
             ))}
-          </Link>
+          </div>
         ))}
       </div>
     </>
@@ -961,6 +879,7 @@ function Feed({
 }
 
 export default function IndexPageClient() {
+  const router = useRouter();
   const {
     mode,
     sort,
@@ -1152,9 +1071,9 @@ export default function IndexPageClient() {
           works grid as a rounded bg-background panel on it. `isolate` keeps
           the -z-10 backdrop above this div's background. */}
       <div
-        // List mode starts a third of the way down; Image and Grid start at
-        // the top, so the first image is centered in the screen.
-        className={`relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start ${worksLayout === "list" ? "mt-[33.3dvh]" : ""}`}
+        // Every view starts at the top (List at its own pt-6; Image with the
+        // first image centered in the screen).
+        className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start"
       >
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
@@ -1178,18 +1097,32 @@ export default function IndexPageClient() {
                 ))}
               </ul>
             )}
-            {/* Works as a grid (Grid): 24 columns, 3 works per row, each
-                4 columns wide — left, center, right (see GRID_START). Mobile:
-                2 per row. Clicking one opens its page. */}
+            {/* Works as a grid (Grid): desktop 6 per row with 4 empty
+                columns between, mobile 2 — every work the same width.
+                Clicking one opens its page. */}
             {mode === "works" && worksLayout === "grid" && (
-              <div className="grid grid-cols-2 lg:grid-cols-24 gap-x-3 lg:gap-x-0 gap-y-36 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 items-start">
+              <div
+                // Desktop: 32 columns, 6 works per row, each 2 columns wide
+                // with 4 empty columns between (see GRID_START) — all the
+                // same width, the first and last at the edges.
+                className="relative grid grid-cols-2 lg:grid-cols-32 gap-x-3 lg:gap-x-0 gap-y-36 lg:gap-y-36 px-3 lg:px-6 pt-6 pb-24 items-start"
+              >
+                {/* About the archive — absolute at the top left (scrolls
+                    away with the page); in the title block's type. */}
+
                 {visibleWorks.slice(0, visibleCount).map((w, i) => (
-                  <Link
+                  // Not a real link (no address shown on hover): clicking
+                  // (or Enter) opens the work's page.
+                  <div
                     key={w.id}
-                    href={`/${w.slug}`}
-                    prefetch={false}
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => router.push(`/${w.slug}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") router.push(`/${w.slug}`);
+                    }}
                     aria-label={w.title.rendered}
-                    className={`col-span-1 lg:col-span-4 ${GRID_START[i % 3]} flex justify-center items-start`}
+                    className={`col-span-1 lg:col-span-2 ${GRID_START[i % 6]} flex flex-col items-center justify-start`}
                   >
                     {w.image_url && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -1200,7 +1133,7 @@ export default function IndexPageClient() {
                         className="block w-full h-auto transition-opacity duration-200 hover:opacity-50"
                       />
                     )}
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}
@@ -1213,31 +1146,14 @@ export default function IndexPageClient() {
                 // mobile, a sixth on desktop.
                 maxW="max-w-2/3 lg:max-w-1/6"
                 sameWidth
+                // The title block at most max-w-2xl (! beats its max-w-6xl).
+                titleClassName="max-w-2xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
             )}
-            {/* Exhibitions as a feed, like the works (no grid). */}
-            {/* Exhibitions as a list (List): every exhibition's title, a
-                link to its page — as the works list. */}
-            {mode === "exhibitions" && worksLayout === "list" && (
-              <ul className={TITLE_LIST}>
-                {visibleExhibitions.map((ex) => (
-                  <li key={ex.id}>
-                    <Link
-                      href={`/exhibitions/${ex.slug}`}
-                      prefetch={false}
-                      className={TITLE_LINK}
-                    >
-                      {ex.title.rendered}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {/* Exhibitions as a feed (Image; also when Grid is set — no
-                exhibitions grid). */}
-            {mode === "exhibitions" && worksLayout !== "list" && (
+            {/* Exhibitions as a feed (always — no index view). */}
+            {mode === "exhibitions" && (
               <Feed
                 items={visibleExhibitions
                   .slice(0, visibleCount)
@@ -1245,22 +1161,20 @@ export default function IndexPageClient() {
                 totalItems={visibleExhibitions.length}
                 maxW="max-w-full lg:max-w-2/3"
                 gap="gap-y-30"
+                // The title block at most max-w-2xl (! beats its max-w-6xl).
+                titleClassName="max-w-2xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
             )}
 
             <div ref={sentinelRef} className="h-1" />
-            {/* Not on exhibitions. */}
-            {mode !== "exhibitions" && <BackToTop />}
           </div>
         </div>
       </div>
 
       {(mode === "works" || mode === "exhibitions") && (
         <>
-          {/* The active filters, top right (not in List). */}
-          {worksLayout !== "list" && <ActiveFilters />}
           <LenisScroll />
           {/* Column labels for the list, fixed across the top. */}
           <IndexNav mode={mode} />

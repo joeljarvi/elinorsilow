@@ -9,7 +9,7 @@ import { useExhibitions, type ExCategory } from "@/context/ExhibitionsContext";
 
 const WORK_FILTERS: { value: CategoryFilter; label: string }[] = [
   { value: "painting", label: "Painting" },
-  { value: "drawing", label: "Drawing" },
+  // Drawing: left out until there are any.
   { value: "sculpture", label: "Sculpture" },
   { value: "textile", label: "Textile" },
 ];
@@ -145,31 +145,35 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
             aria-label={`Search ${mode}`}
-            className="w-full p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 mb-3"
+            // Hidden for now.
+            className="hidden w-full p-0 border-0 bg-transparent outline-none uppercase placeholder:text-neutral-400 mb-3"
           />
-          <Setting
-            name="View"
-            options={[
-              { value: "list", label: "List" },
-              { value: "image", label: "Image" },
-              ...(exhibitions ? [] : [{ value: "grid", label: "Grid" }]),
-            ]}
-            value={worksLayout}
-            onChange={(v) => setWorksLayout(v as WorksLayout)}
-          />
+          {/* Works only — exhibitions are always the image feed. */}
+          {!exhibitions && (
+            <Setting
+              name="View"
+              options={[
+                { value: "list", label: "List" },
+                { value: "image", label: "Image" },
+                { value: "grid", label: "Grid" },
+              ]}
+              value={worksLayout}
+              onChange={(v) => setWorksLayout(v as WorksLayout)}
+            />
+          )}
         </div>
         <div className="flex flex-col lg:flex-row lg:flex-wrap lg:justify-end lg:w-full lg:gap-x-8 text-[18px] lg:text-[21px] gap-y-0">
           {exhibitions ? (
             <Setting
               name="Category"
-              options={[{ value: "all", label: "All exhibitions" }, ...EX_FILTERS]}
+              options={[{ value: "all", label: "All" }, ...EX_FILTERS]}
               value={exCat}
               onChange={(v) => setExCat(v as ExCategory)}
             />
           ) : (
             <Setting
               name="Category"
-              options={[{ value: "all", label: "All works" }, ...WORK_FILTERS]}
+              options={[{ value: "all", label: "All" }, ...WORK_FILTERS]}
               value={categoryFilter}
               onChange={(v) => setCategoryFilter(v as CategoryFilter)}
             />

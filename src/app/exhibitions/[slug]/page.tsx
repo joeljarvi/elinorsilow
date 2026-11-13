@@ -83,7 +83,12 @@ export default async function ExhibitionPage({ params }: Props) {
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
       <div className="fixed inset-x-0 top-4 z-70  px-4     bg-background lg:bg-transparent pointer-events-none">
-        <TitleBlock heading title={ex.title.rendered} metadata={metadata} />
+        <TitleBlock
+          heading
+          title={ex.title.rendered}
+          metadata={metadata}
+          className="text-[18px]! max-w-md!"
+        />
       </div>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
@@ -94,7 +99,7 @@ export default async function ExhibitionPage({ params }: Props) {
           title={ex.title.rendered}
           intro={
             ex.acf.description && (
-              <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">
+              <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
                 {ex.acf.description}
               </p>
             )
@@ -102,7 +107,7 @@ export default async function ExhibitionPage({ params }: Props) {
         />
         {/* The credits, after the images — styled as the description. */}
         {ex.acf.credits && (
-          <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[21px] leading-tight">
+          <p className="w-full max-w-xl whitespace-pre-line text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
             {ex.acf.credits}
           </p>
         )}

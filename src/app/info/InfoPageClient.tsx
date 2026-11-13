@@ -5,7 +5,6 @@ import { useIndex } from "@/context/IndexContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import type { Press } from "../../../lib/sanity";
 import type { ReactNode } from "react";
-import BackToTop from "@/components/BackToTop";
 import TitleBlock from "@/components/TitleBlock";
 
 const byYearDesc =
@@ -52,9 +51,9 @@ type Section = {
 };
 
 // The info page: its title at the top left (where the works / exhibitions
-// pages have theirs), then the sections one under another in a centered
-// column (max-w-xl): the bio, then everything dated (exhibitions, grants,
-// education, press) grouped by year, newest first, then the colophon.
+// pages have theirs), then contact and the sections in one column,
+// 24px: the bio, then everything dated (exhibitions, grants, press)
+// grouped by year, newest first, then education, then the colophon.
 export default function InfoPageClient({
   bio = "",
   press = [],
@@ -113,9 +112,9 @@ export default function InfoPageClient({
     matches(p.title, p.author, p.link, p.year),
   );
 
-  // Everything with a year — exhibitions, grants, education (by its end
-  // year), press — in one list, newest year first; each entry says what it
-  // is (exhibitions by their type).
+  // Everything with a year — exhibitions, grants, press — in one list,
+  // newest year first; each entry says what it is (exhibitions by their
+  // type).
   const dated: { id: string; year: number; node: ReactNode }[] = [
     ...history.map((e) => ({
       id: e.id,
@@ -147,21 +146,6 @@ export default function InfoPageClient({
         />
       ),
     })),
-    ...shownEducations.map((e) => ({
-      id: `edu-${e.id}`,
-      year: Number(e.acf.end_year || e.acf.start_year),
-      node: (
-        <Entry
-          key={`edu-${e.id}`}
-          first={e.acf.school}
-          rest={[
-            e.acf.city,
-            [e.acf.start_year, e.acf.end_year].filter(Boolean).join("–"),
-            "Education",
-          ]}
-        />
-      ),
-    })),
     ...shownPress.map((p) => ({
       id: `press-${p.id}`,
       year: Number(p.year),
@@ -186,15 +170,16 @@ export default function InfoPageClient({
   const years = [...new Set(dated.map((d) => d.year))].sort((a, b) => b - a);
 
   // The sections, in order: the bio, then one per year (the year as its
-  // header, everything from that year below), then the colophon; empty ones
+  // header, everything from that year below), then education, then the
+  // colophon; empty ones
   // are left out.
   const sections = [
     bio && {
       key: "about",
-      title: "About",
+      title: "Elinor Silow",
       body: (
         <>
-          <p className="text-justify whitespace-pre-line">{bio}</p>
+          <p className=" whitespace-pre-line">{bio}</p>
         </>
       ),
     },
@@ -203,6 +188,21 @@ export default function InfoPageClient({
       title: String(y),
       body: dated.filter((d) => d.year === y).map((d) => d.node),
     })),
+    // Education: its own section, after the years (newest first).
+    shownEducations.length > 0 && {
+      key: "education",
+      title: "Education",
+      body: shownEducations.map((e) => (
+        <Entry
+          key={`edu-${e.id}`}
+          first={e.acf.school}
+          rest={[
+            e.acf.city,
+            [e.acf.start_year, e.acf.end_year].filter(Boolean).join("–"),
+          ]}
+        />
+      )),
+    },
     {
       key: "colophon",
       title: "Colophon",
@@ -226,40 +226,18 @@ export default function InfoPageClient({
     <section className="relative w-full min-h-dvh bg-background text-neutral-800">
       {/* The page's title, at the top left (where the works and
           exhibitions pages have theirs), scrolling with the page. */}
-      <TitleBlock
-        heading
-        title="Information, CV and Contact"
-        className="px-1 pt-6 lg:px-12 lg:pt-18"
-      />
 
-      {/* Contact, above the bio, spread across the column. */}
-      <p className=" flex flex-col  w-full gap-x-3 lg:gap-x-6 mb-6 px-6 mt-0 lg:mt-0 lg:px-12 font-gensco text-[18px] leading-tight gap-y-0">
-        <span className="flex gap-x-6">
-          EMAIL:
-          <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>
-        </span>
-        <span className="flex gap-x-6 mb- ">
-          IG:
-          <a
-            href="https://www.instagram.com/elinorsilow"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @elinorsilow
-          </a>
-        </span>
-      </p>
-      {/* The sections, one under another, centered. */}
-      <div className="max-w-full lg:max-w-full  mx-0 flex flex-col items-start gap-y-12 lg:gap-y-6 pl-1 pr-6 lg:px-6 pt-16 pb-24 font-gensco text-[18px] leading-tight ">
+      {/* Everything below the title — contact, then the sections — in one
+          column, 24px. */}
+      <div className="flex flex-col max-w-4xl pl-3 pr-12 lg:px-6 pt-3 lg:pt-6 pb-24 font-gensco text-[18px] lg:text-[24px] leading-tight">
         {sections.map((section) => (
-          <div key={section.key} className="w-full max-w-xl flex flex-col ">
-            <h2 className="font-gensco normal-case text-[18px] leading-tight indent-4 mb-4 lg:indent-12 lg:mb-6">
+          <div key={section.key} className="flex flex-col mb-6">
+            <h2 className="font-gensco normal-case text-[18px] lg:text-[24px] leading-tight indent-3 mb-3 lg:indent-6 lg:mb-3">
               {section.title}
             </h2>
             {section.body}
           </div>
         ))}
-        <BackToTop />
       </div>
     </section>
   );

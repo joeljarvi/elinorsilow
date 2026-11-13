@@ -6,14 +6,14 @@ import { motion } from "framer-motion";
 import TrumpetNav from "./TrumpetNav";
 
 // Idle time before the screen saver shows, and how fast the trumpet plays.
-const IDLE_MS = 5_000;
+const IDLE_MS = 3_000;
 const FRAME_MS = 1000;
 // Frames 1 → 2 → 3 → 2 → 1 → …
 const PINGPONG = [0, 1, 2, 1];
 
 // Screen saver: after IDLE_MS without the mouse moving (or any other
 // input), the cursor is hidden and one trumpet (TrumpetNav, frames 1–3, a
-// frame a second, h-18) appears, scaling up from its center, where the mouse
+// frame a second, w-12; w-18 on desktop) appears, scaling up from its center, where the mouse
 // cursor last was (desktop), or at the bottom right (mobile, or before the
 // mouse has moved: bottom-6 right-6). text-neutral-800, above everything
 // (z-100); any input hides it.
@@ -82,7 +82,7 @@ export default function ESScreenSaver() {
       >
         <TrumpetNav
           frame={PINGPONG[tick % PINGPONG.length]}
-          className="w-12 h-auto"
+          className="w-12 lg:w-18 h-auto"
         />
       </motion.div>
     </div>

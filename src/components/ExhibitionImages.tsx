@@ -39,36 +39,35 @@ export default function ExhibitionImages({
 
   return (
     <>
-      {/* The first screen: the intro (description) at PAGE_TOP (a third of
-          the way down; a quarter on desktop),
-          then the first image filling what's left down to the bottom of the
-          viewport. */}
+      {/* The intro (description) at PAGE_TOP (a third of the way down; a
+          quarter on desktop), then the first image — as big as the rest
+          (at most the screen less 6rem, as on a work's page). */}
       <div
-        className={`h-dvh w-full flex flex-col items-center gap-y-2 ${PAGE_TOP} pb-1 px-1`}
+        className={`w-full flex flex-col items-center gap-y-2 ${PAGE_TOP} px-1`}
       >
         {intro}
         {images[0] && (
-          <figure className="flex-1 min-h-0 w-full flex flex-col">
+          <figure className="w-full flex flex-col">
             <button
               type="button"
               onClick={() => setOpen(0)}
-              className="flex-1 min-h-0 w-full flex justify-center cursor-zoom-in"
+              className="w-full flex justify-center cursor-zoom-in"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`${images[0].url}?w=2000&auto=format`}
                 alt={alt(0)}
                 loading="eager"
-                className="block h-full w-auto max-w-full object-contain"
+                className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
               />
             </button>
             {caption(0)}
           </figure>
         )}
       </div>
-      {/* The rest, one under another, gap-y-6 apart — each as big as in the
-          lightbox (the screen less its px-1 / py-1). */}
-      <div className="flex flex-col gap-y-6 w-full px-1 pt-6">
+      {/* The rest, one under another, gap-y-3 apart on mobile, gap-y-6 on
+          desktop — each at most the screen less 6rem. */}
+      <div className="flex flex-col gap-y-3 lg:gap-y-6 w-full px-1 pt-3 lg:pt-6">
         {images.slice(1).map((img, k) => {
           const i = k + 1;
           return (
@@ -83,7 +82,7 @@ export default function ExhibitionImages({
                   src={`${img.url}?w=2000&auto=format`}
                   alt={alt(i)}
                   loading={i < 2 ? "eager" : "lazy"}
-                  className="block w-auto h-auto max-w-full max-h-[calc(100dvh-0.5rem)]"
+                  className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
                 />
               </button>
               {caption(i)}

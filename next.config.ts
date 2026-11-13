@@ -23,8 +23,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/index", destination: "/works", permanent: false },
-      // The exhibitions are the home page.
-      { source: "/", destination: "/exhibitions", permanent: false },
+      // The works are the home page.
+      { source: "/", destination: "/works", permanent: false },
     ];
   },
   async rewrites() {

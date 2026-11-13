@@ -11,9 +11,11 @@ import {
   type WorksLayout,
 } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
+import ActiveFilters from "./ActiveFilters";
 import FadeEdge from "./FadeEdge";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useCssHeightVar } from "@/lib/useCssHeightVar";
 
 // Labelled with the mode it switches to. Hidden until mounted, since the
 // resolved theme is only known on the client.
@@ -72,31 +74,38 @@ export default function ESNav() {
   // List settings — shown with the works / exhibitions lists: the Filter menu
   // on desktop, S / M / L in the mobile menu.
   const showSizes = onIndex && mode !== "info";
-  // Works and exhibitions: the List / Image view toggle.
+  // Works: Index. Off, the image feed; clicking it shows the list, with
+  // List / Grid beside it to switch between the index's two views.
   const { worksLayout, setWorksLayout } = useIndex();
-  // The view toggle cycles List → Image → Grid (works) / List → Image
-  // (exhibitions: no grid).
-  const cycle: WorksLayout[] =
-    mode === "works" ? ["list", "image", "grid"] : ["list", "image"];
-  const current = cycle.includes(worksLayout) ? worksLayout : "image";
-  const nextLayout = cycle[(cycle.indexOf(current) + 1) % cycle.length];
-  const layoutButtons = (className: string, afterPick?: () => void) => (
-    // One toggle: shows the current view and switches to the other.
-    <button
-      type="button"
-      onClick={() => {
-        setWorksLayout(nextLayout);
-        afterPick?.();
-      }}
-      aria-label={`Switch to ${LAYOUT_LABEL[nextLayout].toLowerCase()} view`}
-      className={`cursor-pointer normal-case ${className}`}
-    >
-      {
-        LAYOUT_LABEL[
-          worksLayout === "grid" && mode !== "works" ? "image" : worksLayout
-        ]
-      }
-    </button>
+  const indexOn = worksLayout !== "image";
+  const indexViews: WorksLayout[] = ["list", "grid"];
+  const layoutButtons = (className: string) => (
+    <span className={`items-baseline gap-x-3 normal-case ${className}`}>
+      <button
+        type="button"
+        onClick={() => setWorksLayout(indexOn ? "image" : "list")}
+        aria-pressed={indexOn}
+        className="cursor-pointer normal-case"
+      >
+        Index
+      </button>
+      {indexOn && (
+        <>
+          <span>:</span>
+          {indexViews.map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setWorksLayout(v)}
+              aria-pressed={worksLayout === v}
+              className={`cursor-pointer normal-case ${worksLayout === v ? "" : "opacity-50"}`}
+            >
+              {LAYOUT_LABEL[v]}
+            </button>
+          ))}
+        </>
+      )}
+    </span>
   );
   // The nav shows right away on every page (it used to fade in last on the
   // home and index pages).
@@ -122,7 +131,16 @@ export default function ESNav() {
     if (next) setFilterOpen(false);
   };
 
+  // The exhibitions list: the bar keeps its background, with the fade under
+  // it, on desktop too.
+  const onExhibitions = pathname === "/exhibitions";
+
   // Sanity Studio has its own UI — no site nav (or logo) on top of it.
+  // The bar's height, as --nav-h (exhibition images fit between it and the
+  // title block).
+  const navRef = useRef<HTMLElement>(null);
+  useCssHeightVar(navRef, "--nav-h", !showBack);
+
   if (pathname.startsWith("/studio")) return null;
 
   return (
@@ -133,26 +151,30 @@ export default function ESNav() {
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-0 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
+          className="fixed top-0 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[18px] leading-tight text-neutral-800 cursor-pointer"
         >
           Back
         </button>
       )}
-      {/* The nav, a bar fixed across the top (mobile and desktop alike):
-          "Elinor Silow" (home) and Menu at the top left. Desktop: Menu opens
+      {/* The nav, a bar fixed across the bottom (mobile and desktop alike):
+          "Elinor Silow" (home) and Menu at the bottom left. Desktop: Menu opens
           to "Menu:" with Works, Exhibitions and Info beside it; mobile: it
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 top-3 lg:top-6 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-3 lg:px-6 lg:h-6 pt-0 pb-0 bg-transparentlg:bg-transparent ${navShown ? "" : "pointer-events-none"}`}
+        ref={navRef}
+        className={`fixed inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-16 px-3 lg:px-6 pt-0 pb-3 lg:pb-6 bg-background ${onExhibitions ? "" : "lg:bg-background"} ${navShown ? "" : "pointer-events-none"}`}
       >
-        {/* Mobile, in List mode (works / exhibitions): the page background
-            fading out below the bar. */}
-        {showSizes && worksLayout === "list" && (
-          <FadeEdge className="lg:hidden" />
-        )}
+        {/* The page background fading out above the bar — every page on
+            mobile; on desktop only on the exhibitions list (elsewhere the
+            bar is transparent there). */}
+        <FadeEdge
+          side="top"
+          // Raised 8px off the bar.
+          className={` ${onExhibitions ? "hidden" : "lg:hidden"}`}
+        />
         <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
-            href="/exhibitions"
+            href="/works"
             style={navReveal(navShown, 0).style}
             className={navReveal(navShown, 0).className}
           >
@@ -160,18 +182,17 @@ export default function ESNav() {
           </Link>
           {/* Menu (and, open, ": Works Exhibitions Info"), normal case —
               next to the logo at the left (desktop). */}
-          <span className="flex font-gensco font-normal text-[18px]  items-baseline gap-x-4 justify-between normal-case lg:justify-start">
+          <span className="flex font-gensco font-normal text-[18px]  items-baseline gap-x-3 justify-between normal-case lg:justify-start">
             <button
               type="button"
               style={navReveal(navShown, 1).style}
-              // Mobile: at the right of the bar instead.
-              className={`cursor-pointer normal-case hidden lg:inline ${navReveal(navShown, 1).className}`}
+              className={`cursor-pointer normal-case ${navReveal(navShown, 1).className}`}
               onClick={toggleOpen}
               aria-expanded={open}
             >
               {open ? "Menu" : "Menu"}
             </button>
-            <span className="hidden lg:flex items-baseline gap-x-4 font-gensco text-[18px] font-normal normal-case">
+            <span className="hidden lg:flex items-baseline gap-x-3 font-gensco text-[18px] font-normal normal-case">
               <span className=" ">:</span>
               {open &&
                 VIEW_LINKS.map(({ view, label, href }, i) => (
@@ -198,13 +219,13 @@ export default function ESNav() {
             the button stays above it to close it) — at the right, on the
             same baseline as the name and Menu. Mobile: just Filter (search
             and Vertical / Grid are in the Filter menu there). */}
-        {/* Right side: (works / exhibitions) search, List / Image and Filter;
-            mobile, Menu (on every page). */}
-        <div className="flex items-baseline gap-x-4 font-gensco text-[18px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
+        {/* Right side (works / exhibitions): search, List / Image and
+            Filter. */}
+        <div className="flex items-baseline gap-x-12 font-gensco text-[18px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
           {showSizes && (
             <>
-              {/* Search (the shared index search: filters the list), left of
-                Vertical / Grid. */}
+              {/* Search (the shared index search: filters the list) —
+                hidden for now, mobile and desktop. */}
               <input
                 type="search"
                 value={search}
@@ -212,22 +233,26 @@ export default function ESNav() {
                 placeholder="Search..."
                 aria-label={`Search ${mode}`}
                 style={navReveal(navShown, 2).style}
-                className={`hidden lg:block w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
+                className={`hidden w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
               />
-              {/* List / Image toggle: works and exhibitions — at the right
+              {/* Index (and, on, List / Grid): works only — at the right
                 of the bar, mobile and desktop. */}
-              {layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
+              {mode === "works" &&
+                layoutButtons(`flex ${navReveal(navShown, 3).className}`)}
             </>
           )}
-          {/* Mobile: Menu, next to the toggle (at the left on desktop). */}
-          <button
-            type="button"
-            className="lg:hidden cursor-pointer normal-case"
-            onClick={toggleOpen}
-            aria-expanded={open}
-          >
-            Menu
-          </button>
+          {/* Info: Instagram, at the right of the bar — desktop. */}
+          {pathname === "/info" && (
+            <a
+              href="https://www.instagram.com/elinorsilow"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={navReveal(navShown, 2).style}
+              className={`hidden lg:block normal-case ${navReveal(navShown, 2).className}`}
+            >
+              Instagram
+            </a>
+          )}
           {showSizes && (
             <button
               type="button"
@@ -251,9 +276,9 @@ export default function ESNav() {
       </nav>
       {/* Mobile: Menu opens a full-screen overlay (page background, under the
           bar so Menu stays on top to close it) with Works, Exhibitions and
-          Info stacked; picking one closes it. */}
+          Info stacked, then Email; picking a link closes it. */}
       {open && !showBack && (
-        <nav className="lg:hidden fixed inset-0 bottom-0 left-0 z-[75] flex flex-col items-start gap-y-0 px-2 pt-6 pb-0 bg-background font-alteHaas font-bold uppercase text-[48px] leading-none text-neutral-800">
+        <nav className="lg:hidden fixed  bottom-0 left-0 z-[75] flex flex-col items-start justify-end gap-y-0 px-3 pt-10 pb-3 bg-background font-gensco text-[36px] leading-none text-neutral-800 w-full h-full">
           {VIEW_LINKS.map(({ view, label, href }) => (
             <Link
               key={view}
@@ -265,13 +290,25 @@ export default function ESNav() {
               }}
               aria-current={pathname === href ? "page" : undefined}
               className={
-                pathname === href ? "text-purple-950" : "text-purple-200"
+                pathname === href ? "text-neutral-800" : "text-neutral-300"
               }
             >
               {label}
             </Link>
           ))}
+          {/* Email, after the links. */}
+          <a
+            href="mailto:elinor.silow@gmail.com"
+            className="mt-6 text-neutral-300"
+          >
+            Email
+          </a>
         </nav>
+      )}
+      {/* The active filters (category cycling), fixed at the top right —
+          desktop; hidden in the index (List / Grid). */}
+      {showSizes && !showBack && !(mode === "works" && indexOn) && (
+        <ActiveFilters className="fixed top-6 right-6 z-70 hidden lg:flex font-gensco text-[18px] leading-tight text-neutral-800" />
       )}
       {/* Filter overlay: full height, under the nav (like the menu). */}
       {showSizes && filterOpen && (
