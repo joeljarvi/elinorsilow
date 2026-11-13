@@ -53,8 +53,8 @@ type Section = {
 
 // The info page: its title at the top left (where the works / exhibitions
 // pages have theirs), then the sections one under another in a centered
-// column (max-w-xl): the bio, exhibition history, grants, education, press,
-// colophon.
+// column (max-w-xl): the bio, then everything dated (exhibitions, grants,
+// education, press) grouped by year, newest first, then the colophon.
 export default function InfoPageClient({
   bio = "",
   press = [],
@@ -113,22 +113,14 @@ export default function InfoPageClient({
     matches(p.title, p.author, p.link, p.year),
   );
 
-  // The sections, in order; empty ones are left out.
-  const sections = [
-    bio && {
-      key: "about",
-      title: "About",
-      body: (
-        <>
-          <p className="text-justify whitespace-pre-line">{bio}</p>
-        </>
-      ),
-    },
-    history.length > 0 && {
-      key: "exhibition-history",
-      title: "Exhibition history",
-      count: history.length,
-      body: history.map((e) => (
+  // Everything with a year — exhibitions, grants, education (by its end
+  // year), press — in one list, newest year first; each entry says what it
+  // is (exhibitions by their type).
+  const dated: { id: string; year: number; node: ReactNode }[] = [
+    ...history.map((e) => ({
+      id: e.id,
+      year: Number(e.year),
+      node: (
         <Entry
           key={e.id}
           first={
@@ -140,44 +132,42 @@ export default function InfoPageClient({
               e.title
             )
           }
-          rest={[e.venue, e.city, e.type, e.year]}
+          rest={[e.venue, e.city, e.type]}
         />
-      )),
-    },
-    shownGrants.length > 0 && {
-      key: "grants",
-      title: "Grants",
-      count: shownGrants.length,
-      body: shownGrants.map((g) => (
+      ),
+    })),
+    ...shownGrants.map((g) => ({
+      id: `grant-${g.id}`,
+      year: Number(g.acf.year),
+      node: (
         <Entry
-          key={g.id}
+          key={`grant-${g.id}`}
           first={g.acf.title}
-          rest={[g.acf.institution, g.acf.year]}
+          rest={[g.acf.institution, "Grant"]}
         />
-      )),
-    },
-    shownEducations.length > 0 && {
-      key: "education",
-      title: "Education",
-      count: shownEducations.length,
-      body: shownEducations.map((e) => (
+      ),
+    })),
+    ...shownEducations.map((e) => ({
+      id: `edu-${e.id}`,
+      year: Number(e.acf.end_year || e.acf.start_year),
+      node: (
         <Entry
-          key={e.id}
+          key={`edu-${e.id}`}
           first={e.acf.school}
           rest={[
             e.acf.city,
             [e.acf.start_year, e.acf.end_year].filter(Boolean).join("–"),
+            "Education",
           ]}
         />
-      )),
-    },
-    shownPress.length > 0 && {
-      key: "press",
-      title: "Press",
-      count: shownPress.length,
-      body: shownPress.map((p) => (
+      ),
+    })),
+    ...shownPress.map((p) => ({
+      id: `press-${p.id}`,
+      year: Number(p.year),
+      node: (
         <Entry
-          key={p.id}
+          key={`press-${p.id}`}
           first={p.title}
           rest={[
             p.author,
@@ -186,11 +176,33 @@ export default function InfoPageClient({
                 {siteName(p.link)}
               </Link>
             ),
-            p.year,
+            "Press",
           ]}
         />
-      )),
+      ),
+    })),
+  ].filter((d) => d.year > 0);
+  // Grouped by year, newest first.
+  const years = [...new Set(dated.map((d) => d.year))].sort((a, b) => b - a);
+
+  // The sections, in order: the bio, then one per year (the year as its
+  // header, everything from that year below), then the colophon; empty ones
+  // are left out.
+  const sections = [
+    bio && {
+      key: "about",
+      title: "About",
+      body: (
+        <>
+          <p className="text-justify whitespace-pre-line">{bio}</p>
+        </>
+      ),
     },
+    ...years.map((y) => ({
+      key: `year-${y}`,
+      title: String(y),
+      body: dated.filter((d) => d.year === y).map((d) => d.node),
+    })),
     {
       key: "colophon",
       title: "Colophon",
@@ -238,7 +250,7 @@ export default function InfoPageClient({
         </span>
       </p>
       {/* The sections, one under another, centered. */}
-      <div className="max-w-full lg:max-w-xl  mx-auto flex flex-col items-center gap-y-12 lg:gap-y-24 pl-1 pr-6 lg:px-6 pt-16 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight ">
+      <div className="max-w-full lg:max-w-xl  mx-0 flex flex-col items-center gap-y-12 lg:gap-y-6 pl-1 pr-6 lg:px-1 pt-16 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight ">
         {sections.map((section) => (
           <div key={section.key} className="w-full max-w-xl flex flex-col ">
             <h2 className="font-gensco normal-case text-[18px] lg:text-[21px] leading-tight indent-4 mb-4 lg:indent-12 lg:mb-6">

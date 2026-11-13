@@ -3,8 +3,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { PAGE_TOP } from "@/lib/layout";
 
-// An exhibition's images, one under another: the first fitting the first
-// screen under the intro, the rest each as big as in the lightbox.
+// An exhibition's images, one under another, each with its caption below:
+// the first fitting the first screen under the intro, the rest each as big
+// as in the lightbox.
 // Clicking one opens it in a lightbox: the image as tall as the screen
 // (minus py-6) on the page background, with Close at the top right; Esc or a
 // click outside the image closes it too.
@@ -13,7 +14,7 @@ export default function ExhibitionImages({
   title,
   intro,
 }: {
-  images: { url: string; alt?: string }[];
+  images: { url: string; alt?: string; caption?: string }[];
   title: string;
   // Above the first image, in the first screen (the description).
   intro?: ReactNode;
@@ -28,6 +29,13 @@ export default function ExhibitionImages({
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
   const alt = (i: number) => images[i].alt || (i === 0 ? title : "");
+  // An image's caption (from Sanity), under it.
+  const caption = (i: number) =>
+    images[i].caption ? (
+      <figcaption className="shrink-0 w-full max-w-full lg:max-w-xl mx-auto pt-1 font-gensco text-[14px] lg:text-[16px] leading-tight text-neutral-800">
+        {images[i].caption}
+      </figcaption>
+    ) : null;
 
   return (
     <>
@@ -40,19 +48,22 @@ export default function ExhibitionImages({
       >
         {intro}
         {images[0] && (
-          <button
-            type="button"
-            onClick={() => setOpen(0)}
-            className="flex-1 min-h-0 w-full flex justify-center cursor-zoom-in"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`${images[0].url}?w=2000&auto=format`}
-              alt={alt(0)}
-              loading="eager"
-              className="block h-full w-auto max-w-full object-contain"
-            />
-          </button>
+          <figure className="flex-1 min-h-0 w-full flex flex-col">
+            <button
+              type="button"
+              onClick={() => setOpen(0)}
+              className="flex-1 min-h-0 w-full flex justify-center cursor-zoom-in"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${images[0].url}?w=2000&auto=format`}
+                alt={alt(0)}
+                loading="eager"
+                className="block h-full w-auto max-w-full object-contain"
+              />
+            </button>
+            {caption(0)}
+          </figure>
         )}
       </div>
       {/* The rest, one under another, gap-y-1 apart — each as big as in the
@@ -61,20 +72,22 @@ export default function ExhibitionImages({
         {images.slice(1).map((img, k) => {
           const i = k + 1;
           return (
-            <button
-              key={img.url}
-              type="button"
-              onClick={() => setOpen(i)}
-              className="flex justify-center w-full cursor-zoom-in"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${img.url}?w=2000&auto=format`}
-                alt={alt(i)}
-                loading={i < 2 ? "eager" : "lazy"}
-                className="block w-auto h-auto max-w-full max-h-[calc(100dvh-0.5rem)]"
-              />
-            </button>
+            <figure key={img.url} className="w-full flex flex-col">
+              <button
+                type="button"
+                onClick={() => setOpen(i)}
+                className="flex justify-center w-full cursor-zoom-in"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${img.url}?w=2000&auto=format`}
+                  alt={alt(i)}
+                  loading={i < 2 ? "eager" : "lazy"}
+                  className="block w-auto h-auto max-w-full max-h-[calc(100dvh-0.5rem)]"
+                />
+              </button>
+              {caption(i)}
+            </figure>
           );
         })}
       </div>

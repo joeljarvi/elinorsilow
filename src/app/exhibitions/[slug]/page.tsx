@@ -14,8 +14,13 @@ import ExhibitionImages from "@/components/ExhibitionImages";
 function exhibitionImages(ex: Exhibition) {
   const acf = ex.acf as Record<string, unknown>;
   return Array.from({ length: 10 }, (_, i) => acf[`image_${i + 1}`])
-    .map((img) => img as { url?: string; alt?: string } | undefined)
-    .filter((img): img is { url: string; alt?: string } => Boolean(img?.url));
+    .map(
+      (img) =>
+        img as { url?: string; alt?: string; caption?: string } | undefined,
+    )
+    .filter((img): img is { url: string; alt?: string; caption?: string } =>
+      Boolean(img?.url),
+    );
 }
 
 // "year, venue, city, type".
