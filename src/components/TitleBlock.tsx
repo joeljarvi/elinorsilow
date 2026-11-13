@@ -32,7 +32,7 @@ export default function TitleBlock({
   if (stacked)
     return (
       <div
-        className={`flex flex-col font-gensco text-[18px] lg:text-[24px] text-left items-start justify-start leading-tight max-w-6xl text-neutral-800 ${className}`}
+        className={`flex flex-col font-gensco text-[24px] lg:text-[24px] text-left items-start justify-start leading-tight max-w-6xl text-neutral-800 ${className}`}
       >
         <Title className={`uppercase ${textWidth}`}>{title}</Title>
         {metadata && <p className={textWidth}>{metadata},</p>}

@@ -15,7 +15,7 @@ import LenisScroll from "@/components/LenisScroll";
 import ESTitle from "@/components/ESTitle";
 import IndexNav from "@/components/IndexNav";
 import TitleBlock from "@/components/TitleBlock";
-import FadeEdge from "@/components/FadeEdge";
+import ActiveFilters from "@/components/ActiveFilters";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
 import { useLenis } from "lenis/react";
 import Link from "next/link";
@@ -828,12 +828,15 @@ function Feed({
       `block w-auto h-auto ${maxW} max-h-[calc(100dvh-var(--title-h,0px)-var(--nav-h,0px))] object-contain ${align === "left" ? "object-left" : ""}`;
   return (
     <>
-      {current && (
-        <div
-          ref={titleRef}
-          // Fixed at the top left (Image mode).
-          className={`fixed top-0 left-0  z-70 w-full bg-background   text-neutral-800 pointer-events-none flex flex-col gap-y-0 pb-3 px-3 pt-3 lg:p-6 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
-        >
+      {/* Fixed across the top (Image mode): the current item's title and
+          metadata at the left, the active filters at the right — one row,
+          on the same baseline (items-baseline). Shown even with no items,
+          so the filters can still be changed. */}
+      <div
+        ref={titleRef}
+        className={`fixed top-0 left-0  z-70 w-full bg-background   text-neutral-800 pointer-events-none flex items-baseline justify-between gap-x-6 pb-3 px-3 pt-3 lg:px-6 lg:pt-6 lg:pb-6 lg:min-h-20 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+      >
+        {current ? (
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
@@ -841,10 +844,11 @@ function Feed({
             textWidth="max-w-full pr-1 lg:max-w-xl"
             className={titleClassName}
           />
-          {/* Mobile: the page background fading out above it. */}
-          <FadeEdge className="hidden" />
-        </div>
-      )}
+        ) : (
+          <span />
+        )}
+        <ActiveFilters className="flex shrink-0 pointer-events-auto font-gensco text-[18px] leading-tight text-neutral-800" />
+      </div>
       <div
         className={`flex flex-col ${gap} ${top} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"}`}
       >

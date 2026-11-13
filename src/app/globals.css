@@ -5,8 +5,14 @@
 
 html {
   font-size: 16px;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+}
+/* Desktop only: snap scrolling and smooth jumps (with Lenis). Mobile keeps
+   the browser's own native scrolling. */
+@media (min-width: 1024px) {
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
 }
 
 @theme inline {

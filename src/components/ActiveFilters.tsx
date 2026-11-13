@@ -81,7 +81,8 @@ export default function ActiveFilters({
     <div
       className={`flex-wrap items-baseline justify-end gap-x-3 normal-case ${className}`}
     >
-      <span>Filter</span>
+      {/* "Filter" on desktop; mobile shows just ": All". */}
+      <span className="hidden lg:inline">Filter</span>
       <span>:</span>
       <button
         type="button"

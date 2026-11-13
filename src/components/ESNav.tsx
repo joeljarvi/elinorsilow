@@ -11,7 +11,6 @@ import {
   type WorksLayout,
 } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
-import ActiveFilters from "./ActiveFilters";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
@@ -77,8 +76,6 @@ export default function ESNav() {
   // List / Grid beside it to switch between the index's two views.
   const { worksLayout, setWorksLayout } = useIndex();
   const indexOn = worksLayout !== "image";
-  // The active filters: works and exhibitions, hidden in the index.
-  const showFilters = showSizes && !(mode === "works" && indexOn);
   const indexViews: WorksLayout[] = ["list", "grid"];
   const layoutButtons = (className: string) => (
     <span className={`items-baseline gap-x-3 normal-case ${className}`}>
@@ -140,6 +137,8 @@ export default function ESNav() {
   // The exhibitions list: the bar keeps its background, with the fade under
   // it, on desktop too.
   const onExhibitions = pathname === "/exhibitions";
+  // The works index (List / Grid): the bar on the page background.
+  const inIndex = showSizes && mode === "works" && indexOn;
 
   // Sanity Studio has its own UI — no site nav (or logo) on top of it.
   // The bar's height, as --nav-h (exhibition images fit between it and the
@@ -168,8 +167,11 @@ export default function ESNav() {
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
         ref={navRef}
-        className={`fixed inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-16 px-3 lg:px-6 pt-0 pb-3 lg:pb-6 bg-background ${onExhibitions ? "" : "lg:bg-background"} ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3  ${inIndex ? "bg-background" : onExhibitions ? "" : "lg:bg-neutral-200"} ${navShown ? "" : "pointer-events-none"}`}
       >
+        {/* A separator line along the top of the bar, mx-3 in from the
+            edges. */}
+
         <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
             href="/works"
@@ -279,38 +281,44 @@ export default function ESNav() {
           Info stacked, then Email — above the bar (pb-15: its h-12 plus
           pb-3), which would cover the last line; picking a link closes it. */}
       {open && !showBack && (
-        <nav className="lg:hidden fixed  bottom-0 left-0 z-[75] flex flex-col items-start justify-end gap-y-0 px-3 pt-10 pb-15 bg-background font-gensco text-[36px] leading-none text-neutral-800 w-full h-full">
-          {VIEW_LINKS.map(({ view, label, href }) => (
-            <Link
-              key={view}
-              href={href}
-              scroll={false}
-              onClick={() => {
-                setSearch("");
-                setOpenDesktopNav(false);
-              }}
-              aria-current={pathname === href ? "page" : undefined}
-              className={
-                pathname === href ? "text-neutral-800" : "text-neutral-800"
-              }
-            >
-              {label}
-            </Link>
-          ))}
-          {/* Email, after the links. */}
-          <a
-            href="mailto:elinor.silow@gmail.com"
-            className="mt-6 text-neutral-800"
-          >
-            Email
-          </a>
+        <nav className="lg:hidden fixed  bottom-0 left-0 z-[75] flex flex-col items-start justify-between gap-y-0 px-3 pt-3 pb-12 bg-background font-gensco text-[36px] leading-none text-neutral-800 w-full h-full">
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between w-full text-[18px]">
+              <span>Email</span> <span>:</span>
+              <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>
+            </div>
+            <div className="flex justify-between w-full text-[18px]">
+              <span>Instagram</span>
+              <span>:</span>
+              <a
+                href="https://www.instagram.com/elinorsilow"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                @elinorsilow
+              </a>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            {VIEW_LINKS.map(({ view, label, href }) => (
+              <Link
+                key={view}
+                href={href}
+                scroll={false}
+                onClick={() => {
+                  setSearch("");
+                  setOpenDesktopNav(false);
+                }}
+                aria-current={pathname === href ? "page" : undefined}
+                className={
+                  pathname === href ? "text-neutral-800" : "text-neutral-800"
+                }
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </nav>
-      )}
-      {/* The active filters (category cycling), fixed at the top right —
-          mobile and desktop; hidden in the index (List / Grid). z-71: above
-          the feed's title block (z-70), under the mobile menu (z-75). */}
-      {showFilters && !showBack && (
-        <ActiveFilters className="fixed top-3 right-3 lg:top-6 lg:right-6 z-[71] flex font-gensco text-[18px] leading-tight text-neutral-800" />
       )}
       {/* Filter overlay: full height, under the nav (like the menu). */}
       {showSizes && filterOpen && (
