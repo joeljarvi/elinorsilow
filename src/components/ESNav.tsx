@@ -60,25 +60,6 @@ export const VIEW_LINKS: { view: HomeView; label: string; href: string }[] = [
   { view: "info", label: "Info", href: "/info" },
 ];
 
-// The site's orange mode (Orange on /info): an orange background and
-// neutral-950 text, set as variables on <html> (beating light and dark
-// mode) — the site's text is text-neutral-800, so that variable is swapped
-// too. Remembered in this browser.
-const ORANGE = "#FF7221";
-const NEUTRAL_950 = "oklch(0.145 0 0)";
-const ORANGE_VARS: Record<string, string> = {
-  "--background": ORANGE,
-  "--foreground": NEUTRAL_950,
-  "--color-neutral-800": NEUTRAL_950,
-};
-const ORANGE_KEY = "es-orange";
-function applyOrange(on: boolean) {
-  const style = document.documentElement.style;
-  for (const [name, value] of Object.entries(ORANGE_VARS))
-    if (on) style.setProperty(name, value);
-    else style.removeProperty(name);
-}
-
 export default function ESNav() {
   const {
     openDesktopNav: open,
@@ -88,22 +69,6 @@ export default function ESNav() {
   } = useUI();
   const pathname = usePathname();
   const { mode, search, setSearch } = useIndex();
-  const [orange, setOrange] = useState(false);
-  useEffect(() => {
-    let on = false;
-    try {
-      on = localStorage.getItem(ORANGE_KEY) === "1";
-    } catch {}
-    setOrange(on);
-    applyOrange(on);
-  }, []);
-  const setOrangeOn = (on: boolean) => {
-    setOrange(on);
-    applyOrange(on);
-    try {
-      localStorage.setItem(ORANGE_KEY, on ? "1" : "0");
-    } catch {}
-  };
   const onIndex = isIndexPath(pathname);
   // List settings — shown with the works / exhibitions lists: the Filter menu
   // on desktop, S / M / L in the mobile menu.
@@ -346,38 +311,6 @@ export default function ESNav() {
           the feed's title block (z-70), under the mobile menu (z-75). */}
       {showFilters && !showBack && (
         <ActiveFilters className="fixed top-3 right-3 lg:top-6 lg:right-6 z-[71] flex font-gensco text-[18px] leading-tight text-neutral-800" />
-      )}
-      {/* Info only: the background colour, fixed at the top right —
-          Orange (the whole site's background orange) and B/W (the normal
-          background); the one not in use dimmed, as in the menu. Mobile:
-          one button, showing the current one; clicking switches. */}
-      {pathname === "/info" && (
-        <span className="fixed top-3 right-3 lg:top-6 lg:right-6 z-[71] flex items-baseline gap-x-3 font-gensco text-[18px] leading-tight normal-case text-neutral-800">
-          <button
-            type="button"
-            onClick={() => setOrangeOn(!orange)}
-            aria-label={orange ? "Switch to B/W" : "Switch to orange"}
-            className="lg:hidden cursor-pointer"
-          >
-            {orange ? "Orange" : "B/W"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setOrangeOn(true)}
-            aria-pressed={orange}
-            className={`hidden lg:block cursor-pointer ${orange ? "" : "opacity-50"}`}
-          >
-            Orange
-          </button>
-          <button
-            type="button"
-            onClick={() => setOrangeOn(false)}
-            aria-pressed={!orange}
-            className={`hidden lg:block cursor-pointer ${orange ? "opacity-50" : ""}`}
-          >
-            B/W
-          </button>
-        </span>
       )}
       {/* Filter overlay: full height, under the nav (like the menu). */}
       {showSizes && filterOpen && (
