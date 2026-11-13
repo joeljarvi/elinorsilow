@@ -12,7 +12,6 @@ import {
 } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
 import ActiveFilters from "./ActiveFilters";
-import FadeEdge from "./FadeEdge";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
@@ -164,14 +163,6 @@ export default function ESNav() {
         ref={navRef}
         className={`fixed inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-16 px-3 lg:px-6 pt-0 pb-3 lg:pb-6 bg-background ${onExhibitions ? "" : "lg:bg-background"} ${navShown ? "" : "pointer-events-none"}`}
       >
-        {/* The page background fading out above the bar — every page on
-            mobile; on desktop only on the exhibitions list (elsewhere the
-            bar is transparent there). */}
-        <FadeEdge
-          side="top"
-          // Raised 8px off the bar.
-          className={` ${onExhibitions ? "hidden" : "lg:hidden"}`}
-        />
         <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
             href="/works"

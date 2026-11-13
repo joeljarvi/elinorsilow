@@ -29,14 +29,17 @@ export default function TitleBlock({
   const Title = heading ? "h1" : "p";
   return (
     <div
-      className={`flex ${stacked ? "flex-col" : "flex-wrap"} font-gensco text-[24px] text-left items-start justify-start leading-tight max-w-6xl text-neutral-800 ${className}`}
+      className={`flex ${stacked ? "flex-col" : "flex-wrap"} font-gensco text-[18px] lg:text-[24px] text-left items-start justify-start leading-tight max-w-6xl text-neutral-800 ${className}`}
     >
-      <Title className={`uppercase   ${textWidth}`}>{title}</Title>
-      {!stacked && ","}
+      {/* The comma inside the title, so its width / padding (textWidth)
+          never comes between them. */}
+      <Title className={`uppercase   ${textWidth}`}>
+        {title}
+        {!stacked && ","}
+      </Title>
       {metadata && (
         <p className={`pl-0 ${stacked ? "" : "lg:ml-1"} ${textWidth}`}>
-          {metadata},
-          {/* A space before "Read more" — invisible if it wraps. */}
+          {metadata},{/* A space before "Read more" — invisible if it wraps. */}
           {href && "\u00a0"}
         </p>
       )}

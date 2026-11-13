@@ -742,6 +742,9 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
 // The works grid (desktop, 32 columns): where each of the 6 works in a row
 // starts — each 2 columns wide with 4 empty columns between (cols 1–2, 7–8,
 // 13–14, 19–20, 25–26, 31–32).
+// Mobile (4 columns): 2 works per row, each 1 column wide with 1 empty
+// column between (cols 1 and 3).
+const GRID_START_MOBILE = ["col-start-1", "col-start-3"];
 const GRID_START = [
   "lg:col-start-1",
   "lg:col-start-7",
@@ -832,7 +835,7 @@ function Feed({
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth="max-w-full pr-6 lg:pr-0 lg:max-w-xl"
+            textWidth="max-w-full pr-1 lg:max-w-xl"
             className={titleClassName}
           />
           {/* Mobile: the page background fading out above it. */}
@@ -1098,14 +1101,15 @@ export default function IndexPageClient() {
               </ul>
             )}
             {/* Works as a grid (Grid): desktop 6 per row with 4 empty
-                columns between, mobile 2 — every work the same width.
+                columns between, mobile 2 per row (4 columns, 1 empty
+                between) — every work the same width.
                 Clicking one opens its page. */}
             {mode === "works" && worksLayout === "grid" && (
               <div
                 // Desktop: 32 columns, 6 works per row, each 2 columns wide
                 // with 4 empty columns between (see GRID_START) — all the
                 // same width, the first and last at the edges.
-                className="relative grid grid-cols-2 lg:grid-cols-32 gap-x-3 lg:gap-x-0 gap-y-36 lg:gap-y-36 px-3 lg:px-6 pt-6 pb-24 items-start"
+                className="relative grid grid-cols-4 lg:grid-cols-32 gap-x-0 gap-y-36 lg:gap-y-36 px-3 lg:px-6 pt-3 lg:pt-6  pb-24 items-start"
               >
                 {/* About the archive — absolute at the top left (scrolls
                     away with the page); in the title block's type. */}
@@ -1122,7 +1126,7 @@ export default function IndexPageClient() {
                       if (e.key === "Enter") router.push(`/${w.slug}`);
                     }}
                     aria-label={w.title.rendered}
-                    className={`col-span-1 lg:col-span-2 ${GRID_START[i % 6]} flex flex-col items-center justify-start`}
+                    className={`col-span-1 lg:col-span-2 ${GRID_START_MOBILE[i % 2]} ${GRID_START[i % 6]} flex flex-col items-center justify-start`}
                   >
                     {w.image_url && (
                       // eslint-disable-next-line @next/next/no-img-element
