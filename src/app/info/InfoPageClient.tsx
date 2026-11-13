@@ -233,7 +233,7 @@ export default function InfoPageClient({
       />
 
       {/* Contact, above the bio, spread across the column. */}
-      <p className=" flex flex-col  w-full gap-x-3 lg:gap-x-6 mb-6 px-6 mt-0 lg:mt-0 lg:px-12 font-gensco text-[18px] lg:text-[21px] leading-tight gap-y-0">
+      <p className=" flex flex-col  w-full gap-x-3 lg:gap-x-6 mb-6 px-6 mt-0 lg:mt-0 lg:px-12 font-gensco text-[18px] leading-tight gap-y-0">
         <span className="flex gap-x-6">
           EMAIL:
           <a href="mailto:elinor.silow@gmail.com">elinor.silow@gmail.com</a>
@@ -250,10 +250,10 @@ export default function InfoPageClient({
         </span>
       </p>
       {/* The sections, one under another, centered. */}
-      <div className="max-w-full lg:max-w-full  mx-0 flex flex-col items-start gap-y-12 lg:gap-y-6 pl-1 pr-6 lg:px-6 pt-16 pb-24 font-gensco text-[18px] lg:text-[21px] leading-tight ">
+      <div className="max-w-full lg:max-w-full  mx-0 flex flex-col items-start gap-y-12 lg:gap-y-6 pl-1 pr-6 lg:px-6 pt-16 pb-24 font-gensco text-[18px] leading-tight ">
         {sections.map((section) => (
           <div key={section.key} className="w-full max-w-xl flex flex-col ">
-            <h2 className="font-gensco normal-case text-[18px] lg:text-[21px] leading-tight indent-4 mb-4 lg:indent-12 lg:mb-6">
+            <h2 className="font-gensco normal-case text-[18px] leading-tight indent-4 mb-4 lg:indent-12 lg:mb-6">
               {section.title}
             </h2>
             {section.body}

@@ -66,9 +66,9 @@ export default function ExhibitionImages({
           </figure>
         )}
       </div>
-      {/* The rest, one under another, gap-y-2 apart — each as big as in the
+      {/* The rest, one under another, gap-y-6 apart — each as big as in the
           lightbox (the screen less its px-1 / py-1). */}
-      <div className="flex flex-col gap-y-2 w-full px-1 pt-2">
+      <div className="flex flex-col gap-y-6 w-full px-1 pt-6">
         {images.slice(1).map((img, k) => {
           const i = k + 1;
           return (

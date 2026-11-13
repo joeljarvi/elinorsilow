@@ -25,7 +25,7 @@ export default function TitleBlock({
   const Title = heading ? "h1" : "p";
   return (
     <div
-      className={`flex flex-col font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 ${className}`}
+      className={`flex flex-col font-gensco text-[18px] leading-tight text-neutral-800 ${className}`}
     >
       <Title className={`uppercase  ${textWidth}`}>{title}</Title>
       {(metadata || href) && (

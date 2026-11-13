@@ -739,8 +739,8 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
   };
 }
 
-// The active filters (category, year, size, search), fixed at the top right
-// on the title block's line and in its type: "Works filtered by : all", or
+// The active filters (category, year, size, search), fixed at the bottom
+// right, level with the title block (bottom left) and in its type: "Works filtered by : all", or
 // each active filter as a button (clicking one clears that filter).
 // The List view's titles (works and exhibitions alike): stacked, centered,
 // Alte Haas Bold, uppercase; each a link (TITLE_LINK).
@@ -752,11 +752,6 @@ const TITLE_LINK = "hover:text-purple-300 transition-all";
 // the first at the left edge (cols 1–4), the second centered (11–14), the
 // third at the right edge (21–24).
 const GRID_START = ["lg:col-start-1", "lg:col-start-11", "lg:col-start-21"];
-
-// Where the fixed headings sit — the feed's title block (top left) and the
-// active filters (top right) — shared so the two keep the same height and
-// baseline.
-const HEADING_TOP = "top-3 lg:top-18 px-3 py-0 lg:px-12 lg:py-0";
 
 // The category toggle's steps, in order (each click moves to the next).
 const WORK_CATEGORY_STEPS = [
@@ -826,7 +821,7 @@ function ActiveFilters() {
   const anyFilter = category !== "all" || filters.length > 0;
   return (
     <div
-      className={`fixed ${HEADING_TOP} right-4 z-70 hidden lg:flex flex-wrap items-baseline justify-end gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight normal-case text-neutral-800`}
+      className={`fixed bottom-6 right-6 z-70 hidden lg:flex flex-wrap items-baseline justify-end gap-x-4 font-gensco text-[18px] leading-tight normal-case text-neutral-800`}
     >
       <span>{exhibitions ? "Exhibitions" : "Works"} filtered by :</span>
       <button
@@ -869,7 +864,7 @@ function ActiveFilters() {
 // tall, its images centered in a column (a work has one, an exhibition all
 // of its own); clicking one opens its page. The title and metadata of the
 // item in view (the one crossing the middle of the screen) are fixed at the
-// top left and change as the page scrolls.
+// bottom left and change as the page scrolls.
 function Feed({
   items,
   hidden,
@@ -912,24 +907,24 @@ function Feed({
   const imageClass = sameWidth
     ? // Capped at two-thirds of the screen height (a tall work keeps its
       // proportions inside the same-width box).
-      `block w-full h-auto ${maxW} max-h-[66.6vh] object-contain`
-    : `block w-auto h-auto ${maxW} max-h-[calc(100dvh-4rem)]`;
+      `block w-full h-auto ${maxW} max-h-[66.6vh] object-contain transition-opacity duration-200 hover:opacity-50`
+    : // Exhibitions: each image the screen's height less 18 units (4.5rem)
+      // at the top and 24 (6rem) at the bottom (a wide one scaled down
+      // inside).
+      `block w-auto h-[calc(100dvh-10.5rem)] ${maxW} object-contain`;
   return (
     <>
       {current && (
         <div
-          className={`fixed ${HEADING_TOP} left-0 lg:left-0 z-70 w-full bg-background lg:bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 px-0
-           lg:px-0  transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+          // Fixed at the bottom left (Image mode).
+          className={`fixed bottom-6 left-6 right-6 z-70 bg-transparent text-neutral-800 pointer-events-none flex flex-col gap-y-0 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
         >
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth="max-w-sm lg:max-w-md"
+            textWidth="max-w-sm lg:max-w-sm"
           />
-          {/* The page background fading out below it (mobile, where it has a
-              background). */}
-          <FadeEdge className="lg:hidden" />
         </div>
       )}
       <div
@@ -945,7 +940,7 @@ function Feed({
             href={item.href}
             prefetch={false}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-2 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[33.3dvh] lg:py-[25vh]" : ""}`}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-6 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "pt-18 pb-24" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -1156,7 +1151,11 @@ export default function IndexPageClient() {
           as a fixed backdrop (purple-100 shows while it loads), with the
           works grid as a rounded bg-background panel on it. `isolate` keeps
           the -z-10 backdrop above this div's background. */}
-      <div className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start mt-[33.3dvh]">
+      <div
+        // List mode starts a third of the way down; Image and Grid start at
+        // the top, so the first image is centered in the screen.
+        className={`relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start ${worksLayout === "list" ? "mt-[33.3dvh]" : ""}`}
+      >
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
             "all": cols 2–3; exhibitions: cols 2–4. */}
@@ -1183,14 +1182,14 @@ export default function IndexPageClient() {
                 4 columns wide — left, center, right (see GRID_START). Mobile:
                 2 per row. Clicking one opens its page. */}
             {mode === "works" && worksLayout === "grid" && (
-              <div className="grid grid-cols-2 lg:grid-cols-24 gap-x-2 lg:gap-x-0 gap-y-12 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 items-center">
+              <div className="grid grid-cols-2 lg:grid-cols-24 gap-x-3 lg:gap-x-0 gap-y-36 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 items-start">
                 {visibleWorks.slice(0, visibleCount).map((w, i) => (
                   <Link
                     key={w.id}
                     href={`/${w.slug}`}
                     prefetch={false}
                     aria-label={w.title.rendered}
-                    className={`col-span-1 lg:col-span-4 ${GRID_START[i % 3]} flex justify-center`}
+                    className={`col-span-1 lg:col-span-4 ${GRID_START[i % 3]} flex justify-center items-start`}
                   >
                     {w.image_url && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -1198,7 +1197,7 @@ export default function IndexPageClient() {
                         src={`${w.image_url}?w=1000&auto=format`}
                         alt={w.title.rendered}
                         loading="lazy"
-                        className="block w-full h-auto"
+                        className="block w-full h-auto transition-opacity duration-200 hover:opacity-50"
                       />
                     )}
                   </Link>
@@ -1210,8 +1209,9 @@ export default function IndexPageClient() {
               <Feed
                 items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
                 totalItems={visibleWorks.length}
-                // Works: all the same width, a third of the screen.
-                maxW="max-w-1/3"
+                // Works: all the same width — two-thirds of the screen on
+                // mobile, a sixth on desktop.
+                maxW="max-w-2/3 lg:max-w-1/6"
                 sameWidth
                 hidden={siteReveal === "covered"}
                 size={imageSize}

@@ -143,7 +143,7 @@ export default function ESNav() {
           to "Menu:" with Works, Exhibitions and Info beside it; mobile: it
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 top-3 lg:top-6 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-3 lg:px-6 lg:h-6 pt-0 pb-0 bg-background lg:bg-transparent ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-3 lg:top-6 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-3 lg:px-6 lg:h-6 pt-0 pb-0 bg-transparentlg:bg-transparent ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* Mobile, in List mode (works / exhibitions): the page background
             fading out below the bar. */}
@@ -158,9 +158,9 @@ export default function ESNav() {
           >
             Elinor Silow
           </Link>
-          {/* Menu (and, open, ": Works Exhibitions Info"), normal case.
-              Desktop: centered at the top of the bar. */}
-          <span className="flex font-gensco font-normal text-[18px]  items-baseline gap-x-4 justify-between normal-case lg:justify-start lg:absolute lg:top-0 lg:left-1/2 lg:-translate-x-1/2">
+          {/* Menu (and, open, ": Works Exhibitions Info"), normal case —
+              next to the logo at the left (desktop). */}
+          <span className="flex font-gensco font-normal text-[18px]  items-baseline gap-x-4 justify-between normal-case lg:justify-start">
             <button
               type="button"
               style={navReveal(navShown, 1).style}
