@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
-import { useIndex, isIndexPath, type HomeView } from "@/context/IndexContext";
+import {
+  useIndex,
+  isIndexPath,
+  type HomeView,
+  type WorksLayout,
+} from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
 import FadeEdge from "./FadeEdge";
 import { useTheme } from "next-themes";
@@ -41,6 +46,12 @@ function ThemeToggle({
   );
 }
 
+const LAYOUT_LABEL: Record<WorksLayout, string> = {
+  list: "List",
+  image: "Image",
+  grid: "Grid",
+};
+
 // The index section's views, in the menu.
 export const VIEW_LINKS: { view: HomeView; label: string; href: string }[] = [
   { view: "works", label: "Works", href: "/works" },
@@ -63,18 +74,28 @@ export default function ESNav() {
   const showSizes = onIndex && mode !== "info";
   // Works and exhibitions: the List / Image view toggle.
   const { worksLayout, setWorksLayout } = useIndex();
+  // The view toggle cycles List → Image → Grid (works) / List → Image
+  // (exhibitions: no grid).
+  const cycle: WorksLayout[] =
+    mode === "works" ? ["list", "image", "grid"] : ["list", "image"];
+  const current = cycle.includes(worksLayout) ? worksLayout : "image";
+  const nextLayout = cycle[(cycle.indexOf(current) + 1) % cycle.length];
   const layoutButtons = (className: string, afterPick?: () => void) => (
     // One toggle: shows the current view and switches to the other.
     <button
       type="button"
       onClick={() => {
-        setWorksLayout(worksLayout === "grid" ? "list" : "grid");
+        setWorksLayout(nextLayout);
         afterPick?.();
       }}
-      aria-label={`Switch to ${worksLayout === "grid" ? "image" : "list"} view`}
+      aria-label={`Switch to ${LAYOUT_LABEL[nextLayout].toLowerCase()} view`}
       className={`cursor-pointer normal-case ${className}`}
     >
-      {worksLayout === "grid" ? "List" : "Image"}
+      {
+        LAYOUT_LABEL[
+          worksLayout === "grid" && mode !== "works" ? "image" : worksLayout
+        ]
+      }
     </button>
   );
   // The nav shows right away on every page (it used to fade in last on the
@@ -112,7 +133,7 @@ export default function ESNav() {
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-0 lg:top-0 right-1 lg:right-1 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
+          className="fixed top-0 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[21px] leading-tight text-neutral-800 cursor-pointer"
         >
           Back
         </button>
@@ -122,14 +143,14 @@ export default function ESNav() {
           to "Menu:" with Works, Exhibitions and Info beside it; mobile: it
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
-        className={`fixed inset-x-0 top-0 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-1 lg:px-1 lg:h-6 pt-0 pb-0 bg-background lg:bg-transparent ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed inset-x-0 top-3 lg:top-6 z-80 ${showBack ? "hidden" : "flex"} items-baseline justify-between gap-x-3 lg:gap-x-6 h-6 px-3 lg:px-6 lg:h-6 pt-0 pb-0 bg-background lg:bg-transparent ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* Mobile, in List mode (works / exhibitions): the page background
             fading out below the bar. */}
-        {showSizes && worksLayout === "grid" && (
+        {showSizes && worksLayout === "list" && (
           <FadeEdge className="lg:hidden" />
         )}
-        <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] leading-tight whitespace-nowrap text-neutral-800">
+        <span className="flex flex-wrap items-baseline gap-x-4 font-gensco text-[18px] leading-tight whitespace-nowrap text-neutral-800">
           <Link
             href="/exhibitions"
             style={navReveal(navShown, 0).style}
@@ -137,9 +158,9 @@ export default function ESNav() {
           >
             Elinor Silow
           </Link>
-          {/* Menu (and, open, ": Works Exhibitions Info"), next to the logo
-              at the left; normal case. */}
-          <span className="flex font-gensco font-normal text-[18px] lg:text-[21px]  items-baseline gap-x-4 justify-between normal-case lg:justify-start">
+          {/* Menu (and, open, ": Works Exhibitions Info"), normal case.
+              Desktop: centered at the top of the bar. */}
+          <span className="flex font-gensco font-normal text-[18px]  items-baseline gap-x-4 justify-between normal-case lg:justify-start lg:absolute lg:top-0 lg:left-1/2 lg:-translate-x-1/2">
             <button
               type="button"
               style={navReveal(navShown, 1).style}
@@ -150,7 +171,7 @@ export default function ESNav() {
             >
               {open ? "Menu" : "Menu"}
             </button>
-            <span className="hidden lg:flex items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] font-normal normal-case">
+            <span className="hidden lg:flex items-baseline gap-x-4 font-gensco text-[18px] font-normal normal-case">
               <span className=" ">:</span>
               {open &&
                 VIEW_LINKS.map(({ view, label, href }, i) => (
@@ -179,7 +200,7 @@ export default function ESNav() {
             and Vertical / Grid are in the Filter menu there). */}
         {/* Right side: (works / exhibitions) search, List / Image and Filter;
             mobile, Menu (on every page). */}
-        <div className="flex items-baseline gap-x-4 font-gensco text-[18px] lg:text-[21px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
+        <div className="flex items-baseline gap-x-4 font-gensco text-[18px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
           {showSizes && (
             <>
               {/* Search (the shared index search: filters the list), left of

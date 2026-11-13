@@ -748,10 +748,15 @@ const TITLE_LIST =
   "flex min-h-dvh flex-col items-center justify-start gap-y-0 px-3 lg:px-4 pt-8 pb-0 font-alteHaas font-bold text-[32px] lg:text-[48px] leading-[1.2] lg:leading-[1.1] uppercase text-center text-purple-900 ";
 const TITLE_LINK = "hover:text-purple-300 transition-all";
 
+// The works grid (desktop, 24 columns): where each work in a row starts —
+// the first at the left edge (cols 1–4), the second centered (11–14), the
+// third at the right edge (21–24).
+const GRID_START = ["lg:col-start-1", "lg:col-start-11", "lg:col-start-21"];
+
 // Where the fixed headings sit — the feed's title block (top left) and the
 // active filters (top right) — shared so the two keep the same height and
 // baseline.
-const HEADING_TOP = "top-6 lg:top-6 px-1 py-0 lg:px-1 lg:py-0";
+const HEADING_TOP = "top-3 lg:top-18 px-3 py-0 lg:px-12 lg:py-0";
 
 // The category toggle's steps, in order (each click moves to the next).
 const WORK_CATEGORY_STEPS = [
@@ -905,9 +910,9 @@ function Feed({
   }, [items]);
   const current = items[active];
   const imageClass = sameWidth
-    ? // Capped at 90% of the screen height on mobile, 75% on desktop (a tall work keeps its
+    ? // Capped at two-thirds of the screen height (a tall work keeps its
       // proportions inside the same-width box).
-      `block w-full h-auto ${maxW} max-h-[90dvh] lg:max-h-[75dvh] object-contain`
+      `block w-full h-auto ${maxW} max-h-[66.6vh] object-contain`
     : `block w-auto h-auto ${maxW} max-h-[calc(100dvh-4rem)]`;
   return (
     <>
@@ -920,7 +925,7 @@ function Feed({
             title={current.title}
             metadata={current.metadata}
             href={current.href}
-            textWidth="max-w-sm lg:max-w-xl"
+            textWidth="max-w-sm lg:max-w-md"
           />
           {/* The page background fading out below it (mobile, where it has a
               background). */}
@@ -940,7 +945,7 @@ function Feed({
             href={item.href}
             prefetch={false}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col items-center justify-center gap-y-1 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[33.3dvh] lg:py-[25vh]" : ""}`}
+            className={`min-h-dvh flex flex-col items-center justify-center gap-y-2 px-1 lg:px-0 cursor-pointer ${item.images.length > 1 ? "py-[33.3dvh] lg:py-[25vh]" : ""}`}
           >
             {item.images.map((src, j) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -1157,10 +1162,9 @@ export default function IndexPageClient() {
             "all": cols 2–3; exhibitions: cols 2–4. */}
         <div className="lg:col-start-1 lg:col-span-12 lg:row-start-1 flex flex-col lg:px-0">
           <div>
-            {/* Works as a list ("List" in the nav — the layout's "grid"
-                setting; "Image" is the feed): every work's title, a link to its page, one under
-                another, centered. Alte Haas, 48px, uppercase. */}
-            {mode === "works" && worksLayout === "grid" && (
+            {/* Works as a list (List): every work's title, a link to its
+                page, one under another, centered. */}
+            {mode === "works" && worksLayout === "list" && (
               <ul className={TITLE_LIST}>
                 {visibleWorks.map((w) => (
                   <li key={w.id}>
@@ -1175,8 +1179,34 @@ export default function IndexPageClient() {
                 ))}
               </ul>
             )}
+            {/* Works as a grid (Grid): 24 columns, 3 works per row, each
+                4 columns wide — left, center, right (see GRID_START). Mobile:
+                2 per row. Clicking one opens its page. */}
+            {mode === "works" && worksLayout === "grid" && (
+              <div className="grid grid-cols-2 lg:grid-cols-24 gap-x-2 lg:gap-x-0 gap-y-12 lg:gap-y-24 px-3 lg:px-6 pt-24 pb-24 items-center">
+                {visibleWorks.slice(0, visibleCount).map((w, i) => (
+                  <Link
+                    key={w.id}
+                    href={`/${w.slug}`}
+                    prefetch={false}
+                    aria-label={w.title.rendered}
+                    className={`col-span-1 lg:col-span-4 ${GRID_START[i % 3]} flex justify-center`}
+                  >
+                    {w.image_url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`${w.image_url}?w=1000&auto=format`}
+                        alt={w.title.rendered}
+                        loading="lazy"
+                        className="block w-full h-auto"
+                      />
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
             {/* Works as a feed (Image). */}
-            {mode === "works" && worksLayout === "list" && (
+            {mode === "works" && worksLayout === "image" && (
               <Feed
                 items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
                 totalItems={visibleWorks.length}
@@ -1190,7 +1220,7 @@ export default function IndexPageClient() {
             {/* Exhibitions as a feed, like the works (no grid). */}
             {/* Exhibitions as a list (List): every exhibition's title, a
                 link to its page — as the works list. */}
-            {mode === "exhibitions" && worksLayout === "grid" && (
+            {mode === "exhibitions" && worksLayout === "list" && (
               <ul className={TITLE_LIST}>
                 {visibleExhibitions.map((ex) => (
                   <li key={ex.id}>
@@ -1205,7 +1235,9 @@ export default function IndexPageClient() {
                 ))}
               </ul>
             )}
-            {mode === "exhibitions" && worksLayout === "list" && (
+            {/* Exhibitions as a feed (Image; also when Grid is set — no
+                exhibitions grid). */}
+            {mode === "exhibitions" && worksLayout !== "list" && (
               <Feed
                 items={visibleExhibitions
                   .slice(0, visibleCount)
@@ -1227,8 +1259,8 @@ export default function IndexPageClient() {
 
       {(mode === "works" || mode === "exhibitions") && (
         <>
-          {/* The active filters, top right (Image mode only). */}
-          {worksLayout !== "grid" && <ActiveFilters />}
+          {/* The active filters, top right (not in List). */}
+          {worksLayout !== "list" && <ActiveFilters />}
           <LenisScroll />
           {/* Column labels for the list, fixed across the top. */}
           <IndexNav mode={mode} />

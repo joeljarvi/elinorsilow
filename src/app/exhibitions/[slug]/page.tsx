@@ -82,7 +82,7 @@ export default async function ExhibitionPage({ params }: Props) {
       {/* The title, fixed at the top left while the page scrolls, on the
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
-      <div className="fixed inset-x-0 top-0 z-70  px-1     bg-background lg:bg-transparent pointer-events-none">
+      <div className="fixed inset-x-0 top-4 z-70  px-4     bg-background lg:bg-transparent pointer-events-none">
         <TitleBlock heading title={ex.title.rendered} metadata={metadata} />
       </div>
       {/* The description, then all the images, one under another — centered,

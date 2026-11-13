@@ -15,6 +15,7 @@ import type { WorkSize } from "@/lib/workSize";
 export type HomeView = "works" | "exhibitions" | "info";
 export type IndexMode = HomeView;
 export type IndexSort = "latest" | "title" | "year" | "random";
+export type WorksLayout = "image" | "list" | "grid";
 
 // The index section's paths (/works, /exhibitions, /info).
 export const INDEX_PATHS = ["/works", "/exhibitions", "/info"];
@@ -32,9 +33,10 @@ interface IndexContextValue {
   sizeFilter: WorkSize | "all";
   setSizeFilter: (s: WorkSize | "all") => void;
   // Open works: show the scale and matchbox (the Filter panel's settings).
-  // Works: a list of rows, or a grid of images.
-  worksLayout: "list" | "grid";
-  setWorksLayout: (l: "list" | "grid") => void;
+  // Works / exhibitions view: "image" (the feed), "list" (the titles) or
+  // "grid" (works only: 3 per row).
+  worksLayout: WorksLayout;
+  setWorksLayout: (l: WorksLayout) => void;
   showScale: boolean;
   setShowScale: (v: boolean) => void;
   // "random" sort: the order comes from this seed; randomize() picks a new one
@@ -87,7 +89,7 @@ export function IndexProvider({ children }: { children: ReactNode }) {
     setSizeFilter("all");
   }, [mode]);
   const [showScale, setShowScale] = useState(true);
-  const [worksLayout, setWorksLayout] = useState<"list" | "grid">("list");
+  const [worksLayout, setWorksLayout] = useState<WorksLayout>("image");
   const [shuffleSeed, setShuffleSeed] = useState(1);
   const randomize = () => {
     setShuffleSeed(Math.floor(Math.random() * 1e9) + 1);

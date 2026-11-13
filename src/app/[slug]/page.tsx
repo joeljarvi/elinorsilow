@@ -29,7 +29,7 @@ export default async function WorkPage({ params }: Props) {
         heading
         title={work.title.rendered}
         metadata={metadata}
-        className="absolute top-0 left-0 px-1 lg:px-1 pt-0 lg:pt-0 pr-20 lg:pr-0 min-w-0"
+        className="absolute top-4 left-0 px-1 lg:px-4 pt-0 lg:pt-0 pr-20 lg:pr-0 min-w-0"
       />
       {/* The work, centered in the viewport. */}
       {work.image_url && (
@@ -37,7 +37,7 @@ export default async function WorkPage({ params }: Props) {
         <img
           src={`${work.image_url}?h=2000&auto=format`}
           alt={work.title.rendered}
-          className="block w-auto h-auto max-w-full max-h-[75dvh] object-contain"
+          className="block w-auto h-auto max-w-full max-h-[66.6vh] object-contain"
         />
       )}
     </main>

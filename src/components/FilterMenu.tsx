@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useIndex } from "@/context/IndexContext";
+import { useIndex, type WorksLayout } from "@/context/IndexContext";
 import { useUI, type ImageSize } from "@/context/UIContext";
 import type { WorkSize } from "@/lib/workSize";
 import { useWorks, type CategoryFilter } from "@/context/WorksContext";
@@ -150,11 +150,12 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
           <Setting
             name="View"
             options={[
-              { value: "grid", label: "List" },
-              { value: "list", label: "Image" },
+              { value: "list", label: "List" },
+              { value: "image", label: "Image" },
+              ...(exhibitions ? [] : [{ value: "grid", label: "Grid" }]),
             ]}
             value={worksLayout}
-            onChange={(v) => setWorksLayout(v as "list" | "grid")}
+            onChange={(v) => setWorksLayout(v as WorksLayout)}
           />
         </div>
         <div className="flex flex-col lg:flex-row lg:flex-wrap lg:justify-end lg:w-full lg:gap-x-8 text-[18px] lg:text-[21px] gap-y-0">
