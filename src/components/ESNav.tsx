@@ -11,7 +11,7 @@ import {
 } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
 import ActiveFilters from "./ActiveFilters";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
 import { useFirstLoad, REVEAL_NAV } from "@/lib/firstLoad";
 
@@ -283,26 +283,27 @@ export default function ESNav() {
           {/* Works, Exhibitions, Info — centered vertically on the screen. */}
           <div className="absolute left-3 top-1/2 -translate-y-1/2 flex flex-col">
             {VIEW_LINKS.map(({ view, label, href }) => (
-              <Link
-                key={view}
-                href={href}
-                scroll={false}
-                onClick={() => {
-                  setSearch("");
-                  setOpenDesktopNav(false);
-                }}
-                aria-current={pathname === href ? "page" : undefined}
-              >
-                {label}
-              </Link>
+              <Fragment key={view}>
+                <Link
+                  href={href}
+                  scroll={false}
+                  onClick={() => {
+                    setSearch("");
+                    setOpenDesktopNav(false);
+                  }}
+                  aria-current={pathname === href ? "page" : undefined}
+                >
+                  {label}
+                </Link>
+                {/* On Works: Index (and, on, List / Grid), right below
+                    Works — picking one closes the menu. */}
+                {view === "works" && showSizes && mode === "works" && (
+                  <div onClick={() => setOpenDesktopNav(false)}>
+                    {layoutButtons("flex")}
+                  </div>
+                )}
+              </Fragment>
             ))}
-            {/* Works: Index (and, on, List / Grid), below the links —
-                picking one closes the menu. */}
-            {showSizes && mode === "works" && (
-              <div className="mt-6" onClick={() => setOpenDesktopNav(false)}>
-                {layoutButtons("flex")}
-              </div>
-            )}
           </div>
         </nav>
       )}

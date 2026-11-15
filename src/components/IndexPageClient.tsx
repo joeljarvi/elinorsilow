@@ -419,12 +419,12 @@ export default function IndexPageClient() {
                 totalItems={visibleWorks.length}
                 // Works: all the same width — two-thirds of the screen on
                 // mobile, a sixth on desktop.
-                maxW="max-w-2/3 lg:max-w-1/6"
+                maxW="max-w-full lg:max-w-1/6"
                 sameWidth
                 // The title block at most 2/3 of the screen on mobile (clear of
                 // the filters, top right), max-w-5xl on desktop (! beats its
                 // max-w-6xl).
-                titleClassName="max-w-2/3! lg:max-w-5xl!"
+                titleClassName="max-w-full lg:max-w-5xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
@@ -443,7 +443,7 @@ export default function IndexPageClient() {
                 // The title block at most 2/3 of the screen on mobile (clear of
                 // the filters, top right), max-w-5xl on desktop (! beats its
                 // max-w-6xl).
-                titleClassName="max-w-2/3! lg:max-w-5xl!"
+                titleClassName="max-w-full lg:max-w-5xl!"
                 hidden={siteReveal === "covered"}
                 size={imageSize}
               />
