@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   serverExternalPackages: ["sanity", "@sanity/vision"],
+  // React's <ViewTransition>: a work's image zooms between the feed and
+  // its page.
+  experimental: {
+    viewTransition: true,
+  },
   // The works / exhibitions / info views live at /works, /exhibitions and
   // /info. They used to be under /index/…, which can't work on Vercel (its
   // Next.js runtime reads "/index/x" as "/x" and 404s). Old /index/… links

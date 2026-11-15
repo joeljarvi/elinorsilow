@@ -2,29 +2,14 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { STIX_Two_Text } from "next/font/google";
 import "./globals.css";
-import { AnimationProvider } from "@/context/AnimationContext";
 import { WorksProvider } from "@/context/WorksContext";
 import { ExhibitionsProvider } from "@/context/ExhibitionsContext";
 import { ThemeProvider } from "@/context/theme-provider";
 import { InfoProvider } from "@/context/InfoContext";
-import { NavProvider } from "@/context/NavContext";
 import { UIProvider } from "@/context/UIContext";
 import { IndexProvider } from "@/context/IndexContext";
-import { NavSlotProvider } from "@/context/NavSlotContext";
 import ESNav from "@/components/ESNav";
-// The "under construction" overlay (UnderConstruction) is off for now.
 import ESScreenSaver from "@/components/ESScreenSaver";
-
-import NavWrapper from "@/components/NavWrapper";
-import InkBleedFilter from "@/components/InkBleedFilter";
-
-import ContentWrapper from "@/components/ContentWrapper";
-
-import { CarouselProvider } from "@/context/CarouselContext";
-
-import { ActivityProvider } from "@/context/ActivityContext";
-import { getRecentActivity } from "../../lib/sanity";
-import DesktopNav from "@/components/DesktopNav";
 
 const areal = localFont({
   src: [
@@ -583,12 +568,11 @@ export const metadata: Metadata = {
   description: "The artist known as Elinor Silow",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const updates = await getRecentActivity(20);
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -607,26 +591,13 @@ export default async function RootLayout({
           <WorksProvider>
             <ExhibitionsProvider>
               <InfoProvider>
-                <NavProvider>
-                  <UIProvider>
-                    <IndexProvider>
-                      <ActivityProvider updates={updates}>
-                        <NavSlotProvider>
-                          <AnimationProvider>
-                            {/* Column shadow overlay — fixed, covers full viewport */}
-
-                            <CarouselProvider>
-                              <InkBleedFilter />
-                              <ESNav />
-                              <ESScreenSaver />
-                              {children}
-                            </CarouselProvider>
-                          </AnimationProvider>
-                        </NavSlotProvider>
-                      </ActivityProvider>
-                    </IndexProvider>
-                  </UIProvider>
-                </NavProvider>
+                <UIProvider>
+                  <IndexProvider>
+                    <ESNav />
+                    <ESScreenSaver />
+                    {children}
+                  </IndexProvider>
+                </UIProvider>
               </InfoProvider>
             </ExhibitionsProvider>
           </WorksProvider>

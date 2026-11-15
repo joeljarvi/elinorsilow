@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUI, navReveal } from "@/context/UIContext";
@@ -11,40 +10,10 @@ import {
   type WorksLayout,
 } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
-import { useTheme } from "next-themes";
-import { useEffect, useRef, useState } from "react";
+import ActiveFilters from "./ActiveFilters";
+import { useRef } from "react";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
-
-// Labelled with the mode it switches to. Hidden until mounted, since the
-// resolved theme is only known on the client.
-function ThemeToggle({
-  className,
-  size = "sm",
-}: {
-  className?: string;
-  size?: "sm" | "default";
-}) {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  // Only read the theme once mounted: next-themes already knows it on the
-  // client's first render, which would make the label differ from the
-  // server's and break hydration.
-  const isDark = mounted && resolvedTheme === "dark";
-
-  return (
-    <Button
-      variant="link"
-      size={size}
-      className={`${className ?? ""} ${mounted ? "" : "invisible"}`}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-    >
-      {isDark ? "Light" : "Dark"}
-    </Button>
-  );
-}
+import { useFirstLoad, REVEAL_NAV } from "@/lib/firstLoad";
 
 const LAYOUT_LABEL: Record<WorksLayout, string> = {
   list: "List",
@@ -138,6 +107,8 @@ export default function ESNav() {
   // The bar's height, as --nav-h (exhibition images fit between it and the
   // title block).
   const navRef = useRef<HTMLElement>(null);
+  // The load reveal: the bar fades in last (after the images and title).
+  const firstLoad = useFirstLoad();
   useCssHeightVar(navRef, "--nav-h", !showBack);
 
   if (pathname.startsWith("/studio")) return null;
@@ -161,7 +132,7 @@ export default function ESNav() {
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
         ref={navRef}
-        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3 bg-background ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3 bg-background ${navShown ? "" : "pointer-events-none"} ${firstLoad ? REVEAL_NAV : ""}`}
       >
         {/* A separator line along the top of the bar, mx-3 in from the
             edges. */}
@@ -237,12 +208,17 @@ export default function ESNav() {
                 style={navReveal(navShown, 2).style}
                 className={`hidden w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
               />
-              {/* Index (and, on, List / Grid): works only — at the right
-                of the bar, mobile and desktop. */}
+              {/* Mobile: the filters ("Filter" / ": Paintings"), at the
+                right of the bar — with the feed only (not in the index), and
+                not while the menu is open (desktop: top right of the feed). */}
+              {!(mode === "works" && indexOn) && !open && (
+                <ActiveFilters compact className="flex lg:hidden" />
+              )}
+              {/* Desktop: Index (and, on, List / Grid), works only — at the
+                right of the bar (mobile: in the menu overlay). */}
               {mode === "works" &&
                 layoutButtons(
-                  // Hidden on mobile while the menu overlay is open.
-                  `${open ? "hidden lg:flex" : "flex"} ${navReveal(navShown, 3).className}`,
+                  `hidden lg:flex ${navReveal(navShown, 3).className}`,
                 )}
             </>
           )}
@@ -320,6 +296,13 @@ export default function ESNav() {
                 {label}
               </Link>
             ))}
+            {/* Works: Index (and, on, List / Grid), below the links —
+                picking one closes the menu. */}
+            {showSizes && mode === "works" && (
+              <div className="mt-6" onClick={() => setOpenDesktopNav(false)}>
+                {layoutButtons("flex")}
+              </div>
+            )}
           </div>
         </nav>
       )}

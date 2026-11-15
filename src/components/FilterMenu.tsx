@@ -96,7 +96,6 @@ export default function FilterSettings({ onClose }: { onClose: () => void }) {
     setWorksLayout,
     showScale,
     setShowScale,
-    randomize,
   } = useIndex();
   const { imageSize, setImageSize } = useUI();
   const { allWorks, categoryFilter, setCategoryFilter } = useWorks();

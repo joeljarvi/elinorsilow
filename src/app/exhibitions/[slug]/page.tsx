@@ -7,9 +7,9 @@ import {
   type Exhibition,
 } from "../../../../lib/sanity";
 import TitleBlock from "@/components/TitleBlock";
-import FadeEdge from "@/components/FadeEdge";
 import ExhibitionImages from "@/components/ExhibitionImages";
 import ScrollToTop from "@/components/ScrollToTop";
+import { vtName } from "@/lib/viewTransition";
 
 // An exhibition's images (image_1 … image_10), in order.
 function exhibitionImages(ex: Exhibition) {
@@ -36,24 +36,6 @@ function exhibitionMetadata(ex: Exhibition) {
     .join(", ");
 }
 
-// Three other exhibitions to show as related: the closest in year (those
-// with images first; the same type wins a tie).
-function relatedExhibitions(ex: Exhibition, all: Exhibition[]) {
-  const year = Number(ex.acf.year) || 0;
-  return all
-    .filter((other) => other.id !== ex.id)
-    .map((other) => ({
-      other,
-      score:
-        (exhibitionImages(other).length ? 0 : 1000) +
-        Math.abs((Number(other.acf.year) || 0) - year) * 2 +
-        (other.acf.exhibition_type === ex.acf.exhibition_type ? 0 : 1),
-    }))
-    .sort((a, b) => a.score - b.score)
-    .slice(0, 3)
-    .map(({ other }) => other);
-}
-
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -67,8 +49,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // An exhibition's own page: the title and "year, venue, city, type" fixed
 // at the top left (like a work's page), then, centered, the description, all
-// its images one under another and the credits; then three related
-// exhibitions.
+// its images one under another and the credits; Prev / Next to the
+// neighbouring exhibitions.
 export default async function ExhibitionPage({ params }: Props) {
   const [ex, all] = await Promise.all([
     getExhibitionBySlug((await params).slug),
@@ -77,7 +59,6 @@ export default async function ExhibitionPage({ params }: Props) {
   if (!ex) notFound();
   const metadata = exhibitionMetadata(ex);
   const images = exhibitionImages(ex);
-  const related = relatedExhibitions(ex, all);
   // Prev / Next: the exhibitions in the list's order (newest first),
   // wrapping around at either end.
   const at = all.findIndex((other) => other.id === ex.id);
@@ -133,6 +114,7 @@ export default async function ExhibitionPage({ params }: Props) {
         <ExhibitionImages
           images={images}
           title={ex.title.rendered}
+          transitionName={vtName(`/exhibitions/${ex.slug}`)}
           intro={
             ex.acf.description && (
               <p className="w-full max-w-full lg:max-w-xl whitespace-pre-line lg:text-justify font-gensco text-[18px] lg:text-[18px] leading-tight">
@@ -157,9 +139,7 @@ export default async function ExhibitionPage({ params }: Props) {
         <ScrollToTop always />
         <span className="flex items-baseline gap-x-3">{prevNext}</span>
       </div>
-      {/* Related: three other exhibitions, side by side — each its first
-          image, its title and metadata showing on hover; clicking one opens
-          it. */}
+      
     </main>
   );
 }

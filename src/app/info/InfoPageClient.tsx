@@ -5,7 +5,6 @@ import { useIndex } from "@/context/IndexContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
 import type { Press } from "../../../lib/sanity";
 import type { ReactNode } from "react";
-import TitleBlock from "@/components/TitleBlock";
 
 const byYearDesc =
   <T,>(year: (t: T) => number | string) =>

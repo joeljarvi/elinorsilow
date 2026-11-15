@@ -24,8 +24,12 @@ const EX_CATEGORY_STEPS = [
 
 export default function ActiveFilters({
   className = "",
+  compact = false,
 }: {
   className?: string;
+  // Mobile (the nav bar): no "Filter" label — just "Filter" while the
+  // category is All, else ": Paintings" etc.
+  compact?: boolean;
 }) {
   const {
     mode,
@@ -81,17 +85,30 @@ export default function ActiveFilters({
     <div
       className={`flex-wrap items-baseline justify-end gap-x-3 normal-case ${className}`}
     >
-      {/* "Filter" on desktop; mobile shows just ": All". */}
-      <span className="hidden lg:inline">Filter</span>
-      <span>:</span>
-      <button
-        type="button"
-        onClick={nextCategory}
-        aria-label="Next category"
-        className="cursor-pointer hover:underline"
-      >
-        {steps[stepIndex].label}
-      </button>
+      {compact && stepIndex === 0 ? (
+        // Compact, category All: just "Filter" (clicking cycles on).
+        <button
+          type="button"
+          onClick={nextCategory}
+          aria-label="Next category"
+          className="cursor-pointer"
+        >
+          Filter
+        </button>
+      ) : (
+        <>
+          {!compact && <span>Filter</span>}
+          <span>:</span>
+          <button
+            type="button"
+            onClick={nextCategory}
+            aria-label="Next category"
+            className="cursor-pointer hover:underline"
+          >
+            {steps[stepIndex].label}
+          </button>
+        </>
+      )}
       {filters.map((f) => (
         <button
           key={f.key}

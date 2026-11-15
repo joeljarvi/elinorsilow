@@ -9,7 +9,6 @@ import React, {
   useMemo,
 } from "react";
 import { Work, getAllWorks } from "../../lib/sanity";
-import { useNav } from "./NavContext";
 
 export type WorkSort = "year-latest" | "year-oldest" | "year" | "title" | "category";
 export type CategoryFilter =

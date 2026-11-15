@@ -1,6 +1,6 @@
 import { createClient } from "@sanity/client";
 import { createImageUrlBuilder } from "@sanity/image-url";
-import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import type { SanityImageSource } from "@sanity/image-url";
 
 export const client = createClient({
   projectId: "nk8tddh2",
@@ -11,7 +11,8 @@ export const client = createClient({
 
 const builder = createImageUrlBuilder(client);
 
-export function urlFor(source: SanityImageSource) {
+// A Sanity image's URL builder (works' image_url).
+function urlFor(source: SanityImageSource) {
   return builder.image(source);
 }
 
@@ -129,12 +130,6 @@ export type NewsItem = {
   location?: string;
 };
 
-export type News = {
-  current: NewsItem | null;
-  upcoming: NewsItem | null;
-  past: NewsItem | null;
-};
-
 export type LongBio = {
   bio: string;
 };
@@ -243,11 +238,6 @@ function transformExhibitionList(doc: any): Exhibition_list {
   };
 }
 
-// ---- In-memory cache ----
-
-let cachedWorks: Work[] | null = null;
-let cachedExhibitions: Exhibition[] | null = null;
-
 // ---- Fetch functions ----
 
 const WORK_FIELDS = `
@@ -300,18 +290,6 @@ export async function getExhibitionBySlug(
     { next: { revalidate: 60 } }
   );
   return data ? transformExhibition(data) : null;
-}
-
-export async function getCachedExhibitions(): Promise<Exhibition[]> {
-  if (cachedExhibitions) return cachedExhibitions;
-  cachedExhibitions = await getAllExhibitions();
-  return cachedExhibitions;
-}
-
-export async function getCachedWorks(): Promise<Work[]> {
-  if (cachedWorks) return cachedWorks;
-  cachedWorks = await getAllWorks();
-  return cachedWorks;
 }
 
 export async function getAllEducations(): Promise<Education[]> {
@@ -376,22 +354,6 @@ export async function getAllPress(): Promise<Press[]> {
     : [];
 }
 
-// The home page's background images (the Hero document): uploaded images
-// and picked works' images, as { url, alt }.
-export async function getHeroImages(): Promise<{ url: string; alt: string }[]> {
-  const data = await client.fetch(
-    `*[_type == "hero"][0].images[]{
-      "url": coalesce(asset->url, @->image.asset->url),
-      "alt": coalesce(alt, @->title, "")
-    }`,
-    {},
-    { next: { revalidate: 60 } }
-  );
-  return Array.isArray(data)
-    ? data.filter((i: { url?: string }) => Boolean(i?.url))
-    : [];
-}
-
 export async function getShortBio(): Promise<string> {
   const data = await client.fetch(
     `*[_type == "short_bio"][0] { bio }`,
@@ -401,19 +363,6 @@ export async function getShortBio(): Promise<string> {
   return data?.bio ?? "";
 }
 
-export async function getNews(): Promise<News> {
-  const data = await client.fetch(
-    `*[_type == "news"][0] { current, upcoming, past }`,
-    {},
-    { next: { revalidate: 60 } }
-  );
-  return {
-    current: data?.current ?? null,
-    upcoming: data?.upcoming ?? null,
-    past: data?.past ?? null,
-  };
-}
-
 export async function getLongBio(): Promise<string> {
   const data = await client.fetch(
     `*[_type == "long_bio"][0] { bio }`,
@@ -421,116 +370,6 @@ export async function getLongBio(): Promise<string> {
     { next: { revalidate: 60 } }
   );
   return data?.bio ?? "";
-}
-
-export type MediaItem = {
-  url: string;
-  title: string; // title of the work/exhibition using the image
-  // Metadata of that work/exhibition, in display order, empty parts dropped.
-  // Work: title, materials, dimensions, year.
-  // Exhibition: title, venue, city, year.
-  meta: string[];
-  // Where "Read more" goes (e.g. the exhibition's page), if anywhere.
-  href?: string;
-};
-
-// The most recently uploaded images that are actually used by a document
-// (unused uploads are skipped), newest first.
-export async function getLatestMedia(limit = 30): Promise<MediaItem[]> {
-  const data = await client.fetch(
-    `*[_type == "sanity.imageAsset"] | order(_createdAt desc) [0...$scan] {
-      url,
-      "doc": *[references(^._id)][0]{
-        _type, title, year, materials, dimensions, location, city
-      }
-    }`,
-    { scan: limit * 2 },
-    { next: { revalidate: 60 } }
-  );
-  return Array.isArray(data)
-    ? data
-        .filter((d: any) => d.url && d.doc?.title)
-        .slice(0, limit)
-        .map((d: any) => {
-          const doc = d.doc;
-          const parts =
-            doc._type === "work"
-              ? [doc.title, doc.materials, doc.dimensions, doc.year]
-              : [doc.title, doc.location, doc.city, doc.year];
-          return {
-            url: d.url,
-            title: String(doc.title),
-            meta: parts
-              .filter((p: unknown) => p !== null && p !== undefined && p !== "")
-              .map(String),
-          };
-        })
-    : [];
-}
-
-export type ActivityEntry = {
-  type: "work" | "exhibition" | "exhibition_list";
-  title: string;
-  slug: string;
-  updatedAt: string;
-  image?: string;
-};
-
-export async function getLatestWorks(limit = 10): Promise<Work[]> {
-  const data = await client.fetch(
-    `*[_type == "work"] | order(_createdAt desc) [0...$limit] { ${WORK_FIELDS} }`,
-    { limit },
-    { next: { revalidate: 60 } }
-  );
-  return Array.isArray(data) ? data.map(transformWork) : [];
-}
-
-export async function getFeaturedWorks(): Promise<Work[]> {
-  const data = await client.fetch(
-    `*[_type == "work" && featured == true] | order(_createdAt desc) { ${WORK_FIELDS} }`,
-    {},
-    { next: { revalidate: 60 } }
-  );
-  return Array.isArray(data) ? data.map(transformWork) : [];
-}
-
-export async function getLatestExhibition(): Promise<Exhibition | null> {
-  const data = await client.fetch(
-    `*[_type == "exhibition"] | order(_createdAt desc) [0] { ${EXHIBITION_FIELDS} }`,
-    {},
-    { next: { revalidate: 60 } }
-  );
-  return data ? transformExhibition(data) : null;
-}
-
-export async function getRecentActivity(limit = 12): Promise<ActivityEntry[]> {
-  const [works, exhibitions, exhibitionList] = await Promise.all([
-    client.fetch(
-      `*[_type == "work"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt, "image": image.asset->url }`,
-      { limit },
-      { next: { revalidate: 60 } }
-    ),
-    client.fetch(
-      `*[_type == "exhibition"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt, "image": images[0].asset->url }`,
-      { limit },
-      { next: { revalidate: 60 } }
-    ),
-    client.fetch(
-      `*[_type == "exhibition_list"] | order(_updatedAt desc) [0...$limit] { title, "slug": slug.current, _updatedAt }`,
-      { limit },
-      { next: { revalidate: 60 } }
-    ),
-  ]);
-
-  const combined: ActivityEntry[] = [
-    ...works.map((d: any) => ({ type: "work" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt, image: d.image })),
-    ...exhibitions.map((d: any) => ({ type: "exhibition" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt, image: d.image })),
-    ...exhibitionList.map((d: any) => ({ type: "exhibition_list" as const, title: d.title, slug: d.slug ?? "", updatedAt: d._updatedAt })),
-  ];
-
-  return combined
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, limit);
 }
 
 export async function getExhibitionList(): Promise<Exhibition_list[]> {

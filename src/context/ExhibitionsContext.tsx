@@ -16,7 +16,6 @@ import {
   Exhibition_list,
   getExhibitionBySlug as fetchExhibitionBySlug,
 } from "../../lib/sanity";
-import { useNav } from "./NavContext";
 
 import { useDebounce } from "use-debounce";
 

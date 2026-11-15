@@ -15,6 +15,43 @@ html {
   }
 }
 
+/* The load reveal (useFirstLoad): fades in, the steps staggered with
+   animation-delay — images, then title and metadata, then nav and filters. */
+@keyframes es-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.es-reveal {
+  animation: es-reveal 0.8s ease both;
+}
+
+/* Page transitions (View Transitions): a work's image morphs between the
+   feed and its page — zooming in, and out on the way back; the rest of the
+   page cross-fades. */
+::view-transition-group(*) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .es-reveal {
+    animation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 @theme inline {
   --text-shadow-xl: 0 2px 8px rgb(0 0 0 / 0.75);
   --font-areal: var(--font-areal);

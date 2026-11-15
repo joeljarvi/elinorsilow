@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getWorkBySlug } from "../../../lib/sanity";
 import TitleBlock from "@/components/TitleBlock";
 import BackdropClose from "@/components/BackdropClose";
+import { ViewTransition } from "react";
+import { vtName } from "@/lib/viewTransition";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -39,12 +41,16 @@ export default async function WorkPage({ params }: Props) {
       />
       {/* The work, centered in the viewport. */}
       {work.image_url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={`${work.image_url}?h=2000&auto=format`}
-          alt={work.title.rendered}
-          className="block w-auto h-auto max-w-full max-h-[75dvh] lg:max-h-[calc(100vh-4rem)] object-contain cursor-default"
-        />
+        // The same image as in the feed / grid (by name): it zooms in from
+        // there, and back out on the way back.
+        <ViewTransition name={vtName(`/${work.slug}`)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`${work.image_url}?h=2000&auto=format`}
+            alt={work.title.rendered}
+            className="block w-auto h-auto max-w-full max-h-[75dvh] lg:max-h-[calc(100vh-4rem)] object-contain cursor-default"
+          />
+        </ViewTransition>
       )}
     </BackdropClose>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, ViewTransition, type ReactNode } from "react";
 import { PAGE_TOP } from "@/lib/layout";
 
 // An exhibition's images, one under another, each with its caption below:
@@ -14,6 +14,7 @@ export default function ExhibitionImages({
   title,
   intro,
   outro,
+  transitionName,
 }: {
   images: { url: string; alt?: string; caption?: string }[];
   title: string;
@@ -21,6 +22,9 @@ export default function ExhibitionImages({
   intro?: ReactNode;
   // After the last image, at its left edge on desktop (the credits).
   outro?: ReactNode;
+  // The first image's view-transition name (vtName of the page's href): it
+  // zooms in from the exhibitions feed, and back out.
+  transitionName?: string;
 }) {
   const [open, setOpen] = useState<number | null>(null);
   useEffect(() => {
@@ -65,13 +69,15 @@ export default function ExhibitionImages({
                 onClick={() => setOpen(0)}
                 className="w-full flex justify-center cursor-zoom-in"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`${images[0].url}?w=2000&auto=format`}
-                  alt={alt(0)}
-                  loading="eager"
-                  className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
-                />
+                <ViewTransition name={transitionName}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`${images[0].url}?w=2000&auto=format`}
+                    alt={alt(0)}
+                    loading="eager"
+                    className="block w-auto h-auto max-w-full max-h-[calc(100vh-6rem)] object-contain"
+                  />
+                </ViewTransition>
               </button>
               <div className="lg:w-0 lg:min-w-full">{caption(0)}</div>
             </figure>
