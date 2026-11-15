@@ -134,13 +134,6 @@ export default function ESNav() {
     if (next) setFilterOpen(false);
   };
 
-  // The exhibitions list: the bar keeps its background, with the fade under
-  // it, on desktop too.
-  const onExhibitions = pathname === "/exhibitions";
-  // The works index (List / Grid) and /info: the bar on the page
-  // background.
-  const inIndex = showSizes && mode === "works" && indexOn;
-
   // Sanity Studio has its own UI — no site nav (or logo) on top of it.
   // The bar's height, as --nav-h (exhibition images fit between it and the
   // title block).
@@ -168,7 +161,7 @@ export default function ESNav() {
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
         ref={navRef}
-        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3  ${inIndex || pathname === "/info" ? "bg-background" : onExhibitions ? "" : "lg:bg-neutral-200"} ${navShown ? "" : "pointer-events-none"}`}
+        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3 bg-background ${navShown ? "" : "pointer-events-none"}`}
       >
         {/* A separator line along the top of the bar, mx-3 in from the
             edges. */}

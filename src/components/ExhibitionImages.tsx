@@ -27,10 +27,17 @@ export default function ExhibitionImages({
     if (open === null) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(null);
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
+  // The lightbox's Prev / Next: the previous / next image, wrapping around.
+  const step = (by: number) =>
+    setOpen((i) =>
+      i === null ? i : (i + by + images.length) % images.length,
+    );
   const alt = (i: number) => images[i].alt || (i === 0 ? title : "");
   // An image's caption (from Sanity), under it.
   const caption = (i: number) =>
@@ -131,6 +138,32 @@ export default function ExhibitionImages({
           >
             Close
           </button>
+          {/* Prev / Next (or ← / →), at the bottom right — where the page's
+              Prev / Next are (bottom-6 right-6, 18px): the previous / next
+              image, like a carousel. z-91: above the image. */}
+          {images.length > 1 && (
+            <span
+              onClick={(e) => e.stopPropagation()}
+              className="fixed bottom-3 right-3 lg:bottom-6 lg:right-6 z-[91] flex items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800"
+            >
+              <button
+                type="button"
+                onClick={() => step(-1)}
+                aria-label="Previous image"
+                className="cursor-pointer"
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                aria-label="Next image"
+                className="cursor-pointer"
+              >
+                Next
+              </button>
+            </span>
+          )}
         </div>
       )}
     </>

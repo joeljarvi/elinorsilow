@@ -87,6 +87,26 @@ export default async function ExhibitionPage({ params }: Props) {
       : null;
   const prev = step(-1);
   const next = step(1);
+  const prevNext = (
+    <>
+      {prev && (
+        <Link
+          href={`/exhibitions/${prev.slug}`}
+          aria-label={`Previous: ${prev.title.rendered}`}
+        >
+          Prev
+        </Link>
+      )}
+      {next && (
+        <Link
+          href={`/exhibitions/${next.slug}`}
+          aria-label={`Next: ${next.title.rendered}`}
+        >
+          Next
+        </Link>
+      )}
+    </>
+  );
   return (
     <main className="flex flex-col px-3 lg:px-6 pb-6 text-neutral-800">
       {/* The title, fixed at the top left while the page scrolls, on the
@@ -102,28 +122,9 @@ export default async function ExhibitionPage({ params }: Props) {
       </div>
       {/* Back to top, fixed at the bottom left — desktop. */}
       <ScrollToTop className="hidden lg:block fixed bottom-6 left-6 z-80 font-gensco text-[18px] leading-tight text-neutral-800" />
-      {/* Prev / Next, fixed at the bottom right. */}
-      <nav className="fixed bottom-3 right-3 lg:bottom-6 lg:right-6 z-80 flex items-baseline gap-x-12 font-gensco text-[18px] leading-tight text-neutral-800">
-        {(prev || next) && (
-          <span className="flex items-baseline gap-x-3">
-            {prev && (
-              <Link
-                href={`/exhibitions/${prev.slug}`}
-                aria-label={`Previous: ${prev.title.rendered}`}
-              >
-                Prev
-              </Link>
-            )}
-            {next && (
-              <Link
-                href={`/exhibitions/${next.slug}`}
-                aria-label={`Next: ${next.title.rendered}`}
-              >
-                Next
-              </Link>
-            )}
-          </span>
-        )}
+      {/* Prev / Next, fixed at the bottom right — desktop. */}
+      <nav className="hidden lg:flex fixed bottom-6 right-6 z-80 items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800">
+        {prevNext}
       </nav>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
@@ -149,6 +150,12 @@ export default async function ExhibitionPage({ params }: Props) {
             )
           }
         />
+      </div>
+      {/* Mobile: Back to top (left) and Prev / Next (right), at the bottom
+          of the page, below the credits. */}
+      <div className="lg:hidden flex items-baseline justify-between pt-12 pb-3 font-gensco text-[18px] leading-tight text-neutral-800">
+        <ScrollToTop always />
+        <span className="flex items-baseline gap-x-3">{prevNext}</span>
       </div>
       {/* Related: three other exhibitions, side by side — each its first
           image, its title and metadata showing on hover; clicking one opens

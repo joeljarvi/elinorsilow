@@ -3,8 +3,14 @@
 import { useEffect, useState } from "react";
 
 // "Back to top": scrolls the page smoothly to the top. Shown only once the
-// page is scrolled to the bottom (within a few pixels).
-export default function ScrollToTop({ className = "" }: { className?: string }) {
+// page is scrolled to the bottom (within a few pixels), unless `always`.
+export default function ScrollToTop({
+  className = "",
+  always = false,
+}: {
+  className?: string;
+  always?: boolean;
+}) {
   const [atBottom, setAtBottom] = useState(false);
   useEffect(() => {
     const check = () =>
@@ -20,7 +26,7 @@ export default function ScrollToTop({ className = "" }: { className?: string }) 
       window.removeEventListener("resize", check);
     };
   }, []);
-  if (!atBottom) return null;
+  if (!always && !atBottom) return null;
   return (
     <button
       type="button"
