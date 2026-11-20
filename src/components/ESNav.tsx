@@ -10,7 +10,6 @@ import {
   type WorksLayout,
 } from "@/context/IndexContext";
 import FilterSettings from "./FilterMenu";
-import ActiveFilters from "./ActiveFilters";
 import { Fragment, useRef } from "react";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
 import { useFirstLoad, REVEAL_NAV } from "@/lib/firstLoad";
@@ -115,15 +114,16 @@ export default function ESNav() {
 
   return (
     <>
-      {/* Back (an exhibition's or work's own page), fixed top right — the
-          only nav there. */}
+      {/* Back / Close (an exhibition's / a work's own page), fixed top
+          right — the only nav there. */}
       {showBack && (
         <button
           type="button"
           onClick={goBack}
           className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[18px] leading-tight text-neutral-800 cursor-pointer"
         >
-          Back
+          {/* A work's page: "Close"; an exhibition's: "Back". */}
+          {workPage ? "Close" : "Back"}
         </button>
       )}
       {/* The nav, a bar fixed across the bottom (mobile and desktop alike):
@@ -208,17 +208,12 @@ export default function ESNav() {
                 style={navReveal(navShown, 2).style}
                 className={`hidden w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
               />
-              {/* Mobile: the filters ("Filter" / ": Paintings"), at the
-                right of the bar — with the feed only (not in the index), and
-                not while the menu is open (desktop: top right of the feed). */}
-              {!(mode === "works" && indexOn) && !open && (
-                <ActiveFilters compact className="flex lg:hidden" />
-              )}
-              {/* Desktop: Index (and, on, List / Grid), works only — at the
-                right of the bar (mobile: in the menu overlay). */}
+              {/* Index (and, on, List / Grid): works only — at the right
+                of the bar, mobile and desktop (hidden on mobile while the
+                menu is open). */}
               {mode === "works" &&
                 layoutButtons(
-                  `hidden lg:flex ${navReveal(navShown, 3).className}`,
+                  `${open ? "hidden lg:flex" : "flex"} ${navReveal(navShown, 3).className}`,
                 )}
             </>
           )}
@@ -295,13 +290,6 @@ export default function ESNav() {
                 >
                   {label}
                 </Link>
-                {/* On Works: Index (and, on, List / Grid), right below
-                    Works — picking one closes the menu. */}
-                {view === "works" && showSizes && mode === "works" && (
-                  <div onClick={() => setOpenDesktopNav(false)}>
-                    {layoutButtons("flex")}
-                  </div>
-                )}
               </Fragment>
             ))}
           </div>

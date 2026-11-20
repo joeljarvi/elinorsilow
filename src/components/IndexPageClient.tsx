@@ -184,6 +184,12 @@ function Feed({
         ) : (
           <span />
         )}
+        {/* Mobile: compact ("Filter" / ": Paintings"); desktop: "Filter :
+            All". */}
+        <ActiveFilters
+          compact
+          className={`flex lg:hidden shrink-0 pointer-events-auto font-gensco text-[18px] leading-tight text-neutral-800 ${firstLoad ? REVEAL_NAV : ""}`}
+        />
         <ActiveFilters
           className={`hidden lg:flex shrink-0 pointer-events-auto font-gensco text-[18px] leading-tight text-neutral-800 ${firstLoad ? REVEAL_NAV : ""}`}
         />

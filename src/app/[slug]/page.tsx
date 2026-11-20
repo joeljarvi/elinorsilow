@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getWorkBySlug } from "../../../lib/sanity";
+import Link from "next/link";
+import { getAllWorks, getWorkBySlug } from "../../../lib/sanity";
 import TitleBlock from "@/components/TitleBlock";
 import BackdropClose from "@/components/BackdropClose";
 import { ViewTransition } from "react";
@@ -19,10 +20,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // A work's own page: the title and "year, materials, dimensions" at the top
 // left, the work centered in the viewport. Clicking anywhere but the image
-// goes back to the list.
+// goes back to the list. Prev / Next at the bottom right.
 export default async function WorkPage({ params }: Props) {
-  const work = await getWorkBySlug((await params).slug);
+  const [work, all] = await Promise.all([
+    getWorkBySlug((await params).slug),
+    getAllWorks(),
+  ]);
   if (!work) notFound();
+  // Prev / Next: the works in the feed's default order (latest first),
+  // wrapping around at either end.
+  const works = [...all].sort((a, b) => b.date.localeCompare(a.date));
+  const at = works.findIndex((w) => w.id === work.id);
+  const step = (by: number) =>
+    works.length > 1 && at !== -1
+      ? works[(at + by + works.length) % works.length]
+      : null;
+  const prev = step(-1);
+  const next = step(1);
   const metadata = [work.acf.year, work.acf.materials, work.acf.dimensions]
     .filter(Boolean)
     .join(", ");
@@ -37,8 +51,30 @@ export default async function WorkPage({ params }: Props) {
         stacked
         title={work.title.rendered}
         metadata={metadata}
-        className="absolute top-0 left-0 h-12 lg:h-18 flex justify-center text-[18px]! px-3 lg:px-6 pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0 max-w-md"
+        className="absolute top-0 left-0 h-12 lg:h-18 flex justify-center text-[18px]! px-3 lg:px-6 pt-3 lg:pt-6 pr-20 lg:pr-0 min-w-0 max-w-sm"
       />
+      {/* Prev / Next, fixed at the bottom right (as on an exhibition's
+          page). */}
+      {(prev || next) && (
+        <nav className="fixed bottom-3 right-3 lg:bottom-6 lg:right-6 z-80 flex items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800 cursor-default">
+          {prev && (
+            <Link
+              href={`/${prev.slug}`}
+              aria-label={`Previous: ${prev.title.rendered}`}
+            >
+              Prev
+            </Link>
+          )}
+          {next && (
+            <Link
+              href={`/${next.slug}`}
+              aria-label={`Next: ${next.title.rendered}`}
+            >
+              Next
+            </Link>
+          )}
+        </nav>
+      )}
       {/* The work, centered in the viewport. */}
       {work.image_url && (
         // The same image as in the feed / grid (by name): it zooms in from
