@@ -12,7 +12,12 @@ import {
 import FilterSettings from "./FilterMenu";
 import { Fragment, useRef } from "react";
 import { useCssHeightVar } from "@/lib/useCssHeightVar";
-import { useFirstLoad, REVEAL_NAV } from "@/lib/firstLoad";
+import {
+  useFirstLoad,
+  useTyped,
+  REVEAL_NAV,
+  REVEAL_WAIT,
+} from "@/lib/firstLoad";
 
 const LAYOUT_LABEL: Record<WorksLayout, string> = {
   list: "List",
@@ -40,11 +45,12 @@ export default function ESNav() {
   // List settings — shown with the works / exhibitions lists: the Filter menu
   // on desktop, S / M / L in the mobile menu.
   const showSizes = onIndex && mode !== "info";
-  // Works: Index. Off, the image feed; clicking it shows the list, with
-  // List / Grid beside it to switch between the index's two views.
+  // Index (works and exhibitions). Off, the image feed; clicking it shows
+  // the list — on works with List / Grid beside it to switch between the
+  // index's two views (exhibitions: the list only).
   const { worksLayout, setWorksLayout } = useIndex();
   const indexOn = worksLayout !== "image";
-  const indexViews: WorksLayout[] = ["list", "grid"];
+  const indexViews: WorksLayout[] = mode === "works" ? ["list", "grid"] : [];
   const layoutButtons = (className: string) => (
     <span className={`items-baseline gap-x-3 normal-case ${className}`}>
       <button
@@ -55,7 +61,7 @@ export default function ESNav() {
       >
         Index
       </button>
-      {indexOn && (
+      {indexOn && indexViews.length > 0 && (
         <>
           <span>:</span>
           {indexViews.map((v) => (
@@ -70,6 +76,16 @@ export default function ESNav() {
             </button>
           ))}
         </>
+      )}
+      {/* Open: Close — back to the image feed. */}
+      {indexOn && (
+        <button
+          type="button"
+          onClick={() => setWorksLayout("image")}
+          className="cursor-pointer normal-case"
+        >
+          Close
+        </button>
       )}
     </span>
   );
@@ -108,22 +124,24 @@ export default function ESNav() {
   const navRef = useRef<HTMLElement>(null);
   // The load reveal: the bar fades in last (after the images and title).
   const firstLoad = useFirstLoad();
+  // …on the feeds, after the title has typed itself out.
+  const typed = useTyped(firstLoad && showSizes);
   useCssHeightVar(navRef, "--nav-h", !showBack);
 
   if (pathname.startsWith("/studio")) return null;
 
   return (
     <>
-      {/* Back / Close (an exhibition's / a work's own page), fixed top
-          right — the only nav there. */}
+      {/* Close (an exhibition's or a work's own page), fixed top right —
+          the only nav there. */}
       {showBack && (
         <button
           type="button"
           onClick={goBack}
-          className="fixed top-3 lg:top-6 right-3 lg:right-6 z-80 font-gensco text-[18px] lg:text-[18px] leading-tight text-neutral-800 cursor-pointer"
+          // 12px in from the top-right corner, on every screen.
+          className={`fixed top-3 right-3 z-80 font-gensco text-[18px] leading-tight text-neutral-800 cursor-pointer`}
         >
-          {/* A work's page: "Close"; an exhibition's: "Back". */}
-          {workPage ? "Close" : "Back"}
+          Close
         </button>
       )}
       {/* The nav, a bar fixed across the bottom (mobile and desktop alike):
@@ -132,7 +150,7 @@ export default function ESNav() {
           opens the overlay below. Stays above modals (z-80 > their z-70). */}
       <nav
         ref={navRef}
-        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-6 pt-0 pb-3 lg:pb-3 bg-background ${navShown ? "" : "pointer-events-none"} ${firstLoad ? REVEAL_NAV : ""}`}
+        className={`fixed  inset-x-0 bottom-0 z-80 ${showBack ? "hidden" : "flex"} items-end justify-between gap-x-3 lg:gap-x-6 h-12 lg:h-12 px-3 lg:px-3 pt-0 pb-3 lg:pb-3 bg-background ${navShown ? "" : "pointer-events-none"} ${firstLoad && showSizes ? (typed ? REVEAL_NAV : REVEAL_WAIT) : ""}`}
       >
         {/* A separator line along the top of the bar, mx-3 in from the
             edges. */}
@@ -194,7 +212,7 @@ export default function ESNav() {
             and Vertical / Grid are in the Filter menu there). */}
         {/* Right side (works / exhibitions): search, List / Image and
             Filter. */}
-        <div className="flex items-baseline gap-x-12 font-gensco text-[18px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
+        <div className="flex items-baseline gap-x-3 font-gensco text-[18px] font-normal tracking-wide leading-tight whitespace-nowrap text-neutral-800">
           {showSizes && (
             <>
               {/* Search (the shared index search: filters the list) —
@@ -208,13 +226,12 @@ export default function ESNav() {
                 style={navReveal(navShown, 2).style}
                 className={`hidden w-32 p-0 border-0 bg-transparent outline-none normal-case placeholder:text-neutral-400 ${navReveal(navShown, 2).className}`}
               />
-              {/* Index (and, on, List / Grid): works only — at the right
-                of the bar, mobile and desktop (hidden on mobile while the
-                menu is open). */}
-              {mode === "works" &&
-                layoutButtons(
-                  `${open ? "hidden lg:flex" : "flex"} ${navReveal(navShown, 3).className}`,
-                )}
+              {/* Index (and, on works, List / Grid) — at the right of the
+                bar, mobile and desktop (hidden on mobile while the menu is
+                open). */}
+              {layoutButtons(
+                `${open ? "hidden lg:flex" : "flex"} ${navReveal(navShown, 3).className}`,
+              )}
             </>
           )}
           {/* Info: Instagram, at the right of the bar ("IG" on mobile). */}

@@ -86,6 +86,7 @@ export default function InfoPageClient({
       city: e.acf.city,
       type: type(e.acf.exhibition_type),
       slug: e.slug as string | undefined,
+      created: e.date,
     })),
     ...exhibitionList
       .filter((e) => !titles.has(norm(e.title.rendered)))
@@ -97,6 +98,7 @@ export default function InfoPageClient({
         city: e.acf.city,
         type: type(e.acf.exhibition_type),
         slug: undefined as string | undefined,
+        created: e.date,
       })),
   ]
     .filter((e) => matches(e.title, e.venue, e.city, e.type, e.year))
@@ -116,10 +118,17 @@ export default function InfoPageClient({
   // Everything with a year — exhibitions, grants, press — in one list,
   // newest year first; each entry says what it is (exhibitions by their
   // type).
-  const dated: { id: string; year: number; node: ReactNode }[] = [
+  const dated: {
+    id: string;
+    year: number;
+    // When it was added to the CMS — newest first within a year.
+    created: string;
+    node: ReactNode;
+  }[] = [
     ...history.map((e) => ({
       id: e.id,
       year: Number(e.year),
+      created: e.created,
       node: (
         <Entry
           key={e.id}
@@ -139,6 +148,7 @@ export default function InfoPageClient({
     ...shownGrants.map((g) => ({
       id: `grant-${g.id}`,
       year: Number(g.acf.year),
+      created: g.date,
       node: (
         <Entry
           key={`grant-${g.id}`}
@@ -150,6 +160,7 @@ export default function InfoPageClient({
     ...shownPress.map((p) => ({
       id: `press-${p.id}`,
       year: Number(p.year),
+      created: p.date,
       node: (
         <Entry
           key={`press-${p.id}`}
@@ -166,7 +177,10 @@ export default function InfoPageClient({
         />
       ),
     })),
-  ].filter((d) => d.year > 0);
+  ]
+    .filter((d) => d.year > 0)
+    // Newest year first; within a year, the last added first.
+    .sort((a, b) => b.year - a.year || b.created.localeCompare(a.created));
   // Grouped by year, newest first.
   const years = [...new Set(dated.map((d) => d.year))].sort((a, b) => b - a);
 
@@ -231,7 +245,7 @@ export default function InfoPageClient({
 
       {/* Everything below the title — contact, then the sections — in one
           column, 24px. */}
-      <div className="flex flex-col max-w-4xl pl-3 pr-12 lg:px-6 pt-3 lg:pt-6 pb-24 font-gensco text-[18px] lg:text-[24px] leading-tight">
+      <div className="flex flex-col max-w-4xl pl-3 pr-12 lg:px-3 pt-3 lg:pt-3 pb-24 font-gensco text-[18px] lg:text-[24px] leading-tight">
         {sections.map((section) => (
           <div key={section.key} className="flex flex-col mb-6">
             <h2 className="font-gensco normal-case text-[18px] lg:text-[24px] leading-tight indent-0 mb-3 lg:indent-0 lg:mb-3">

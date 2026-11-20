@@ -25,11 +25,14 @@ const EX_CATEGORY_STEPS = [
 export default function ActiveFilters({
   className = "",
   compact = false,
+  allAsFilter = false,
 }: {
   className?: string;
   // Mobile (the nav bar): no "Filter" label — just "Filter" while the
   // category is All, else ": Paintings" etc.
   compact?: boolean;
+  // Category All: just "Filter" (else "Filter : Paintings" etc.).
+  allAsFilter?: boolean;
 }) {
   const {
     mode,
@@ -85,7 +88,7 @@ export default function ActiveFilters({
     <div
       className={`flex-wrap items-baseline justify-end gap-x-3 normal-case ${className}`}
     >
-      {compact && stepIndex === 0 ? (
+      {(compact || allAsFilter) && stepIndex === 0 ? (
         // Compact, category All: just "Filter" (clicking cycles on).
         <button
           type="button"

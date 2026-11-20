@@ -33,6 +33,9 @@ export type Work = {
   };
   image_url?: string;
   featured?: boolean;
+  // The position set by dragging in the Studio's Works list (a sortable
+  // string; unset until the list has been ordered).
+  orderRank?: string;
 };
 
 export type AcfImage = {
@@ -58,16 +61,6 @@ export type Exhibition = {
     city: string;
     description?: string;
     credits?: string;
-    image_1?: AcfImage;
-    image_2?: AcfImage;
-    image_3?: AcfImage;
-    image_4?: AcfImage;
-    image_5?: AcfImage;
-    image_6?: AcfImage;
-    image_7?: AcfImage;
-    image_8?: AcfImage;
-    image_9?: AcfImage;
-    image_10?: AcfImage;
     work_1?: string;
     work_2?: string;
     work_3?: string;
@@ -79,6 +72,8 @@ export type Exhibition = {
     work_9?: string;
     work_10?: string;
   };
+  // Every image, in order — as many as the exhibition has.
+  images: AcfImage[];
   featured?: boolean;
   upcoming?: boolean;
 };
@@ -98,6 +93,8 @@ export type Education = {
 export type Grant = {
   id: string;
   slug: string;
+  // When it was added to the CMS (_createdAt).
+  date: string;
   title?: { rendered: string };
   acf: {
     title: string;
@@ -117,6 +114,8 @@ export type Biography = {
 
 export type Press = {
   id: string;
+  // When it was added to the CMS (_createdAt).
+  date: string;
   title: string;
   author: string;
   link: string;
@@ -174,24 +173,25 @@ function transformWork(doc: any): Work {
     },
     image_url,
     featured: doc.featured ?? false,
+    orderRank: doc.orderRank || undefined,
   };
 }
 
 function transformExhibition(doc: any): Exhibition {
-  const images: Record<string, AcfImage> = {};
-  if (Array.isArray(doc.images)) {
-    doc.images.slice(0, 10).forEach((img: any, i: number) => {
-      images[`image_${i + 1}`] = {
-        id: i,
-        url: img.url || "",
-        alt: img.alt || "",
-        caption: img.caption || "",
-        description: img.description || "",
-        width: img.width,
-        height: img.height,
-      };
-    });
-  }
+  // Every image (no limit), skipping any without a file.
+  const images: AcfImage[] = Array.isArray(doc.images)
+    ? doc.images
+        .filter((img: any) => img?.url)
+        .map((img: any, i: number) => ({
+          id: i,
+          url: img.url,
+          alt: img.alt || "",
+          caption: img.caption || "",
+          description: img.description || "",
+          width: img.width,
+          height: img.height,
+        }))
+    : [];
 
   const works: Record<string, string> = {};
   if (Array.isArray(doc.related_works)) {
@@ -214,9 +214,9 @@ function transformExhibition(doc: any): Exhibition {
       city: doc.city || "",
       description: doc.description,
       credits: doc.credits,
-      ...images,
       ...works,
     },
+    images,
     featured: doc.featured ?? false,
     upcoming: doc.upcoming ?? false,
   };
@@ -242,7 +242,7 @@ function transformExhibitionList(doc: any): Exhibition_list {
 
 const WORK_FIELDS = `
   _id, "slug": slug.current, title, year, category,
-  materials, dimensions, exhibition, status, description, image, featured, _createdAt
+  materials, dimensions, exhibition, status, description, image, featured, orderRank, _createdAt
 `;
 
 const EXHIBITION_FIELDS = `
@@ -258,7 +258,8 @@ const EXHIBITION_FIELDS = `
 
 export async function getAllWorks(): Promise<Work[]> {
   const data = await client.fetch(
-    `*[_type == "work"] | order(year desc) { ${WORK_FIELDS} }`,
+    // Hidden works (hidden == true) stay in the CMS, off the site.
+    `*[_type == "work" && hidden != true] | order(year desc) { ${WORK_FIELDS} }`,
     {},
     { next: { revalidate: 60 } }
   );
@@ -267,7 +268,7 @@ export async function getAllWorks(): Promise<Work[]> {
 
 export async function getWorkBySlug(slug: string): Promise<Work | null> {
   const data = await client.fetch(
-    `*[_type == "work" && slug.current == $slug][0] { ${WORK_FIELDS} }`,
+    `*[_type == "work" && hidden != true && slug.current == $slug][0] { ${WORK_FIELDS} }`,
     { slug },
     { next: { revalidate: 60 } }
   );
@@ -317,7 +318,7 @@ export async function getAllEducations(): Promise<Education[]> {
 export async function getAllGrants(): Promise<Grant[]> {
   const data = await client.fetch(
     `*[_type == "grant"] | order(year desc) {
-      _id, "slug": slug.current, title, institution, year
+      _id, "slug": slug.current, title, institution, year, _createdAt
     }`,
     {},
     { next: { revalidate: 60 } }
@@ -326,6 +327,7 @@ export async function getAllGrants(): Promise<Grant[]> {
     ? data.map((doc: any) => ({
         id: doc._id,
         slug: doc.slug || "",
+        date: doc._createdAt || "",
         acf: {
           title: (doc.title || "").normalize("NFC"),
           institution: doc.institution
@@ -339,13 +341,14 @@ export async function getAllGrants(): Promise<Grant[]> {
 
 export async function getAllPress(): Promise<Press[]> {
   const data = await client.fetch(
-    `*[_type == "press"] | order(year asc) { _id, title, author, link, year }`,
+    `*[_type == "press"] | order(year asc) { _id, title, author, link, year, _createdAt }`,
     {},
     { next: { revalidate: 60 } }
   );
   return Array.isArray(data)
     ? data.map((doc: any) => ({
         id: doc._id,
+        date: doc._createdAt || "",
         title: (doc.title || "").normalize("NFC"),
         author: (doc.author || "").normalize("NFC"),
         link: doc.link || "",

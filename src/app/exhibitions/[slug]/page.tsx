@@ -9,19 +9,12 @@ import {
 import TitleBlock from "@/components/TitleBlock";
 import ExhibitionImages from "@/components/ExhibitionImages";
 import ScrollToTop from "@/components/ScrollToTop";
+import ShowAtBottom from "@/components/ShowAtBottom";
 import { vtName } from "@/lib/viewTransition";
 
-// An exhibition's images (image_1 … image_10), in order.
+// An exhibition's images, in order — all of them.
 function exhibitionImages(ex: Exhibition) {
-  const acf = ex.acf as Record<string, unknown>;
-  return Array.from({ length: 10 }, (_, i) => acf[`image_${i + 1}`])
-    .map(
-      (img) =>
-        img as { url?: string; alt?: string; caption?: string } | undefined,
-    )
-    .filter((img): img is { url: string; alt?: string; caption?: string } =>
-      Boolean(img?.url),
-    );
+  return ex.images;
 }
 
 // "year, venue, city, type".
@@ -83,33 +76,34 @@ export default async function ExhibitionPage({ params }: Props) {
           href={`/exhibitions/${next.slug}`}
           aria-label={`Next: ${next.title.rendered}`}
         >
-          Next
+          Next exhibition
         </Link>
       )}
     </>
   );
   return (
-    <main className="flex flex-col px-3 lg:px-6 pb-6 text-neutral-800">
+    <main className="flex flex-col px-3 pb-3 text-neutral-800">
       {/* The title, fixed at the top left while the page scrolls, on the
           page background fading out at its bottom edge (as on the lists).
           Clear of Back at the top right. */}
-      <div className="fixed inset-x-0 top-0 pt-3 lg:pt-6 z-70  px-3 lg:px-6     bg-background lg:bg-transparent pointer-events-none">
+      <div className="fixed inset-x-0 top-0 pt-3 lg:pt-3 z-70 px-3 pb-3 bg-background lg:px-3 pointer-events-none">
         <TitleBlock
           heading
           title={ex.title.rendered}
           metadata={metadata}
-          className="text-[18px]! max-w-1/3 mb-3 lg:mb-0"
+          className="text-[18px]! max-w-1/3 mb-3 lg:mb-0 "
         />
       </div>
       {/* Back to top, fixed at the bottom left — desktop. */}
-      <ScrollToTop className="hidden lg:block fixed bottom-6 left-6 z-80 font-gensco text-[18px] leading-tight text-neutral-800" />
-      {/* Prev / Next, fixed at the bottom right — desktop. */}
-      <nav className="hidden lg:flex fixed bottom-6 right-6 z-80 items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800">
+      <ScrollToTop className="hidden lg:block fixed bottom-3 left-3 z-80 font-gensco text-[18px] leading-tight text-neutral-800" />
+      {/* Prev / Next, fixed at the bottom right — desktop, once scrolled
+          to the end of the page. */}
+      <ShowAtBottom className="hidden lg:flex fixed bottom-3 right-3 z-80 items-baseline gap-x-3 font-gensco text-[18px] leading-tight text-neutral-800">
         {prevNext}
-      </nav>
+      </ShowAtBottom>
       {/* The description, then all the images, one under another — centered,
           starting below the fixed title. */}
-      <div className="flex flex-col items-center gap-y-2">
+      <div className="flex flex-col items-center gap-y-3">
         {/* The description and the first image share the first screen. */}
         <ExhibitionImages
           images={images}
@@ -139,7 +133,6 @@ export default async function ExhibitionPage({ params }: Props) {
         <ScrollToTop always />
         <span className="flex items-baseline gap-x-3">{prevNext}</span>
       </div>
-      
     </main>
   );
 }

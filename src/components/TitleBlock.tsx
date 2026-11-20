@@ -32,29 +32,26 @@ export default function TitleBlock({
   if (stacked)
     return (
       <div
-        className={`flex flex-col font-gensco text-[21px] lg:text-[24px] text-left items-start justify-start leading-tight max-w-6xl text-neutral-800 ${className}`}
+        className={`flex flex-col font-gensco text-[21px] lg:text-[18px] text-left items-start justify-start leading-tight max-w-6xl text-neutral-800 ${className}`}
       >
         <Title className={`uppercase ${textWidth}`}>{title}</Title>
-        {metadata && <p className={textWidth}>{metadata},</p>}
+        {metadata && <p className={textWidth}>{metadata}</p>}
       </div>
     );
-  // Otherwise, desktop: one run of text, wrapping word by word as a whole:
-  // "TITLE, metadata, Read more" ("Read more" never split across lines).
-  // Mobile: the title on its own line (no comma), the metadata (and Read
-  // more) below.
+  // Otherwise one run of text (mobile and desktop), wrapping word by word
+  // as a whole: "TITLE, metadata, Read more" ("Read more" never split
+  // across lines).
   return (
     <div
-      className={`font-gensco text-[21px] lg:text-[24px] text-left leading-tight max-w-6xl text-neutral-800 ${className}`}
+      className={`font-gensco text-[18px] lg:text-[18px] text-left leading-tight max-w-6xl text-neutral-800 ${className}`}
     >
-      <Title className="block lg:inline uppercase">
-        {title}
-        <span className="hidden lg:inline">,</span>
-      </Title>
-      {" "}
-      {/* The metadata and Read more — mobile: their own block, under the
-          title; desktop: inline after the title. */}
-      <span className="block max-w-full lg:inline">
-        {metadata && <span>{metadata},</span>}
+      <Title className="inline uppercase">{title},</Title>{" "}
+      <span>
+        {/* A comma after the metadata only to lead into Read more. */}
+        {metadata && (
+          <span>{metadata}
+            {href ? "," : ""}</span>
+        )}
         {href && (
           <>
             {" "}

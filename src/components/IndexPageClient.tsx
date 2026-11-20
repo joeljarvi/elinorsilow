@@ -5,8 +5,12 @@ import { vtName } from "@/lib/viewTransition";
 import {
   useFirstLoad,
   REVEAL_IMAGES,
+  REVEAL_FILTER,
+  REVEAL_WAIT,
   REVEAL_TITLE,
-  REVEAL_NAV,
+  TITLE_MS,
+  TYPED_EVENT,
+  useTyped,
 } from "@/lib/firstLoad";
 import { useWorks } from "@/context/WorksContext";
 import { useExhibitions } from "@/context/ExhibitionsContext";
@@ -24,12 +28,9 @@ import { useUI, type ImageSize } from "@/context/UIContext";
 
 const BATCH = 24;
 
-// image_1 … image_10 of an exhibition, in order, skipping empty slots.
+// An exhibition's image URLs, in order.
 function exhibitionImageUrls(ex: Exhibition): string[] {
-  const acf = ex.acf as Record<string, unknown>;
-  return Array.from({ length: 10 }, (_, i) => acf[`image_${i + 1}`])
-    .map((img) => (img as { url?: string } | undefined)?.url)
-    .filter((url): url is string => Boolean(url));
+  return ex.images.map((img) => img.url);
 }
 
 // One entry in a feed (see Feed): a work or an exhibition.
@@ -39,6 +40,9 @@ type FeedItem = {
   // "year, materials, dimensions" (works) / "year, venue, city, type"
   // (exhibitions).
   metadata: string;
+  // The metadata in the desktop row's order (works): materials, then
+  // "dimensions, year".
+  metaLines?: string[];
   href: string;
   images: string[];
 };
@@ -50,6 +54,10 @@ function workFeedItem(w: Work): FeedItem {
     metadata: [w.acf.year, w.acf.materials, w.acf.dimensions]
       .filter(Boolean)
       .join(", "),
+    metaLines: [
+      w.acf.materials,
+      [w.acf.dimensions, w.acf.year].filter(Boolean).join(", "),
+    ].filter(Boolean),
     href: `/${w.slug}`,
     images: w.image_url ? [w.image_url] : [],
   };
@@ -68,8 +76,8 @@ function exhibitionFeedItem(ex: Exhibition): FeedItem {
       .filter(Boolean)
       .join(", "),
     href: `/exhibitions/${ex.slug}`,
-    // The first four only (the rest are on its page).
-    images: exhibitionImageUrls(ex).slice(0, 4),
+    // The first three only, the cover included (the rest are on its page).
+    images: exhibitionImageUrls(ex).slice(0, 3),
   };
 }
 
@@ -91,7 +99,7 @@ const GRID_START = [
 // The List view's titles (works and exhibitions alike): stacked, centered,
 // Gensco 36px, normal case (as the mobile menu); each a link (TITLE_LINK).
 const TITLE_LIST =
-  "flex min-h-dvh flex-col items-start justify-start gap-y-0 px-3 lg:px-6 pt-3 lg:pt-6 pb-0 font-gensco text-[24px] leading-[1.3] lg:text-[28px] lg:leading-tight normal-case text-left text-neutral-800 ";
+  "flex min-h-dvh flex-col items-start justify-start gap-y-0 p-3 font-gensco text-[24px] leading-[1.3] lg:text-[28px] lg:leading-tight normal-case text-left text-neutral-800 ";
 const TITLE_LINK = "hover:text-purple-300 transition-all";
 
 // Works / exhibitions as a feed: one item under another, at least a screen
@@ -108,6 +116,11 @@ function Feed({
   align = "center",
   gap = "",
   top = "",
+  titleBelow = false,
+  fullWidth = false,
+  horizontal = false,
+  onNearEnd,
+  peek = false,
   titleClassName = "",
   totalItems,
 }: {
@@ -127,6 +140,21 @@ function Feed({
   gap?: string;
   // The space above the first item (a static Tailwind class).
   top?: string;
+  // Mobile: each item's title in the flow, just below its images (works),
+  // instead of fixed at the top left (exhibitions).
+  titleBelow?: boolean;
+  // Every image the full width of the page, the fixed title over them on
+  // no background (exhibitions).
+  fullWidth?: boolean;
+  // Desktop: every image in one row (the same height), scrolled sideways —
+  // the mouse wheel scrolls it too.
+  horizontal?: boolean;
+  // Sideways: called when the item in view is near the end of `items` (to
+  // load more — the page's "load more" point is out of reach then).
+  onNearEnd?: () => void;
+  // Sideways: the space before each item set so that, with the item before
+  // it at the left edge (px-6), exactly half of it shows at the right edge.
+  peek?: boolean;
   // Extra classes for the fixed title block (a static Tailwind class).
   titleClassName?: string;
   // The image size setting: the images' height limit.
@@ -136,12 +164,50 @@ function Feed({
   // The load reveal, on the site's first load only: images, then the
   // title, then the filters (with the nav bar).
   const firstLoad = useFirstLoad();
+  // …the images and filter wait for the title to finish typing.
+  const typed = useTyped(firstLoad);
+  const reveal = (cls: string) =>
+    firstLoad ? (typed ? cls : REVEAL_WAIT) : "";
+  // The title fades in as soon as there's one to show; once it has, the
+  // rest follows (TYPED_EVENT).
+  const titleShown = Boolean(items[active]);
+  useEffect(() => {
+    if (!firstLoad || !titleShown) return;
+    const t = setTimeout(
+      () => window.dispatchEvent(new Event(TYPED_EVENT)),
+      TITLE_MS,
+    );
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [titleShown]);
   const refs = useRef<(HTMLElement | null)[]>([]);
   const router = useRouter();
   // The title block's height, as --title-h (exhibition images fit between
   // it and the nav bar).
   const titleRef = useRef<HTMLDivElement>(null);
   useCssHeightVar(titleRef, "--title-h", Boolean(items[active]));
+  // The sideways row (horizontal, desktop).
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [sideways, setSideways] = useState(false);
+  useEffect(() => {
+    if (!horizontal) return;
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setSideways(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, [horizontal]);
+  // Sideways: the mouse wheel (up / down) scrolls the row left / right.
+  useEffect(() => {
+    const row = rowRef.current;
+    if (!sideways || !row) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      row.scrollLeft += e.deltaY + e.deltaX;
+    };
+    row.addEventListener("wheel", onWheel, { passive: false });
+    return () => row.removeEventListener("wheel", onWheel);
+  }, [sideways]);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -149,20 +215,69 @@ function Feed({
           if (entry.isIntersecting)
             setActive(Number((entry.target as HTMLElement).dataset.index));
       },
-      // A line across the middle of the screen.
-      { rootMargin: "-50% 0px -50% 0px" },
+      // A line across the middle of the screen — down the middle of the
+      // row when it scrolls sideways.
+      sideways
+        ? { root: rowRef.current, rootMargin: "0px -50% 0px -50%" }
+        : { rootMargin: "-50% 0px -50% 0px" },
     );
     refs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
-  }, [items]);
+  }, [items, sideways]);
+  useEffect(() => {
+    if (sideways && onNearEnd && active >= items.length - 3) onNearEnd();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sideways, active, items.length]);
+  // Peek: each item's width (measured — they're all the same height, but
+  // as wide as their images), and the row's width.
+  const [widths, setWidths] = useState<number[]>([]);
+  // …and the width of the text beside each (title, materials, …).
+  const sideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [sideWidths, setSideWidths] = useState<number[]>([]);
+  const [rowWidth, setRowWidth] = useState(0);
+  useEffect(() => {
+    const row = rowRef.current;
+    if (!sideways || !peek || !row) return;
+    const measure = () => {
+      setRowWidth(row.clientWidth);
+      setWidths(refs.current.map((el) => el?.offsetWidth ?? 0));
+      setSideWidths(sideRefs.current.map((el) => el?.offsetWidth ?? 0));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(row);
+    refs.current.forEach((el) => el && ro.observe(el));
+    return () => ro.disconnect();
+  }, [sideways, peek, items]);
+  // The space before item i (i > 0): the row (no padding), less the item
+  // before and half of this one — at least room for the text to the right
+  // of the item before (its width + 12px) and 24px more.
+  // The first work: 24px in from the left edge (pl-6) — so the second's
+  // space is 24px less, to still show half of it on the first screen.
+  const FIRST_INSET = 24;
+  const peekGap = (i: number) => {
+    if (!sideways || !peek) return undefined;
+    if (i === 0) return FIRST_INSET;
+    if (!widths[i - 1] || !widths[i]) return undefined;
+    return Math.max(
+      (sideWidths[i - 1] ?? 0) + 36,
+      rowWidth - widths[i - 1] - widths[i] / 2 - (i === 1 ? FIRST_INSET : 0),
+    );
+  };
   const current = items[active];
-  const imageClass = sameWidth
-    ? // Capped at two-thirds of the screen height (a tall work keeps its
-      // proportions inside the same-width box).
-      `block w-full h-auto ${maxW} max-h-[66.6vh] object-contain ${align === "left" ? "object-left" : ""} transition-opacity duration-200 hover:opacity-50`
-    : // Exhibitions: each image at most the screen's height less the
-      // title block (top) and the nav bar (bottom) — their measured heights.
-      `block w-auto h-auto ${maxW} max-h-[calc(100dvh-var(--title-h,0px)-var(--nav-h,0px))] object-contain ${align === "left" ? "object-left" : ""}`;
+  const imageClass = fullWidth
+    ? // Mobile: the full width (inside the item's px-3), any height.
+      // Desktop: at most maxW wide and as tall as the screen less the
+      // title bar and the nav bar (their measured heights), keeping
+      // proportions (horizontal: all 70% of the screen tall).
+      `block w-full h-auto lg:w-auto ${maxW} lg:max-h-[calc(100dvh-var(--title-h,0px)-var(--nav-h,0px))] ${horizontal ? "lg:h-[70dvh] lg:max-w-none lg:max-h-none" : ""}`
+    : sameWidth
+      ? // Capped at two-thirds of the screen height (a tall work keeps its
+        // proportions inside the same-width box).
+        `block w-auto h-[62.5vh] ${maxW} object-contain object-left object-top ${align === "left" ? "" : "lg:object-center"} ${horizontal ? "lg:h-[70dvh] lg:w-auto lg:max-w-none lg:max-h-none" : ""}`
+      : // Exhibitions: each image at most the screen's height less the
+        // title block (top) and the nav bar (bottom) — their measured heights.
+        `block w-auto h-auto ${maxW} max-h-[calc(100dvh-var(--title-h,0px)-var(--nav-h,0px))] object-contain ${align === "left" ? "object-left" : ""}`;
   return (
     <>
       {/* Fixed across the top (Image mode): the current item's title and
@@ -171,31 +286,35 @@ function Feed({
           so the filters can still be changed. */}
       <div
         ref={titleRef}
-        className={`fixed top-0 left-0  z-70 w-full bg-background   text-neutral-800 pointer-events-none flex items-baseline justify-between gap-x-6 pb-3 px-3 pt-3 lg:px-6 lg:pt-6 lg:pb-6 lg:min-h-20 transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
+        // On the page background; text-neutral-800.
+        className={`fixed top-0 left-0  z-70 w-full bg-background text-neutral-800 pointer-events-none flex items-baseline justify-between gap-x-6 pb-3 px-3 pt-3 lg:px-3 lg:pt-3 lg:pb-3  transition-opacity duration-500 ${hidden ? "opacity-0" : "opacity-100"}`}
       >
         {current ? (
           <TitleBlock
             title={current.title}
             metadata={current.metadata}
-            href={current.href}
             textWidth="max-w-full pr-1 lg:max-w-xl"
-            className={`${titleClassName} ${firstLoad ? REVEAL_TITLE : ""}`}
+            // At the top left of the fixed row. (titleBelow: desktop only;
+            // peek: mobile only.)
+            className={`pr-24 ${titleBelow ? "hidden lg:block" : ""} ${peek ? "lg:hidden" : ""} ${titleClassName} ${firstLoad ? REVEAL_TITLE : ""}`}
           />
         ) : (
           <span />
         )}
-        {/* Mobile: compact ("Filter" / ": Paintings"); desktop: "Filter :
-            All". */}
+        {/* The filters, at the top right, 12px from the top (pt-3) —
+            "Filter" for All, then "Filter : Paintings" etc. (mobile and
+            desktop). */}
         <ActiveFilters
-          compact
-          className={`flex lg:hidden shrink-0 pointer-events-auto font-gensco text-[18px] leading-tight text-neutral-800 ${firstLoad ? REVEAL_NAV : ""}`}
-        />
-        <ActiveFilters
-          className={`hidden lg:flex shrink-0 pointer-events-auto font-gensco text-[18px] leading-tight text-neutral-800 ${firstLoad ? REVEAL_NAV : ""}`}
+          allAsFilter
+          className={`flex absolute top-3 right-3 lg:right-6 shrink-0 pointer-events-auto font-gensco text-[18px] leading-tight text-neutral-800 ${reveal(REVEAL_FILTER)}`}
         />
       </div>
       <div
-        className={`flex flex-col ${gap} ${top} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"} ${firstLoad ? REVEAL_IMAGES : ""}`}
+        ref={rowRef}
+        // Horizontal (desktop): one row filling the screen, scrolled
+        // sideways (Lenis leaves it alone).
+        data-lenis-prevent={horizontal || undefined}
+        className={`flex flex-col ${gap} ${top} ${horizontal ? `lg:fixed lg:inset-0 lg:flex-row ${peek ? "lg:items-start lg:px-0" : "lg:items-center lg:px-6"} lg:overflow-x-auto lg:overflow-y-hidden` : ""} transition-opacity duration-1000 ${hidden ? "opacity-0" : "opacity-100"} ${reveal(REVEAL_IMAGES)}`}
       >
         {items.map((item, i) => (
           // Not a real link (no address shown in the browser's corner on
@@ -206,6 +325,7 @@ function Feed({
               refs.current[i] = el;
             }}
             data-index={i}
+            style={{ marginLeft: peekGap(i) }}
             role="link"
             tabIndex={0}
             onClick={() => router.push(item.href)}
@@ -213,7 +333,12 @@ function Feed({
               if (e.key === "Enter") router.push(item.href);
             }}
             aria-label={item.title}
-            className={`min-h-dvh flex flex-col ${align === "left" ? "items-start" : "items-center"} justify-center gap-y-3 lg:gap-y-6 px-3 lg:px-6 cursor-pointer ${item.images.length > 1 ? "py-6" : ""}`}
+            // Mobile, titleBelow: from the top left (pt-3), the title just
+            // below the images; otherwise centered
+            // in the screen (desktop: or at the left, align="left").
+            // fullWidth: the images stacked, px-6 at the sides, gap-y-6
+            // between (gap-y-3 on desktop) — no minimum height.
+            className={`flex flex-col items-start ${align === "left" ? "" : "lg:items-center"} ${fullWidth ? `px-3 ${horizontal ? "gap-y-6 lg:flex-row lg:items-center lg:shrink-0 lg:px-0 lg:gap-x-[50vw]" : "gap-y-3"}` : `min-h-dvh px-3 lg:gap-y-6 ${horizontal ? "lg:min-h-0 lg:shrink-0 lg:px-0" : "lg:px-6"} ${peek ? "lg:relative lg:items-start lg:justify-start lg:pt-6" : ""} ${titleBelow ? "justify-start lg:justify-center gap-y-2 pt-3 lg:pt-0" : sameWidth ? "justify-start gap-y-3 pt-[var(--title-h,0px)]" : "justify-center gap-y-3"} ${item.images.length > 1 ? (titleBelow ? "lg:py-6" : "py-6") : ""}`} cursor-pointer`}
           >
             {item.images.map((src, j) => {
               // eslint-disable-next-line @next/next/no-img-element
@@ -236,6 +361,34 @@ function Feed({
                 img
               );
             })}
+            {/* Peek (desktop): to the right of the image, level with its
+                top — "TITLE, materials, dimensions, year" on one line;
+                out of the flow, so the item is as wide as the image only. */}
+            {peek && (
+              <div
+                ref={(el) => {
+                  sideRefs.current[i] = el;
+                }}
+                className="hidden lg:flex flex-col absolute left-full top-6 ml-3 w-max max-w-none whitespace-nowrap font-gensco text-[24px] leading-tight text-left text-neutral-800"
+              >
+                {/* "TITLE, materials, dimensions, year" — one line. */}
+                <p>
+                  <span className="uppercase">{item.title}</span>
+                  {(item.metaLines ?? [item.metadata]).map((line) => (
+                    <span key={line}>, {line}</span>
+                  ))}
+                </p>
+              </div>
+            )}
+            {/* Mobile: the title and metadata below the images, in the
+                flow (as wide as the images' column, from its left edge). */}
+            {titleBelow && (
+              <TitleBlock
+                title={item.title}
+                metadata={item.metadata}
+                className={`lg:hidden w-full ${maxW}`}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -291,12 +444,29 @@ export default function IndexPageClient() {
     return copy.sort((a, b) => byDate(b).localeCompare(byDate(a)));
   }
 
-  const sortedWorks = applySort(
+  const byDate = applySort(
     filteredWorks,
     (w) => w.date,
     (w) => w.title.rendered,
     (w) => w.acf.year ?? 0,
   );
+  // The default order (latest): as dragged in the Studio's Works list
+  // (orderRank); any not ranked yet after, newest first.
+  const dateRank = new Map(byDate.map((w, i) => [w.id, i]));
+  const sortedWorks =
+    sort === "latest"
+      ? [...byDate].sort((a, b) => {
+          if (a.orderRank && b.orderRank)
+            return a.orderRank < b.orderRank
+              ? -1
+              : a.orderRank > b.orderRank
+                ? 1
+                : 0;
+          if (a.orderRank) return -1;
+          if (b.orderRank) return 1;
+          return dateRank.get(a.id)! - dateRank.get(b.id)!;
+        })
+      : byDate;
 
   const sortedExhibitions = applySort(
     filteredExhibitions,
@@ -350,7 +520,8 @@ export default function IndexPageClient() {
       <div
         // Every view starts at the top (List at its own pt-6; Image with the
         // first image centered in the screen).
-        className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start"
+        // On the page background.
+        className="relative isolate min-h-dvh lg:grid lg:grid-cols-12 lg:gap-2 lg:items-start bg-background"
       >
         {/* Page is a 4-col grid (lines up with the nav's 4 columns). Filter
             sidebar: col 1. Works: all 4 columns (one work per column);
@@ -383,7 +554,7 @@ export default function IndexPageClient() {
                 // Desktop: 32 columns, 6 works per row, each 2 columns wide
                 // with 4 empty columns between (see GRID_START) — all the
                 // same width, the first and last at the edges.
-                className="relative grid grid-cols-4 lg:grid-cols-32 gap-x-0 gap-y-36 lg:gap-y-36 px-3 lg:px-6 pt-3 lg:pt-6  pb-24 items-start"
+                className="relative grid grid-cols-4 lg:grid-cols-32 gap-x-0 gap-y-36 lg:gap-y-36 px-3 pt-3 pb-24 items-start"
               >
                 {/* About the archive — absolute at the top left (scrolls
                     away with the page); in the title block's type. */}
@@ -400,7 +571,7 @@ export default function IndexPageClient() {
                       if (e.key === "Enter") router.push(`/${w.slug}`);
                     }}
                     aria-label={w.title.rendered}
-                    className={`col-span-1 lg:col-span-2 ${GRID_START_MOBILE[i % 2]} ${GRID_START[i % 6]} flex flex-col items-center justify-start`}
+                    className={`col-span-1 lg:col-span-2 ${GRID_START_MOBILE[i % 2]} ${GRID_START[i % 6]} flex flex-col items-center justify-start cursor-pointer`}
                   >
                     {w.image_url && (
                       // Zooms into (and back out of) the work's page.
@@ -410,7 +581,7 @@ export default function IndexPageClient() {
                           src={`${w.image_url}?w=1000&auto=format`}
                           alt={w.title.rendered}
                           loading="lazy"
-                          className="block w-full h-auto transition-opacity duration-200 hover:opacity-50"
+                          className="block w-full h-auto"
                         />
                       </ViewTransition>
                     )}
@@ -423,9 +594,9 @@ export default function IndexPageClient() {
               <Feed
                 items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
                 totalItems={visibleWorks.length}
-                // Works: all the same width — two-thirds of the screen on
-                // mobile, a sixth on desktop.
-                maxW="max-w-full lg:max-w-1/6"
+                // Works: mobile all the same width (half the screen);
+                // desktop 62.5vh tall, any width (up to the page).
+                maxW="max-w-1/2 lg:max-w-full"
                 sameWidth
                 // The title block at most 2/3 of the screen on mobile (clear of
                 // the filters, top right), max-w-5xl on desktop (! beats its
@@ -435,17 +606,39 @@ export default function IndexPageClient() {
                 size={imageSize}
               />
             )}
-            {/* Exhibitions as a feed (always — no index view). */}
-            {mode === "exhibitions" && (
+            {/* Exhibitions in the index (List; also if Grid is still set
+                from works — no exhibitions grid): every exhibition's title,
+                a link to its page — as the works list. */}
+            {mode === "exhibitions" && worksLayout !== "image" && (
+              <ul className={TITLE_LIST}>
+                {visibleExhibitions.map((ex) => (
+                  <li key={ex.id}>
+                    <Link
+                      href={`/exhibitions/${ex.slug}`}
+                      prefetch={false}
+                      className={TITLE_LINK}
+                    >
+                      {ex.title.rendered}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {/* Exhibitions as a feed. */}
+            {mode === "exhibitions" && worksLayout === "image" && (
               <Feed
                 items={visibleExhibitions
                   .slice(0, visibleCount)
                   .map(exhibitionFeedItem)}
                 totalItems={visibleExhibitions.length}
-                maxW="max-w-full lg:max-w-2/3"
-                gap="gap-y-30"
-                // Mobile: a third of the screen above the first exhibition.
-                top="pt-[33.3dvh] lg:pt-0"
+                maxW="max-w-full lg:max-w-3/4"
+                // Mobile: every image the full page width (less px-3);
+                // desktop: at most 3/4 wide and fitting the screen. Between
+                // exhibitions: gap-y-18 (mobile), half a screen (desktop).
+                fullWidth
+                gap="gap-y-18 lg:gap-y-[50vh]"
+                // The first image starts just below the fixed title bar.
+                top="pt-[var(--title-h,0px)]"
                 // The title block at most 2/3 of the screen on mobile (clear of
                 // the filters, top right), max-w-5xl on desktop (! beats its
                 // max-w-6xl).

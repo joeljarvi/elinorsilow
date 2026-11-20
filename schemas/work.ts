@@ -1,10 +1,26 @@
 import { defineField, defineType } from "sanity";
+import {
+  orderRankField,
+  orderRankOrdering,
+} from "@sanity/orderable-document-list";
 
 export default defineType({
   name: "work",
   title: "Work",
   type: "document",
+  // Ordered by dragging in the Works list (orderRank).
+  orderings: [orderRankOrdering],
   fields: [
+    // The position set by dragging; new works go to the top.
+    orderRankField({ type: "work", newItemPosition: "before" }),
+    defineField({
+      name: "hidden",
+      title: "Hide from site",
+      description:
+        "Hidden works stay here in the CMS but don't show anywhere on the site.",
+      type: "boolean",
+      initialValue: false,
+    }),
     defineField({
       name: "title",
       title: "Title",
@@ -89,6 +105,12 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: "title", media: "image", subtitle: "year" },
+    select: { title: "title", media: "image", year: "year", hidden: "hidden" },
+    // "Hidden" next to the year in the Studio's lists.
+    prepare: ({ title, media, year, hidden }) => ({
+      title,
+      media,
+      subtitle: [year, hidden && "Hidden"].filter(Boolean).join(" · "),
+    }),
   },
 });
