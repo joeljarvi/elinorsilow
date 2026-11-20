@@ -61,6 +61,9 @@ export type Exhibition = {
     city: string;
     description?: string;
     credits?: string;
+    // Optional, "YYYY-MM-DD".
+    start_date?: string;
+    end_date?: string;
     work_1?: string;
     work_2?: string;
     work_3?: string;
@@ -144,6 +147,9 @@ export type Exhibition_list = {
     venue: string;
     city: string;
     description?: string;
+    // Optional, "YYYY-MM-DD".
+    start_date?: string;
+    end_date?: string;
   };
 };
 
@@ -214,6 +220,8 @@ function transformExhibition(doc: any): Exhibition {
       city: doc.city || "",
       description: doc.description,
       credits: doc.credits,
+      start_date: doc.start_date || undefined,
+      end_date: doc.end_date || undefined,
       ...works,
     },
     images,
@@ -234,6 +242,8 @@ function transformExhibitionList(doc: any): Exhibition_list {
       venue: doc.venue || "",
       city: doc.city || "",
       description: doc.description,
+      start_date: doc.start_date || undefined,
+      end_date: doc.end_date || undefined,
     },
   };
 }
@@ -247,7 +257,7 @@ const WORK_FIELDS = `
 
 const EXHIBITION_FIELDS = `
   _id, "slug": slug.current, title, year, exhibition_type,
-  location, city, description, credits, related_works, featured, upcoming, _createdAt,
+  location, city, description, credits, start_date, end_date, related_works, featured, upcoming, _createdAt,
   "images": images[]{
     alt, caption, description,
     "url": asset->url,
@@ -378,7 +388,7 @@ export async function getLongBio(): Promise<string> {
 export async function getExhibitionList(): Promise<Exhibition_list[]> {
   const data = await client.fetch(
     `*[_type == "exhibition_list"] | order(year desc) {
-      _id, "slug": slug.current, title, year, exhibition_type, venue, city, description, _createdAt
+      _id, "slug": slug.current, title, year, exhibition_type, venue, city, description, start_date, end_date, _createdAt
     }`,
     {},
     { next: { revalidate: 60 } }

@@ -594,9 +594,9 @@ export default function IndexPageClient() {
               <Feed
                 items={visibleWorks.slice(0, visibleCount).map(workFeedItem)}
                 totalItems={visibleWorks.length}
-                // Works: mobile all the same width (half the screen);
+                // Works: mobile at most two-thirds of the screen wide;
                 // desktop 62.5vh tall, any width (up to the page).
-                maxW="max-w-1/2 lg:max-w-full"
+                maxW="max-w-2/3 lg:max-w-full"
                 sameWidth
                 // The title block at most 2/3 of the screen on mobile (clear of
                 // the filters, top right), max-w-5xl on desktop (! beats its

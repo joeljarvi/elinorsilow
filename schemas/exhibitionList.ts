@@ -23,6 +23,26 @@ export default defineType({
       type: "string",
     }),
     defineField({
+      name: "start_date",
+      title: "Start date",
+      description: "Optional.",
+      type: "date",
+    }),
+    defineField({
+      name: "end_date",
+      title: "End date",
+      description: "Optional.",
+      type: "date",
+      // Not before the start date (when both are set).
+      validation: (Rule) =>
+        Rule.custom((end, ctx) => {
+          const start = (ctx.document as { start_date?: string })?.start_date;
+          return !end || !start || end >= start
+            ? true
+            : "The end date can't be before the start date.";
+        }),
+    }),
+    defineField({
       name: "exhibition_type",
       title: "Type",
       type: "string",

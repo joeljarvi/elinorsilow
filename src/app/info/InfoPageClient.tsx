@@ -40,6 +40,24 @@ function Entry({
   );
 }
 
+// "12 Mar–4 Apr 2024" from optional "YYYY-MM-DD" dates (the year once
+// when both are in it); "" when there are none.
+function dateRange(start?: string, end?: string) {
+  const fmt = (d: string, year: boolean) =>
+    new Date(`${d}T00:00:00`).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      ...(year ? { year: "numeric" } : {}),
+    });
+  if (start && end) {
+    const sameYear = start.slice(0, 4) === end.slice(0, 4);
+    return `${fmt(start, !sameYear)}–${fmt(end, true)}`;
+  }
+  if (start) return `From ${fmt(start, true)}`;
+  if (end) return `Until ${fmt(end, true)}`;
+  return "";
+}
+
 const LINK = "underline underline-offset-4 decoration-1";
 
 type Section = {
@@ -86,6 +104,8 @@ export default function InfoPageClient({
       city: e.acf.city,
       type: type(e.acf.exhibition_type),
       slug: e.slug as string | undefined,
+      dates: dateRange(e.acf.start_date, e.acf.end_date),
+      when: e.acf.start_date || e.acf.end_date || "",
       created: e.date,
     })),
     ...exhibitionList
@@ -98,6 +118,8 @@ export default function InfoPageClient({
         city: e.acf.city,
         type: type(e.acf.exhibition_type),
         slug: undefined as string | undefined,
+        dates: dateRange(e.acf.start_date, e.acf.end_date),
+        when: e.acf.start_date || e.acf.end_date || "",
         created: e.date,
       })),
   ]
@@ -118,17 +140,23 @@ export default function InfoPageClient({
   // Everything with a year — exhibitions, grants, press — in one list,
   // newest year first; each entry says what it is (exhibitions by their
   // type).
-  const dated: {
+  const isGrant = (d: { id: string }) => d.id.startsWith("grant-");
+  type Dated = {
     id: string;
     year: number;
     // When it was added to the CMS — newest first within a year.
     created: string;
+    // Its start (or end) date, if set — the latest first within a year,
+    // ahead of those without.
+    when?: string;
     node: ReactNode;
-  }[] = [
+  };
+  const dated = ([
     ...history.map((e) => ({
       id: e.id,
       year: Number(e.year),
       created: e.created,
+      when: e.when,
       node: (
         <Entry
           key={e.id}
@@ -141,7 +169,7 @@ export default function InfoPageClient({
               e.title
             )
           }
-          rest={[e.venue, e.city, e.type]}
+          rest={[e.venue, e.city, e.dates, e.type]}
         />
       ),
     })),
@@ -177,10 +205,19 @@ export default function InfoPageClient({
         />
       ),
     })),
-  ]
+  ] as Dated[])
     .filter((d) => d.year > 0)
-    // Newest year first; within a year, the last added first.
-    .sort((a, b) => b.year - a.year || b.created.localeCompare(a.created));
+    // Newest year first; within a year, grants last; then those with
+    // dates (start, else end), the latest first; then the rest, the last
+    // added first.
+    .sort(
+      (a, b) =>
+        b.year - a.year ||
+        Number(isGrant(a)) - Number(isGrant(b)) ||
+        Number(!a.when) - Number(!b.when) ||
+        (b.when ?? "").localeCompare(a.when ?? "") ||
+        b.created.localeCompare(a.created),
+    );
   // Grouped by year, newest first.
   const years = [...new Set(dated.map((d) => d.year))].sort((a, b) => b - a);
 
